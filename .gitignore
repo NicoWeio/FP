@@ -1,0 +1,7 @@
+build/
+*.aux
+*.bcf
+*.log
+*.toc
+*.run.xml
+__pycache__

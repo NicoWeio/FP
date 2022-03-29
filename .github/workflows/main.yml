@@ -1,0 +1,32 @@
+name: Continuous Integration
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # TODO lint:
+  build:
+    name: Generate PDFs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: docker://nicoweio/my-texlive
+      # ↓ Hierür wird sudo benötigt, da die mittels Docker erstellen PDFs root gehören.
+      - name: Clean PDFs (for reproducibility)
+        run: sudo find ./*/build/ -name '*.pdf' -print -exec ./clean_pdf.py {} \;
+      - uses: actions/upload-artifact@v2
+        with:
+          name: pdfs
+          path: ./*/build/main.pdf
+      - name: Extract PDFs for bundling
+        run: mkdir gh-pages-bundle && rsync -a --prune-empty-dirs --include '*/' --include '*.pdf' --exclude '*' ./ gh-pages-bundle/
+      - name: Generate index
+        run: python3 build_index.py > gh-pages-bundle/index.md
+      - name: Deploy to GitHub Pages 🚀
+        uses: JamesIves/github-pages-deploy-action@3.7.1
+        with:
+          BRANCH: gh-pages
+          CLEAN: true
+          FOLDER: gh-pages-bundle
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
