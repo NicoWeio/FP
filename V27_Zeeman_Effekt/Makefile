@@ -1,6 +1,14 @@
 all: build/main.pdf
 
-build/main.pdf: main.tex lit.bib | build
+plots: \
+		build/plt/1_magnet.pdf \
+
+
+build/plt/1_magnet.pdf: 1_magnet.py | build/plt
+		MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: python3 1_magnet.py
+
+
+build/main.pdf: main.tex lit.bib plots | build
 	  TEXINPUTS=build: \
 	  BIBINPUTS=build: \
 	  max_print_line=1048576 \
