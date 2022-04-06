@@ -161,7 +161,9 @@ def plot_context(plt, xunits, yunits, xname=None, yname=None):
     class MyPlotter:
         """Hilfsklasse, die einen Teil von `matplotlib.pyplot` nachahmt und ergänzt."""
 
-        def plot(self, x, y, show_xerr=True, show_yerr=True, **kwargs):
+        def plot(self, *args, show_xerr=True, show_yerr=True, **kwargs):
+            x, y, *more_args = args
+
             # Bringe x und y in die vorgegebene Einheit und entferne sie anschließend.
             if isinstance(x, pint.Quantity):
                 x = x.to(xunits).m
@@ -192,9 +194,9 @@ def plot_context(plt, xunits, yunits, xname=None, yname=None):
 
             # Plotte die Daten mit `errorbar`, falls Unsicherheiten angegeben wurden, sonst mit `plot`.
             if (x_s is not None) or (y_s is not None):
-                return plt.errorbar(x_n, y_n, xerr=x_s, yerr=y_s, **kwargs)
+                return plt.errorbar(x_n, y_n, *more_args, xerr=x_s, yerr=y_s, **kwargs)
             else:
-                return plt.plot(x_n, y_n, **kwargs)
+                return plt.plot(x_n, y_n, *more_args, **kwargs)
 
     # automatische Labels
     def fmt_label(name, units):
