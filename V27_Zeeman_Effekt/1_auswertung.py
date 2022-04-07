@@ -1,7 +1,33 @@
+import matplotlib.pyplot as plt
 import numpy as np
 import pint
+import tools
 ureg = pint.UnitRegistry()
 ureg.setup_matplotlib()
+
+# █ Eichung des Elektromagneten
+
+I, B = np.genfromtxt('data/1_magnet.csv', delimiter=',', skip_header=1, unpack=True)
+I *= ureg('A')
+B *= ureg('mT')
+
+slope, intercept = tools.linregress(I, B)
+print(f"{slope=}, {intercept=}")
+
+
+def calc_B(I):
+    return slope * I + intercept
+
+
+with tools.plot_context(plt, 'A', 'mT', 'I', 'B') as plt2:
+    plt2.plot(I, B, 'x', zorder=5, label='Messwerte')
+    plt2.plot(I, tools.nominal_values(calc_B(I)), label='Regressionsgerade')
+plt.grid()
+plt.legend()
+plt.tight_layout()
+plt.savefig('build/plt/1_magnet.pdf')
+plt.plot()
+
 
 # █ Berechnung der Dispersionsgebiete
 
@@ -35,8 +61,7 @@ for name, I in FOO:
     print(f"{δλ.mean()=}")
 
     # █ Bestimmung der Landé-Faktoren
-    # I = Stromstärke des Elektromagneten
-    B = ureg('302.1 mT')  # TODO: Nutze Daten aus 1_magnet.py
+    B = calc_B(I)
 
     # g_ij = m_j * g_j - m_i * g_i
     μ_B = ureg.e * ureg.hbar / (2 * ureg.m_e)

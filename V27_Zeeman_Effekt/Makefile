@@ -4,8 +4,8 @@ plots: \
 		build/plt/1_magnet.pdf \
 
 
-build/plt/1_magnet.pdf: 1_magnet.py | build/plt
-		MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: python3 1_magnet.py
+build/plt/1_magnet.pdf: 1_auswertung.py | build/plt
+		MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: python3 1_auswertung.py
 
 
 build/main.pdf: main.tex lit.bib plots | build
