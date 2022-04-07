@@ -15,8 +15,14 @@ slope, intercept = tools.linregress(I, B)
 print(f"{slope=}, {intercept=}")
 
 
+# def fit_fn(I, a, b, c):
+#     return a*I**2 + b*I + c
+# a, b, c = tools.pint_curve_fit(fit_fn, I, B, (ureg('mT/A²'), ureg('mT/A'), ureg('mT')))
+
+
 def calc_B(I):
     return slope * I + intercept
+    # return fit_fn(I, a, b, c)
 
 
 with tools.plot_context(plt, 'A', 'mT', 'I', 'B') as plt2:
@@ -32,6 +38,7 @@ plt.plot()
 # █ Berechnung der Dispersionsgebiete
 
 DATA = [
+    # (λ, n, color)
     (ureg('643.8 nm'), 1.4567, 'rot'),
     (ureg('480.0 nm'), 1.4635, 'blau'),
 ]
