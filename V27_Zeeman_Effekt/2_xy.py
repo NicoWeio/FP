@@ -21,25 +21,25 @@ for λ, n, color in DATA:
     print(f'Δλ_D ({color}) = {delta_λ_D:.3f}')
 
 
-# █ Bestimmung der Wellenlängenaufspaltung
+FOO = [
+    ('rot', ureg('5 A')),
+    ('blau_pi', ureg('5 A')),
+    ('blau_sigma', ureg('3.24 A')),
+]
 
-ordnung, Δs, δs = np.genfromtxt('blau_sigma.csv', delimiter=',', skip_header=1, unpack=True)
-δλ = δs * delta_λ_D / (2 * Δs)
+for name, I in FOO:
+    print(f'█ {name}')
+    # █ Bestimmung der Wellenlängenaufspaltung
+    ordnung, Δs, δs = np.genfromtxt(f'data/{name}.csv', delimiter=',', skip_header=1, unpack=True)
+    δλ = δs * delta_λ_D / (2 * Δs)
+    print(f"{δλ.mean()=}")
 
-print(f"{δλ=}")
+    # █ Bestimmung der Landé-Faktoren
+    # I = Stromstärke des Elektromagneten
+    B = ureg('302.1 mT')  # TODO: Nutze Daten aus 1_magnet.py
 
-# █ Bestimmung der Landé-Faktoren
-
-# TODO: für blau_sigma, blau_pi, rot ↓
-
-I = ureg('5 A')  # Stromstärke des Elektromagneten
-B = ureg('302.1 mT')  # TODO: Nutze Daten aus 1_magnet.py
-
-# Landé-Faktor:
-# g_ij = m_j * g_j - m_i * g_i
-
-μ_B = ureg.e * ureg.hbar / (2 * ureg.m_e)
-
-g_ij = δλ.mean() * ureg.h * ureg.c / (λ**2 * μ_B * B)
-g_ij.ito('dimensionless')
-print(f"{g_ij=}")
+    # g_ij = m_j * g_j - m_i * g_i
+    μ_B = ureg.e * ureg.hbar / (2 * ureg.m_e)
+    g_ij = δλ.mean() * ureg.h * ureg.c / (λ**2 * μ_B * B)  # Landé-Faktor
+    g_ij.ito('dimensionless')
+    print(f"{g_ij=}")

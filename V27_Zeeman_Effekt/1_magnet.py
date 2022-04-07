@@ -5,7 +5,7 @@ import pint
 ureg = pint.UnitRegistry()
 ureg.setup_matplotlib()
 
-I, B = np.genfromtxt('1_magnet.csv', delimiter=',', skip_header=1, unpack=True)
+I, B = np.genfromtxt('data/1_magnet.csv', delimiter=',', skip_header=1, unpack=True)
 I *= ureg('A')
 B *= ureg('mT')
 
