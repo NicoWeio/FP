@@ -11,18 +11,13 @@ I, B = np.genfromtxt('data/1_magnet.csv', delimiter=',', skip_header=1, unpack=T
 I *= ureg('A')
 B *= ureg('mT')
 
-slope, intercept = tools.linregress(I, B)
-print(f"{slope=}, {intercept=}")
-
-
-# def fit_fn(I, a, b, c):
-#     return a*I**2 + b*I + c
-# a, b, c = tools.pint_curve_fit(fit_fn, I, B, (ureg('mT/A²'), ureg('mT/A'), ureg('mT')))
+fit_params = tools.pint_polyfit(I, B, 3)
+print(f"{fit_params=}")
 
 
 def calc_B(I):
-    return slope * I + intercept
-    # return fit_fn(I, a, b, c)
+    a,b,c,d = fit_params
+    return a*I**3 + b*I**2 + c*I + d
 
 
 with tools.plot_context(plt, 'A', 'mT', 'I', 'B') as plt2:
@@ -48,10 +43,9 @@ d = ureg('4 mm')  # Dicke
 L = ureg('120 mm')
 
 for λ, n, color in DATA:
-    # TODO: anderswo steht n**2 + 1
-    delta_λ_D = λ**2 / (2*d * np.sqrt(n**2 - 1))
-    delta_λ_D.ito('pm')
-    print(f'Δλ_D ({color}) = {delta_λ_D:.3f}')
+    Δλ_D = λ**2 / (2*d * np.sqrt(n**2 - 1))
+    Δλ_D.ito('pm')
+    print(f'Δλ_D ({color}) = {Δλ_D:.3f}')
 
 
 FOO = [
@@ -64,7 +58,7 @@ for name, I in FOO:
     print(f'█ {name}')
     # █ Bestimmung der Wellenlängenaufspaltung
     ordnung, Δs, δs = np.genfromtxt(f'data/{name}.csv', delimiter=',', skip_header=1, unpack=True)
-    δλ = δs * delta_λ_D / (2 * Δs)
+    δλ = δs * Δλ_D / (2 * Δs)
     print(f"{δλ.mean()=}")
 
     # █ Bestimmung der Landé-Faktoren
