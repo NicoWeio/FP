@@ -6,10 +6,6 @@ import scipy.signal
 
 img = imread('IMG_0021_rotated.jpg')
 
-# display the image
-imgplot = plt.imshow(img)
-# plt.show()
-
 # print("img", img)
 # sum colors
 sums1 = img.sum(axis=2)
@@ -27,8 +23,11 @@ peak_dists = np.diff(peaks)
 print(peak_dists)
 print(peak_dists.mean())
 
-plt.figure()
+fig, ax = plt.subplots()
+ax.imshow(img)
+# ax.imshow(img, extent=[0, 4000, 0, 2248])
 x = np.array(range(len(sums)))
-plt.plot(x, sums)
-plt.plot(peaks, sums[peaks], 'x')
+displaysums = sums / max(sums) * sums1.shape[0]
+ax.plot(x, displaysums)
+ax.plot(peaks, displaysums[peaks], 'x')
 plt.show()
