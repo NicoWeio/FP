@@ -1,4 +1,6 @@
+import bildanalyse
 import matplotlib.pyplot as plt
+from matplotlib.image import imread
 import numpy as np
 import pint
 import tools
@@ -16,18 +18,18 @@ print(f"{fit_params=}")
 
 
 def calc_B(I):
-    a,b,c,d = fit_params
+    a, b, c, d = fit_params
     return a*I**3 + b*I**2 + c*I + d
 
 
-with tools.plot_context(plt, 'A', 'mT', 'I', 'B') as plt2:
-    plt2.plot(I, B, 'x', zorder=5, label='Messwerte')
-    plt2.plot(I, tools.nominal_values(calc_B(I)), label='Regressionsgerade')
-plt.grid()
-plt.legend()
-plt.tight_layout()
-plt.savefig('build/plt/1_magnet.pdf')
-plt.plot()
+# with tools.plot_context(plt, 'A', 'mT', 'I', 'B') as plt2:
+#     plt2.plot(I, B, 'x', zorder=5, label='Messwerte')
+#     plt2.plot(I, tools.nominal_values(calc_B(I)), label='Regressionsgerade')
+# plt.grid()
+# plt.legend()
+# plt.tight_layout()
+# plt.savefig('build/plt/1_magnet.pdf')
+# plt.plot()
 
 
 # █ Berechnung der Dispersionsgebiete
@@ -49,15 +51,22 @@ for λ, n, color in DATA:
 
 
 FOO = [
-    ('rot', ureg('5 A')),
-    ('blau_pi', ureg('5 A')),
-    ('blau_sigma', ureg('3.24 A')),
+    ('rot', ureg('8 A')),
+    # ('blau_pi', ureg('5 A')),
+    # ('blau_sigma', ureg('3.24 A')),
 ]
 
 for name, I in FOO:
     print(f'█ {name}')
     # █ Bestimmung der Wellenlängenaufspaltung
-    ordnung, Δs, δs = np.genfromtxt(f'data/{name}.csv', delimiter=',', skip_header=1, unpack=True)
+    # ordnung, Δs, δs = np.genfromtxt(f'data/{name}.csv', delimiter=',', skip_header=1, unpack=True)
+
+    img1 = imread('img/rot_0A.jpg')
+    img2 = imread('img/rot_8A.jpg')
+
+    Δs = bildanalyse.get_Δs(img1)
+    δs = bildanalyse.get_δs(img2)
+
     δλ = δs * Δλ_D / (2 * Δs)
     print(f"{δλ.mean()=}")
 

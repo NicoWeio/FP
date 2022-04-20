@@ -52,7 +52,7 @@ def get_Δs(img):
     peaks = get_peaks(img, show=False)
 
     Δs = np.diff(peaks).mean()
-    Δs /= 2  # !?
+    # Δs /= 2  # !?
     return Δs
 
 
@@ -65,10 +65,3 @@ def get_δs(img):
     diffs = [b - a for a, b in pairs]
     δs = np.array(diffs).mean()
     return δs
-
-
-img1 = imread('img/rot_0A.jpg')
-img2 = imread('img/rot_8A.jpg')
-
-Δs = get_Δs(img1)
-δs = get_δs(img2)
