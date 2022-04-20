@@ -6,7 +6,7 @@ import scipy as sp
 import scipy.signal
 
 
-def analyze_img(img, min_height=0.5, show=False):
+def get_peaks(img, min_height=0.5, show=False):
     """
     min_height: Diesen Anteil vom Maximum muss ein Peak haben, damit er als solcher gewertet wird.
     """
@@ -47,23 +47,28 @@ def analyze_img(img, min_height=0.5, show=False):
     # return peak_dists
 
 
+def get_Δs(img):
+    """Analyse ohne B-Feld/Aufspaltung"""
+    peaks = get_peaks(img, show=False)
+
+    Δs = np.diff(peaks).mean()
+    Δs /= 2  # !?
+    return Δs
+
+
+def get_δs(img):
+    """Analyse mit B-Feld/Aufspaltung"""
+    peaks = get_peaks(img, min_height=0.4, show=False)
+
+    # group peaks2 into pairs of 2
+    pairs = list(itertools.pairwise(peaks))[::2]
+    diffs = [b - a for a, b in pairs]
+    δs = np.array(diffs).mean()
+    return δs
+
+
 img1 = imread('img/rot_0A.jpg')
 img2 = imread('img/rot_8A.jpg')
 
-
-peaks1 = analyze_img(img1, show=False)
-peaks2 = analyze_img(img2, min_height=0.4, show=False)
-
-Δs = np.diff(peaks1).mean()
-Δs /= 2  # !?
-
-# group peaks2 into pairs of 2
-
-pairs = list(itertools.pairwise(peaks2))[::2]
-diffs = [b - a for a, b in pairs]
-δs = np.array(diffs).mean()
-print(peaks2)
-print(pairs)
-print(diffs)
-print(δs)
-
+Δs = get_Δs(img1)
+δs = get_δs(img2)
