@@ -59,7 +59,6 @@ FOO = [
 for name, I in FOO:
     print(f'█ {name}')
     # █ Bestimmung der Wellenlängenaufspaltung
-    # ordnung, Δs, δs = np.genfromtxt(f'data/{name}.csv', delimiter=',', skip_header=1, unpack=True)
 
     img1 = imread('img/rot_0A.jpg')
     img2 = imread('img/rot_8A.jpg')
@@ -78,3 +77,5 @@ for name, I in FOO:
     g_ij = δλ.mean() * ureg.h * ureg.c / (λ**2 * μ_B * B)  # Landé-Faktor
     g_ij.ito('dimensionless')
     print(f"{g_ij=}")
+
+    print(tools.fmt_compare_to_ref(g_ij, 1))
