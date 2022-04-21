@@ -49,41 +49,66 @@ for λ, n, color in DATA:
     Δλ_D.ito('pm')
     print(f'Δλ_D ({color}) = {Δλ_D:.3f}')
 
-# blau TMP ↓
-
-# img1 = imread('img/blau_0A_0deg_0033.jpg')
-# img2 = imread('img/blau_XA_0deg_0034.jpg')
-
-img1 = bildanalyse.preprocess_image('img/blau1/blau_0A_0deg_0033.jpg')
-
-bildanalyse.get_peaks(img1, show=True)
-bildanalyse.get_peaks(img2, show=True)
-
-
-raise NotImplementedError()
+# bildanalyse.get_peaks(img1, min_distance=40, show=False)
+# bildanalyse.get_peaks(img2, min_distance=15, show=True)
 
 
 FOO = [
-    ('rot', ureg('8 A')),
-    # ('blau_pi', ureg('5 A')),
-    # ('blau_sigma', ureg('3.24 A')),
+    {
+        'color': 'rot',
+        'λ': ureg('643.8 nm'),
+        'n': 1.4567,
+        'rotate_deg': -2.3,
+        'images': [
+            {
+                'I': ureg('0 A'),
+                'polarisation': 0,  # in °
+                'path': 'Bilder/rot neu/IMG_0001.JPG',
+            },
+            {
+                'I': ureg('8 A'),
+                'polarisation': 0,  # in °
+                'path': 'Bilder/rot neu/IMG_0002.JPG',
+                # 'min_distance': 70,
+                # 'min_height': 1600/2248,
+                #
+                'min_distance': 1,
+                'min_height': 0.4,
+                'prominence': 800,
+            },
+        ],
+        'g_lit': 1,
+    }
 ]
 
-for name, I in FOO:
-    print(f'█ {name}')
+# raise NotImplementedError()
+
+for messreihe in FOO:
+    print(f"█ Messreihe {messreihe['color']}")
     # █ Bestimmung der Wellenlängenaufspaltung
 
-    img1 = imread('img/rot_0A.jpg')
-    img2 = imread('img/rot_8A.jpg')
+    img1 = bildanalyse.preprocess_image(messreihe['images'][0]['path'], rotate_deg=messreihe['rotate_deg'])
+    img2 = bildanalyse.preprocess_image(messreihe['images'][1]['path'], rotate_deg=messreihe['rotate_deg'])
 
-    Δs = bildanalyse.get_Δs(img1)
-    δs = bildanalyse.get_δs(img2)
+    # Δs = bildanalyse.get_Δs(
+    #     img1,
+    #     show=True,
+    # )
+    δs = bildanalyse.get_δs(
+        img2,
+        min_distance=messreihe['images'][1].get('min_distance', 100),
+        min_height=messreihe['images'][1].get('min_height', 0),
+        prominence=messreihe['images'][1].get('prominence', 0),
+        show=True,
+    )
+    print(f"{δs=}")
+    print(f"{Δs=}")
 
     δλ = δs * Δλ_D / (2 * Δs)
     print(f"{δλ.mean()=}")
 
     # █ Bestimmung der Landé-Faktoren
-    B = calc_B(I)
+    B = calc_B(messreihe['images'][1]['I'])
 
     # g_ij = m_j * g_j - m_i * g_i
     μ_B = ureg.e * ureg.hbar / (2 * ureg.m_e)
@@ -91,4 +116,4 @@ for name, I in FOO:
     g_ij.ito('dimensionless')
     print(f"{g_ij=}")
 
-    print(tools.fmt_compare_to_ref(g_ij, 1))
+    print(tools.fmt_compare_to_ref(g_ij, messreihe['g_lit']))

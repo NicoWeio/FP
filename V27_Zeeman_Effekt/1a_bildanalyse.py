@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
 import scipy.signal
-from PIL import Image
+from PIL import Image, ImageEnhance
 
 timestampImage = Image.open('img/timestamp.png')
 
@@ -19,8 +19,13 @@ def preprocess_image(path, rotate_deg=0):
     # rotated.show()
     return np.array(rotated)
 
+def display_image(img):
+    """Passt das Bild zur Darstellung an."""
+    pil_img_in = Image.fromarray(img)
+    pil_img_out = ImageEnhance.Contrast(pil_img_in).enhance(2.5)
+    return np.array(pil_img_out)
 
-def get_peaks(img, min_height=0.5, show=False):
+def get_peaks(img, min_distance=1, min_height=0.0, prominence=0, show=False):
     """
     min_height: Diesen Anteil vom Maximum muss ein Peak haben, damit er als solcher gewertet wird.
     """
@@ -29,11 +34,12 @@ def get_peaks(img, min_height=0.5, show=False):
     # summiere entlang der vertikalen Achse
     sums = sums1.sum(axis=0)
 
-    min_height = 0.5 * max(sums)
+    min_height_px = min_height * max(sums)
     peaks, _ = sp.signal.find_peaks(
         sums,
-        height=min_height,
-        distance=70,
+        distance=min_distance,
+        height=min_height_px,
+        prominence=3000,
     )
 
     peak_dists = np.diff(peaks)
@@ -42,15 +48,17 @@ def get_peaks(img, min_height=0.5, show=False):
 
     # plt.figure()
     fig, ax = plt.subplots()
-    # ax.imshow(img)
-    ax.imshow(img, extent=[0, 4000, 0, 2248])
+    ax.imshow(display_image(img), extent=[0, 4000, 0, 2248])
     # origin='lower' dreht Achsen und Bild
     x = np.array(range(len(sums)))
     displaysums = sums / max(sums) * sums1.shape[0]
-    ax.plot(x, displaysums, alpha=0.25)
-    # ax.plot(peaks, displaysums[peaks], 'x')
+    ax.plot(x, displaysums, color='g', alpha=0.25)
+    ax.plot(peaks, displaysums[peaks], 'x', alpha=0.5)
+    if min_height:
+        ax.axhline(min_height * sums1.shape[0], color='gray')
+        # ax.axhline(1600, color='gray')
     for peak in peaks:
-        ax.axvline(x=peak, color='r', alpha=0.25)
+        ax.axvline(x=peak, color='r', alpha=0.5)
     plt.axis('off')
     plt.tight_layout()
     # plt.savefig("build/plt/bildanalyse_1.jpg", bbox_inches='tight', pad_inches=0.0)
@@ -61,18 +69,18 @@ def get_peaks(img, min_height=0.5, show=False):
     # return peak_dists
 
 
-def get_Δs(img):
+def get_Δs(img, **kwargs):
     """Analyse ohne B-Feld/Aufspaltung"""
-    peaks = get_peaks(img, show=False)
+    peaks = get_peaks(img, **kwargs)
 
     Δs = np.diff(peaks).mean()
     # Δs /= 2  # !?
     return Δs
 
 
-def get_δs(img):
+def get_δs(img, **kwargs):
     """Analyse mit B-Feld/Aufspaltung"""
-    peaks = get_peaks(img, min_height=0.4, show=False)
+    peaks = get_peaks(img, **kwargs)
 
     # group peaks2 into pairs of 2
     pairs = list(itertools.pairwise(peaks))[::2]
