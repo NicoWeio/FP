@@ -1,9 +1,23 @@
 import itertools
-from matplotlib.image import imread
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
 import scipy.signal
+from PIL import Image
+
+timestampImage = Image.open('img/timestamp.png')
+
+
+def preprocess_image(path, rotate_deg=0):
+    """Entferne den Zeitstempel und rotiere das Bild, sodass die Linien vertikal stehen."""
+    colorImage = Image.open(path)
+    # Zeitstempel entfernen
+    colorImage.paste(timestampImage, (0, 0), timestampImage)
+    # rotieren
+    rotated = colorImage.rotate(rotate_deg)
+
+    # rotated.show()
+    return np.array(rotated)
 
 
 def get_peaks(img, min_height=0.5, show=False):
@@ -33,7 +47,7 @@ def get_peaks(img, min_height=0.5, show=False):
     # origin='lower' dreht Achsen und Bild
     x = np.array(range(len(sums)))
     displaysums = sums / max(sums) * sums1.shape[0]
-    ax.plot(x, displaysums)
+    ax.plot(x, displaysums, alpha=0.25)
     # ax.plot(peaks, displaysums[peaks], 'x')
     for peak in peaks:
         ax.axvline(x=peak, color='r', alpha=0.25)

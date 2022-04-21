@@ -49,6 +49,19 @@ for λ, n, color in DATA:
     Δλ_D.ito('pm')
     print(f'Δλ_D ({color}) = {Δλ_D:.3f}')
 
+# blau TMP ↓
+
+# img1 = imread('img/blau_0A_0deg_0033.jpg')
+# img2 = imread('img/blau_XA_0deg_0034.jpg')
+
+img1 = bildanalyse.preprocess_image('img/blau1/blau_0A_0deg_0033.jpg')
+
+bildanalyse.get_peaks(img1, show=True)
+bildanalyse.get_peaks(img2, show=True)
+
+
+raise NotImplementedError()
+
 
 FOO = [
     ('rot', ureg('8 A')),
