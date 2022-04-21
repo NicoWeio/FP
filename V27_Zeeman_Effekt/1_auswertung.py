@@ -90,15 +90,18 @@ for messreihe in FOO:
     img1 = bildanalyse.preprocess_image(messreihe['images'][0]['path'], rotate_deg=messreihe['rotate_deg'])
     img2 = bildanalyse.preprocess_image(messreihe['images'][1]['path'], rotate_deg=messreihe['rotate_deg'])
 
-    # Δs = bildanalyse.get_Δs(
-    #     img1,
-    #     show=True,
-    # )
+    Δs = bildanalyse.get_Δs(
+        img1,
+        min_distance=messreihe['images'][0].get('min_distance', 100),
+        min_height=messreihe['images'][0].get('min_height', 0.4),
+        prominence=messreihe['images'][0].get('prominence', 0.2),
+        show=True,
+    )
     δs = bildanalyse.get_δs(
         img2,
         min_distance=messreihe['images'][1].get('min_distance', 100),
-        min_height=messreihe['images'][1].get('min_height', 0),
-        prominence=messreihe['images'][1].get('prominence', 0),
+        min_height=messreihe['images'][1].get('min_height', 0.4),
+        prominence=messreihe['images'][1].get('prominence', 0.2),
         show=True,
     )
     print(f"{δs=}")
