@@ -33,29 +33,32 @@ def get_peaks(img, min_distance=1, min_height=0.0, prominence=0, show=False):
     sums1 = img.sum(axis=2)
     # summiere entlang der vertikalen Achse
     sums = sums1.sum(axis=0)
+    # normalisiere zwischen 0 und 1
+    # sums /= sums.max()
+    sums = sums / max(sums)
 
-    min_height_px = min_height * max(sums)
     peaks, _ = sp.signal.find_peaks(
         sums,
         distance=min_distance,
-        height=min_height_px,
-        prominence=3000,
+        height=min_height,
+        prominence=prominence,
     )
 
     peak_dists = np.diff(peaks)
     print(peak_dists)
     print(peak_dists.mean())
 
+    img_height = sums1.shape[0]
     # plt.figure()
     fig, ax = plt.subplots()
     ax.imshow(display_image(img), extent=[0, 4000, 0, 2248])
     # origin='lower' dreht Achsen und Bild
     x = np.array(range(len(sums)))
-    displaysums = sums / max(sums) * sums1.shape[0]
+    displaysums = sums * img_height
     ax.plot(x, displaysums, color='g', alpha=0.25)
     ax.plot(peaks, displaysums[peaks], 'x', alpha=0.5)
     if min_height:
-        ax.axhline(min_height * sums1.shape[0], color='gray')
+        ax.axhline(min_height * img_height, color='gray')
         # ax.axhline(1600, color='gray')
     for peak in peaks:
         ax.axvline(x=peak, color='r', alpha=0.5)

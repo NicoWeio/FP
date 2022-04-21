@@ -74,7 +74,7 @@ FOO = [
                 #
                 'min_distance': 1,
                 'min_height': 0.4,
-                'prominence': 800,
+                'prominence': 0.2,
             },
         ],
         'g_lit': 1,
