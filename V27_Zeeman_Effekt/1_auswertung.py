@@ -89,13 +89,13 @@ FOO = [
             {
                 'I': ureg('0 A'),
                 'polarisation': 0,  # in °
-                'path': 'Bilder/blau/IMG_0027.JPG',
+                'path': 'Bilder/blau/3/IMG_0027.JPG',
                 'min_distance': 40,
             },
             {
                 'I': ureg('3.4 A'),  # TODO
                 'polarisation': 0,  # in °
-                'path': 'Bilder/blau/IMG_0028.JPG',
+                'path': 'Bilder/blau/3/IMG_0028.JPG',
                 'min_distance': 1,
                 'min_height': 0.6,
                 'prominence': 0.0,
@@ -120,14 +120,14 @@ for messreihe in MESSREIHEN:
         min_distance=messreihe['images'][0].get('min_distance', 100),
         min_height=messreihe['images'][0].get('min_height', 0.4),
         prominence=messreihe['images'][0].get('prominence', 0.2),
-        show=False,
+        show=True,
     )
     δs = bildanalyse.get_δs(
         img2,
         min_distance=messreihe['images'][1].get('min_distance', 100),
         min_height=messreihe['images'][1].get('min_height', 0.4),
         prominence=messreihe['images'][1].get('prominence', 0.2),
-        show=False,
+        show=True,
     )
     print(f"{Δs=}")
     print(f"{δs=}")

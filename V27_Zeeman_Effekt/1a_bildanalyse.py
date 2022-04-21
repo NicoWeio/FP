@@ -10,20 +10,26 @@ timestampImage = Image.open('img/timestamp.png')
 
 def preprocess_image(path, rotate_deg=0):
     """Entferne den Zeitstempel und rotiere das Bild, sodass die Linien vertikal stehen."""
+    # Bild einlesen
     colorImage = Image.open(path)
+
     # Zeitstempel entfernen
-    colorImage.paste(timestampImage, (0, 0), timestampImage)
+    # Variante 1:
+    # colorImage.paste(timestampImage, (0, 0), timestampImage)
+    # Variante 2:
+    colorImage = Image.alpha_composite(colorImage.convert('RGBA'), timestampImage).convert('RGB')
+
     # rotieren
     rotated = colorImage.rotate(rotate_deg)
 
-    # rotated.show()
     return np.array(rotated)
 
 
 def display_image(img):
     """Passt das Bild zur Darstellung an."""
     pil_img_in = Image.fromarray(img)
-    pil_img_out = ImageEnhance.Contrast(pil_img_in).enhance(2.5)
+    pil_img_out = ImageEnhance.Brightness(pil_img_in).enhance(2.5)
+    # pil_img_out = ImageEnhance.Contrast(pil_img_in).enhance(2.5)
     return np.array(pil_img_out)
 
 
