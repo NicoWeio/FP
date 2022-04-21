@@ -89,8 +89,10 @@ def get_δs(img, **kwargs):
 
     # group peaks2 into pairs of 2
     pairs = list(itertools.pairwise(peaks))[::2]
+    print(f"{pairs=}")
 
     diffs = [b - a for a, b in pairs]
+    print(f"{diffs=}")
 
     # ↓ Ähm, mache ich das wirklich nicht schon in pairs?
     # use only inner distances

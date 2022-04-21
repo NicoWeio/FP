@@ -59,6 +59,7 @@ FOO = [
         'λ': ureg('643.8 nm'),
         'n': 1.4567,
         'rotate_deg': -2.3,
+        'g_lit': 1,
         'images': [
             {
                 'I': ureg('0 A'),
@@ -77,13 +78,13 @@ FOO = [
                 'prominence': 0.2,
             },
         ],
-        'g_lit': 1,
     },
     {
         'color': 'blau',
         'λ': ureg('480.0 nm'),
         'n': 1.4635,
         'rotate_deg': -2.3,
+        'g_lit': 2,  # TODO
         'images': [
             {
                 'I': ureg('0 A'),
@@ -92,7 +93,7 @@ FOO = [
                 'min_distance': 40,
             },
             {
-                'I': ureg('0 A'),
+                'I': ureg('3.4 A'),  # TODO
                 'polarisation': 0,  # in °
                 'path': 'Bilder/blau/IMG_0028.JPG',
                 'min_distance': 1,
@@ -103,9 +104,9 @@ FOO = [
     }
 ]
 
-# raise NotImplementedError()
-
-MESSREIHEN = [FOO[1]]
+MESSREIHEN = []
+MESSREIHEN += [FOO[0]]
+MESSREIHEN += [FOO[1]]
 
 for messreihe in MESSREIHEN:
     print(f"█ Messreihe {messreihe['color']}")
@@ -119,17 +120,17 @@ for messreihe in MESSREIHEN:
         min_distance=messreihe['images'][0].get('min_distance', 100),
         min_height=messreihe['images'][0].get('min_height', 0.4),
         prominence=messreihe['images'][0].get('prominence', 0.2),
-        show=True,
+        show=False,
     )
     δs = bildanalyse.get_δs(
         img2,
         min_distance=messreihe['images'][1].get('min_distance', 100),
         min_height=messreihe['images'][1].get('min_height', 0.4),
         prominence=messreihe['images'][1].get('prominence', 0.2),
-        show=True,
+        show=False,
     )
-    print(f"{δs=}")
     print(f"{Δs=}")
+    print(f"{δs=}")
 
     δλ = δs * Δλ_D / (2 * Δs)
     print(f"{δλ.mean()=}")
