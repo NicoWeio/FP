@@ -57,7 +57,7 @@ def get_peaks(img, min_distance=1, min_height=0.0, prominence=0, show=False):
     # origin='lower' dreht Achsen und Bild
     x = np.array(range(len(sums)))
     displaysums = sums * img_height
-    ax.plot(x, displaysums, color='g', alpha=0.25)
+    ax.plot(x, displaysums, color='g', alpha=0.8)
     ax.plot(peaks, displaysums[peaks], 'x', alpha=0.5)
     if min_height:
         ax.axhline(min_height * img_height, color='gray')

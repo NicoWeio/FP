@@ -78,12 +78,36 @@ FOO = [
             },
         ],
         'g_lit': 1,
+    },
+    {
+        'color': 'blau',
+        'λ': ureg('480.0 nm'),
+        'n': 1.4635,
+        'rotate_deg': -2.3,
+        'images': [
+            {
+                'I': ureg('0 A'),
+                'polarisation': 0,  # in °
+                'path': 'Bilder/blau/IMG_0027.JPG',
+                'min_distance': 40,
+            },
+            {
+                'I': ureg('0 A'),
+                'polarisation': 0,  # in °
+                'path': 'Bilder/blau/IMG_0028.JPG',
+                'min_distance': 1,
+                'min_height': 0.6,
+                'prominence': 0.0,
+            },
+        ],
     }
 ]
 
 # raise NotImplementedError()
 
-for messreihe in FOO:
+MESSREIHEN = [FOO[1]]
+
+for messreihe in MESSREIHEN:
     print(f"█ Messreihe {messreihe['color']}")
     # █ Bestimmung der Wellenlängenaufspaltung
 
