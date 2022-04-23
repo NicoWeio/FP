@@ -63,8 +63,8 @@ FOO = [
         'images': [
             {
                 'I': ureg('0 A'),
-                'polarisation': 0,  # in °
                 'path': 'Bilder/rot neu/IMG_0001.JPG',
+                'min_height': 0.6,  # entspricht der alten Analyse
             },
             {
                 'I': ureg('8 A'),
@@ -89,13 +89,13 @@ FOO = [
             {
                 'I': ureg('0 A'),
                 'polarisation': 0,  # in °
-                'path': 'Bilder/blau/3/IMG_0027.JPG',
+                'path': 'Bilder/blau/3_4.6A_sigma/IMG_0027.JPG',
                 'min_distance': 40,
             },
             {
                 'I': ureg('3.4 A'),  # TODO
                 'polarisation': 0,  # in °
-                'path': 'Bilder/blau/3/IMG_0028.JPG',
+                'path': 'Bilder/blau/3_4.6A_sigma/IMG_0028.JPG',
                 'min_distance': 1,
                 'min_height': 0.6,
                 'prominence': 0.0,
