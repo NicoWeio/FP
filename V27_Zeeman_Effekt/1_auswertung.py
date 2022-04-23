@@ -1,4 +1,5 @@
 import bildanalyse
+import itertools
 import matplotlib.pyplot as plt
 from matplotlib.image import imread
 import numpy as np
@@ -53,7 +54,9 @@ FOO = [
             {
                 'I': ureg('0 A'),
                 'path': 'Bilder/rot neu/IMG_0001.JPG',
-                'min_height': 0.6,  # entspricht der alten Analyse
+                'find_peaks': {
+                    'min_height': 0.6,  # entspricht der alten Analyse
+                },
             },
             {
                 'I': ureg('8 A'),
@@ -61,9 +64,11 @@ FOO = [
                 # 'min_distance': 70,
                 # 'min_height': 1600/2248,
                 #
-                'min_distance': 1,
-                'min_height': 0.4,
-                'prominence': 0.2,
+                'find_peaks': {
+                    'min_distance': 1,
+                    'min_height': 0.4,
+                    'prominence': 0.2,
+                },
             },
         ],
     },
@@ -78,43 +83,24 @@ FOO = [
                 'I': ureg('0 A'),
                 'polarisation': 0,  # in °
                 'path': 'Bilder/blau/3_4.6A_sigma/IMG_0027.JPG',
-                'min_distance': 40,
+                'find_peaks': {
+                    'min_distance': 40,
+                }
             },
             {
                 'I': ureg('3.4 A'),  # TODO
                 'polarisation': 0,  # in °
                 'path': 'Bilder/blau/3_4.6A_sigma/IMG_0028.JPG',
-                'min_distance': 1,
-                'min_height': 0.6,
-                'prominence': 0.0,
+                'find_peaks': {
+                    'min_distance': 1,
+                    'min_height': 0.6,
+                    'prominence': 0.0,
+                },
             },
         ],
     },
-    {
-        'color': 'blau',
-        'λ': ureg('480.0 nm'),
-        'n': 1.4635,
-        'rotate_deg': -2.3,
-        'g_lit': 2,  # TODO
-        'images': [
-            {
-                'I': ureg('0 A'),
-                'polarisation': 0,  # in °
-                'path': 'Bilder/blau/4/IMG_0029.JPG',
-                'min_distance': 40,
-            },
-            {
-                'I': ureg('3.4 A'),  # TODO
-                'polarisation': 0,  # in °
-                'path': 'Bilder/blau/4/IMG_0031.JPG',
-                'min_distance': 1,
-                'min_height': 0.6,
-                'prominence': 0.0,
-            },
-        ],
-    },
-
 ]
+
 
 MESSREIHEN = [
     FOO[0],
@@ -125,23 +111,42 @@ MESSREIHEN = [
 for messreihe in MESSREIHEN:
     console.rule(f"Messreihe {messreihe['color']}")
 
+    # Bilder vorbereiten
     img1 = bildanalyse.preprocess_image(messreihe['images'][0]['path'], rotate_deg=messreihe['rotate_deg'])
     img2 = bildanalyse.preprocess_image(messreihe['images'][1]['path'], rotate_deg=messreihe['rotate_deg'])
 
-    Δs = bildanalyse.get_Δs(
+    # Peaks finden
+    peaks1 = bildanalyse.get_peaks(
         img1,
-        min_distance=messreihe['images'][0].get('min_distance', 100),
-        min_height=messreihe['images'][0].get('min_height', 0.4),
-        prominence=messreihe['images'][0].get('prominence', 0.2),
+        **messreihe['images'][0]['find_peaks'],
         show=False,
     )
-    δs = bildanalyse.get_δs(
+    peaks2 = bildanalyse.get_peaks(
         img2,
-        min_distance=messreihe['images'][1].get('min_distance', 100),
-        min_height=messreihe['images'][1].get('min_height', 0.4),
-        prominence=messreihe['images'][1].get('prominence', 0.2),
+        **messreihe['images'][1]['find_peaks'],
         show=False,
     )
+
+    # Analyse ohne B-Feld/Aufspaltung
+    Δs = np.diff(peaks1).mean()
+    # Δs /= 2  # !?
+
+    # Analyse mit B-Feld/Aufspaltung
+    # group peaks into pairs of 2
+    pairs = list(itertools.pairwise(peaks2))[::2]
+    print(f"{pairs=}")
+
+    diffs = [b - a for a, b in pairs]
+    print(f"{diffs=}")
+
+    # ↓ Ähm, mache ich das wirklich nicht schon in pairs?
+    # use only inner distances
+    # print("pre", diffs)
+    # diffs = diffs[::2]
+    # print("post", diffs)
+
+    δs = np.array(diffs).mean()
+
     print(f"{Δs=}")
     print(f"{δs=}")
 

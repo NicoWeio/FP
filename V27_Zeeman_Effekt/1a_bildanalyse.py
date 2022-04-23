@@ -33,7 +33,7 @@ def display_image(img):
     return np.array(pil_img_out)
 
 
-def get_peaks(img, min_distance=1, min_height=0.0, prominence=0, show=False):
+def get_peaks(img, min_distance=100, min_height=0.4, prominence=0.2, show=False):
     """
     min_height: Diesen Anteil vom Maximum muss ein Peak haben, damit er als solcher gewertet wird.
     """
@@ -73,33 +73,3 @@ def get_peaks(img, min_distance=1, min_height=0.0, prominence=0, show=False):
         plt.show()
 
     return peaks
-
-
-def get_Δs(img, **kwargs):
-    """Analyse ohne B-Feld/Aufspaltung"""
-    peaks = get_peaks(img, **kwargs)
-
-    Δs = np.diff(peaks).mean()
-    # Δs /= 2  # !?
-    return Δs
-
-
-def get_δs(img, **kwargs):
-    """Analyse mit B-Feld/Aufspaltung"""
-    peaks = get_peaks(img, **kwargs)
-
-    # group peaks2 into pairs of 2
-    pairs = list(itertools.pairwise(peaks))[::2]
-    print(f"{pairs=}")
-
-    diffs = [b - a for a, b in pairs]
-    print(f"{diffs=}")
-
-    # ↓ Ähm, mache ich das wirklich nicht schon in pairs?
-    # use only inner distances
-    # print("pre", diffs)
-    # diffs = diffs[::2]
-    # print("post", diffs)
-
-    δs = np.array(diffs).mean()
-    return δs
