@@ -52,11 +52,8 @@ def get_peaks(img, min_distance=1, min_height=0.0, prominence=0, show=False):
         prominence=prominence,
     )
 
-    peak_dists = np.diff(peaks)
-    print(f"{peak_dists=}")
-    print(f"{peak_dists.mean()=}")
-
-    img_height = sums1.shape[0]
+    # █ Plot
+    img_height = img.shape[0]
     # plt.figure()
     fig, ax = plt.subplots()
     ax.imshow(display_image(img), extent=[0, 4000, 0, 2248])
@@ -67,17 +64,15 @@ def get_peaks(img, min_distance=1, min_height=0.0, prominence=0, show=False):
     ax.plot(peaks, displaysums[peaks], 'x', alpha=0.5)
     if min_height:
         ax.axhline(min_height * img_height, color='gray')
-        # ax.axhline(1600, color='gray')
     for peak in peaks:
         ax.axvline(x=peak, color='r', alpha=0.5)
     plt.axis('off')
     plt.tight_layout()
-    # plt.savefig("build/plt/bildanalyse_1.jpg", bbox_inches='tight', pad_inches=0.0)
+    plt.savefig(f"build/plt/bildanalyse_{str(sum(peaks))[:6]}.jpg", bbox_inches='tight', pad_inches=0.0)
     if show:
         plt.show()
 
     return peaks
-    # return peak_dists
 
 
 def get_Δs(img, **kwargs):
