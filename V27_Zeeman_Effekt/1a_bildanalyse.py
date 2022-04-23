@@ -53,8 +53,8 @@ def get_peaks(img, min_distance=1, min_height=0.0, prominence=0, show=False):
     )
 
     peak_dists = np.diff(peaks)
-    print(peak_dists)
-    print(peak_dists.mean())
+    print(f"{peak_dists=}")
+    print(f"{peak_dists.mean()=}")
 
     img_height = sums1.shape[0]
     # plt.figure()

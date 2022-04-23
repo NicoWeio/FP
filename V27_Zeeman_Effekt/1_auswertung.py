@@ -49,10 +49,6 @@ for λ, n, color in DATA:
     Δλ_D.ito('pm')
     print(f'Δλ_D ({color}) = {Δλ_D:.3f}')
 
-# bildanalyse.get_peaks(img1, min_distance=40, show=False)
-# bildanalyse.get_peaks(img2, min_distance=15, show=True)
-
-
 FOO = [
     {
         'color': 'rot',
@@ -68,7 +64,6 @@ FOO = [
             },
             {
                 'I': ureg('8 A'),
-                'polarisation': 0,  # in °
                 'path': 'Bilder/rot neu/IMG_0002.JPG',
                 # 'min_distance': 70,
                 # 'min_height': 1600/2248,
