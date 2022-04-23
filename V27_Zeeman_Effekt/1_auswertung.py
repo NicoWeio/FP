@@ -101,12 +101,38 @@ FOO = [
                 'prominence': 0.0,
             },
         ],
-    }
+    },
+    {
+        'color': 'blau',
+        'λ': ureg('480.0 nm'),
+        'n': 1.4635,
+        'rotate_deg': -2.3,
+        'g_lit': 2,  # TODO
+        'images': [
+            {
+                'I': ureg('0 A'),
+                'polarisation': 0,  # in °
+                'path': 'Bilder/blau/4/IMG_0029.JPG',
+                'min_distance': 40,
+            },
+            {
+                'I': ureg('3.4 A'),  # TODO
+                'polarisation': 0,  # in °
+                'path': 'Bilder/blau/4/IMG_0031.JPG',
+                'min_distance': 1,
+                'min_height': 0.6,
+                'prominence': 0.0,
+            },
+        ],
+    },
+
 ]
 
-MESSREIHEN = []
-MESSREIHEN += [FOO[0]]
-MESSREIHEN += [FOO[1]]
+MESSREIHEN = [
+    # FOO[0],
+    # FOO[1],
+    FOO[2],
+]
 
 for messreihe in MESSREIHEN:
     print(f"█ Messreihe {messreihe['color']}")
