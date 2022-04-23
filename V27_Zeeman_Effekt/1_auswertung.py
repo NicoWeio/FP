@@ -3,9 +3,13 @@ import matplotlib.pyplot as plt
 from matplotlib.image import imread
 import numpy as np
 import pint
+from rich.console import Console
+import rich
+# from rich import print
 import tools
 ureg = pint.UnitRegistry()
 ureg.setup_matplotlib()
+console = Console()
 
 # █ Eichung des Elektromagneten
 
@@ -34,20 +38,9 @@ def calc_B(I):
 
 # █ Berechnung der Dispersionsgebiete
 
-DATA = [
-    # (λ, n, color)
-    (ureg('643.8 nm'), 1.4567, 'rot'),
-    (ureg('480.0 nm'), 1.4635, 'blau'),
-]
-
 # Abmessungen der Lummer-Gehrcke-Platte:
 d = ureg('4 mm')  # Dicke
 L = ureg('120 mm')
-
-for λ, n, color in DATA:
-    Δλ_D = λ**2 / (2*d * np.sqrt(n**2 - 1))
-    Δλ_D.ito('pm')
-    print(f'Δλ_D ({color}) = {Δλ_D:.3f}')
 
 FOO = [
     {
@@ -124,14 +117,13 @@ FOO = [
 ]
 
 MESSREIHEN = [
-    # FOO[0],
-    # FOO[1],
-    FOO[2],
+    FOO[0],
+    FOO[1],
+    # FOO[2],
 ]
 
 for messreihe in MESSREIHEN:
-    print(f"█ Messreihe {messreihe['color']}")
-    # █ Bestimmung der Wellenlängenaufspaltung
+    console.rule(f"Messreihe {messreihe['color']}")
 
     img1 = bildanalyse.preprocess_image(messreihe['images'][0]['path'], rotate_deg=messreihe['rotate_deg'])
     img2 = bildanalyse.preprocess_image(messreihe['images'][1]['path'], rotate_deg=messreihe['rotate_deg'])
@@ -141,17 +133,21 @@ for messreihe in MESSREIHEN:
         min_distance=messreihe['images'][0].get('min_distance', 100),
         min_height=messreihe['images'][0].get('min_height', 0.4),
         prominence=messreihe['images'][0].get('prominence', 0.2),
-        show=True,
+        show=False,
     )
     δs = bildanalyse.get_δs(
         img2,
         min_distance=messreihe['images'][1].get('min_distance', 100),
         min_height=messreihe['images'][1].get('min_height', 0.4),
         prominence=messreihe['images'][1].get('prominence', 0.2),
-        show=True,
+        show=False,
     )
     print(f"{Δs=}")
     print(f"{δs=}")
+
+    Δλ_D = messreihe['λ']**2 / (2*d * np.sqrt(messreihe['n']**2 - 1))
+    Δλ_D.ito('pm')
+    print(f"Δλ_D ({messreihe['color']}) = {Δλ_D:.3f}")
 
     δλ = δs * Δλ_D / (2 * Δs)
     print(f"{δλ.mean()=}")
@@ -161,7 +157,7 @@ for messreihe in MESSREIHEN:
 
     # g_ij = m_j * g_j - m_i * g_i
     μ_B = ureg.e * ureg.hbar / (2 * ureg.m_e)
-    g_ij = δλ.mean() * ureg.h * ureg.c / (λ**2 * μ_B * B)  # Landé-Faktor
+    g_ij = δλ.mean() * ureg.h * ureg.c / (messreihe['λ']**2 * μ_B * B)  # Landé-Faktor
     g_ij.ito('dimensionless')
     print(f"{g_ij=}")
 
