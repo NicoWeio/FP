@@ -7,14 +7,21 @@
 
 \begin{document}
 \begin{tikzpicture}
-    % Draw all levels
-    \draw[thick] (0,+2) -- (0,+3);
+    \draw[ultra thick] (0,+2) -- (0,+3);
 
-    \draw[thick] (-1,0) -- (-1,+1);
-    \draw[thick] (0,0) -- (0,+1);
-    \draw[thick] (+1,0) -- (+1,+1);
+    \draw[ultra thick] (-1,0) -- (-1,+1);
+    \draw[stealth-stealth](-1.2,0.2) -- (-1.2,0.8);
+    \draw[ultra thick] (0,0) -- (0,+1);
+    \draw[stealth-stealth](-0.3,0.5) -- (+0.3,0.5);
+    \draw[ultra thick] (+1,0) -- (+1,+1);
+    \draw[stealth-stealth](+1.2,0.2) -- (+1.2,0.8);
 
-    \draw[thick] (-1,-2) -- (-1,-1);
-    \draw[thick] (+1,-2) -- (+1,-1);
+    \draw[ultra thick] (-1,-2) -- (-1,-1) node [midway] {\AxisRotator[rotate=270]};
+    \draw[ultra thick] (+1,-2) -- (+1,-1) node [midway] {\AxisRotator[rotate=90]};
+    \node[anchor=north] at (0,-2) {$\vec E \perp \vec B_0$, zirkular};
+
+    \node[anchor=west] at (2,2.5) {ohne Magnetfeld};
+    \node[anchor=west] at (2,0.5) {mit Magnetfeld – transversale Beobachtung};
+    \node[anchor=west] at (2,-1.5) {mit Magnetfeld – longitudinale Beobachtung};
 \end{tikzpicture}
 \end{document}
