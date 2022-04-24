@@ -21,21 +21,25 @@
 \begin{document}
 \begin{tikzpicture}
     % Draw all levels
-    \draw[level] (0,+3)  -- node[above] {$S=0$} (2,+3);
-    \draw[level] (0,-3)  -- node[above] {$S=0$} (2,-3);
+    \draw[level] (0,+3) node[left] {$^3P_1$} -- (2,+3);
+    \draw[level] (0,-3) node[left] {$^3S_1$} -- (2,-3);
 
     \draw[connect] (2,+3) -- (3,+4) (2,+3) -- (3,+3) (2,+3) -- (3,+2);
     \draw[connect] (2,-3) -- (3,-4) (2,-3) -- (3,-3) (2,-3) -- (3,-2);
 
-    \draw[level] (3,+2) -- node[above] {$^1P$} (8,+2);
-    \draw[level] (3,+3) -- node[above] {$^1D$} (8,+3);
-    \draw[level] (3,+4) -- node[above] {$^1F$} (8,+4);
-    \draw[level] (3,-2) -- node[above] {$^1P$} (8,-2);
-    \draw[level] (3,-3) -- node[above] {$^1D$} (8,-3);
-    \draw[level] (3,-4) -- node[above] {$^1F$} (8,-4);
+    \draw[level] (3,+2) -- (5,+2) node[right] {\scriptsize $ 1$};
+    \draw[level] (3,+3) -- (5,+3) node[right] {\scriptsize $ 0$};
+    \draw[level] (3,+4) -- (5,+4) node[right] {\scriptsize $-1$};
+    \draw[level] (3,-2) -- (5,-2) node[right] {\scriptsize $ 1$};
+    \draw[level] (3,-3) -- (5,-3) node[right] {\scriptsize $ 0$};
+    \draw[level] (3,-4) -- (5,-4) node[right] {\scriptsize $-1$};
+
+    % Draw arrows
+    \draw [stealth-stealth](4,+4) -- (4,-3);
+    \draw [stealth-stealth](4.5,+3) -- (4.5,-4);
 
     % Draw labels
-    \node[label] at (4,5.5) {$B = 0$};
-    \node[label] at (7,5.5) {$B \neq 0$};
+    \node[label] at (1.5,5) {$B = 0$};
+    \node[label] at (7,5) {$B \neq 0$};
 \end{tikzpicture}
 \end{document}
