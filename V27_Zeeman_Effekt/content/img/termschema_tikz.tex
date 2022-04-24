@@ -1,5 +1,4 @@
 \documentclass[tikz]{standalone}
-\usetikzlibrary{shapes.callouts}
 \tikzset{
     level/.style = {
         ultra thick,
@@ -27,27 +26,28 @@
     \draw[connect] (2,+3) -- (3,+4) (2,+3) -- (3,+3) (2,+3) -- (3,+2);
     \draw[connect] (2,-3) -- (3,-4) (2,-3) -- (3,-3) (2,-3) -- (3,-2);
 
-    \draw[level] (3,+2) -- (5,+2) node[right] {\scriptsize $ 1$};
-    \draw[level] (3,+3) -- (5,+3) node[right] {\scriptsize $ 0$};
-    \draw[level] (3,+4) -- (5,+4) node[right] {\scriptsize $-1$};
-    \draw[level] (3,-2) -- (5,-2) node[right] {\scriptsize $ 1$};
-    \draw[level] (3,-3) -- (5,-3) node[right] {\scriptsize $ 0$};
-    \draw[level] (3,-4) -- (5,-4) node[right] {\scriptsize $-1$};
+    \draw[level] (3,+4) -- (7,+4) node[right] {\scriptsize $\phantom{-}1$};
+    \draw[level] (3,+3) -- (7,+3) node[right] {\scriptsize $\phantom{-}0$};
+    \draw[level] (3,+2) -- (7,+2) node[right] {\scriptsize $-1$};
+    \draw[level] (3,-2) -- (7,-2) node[right] {\scriptsize $\phantom{-}1$};
+    \draw[level] (3,-3) -- (7,-3) node[right] {\scriptsize $\phantom{-}0$};
+    \draw[level] (3,-4) -- (7,-4) node[right] {\scriptsize $-1$};
 
     % Draw arrows
-    \draw [stealth-stealth](4,+4) -- (4,-3);
-    \draw [stealth-stealth](4.5,+3) -- (4.5,-4);
+    \draw [stealth-stealth]({4 + 0/3},+4) -- ({4 + 0/3},-3);
+    \draw [stealth-stealth]({4 + 1/3},+3) -- ({4 + 1/3},-4);
     %
-    \draw [stealth-stealth]({5 + 1/3},+4) -- ({5 + 1/3},-2);
-    \draw [stealth-stealth]({5 + 2/3},+3) -- ({5 + 2/3},-3);
-    \draw [stealth-stealth]({5 + 3/3},+2) -- ({5 + 3/3},-4);
+    \draw [stealth-stealth]({5 + 0/3},+4) -- ({5 + 0/3},-2);
+    \draw [stealth-stealth]({5 + 1/3},+3) -- ({5 + 1/3},-3);
+    \draw [stealth-stealth]({5 + 2/3},+2) -- ({5 + 2/3},-4);
     %
-    \draw [stealth-stealth](7,+3) -- (7,-2);
-    \draw [stealth-stealth](7.5,+2) -- (7.5,-3);
+    \draw [stealth-stealth]({6 + 1/3},+3) -- ({6 + 1/3},-2);
+    \draw [stealth-stealth]({6 + 2/3},+2) -- ({6 + 2/3},-3);
 
 
     % Draw labels
     \node[label] at (1.5,5) {$B = 0$};
-    \node[label] at (7,5) {$B \neq 0$};
+    \node[label] at (5.5,5) {$B \neq 0$};
+    \node[label] at (8,5) {$m$};
 \end{tikzpicture}
 \end{document}
