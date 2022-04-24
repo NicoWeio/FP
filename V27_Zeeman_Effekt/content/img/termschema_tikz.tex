@@ -21,41 +21,18 @@
 \begin{document}
 \begin{tikzpicture}
     % Draw all levels
-    \draw[level] (0,0) -- node[above] {4p4d} (2,0);
+    \draw[level] (0,+3)  -- node[above] {$S=0$} (2,+3);
+    \draw[level] (0,-3)  -- node[above] {$S=0$} (2,-3);
 
-    \draw[connect] (2,0) -- (3,-2) (2,0) -- (3,3);
-    \draw[level] (3,3) -- node[above] {$S=0$} node[below] {(Singlets)} (5,3);
-    \draw[level] (3,-2) -- node[above] {$S=1$} node[below] {(Triplets)} (5,-2);
+    \draw[connect] (2,+3) -- (3,+4) (2,+3) -- (3,+3) (2,+3) -- (3,+2);
+    \draw[connect] (2,-3) -- (3,-4) (2,-3) -- (3,-3) (2,-3) -- (3,-2);
 
-    \draw[connect] (5,3) -- (6,4.5) (5,3) -- (6,3.5) (5,3) -- (6,1.5);
-    \draw[connect] (5,-2) -- (6,-0.5) (5,-2) -- (6,-1.5) (5,-2) -- (6,-3.5);
-    \draw[level] (6,4.5) -- node[above] {${}^1P$} (8,4.5);
-    \draw[level] (6,3.5) -- node[above] {${}^1D$} (8,3.5);
-    \draw[level] (6,1.5) -- node[above] {${}^1F$} (8,1.5);
-    \draw[level] (6,-0.5) -- node[above] {${}^3P$} (8,-0.5);
-    \draw[level] (6,-1.5) -- node[above] {${}^3D$} (8,-1.5);
-    \draw[level] (6,-3.5) -- node[above] {${}^3F$} (8,-3.5);
-
-    \draw[connect] (8,4.5) -- (9,4.5) (8,3.5) -- (9,3.5) (8,1.5) -- (9,1.5);
-    \draw[level] (9,4.5) -- (11,4.5) node[right] {${}^1P_1$};
-    \draw[level] (9,3.5) -- (11,3.5) node[right] {${}^1D_2$};
-    \draw[level] (9,1.5) -- (11,1.5) node[right] {${}^1F_3$};
-
-    \draw[connect] (8,-0.5) -- (9,-0.5) (8,-0.5) -- (9,-0.8) (8,-0.5) -- (9,-1)
-        (8,-1.5) -- (9,-1.6) (8,-1.5) -- (9,-1.8) (8,-1.5) -- (9,-1.3)
-        (8,-3.5) -- (9,-3.8) (8,-3.5) -- (9,-3.6) (8,-3.5) -- (9,-3.1);
-    \foreach \i/\j in {2/-0.5, 1/-0.8, 0/-1} {
-        \draw[level] (9,\j) -- (11,\j) node[right] {\scriptsize $\i$};
-    }
-    \node[level,right] at (11.5,-0.8) {${}^3P_{0,1,2}$};
-    \foreach \i/\j in {3/-1.3, 2/-1.6, 1/-1.8} {
-        \draw[level] (9,\j) -- (11,\j) node[right] {\scriptsize $\i$};
-    }
-    \node[level,right] at (11.5,-1.6) {${}^3D_{1,2,3}$};
-    \foreach \i/\j in {4/-3.1, 3/-3.6, 2/-3.8} {
-        \draw[level] (9,\j) -- (11,\j) node[right] {\scriptsize $\i$};
-    }
-    \node[level,right] at (11.5,-3.6) {${}^3F_{2,3,4}$};
+    \draw[level] (3,+2) -- node[above] {$^1P$} (8,+2);
+    \draw[level] (3,+3) -- node[above] {$^1D$} (8,+3);
+    \draw[level] (3,+4) -- node[above] {$^1F$} (8,+4);
+    \draw[level] (3,-2) -- node[above] {$^1P$} (8,-2);
+    \draw[level] (3,-3) -- node[above] {$^1D$} (8,-3);
+    \draw[level] (3,-4) -- node[above] {$^1F$} (8,-4);
 
     % Draw labels
     \node[label] at (4,5.5) {$B = 0$};
