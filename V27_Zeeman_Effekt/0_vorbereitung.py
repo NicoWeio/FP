@@ -64,11 +64,11 @@ def calc_E0(λ):
 
 
 def p(E0, delta_λ, min_, max_):
-    return (E0*delta_λ*(max_+min_)-h*c*(min_-max_)) / (delta_λ*mu_B*max_*min_)
+    return (E0 * delta_λ * (max_+min_) - ureg.h * ureg.c * (min_-max_)) / (delta_λ * ureg.mu_B * max_ * min_)
 
 
 def q(E0, min_, max_):
-    return E0**2/(mu_B**2*max_*min_)
+    return E0**2/(ureg.mu_B**2 * max_ * min_)
 
 
 def B_plus(p, q):
@@ -84,10 +84,15 @@ min1 = -1
 max2 = 2
 min2 = -2
 
-
-for λ in [ureg('643.8 nm'), ureg('480.0 nm')]:
-    E0 = calc_E0(λ)
-    p1 = p(E0_1, delta_λ(λ1, A1), min1, max1)
-    q1 = q(E0_1, min1, max1)
-    B1p = B_p(p1, q1)
-    B1m = B_m(p1, q1)
+for data in DATA:
+    print(f"→ {data['λ']:.1f}:")
+    E0 = calc_E0(data['λ'])
+    print(f'E0: {E0.to("eV"):.2f}')
+    p1 = p(E0, calc_Δλ_D(d, data['n'], data['λ']), min1, max1)
+    print(f'p1: {p1:.2f}')
+    q1 = q(E0, min1, max1)
+    print(f'q1: {q1:.2f}')
+    B1p = B_plus(p1, q1)
+    print(f'B1p: {B1p.to("T"):.3f}')
+    B1m = B_minus(p1, q1)
+    print(f'B1m: {B1m.to("T"):.3f}')
