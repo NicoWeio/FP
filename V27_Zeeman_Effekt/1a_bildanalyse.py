@@ -60,13 +60,16 @@ def get_peaks(img, min_distance=100, min_height=0.4, prominence=0.2, name=None, 
     # origin='lower' dreht Achsen und Bild
     x = np.array(range(len(sums)))
     displaysums = sums * img_height
-    ax.plot(x, displaysums, color='g', alpha=0.8)
-    ax.plot(peaks, displaysums[peaks], 'x', alpha=0.5)
-    if min_height:
-        ax.axhline(min_height * img_height, color='gray')
+    ax.plot(x, displaysums, color='g', alpha=0.8, label='Signal')
+    ax.plot(peaks, displaysums[peaks], 'x', alpha=0.5, label='Maxima')
+
+    # if min_height:
+    #     ax.axhline(min_height * img_height, color='gray')
+
     for peak in peaks:
         ax.axvline(x=peak, color='r', alpha=0.5)
     plt.axis('off')
+    plt.legend()
     plt.tight_layout()
     plt.savefig(f"build/plt/{name}.pdf", bbox_inches='tight', pad_inches=0.0)
     if show:

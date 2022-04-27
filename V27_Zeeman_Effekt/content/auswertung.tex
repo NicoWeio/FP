@@ -1,7 +1,7 @@
 \section{Auswertung}
 \label{sec:auswertung}
 
-\subsection{Eichung des Magnetfelds}
+\subsection{Eichung des Magnetfelds} \label{sec:auswertung:eichung}
 Um in den folgenden Auswertungsschritten
 die jeweilige magnetische Flussdichte zu kennen,
 wird zuerst eine Eichung des Elektromagneten durchgeführt,
@@ -52,8 +52,8 @@ Die Auswertung eines einzelnen Bilds erfolgt in den folgenden Schritten:
     \item Da davon auszugehen ist, dass das Bild keine verwertbaren Farbinformationen enthält, werden die RGB-Kanäle summiert.
     \item Für jede Pixel-Spalte wird eine Summe gebildet, sodass ein eindimensionales Array verbleibt,
           welches auf den Wertebereich $[0, 1]$ normiert wird.
-          % TODO: hyperlink, …
-    \item Mittels \texttt{scipy.signal.TODO.find\_peaks} und gegebenenfalls angepasster Suchparameter (\texttt{prominence}, y, z)
+    \item Mittels \href{https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.find_peaks.html}{\texttt{scipy.signal.find\_peaks}}
+          und gegebenenfalls angepasster Suchparameter (\texttt{distance}, \texttt{height}, \texttt{prominence})
           werden die Maxima ermittelt,
           welche den Linien entsprechen, deren Abstand bestimmt werden soll.
     \item Da die Abstände in beliebigen Einheiten verwendet werden können,
@@ -62,10 +62,45 @@ Die Auswertung eines einzelnen Bilds erfolgt in den folgenden Schritten:
 \end{itemize}
 
 \subsection{Untersuchung der roten Spektrallinie}
-\lipsum[1]
+Das zweite Bild wurde bei einem Spulenstrom von \SI{8}{\ampere} aufgenommen,
+welcher nach \autoref{sec:auswertung:eichung} einer magnetischen Flussdichte von \SI{573.67 \pm 35.62}{\milli\tesla} entspricht.
 
+Die Abstände zwischen den Linien werden in \autoref{tab:rot} aufgelistet.
+
+\begin{table}
+    \centering
+    \caption{TODO.}
+    \label{tab:rot}
+    \begin{tabular}{S S S}
+        \toprule
+        {$I \mathbin{/} \si{A}$} & 0 & 8 \\
+        {$B \mathbin{/} \si{\milli\tesla}$} & 0 & 573.67 \pm 35.62 \\
+        \midrule
+        & {$\delta S$} & {$\Delta S$} \\ %TODO
+        \midrule
+        & 0.5 & 100 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{build/plt/rot_1.pdf}
+    \caption{Bild mit ausgeschaltetem Elektromagneten.}
+    \label{fig:plt:rot_1}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{build/plt/rot_2.pdf}
+    \caption{Bild mit eingeschaltetem Elektromagneten.}
+    \label{fig:plt:rot_2}
+\end{figure}
+
+\FloatBarrier
 \subsection{Untersuchung der blauen, sigma-polarisierten Spektrallinie}
 \lipsum[1]
 
+\FloatBarrier
 \subsection{Untersuchung der blauen, pi-polarisierten Spektrallinie}
 \lipsum[1]

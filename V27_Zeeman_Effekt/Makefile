@@ -6,7 +6,7 @@ plots: \
 		build/plt/rot_2.pdf \
 
 
-build/plt/% &: 1_auswertung.py | build/plt
+build/plt/% &: 1_auswertung.py 1a_bildanalyse.py | build/plt
 		MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: python3 1_auswertung.py
 
 

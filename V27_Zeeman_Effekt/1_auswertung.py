@@ -167,6 +167,7 @@ for messreihe in MESSREIHEN:
 
     # █ Bestimmung der Landé-Faktoren
     B = calc_B(messreihe['images'][1]['I'])
+    print(f"B={B:.2f}")
 
     # g_ij = m_j * g_j - m_i * g_i
     μ_B = ureg.e * ureg.hbar / (2 * ureg.m_e)
