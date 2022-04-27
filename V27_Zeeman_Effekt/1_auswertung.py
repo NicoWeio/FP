@@ -12,6 +12,10 @@ ureg = pint.UnitRegistry()
 ureg.setup_matplotlib()
 console = Console()
 
+# TODO: Auslagern in tools / env-Variable
+# steuert, ob Plots und Tabellen erstellt werden sollen
+BUILD = True
+
 # █ Eichung des Elektromagneten
 
 I, B = np.genfromtxt('data/1_magnet.csv', delimiter=',', skip_header=1, unpack=True)
@@ -27,14 +31,14 @@ def calc_B(I):
     return a*I**3 + b*I**2 + c*I + d
 
 
-# with tools.plot_context(plt, 'A', 'mT', 'I', 'B') as plt2:
-#     plt2.plot(I, B, 'x', zorder=5, label='Messwerte')
-#     plt2.plot(I, tools.nominal_values(calc_B(I)), label='Regressionsgerade')
-# plt.grid()
-# plt.legend()
-# plt.tight_layout()
-# plt.savefig('build/plt/1_magnet.pdf')
-# plt.plot()
+with tools.plot_context(plt, 'A', 'mT', 'I', 'B') as plt2:
+    plt2.plot(I, B, 'x', zorder=5, label='Messwerte')
+    plt2.plot(I, tools.nominal_values(calc_B(I)), label='Regressionsgerade')
+plt.grid()
+plt.legend()
+plt.tight_layout()
+if BUILD:
+    plt.savefig('build/plt/1_magnet.pdf')
 
 
 # █ Berechnung der Dispersionsgebiete
@@ -50,6 +54,7 @@ FOO = [
         'n': 1.4567,
         'rotate_deg': -2.3,
         'g_lit': 1,
+        'name': 'rot',
         'images': [
             {
                 'I': ureg('0 A'),
@@ -78,6 +83,7 @@ FOO = [
         'n': 1.4635,
         'rotate_deg': -2.3,
         'g_lit': 2,  # TODO
+        'name': 'blau_sigma',  # TODO
         'images': [
             {
                 'I': ureg('0 A'),
@@ -119,11 +125,13 @@ for messreihe in MESSREIHEN:
     peaks1 = bildanalyse.get_peaks(
         img1,
         **messreihe['images'][0]['find_peaks'],
+        name=f"{messreihe['name']}_1",
         show=False,
     )
     peaks2 = bildanalyse.get_peaks(
         img2,
         **messreihe['images'][1]['find_peaks'],
+        name=f"{messreihe['name']}_2",
         show=False,
     )
 

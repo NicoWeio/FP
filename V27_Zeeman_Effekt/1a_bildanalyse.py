@@ -33,7 +33,7 @@ def display_image(img):
     return np.array(pil_img_out)
 
 
-def get_peaks(img, min_distance=100, min_height=0.4, prominence=0.2, show=False):
+def get_peaks(img, min_distance=100, min_height=0.4, prominence=0.2, name=None, show=False):
     """
     min_height: Diesen Anteil vom Maximum muss ein Peak haben, damit er als solcher gewertet wird.
     """
@@ -68,7 +68,7 @@ def get_peaks(img, min_distance=100, min_height=0.4, prominence=0.2, show=False)
         ax.axvline(x=peak, color='r', alpha=0.5)
     plt.axis('off')
     plt.tight_layout()
-    plt.savefig(f"build/plt/bildanalyse_{str(sum(peaks))[:6]}.jpg", bbox_inches='tight', pad_inches=0.0)
+    plt.savefig(f"build/plt/{name}.pdf", bbox_inches='tight', pad_inches=0.0)
     if show:
         plt.show()
 

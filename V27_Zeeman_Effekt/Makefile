@@ -2,9 +2,11 @@ all: build/main.pdf
 
 plots: \
 		build/plt/1_magnet.pdf \
+		build/plt/rot_1.pdf \
+		build/plt/rot_2.pdf \
 
 
-build/plt/1_magnet.pdf: 1_auswertung.py | build/plt
+build/plt/% &: 1_auswertung.py | build/plt
 		MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: python3 1_auswertung.py
 
 
