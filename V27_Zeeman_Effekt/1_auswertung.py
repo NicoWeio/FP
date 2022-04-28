@@ -18,6 +18,7 @@ console = Console()
 
 # █ Eichung des Elektromagneten
 
+console.rule("Eichung des Elektromagneten")
 I, B = np.genfromtxt('data/1_magnet.csv', delimiter=',', skip_header=1, unpack=True)
 I *= ureg('A')
 B *= ureg('mT')
@@ -82,7 +83,7 @@ FOO = [
         'λ': ureg('480.0 nm'),
         'n': 1.4635,
         'rotate_deg': -2.3,
-        'g_lit': 2,  # TODO
+        'g_lit': 1.75,  # Mampfzwerg
         'name': 'blau_sigma',  # TODO
         'images': [
             {
@@ -94,9 +95,37 @@ FOO = [
                 }
             },
             {
-                'I': ureg('3.4 A'),  # TODO
+                'I': ureg('4.6 A'),
                 'polarisation': 0,  # in °
                 'path': 'Bilder/blau/3_4.6A_sigma/IMG_0028.JPG',
+                'find_peaks': {
+                    'min_distance': 1,
+                    'min_height': 0.6,
+                    'prominence': 0.0,
+                },
+            },
+        ],
+    },
+    {
+        'color': 'blau',
+        'λ': ureg('480.0 nm'),
+        'n': 1.4635,
+        'rotate_deg': -2.3,
+        'g_lit': 0.5,  # Mampfzwerg
+        'name': 'blau_pi',
+        'images': [
+            {
+                'I': ureg('0 A'),
+                'polarisation': 0,  #TODO
+                'path': 'Bilder/blau/5_8A_pi/IMG_0033.JPG',
+                'find_peaks': {
+                    'min_distance': 40,
+                }
+            },
+            {
+                'I': ureg('8 A'),  # TODO
+                'polarisation': 0,  #TODO
+                'path': 'Bilder/blau/5_8A_pi/IMG_0035.JPG',
                 'find_peaks': {
                     'min_distance': 1,
                     'min_height': 0.6,
@@ -109,13 +138,13 @@ FOO = [
 
 
 MESSREIHEN = [
-    FOO[0],
+    # FOO[0],
     FOO[1],
-    # FOO[2],
+    FOO[2],
 ]
 
 for messreihe in MESSREIHEN:
-    console.rule(f"Messreihe {messreihe['color']}")
+    console.rule(f"Messreihe {messreihe['name']}")
 
     # Bilder vorbereiten
     img1 = bildanalyse.preprocess_image(messreihe['images'][0]['path'], rotate_deg=messreihe['rotate_deg'])
@@ -155,8 +184,8 @@ for messreihe in MESSREIHEN:
 
     δs = np.array(diffs).mean()
 
-    print(f"Δs{Δs:.1f}")
-    print(f"δs{δs:.1f}")
+    print(f"Δs={Δs:.1f}")
+    print(f"δs={δs:.1f}")
 
     Δλ_D = messreihe['λ']**2 / (2*d * np.sqrt(messreihe['n']**2 - 1))
     Δλ_D.ito('pm')
