@@ -6,11 +6,12 @@ plots: \
 		build/plt/rot_2.pdf \
 
 
-build/plt/% &: 1_auswertung.py 1a_bildanalyse.py | build/plt
-		MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/.. BUILD=true: python3 1_auswertung.py
+plots &: 1_auswertung.py 1a_bildanalyse.py | build/plt
+		BUILD=true MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: python3 1_auswertung.py
 
 
-build/main.pdf: main.tex lit.bib plots | build
+# TODO: plots wieder einfügen
+build/main.pdf: main.tex lit.bib $(wildcard content/*.tex) $(wildcard build/tab/*.tex) | build
 	  TEXINPUTS=build: \
 	  BIBINPUTS=build: \
 	  max_print_line=1048576 \

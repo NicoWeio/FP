@@ -61,13 +61,13 @@ def get_peaks(img, min_distance=100, min_height=0.4, prominence=0.2, name=None, 
     x = np.array(range(len(sums)))
     displaysums = sums * img_height
     ax.plot(x, displaysums, color='g', alpha=0.8, label='Signal')
-    ax.plot(peaks, displaysums[peaks], 'x', alpha=0.5, label='Maxima')
+    ax.plot(peaks, displaysums[peaks], 'x', alpha=0.5, label='Peaks')
 
     # if min_height:
     #     ax.axhline(min_height * img_height, color='gray')
 
     for peak in peaks:
-        ax.axvline(x=peak, color='r', alpha=0.5)
+        ax.axvline(x=peak, color='r', linewidth=0.5, alpha=0.5)
     plt.axis('off')
     plt.legend()
     plt.tight_layout()

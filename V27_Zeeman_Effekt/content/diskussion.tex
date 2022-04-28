@@ -9,10 +9,34 @@ beschreibt den Verlauf der gemessenen Kurve sehr gut.
 
 Der Landé-Faktor zur roten Linie weist eine relative Abweichung von lediglich \SI{0.72}{\percent} auf;
 der theoretische Wert liegt bei $g_\text{rot, theo} = 1$,
-der gemessene Wert ist $g_\text{rot} = \num{0.99 \pm 0.06}$
+der gemessene Wert ist $g_\text{rot} = \num{0.99 \pm 0.06}$.
 Hierbei ist jedoch anzumerken, dass die Auswahl der zu berücksichtigen Linien einen wesentlichen Einfluss
 auf das Ergebnis hat.
-Bei einer anderen Wahl hätte sich beispielsweise XY ergeben.
+% Bei einer anderen Wahl hätte sich beispielsweise XY ergeben.
+
+% TODO: Blau Sigma
+
+Der Landé-Faktor zur blauen $\sigma$-Spektrallinie konnte nicht sinnvoll ermittelt werden,
+da mit dem verwendeten Versuchsaufbau keine ausreichenden magnetischen Flussdichten erreicht werden konnten,
+um die Interferenzlinien klar zu trennen.
+
+\begin{table}
+    \centering
+    \caption{Magnetische Flussdichte in Abhängigkeit des Spulenstroms.}
+    \label{tab:diskussion}
+    \begin{tabular}{l S S S}
+        \toprule
+        {Spektrallinie} &
+        {$g_\text{theo}$} &
+        {$g_\text{mess}$} &
+        {$\text{rel. Abweichung} \mathbin{/} \si{\percent}$} \\
+        \midrule
+        rot            & 1.00 & 0.99 \pm 0.06 & - 0.72 \\
+        blau, $\sigma$ & 1.75 & 1.30 \pm 0.04 & -25.56 \\
+        blau, $\pi$    & 0.50 & 0.99 \pm 0.06 &  97.74 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
 
 \subsection{Mögliche Fehlerquellen}

@@ -55,8 +55,8 @@ def get_peaks(img, min_distance=100, min_height=0.4, prominence=0.2, name=None, 
     plt.hlines(peak_widths[1] * img_height, peak_widths[2], peak_widths[3], color='r', alpha=0.5)
 
     for pw in zip(*peak_widths):
-        ax.axvline(x=pw[2], color='r', alpha=0.5)
-        ax.axvline(x=pw[3], color='r', alpha=0.5)
+        ax.axvline(x=pw[2], color='r', linewidth=0.5, alpha=0.5)
+        ax.axvline(x=pw[3], color='r', linewidth=0.5, alpha=0.5)
 
     # for peak in peaks:
     #     ax.axvline(x=peak, color='r', alpha=0.5)
@@ -64,7 +64,7 @@ def get_peaks(img, min_distance=100, min_height=0.4, prominence=0.2, name=None, 
     plt.axis('off')
     plt.legend()
     plt.tight_layout()
-    # plt.savefig(f"build/plt/{name}.pdf", bbox_inches='tight', pad_inches=0.0)
+    plt.savefig(f"build/plt/blau_pi_2.pdf", bbox_inches='tight', pad_inches=0.0)
     if show:
         plt.show()
 

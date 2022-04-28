@@ -204,9 +204,8 @@ for messreihe in MESSREIHEN:
     print(f"{δλ=}")
 
     # █ Tabelle
-    mydata = list(itertools.zip_longest(Δs_all, δs_all, fillvalue='-'))
-    print(f"{mydata=}")
-    generate_table(f"tab/{messreihe['name']}", mydata, col_fmt=[{'d': 1}, {'d': 1}])
+    mydata = list(itertools.zip_longest([], Δs_all, δs_all))  # , fillvalue='-'
+    generate_table(f"tab/{messreihe['name']}", mydata, col_fmt=[{}, {'d': 1}, {'d': 1}])
 
     # █ Bestimmung der Landé-Faktoren
     B = calc_B(messreihe['images'][1]['I'])

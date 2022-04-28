@@ -1,8 +1,12 @@
 \section{Auswertung}
 \label{sec:auswertung}
 
-Die Fehlerrechnung übernimmt die Python-Bibliothek \texttt{uncertainties}.
-% TODO trotzdem Formel, just in case
+Die Fehlerrechnung übernimmt hier die Python-Bibliothek \texttt{uncertainties}.
+Dieser liegt die Gauß'sche Fehlerfortpflanzung zugrunde:
+\begin{equation*}
+    \symup{\Delta} y = \sum_{i=1}^n \left| \frac{\delta f(x_1, \ldots, x_n)}{\delta x_i} \right| \symup{\Delta} x_i \ .
+\end{equation*}
+
 
 \subsection{Eichung des Magnetfelds} \label{sec:auswertung:eichung}
 Um in den folgenden Auswertungsschritten
@@ -34,8 +38,47 @@ die Parameter
         \toprule
         {$I \mathbin{/} \si{A}$} & {$B \mathbin{/} \si{\milli\tesla}$} \\
         \midrule
-        0 & 0 \\
-        0.5 & 100 \\
+        0.0 &   6.0 \\
+        0.2 &  23.6 \\
+        0.4 &  41.8 \\
+        0.6 &  59.6 \\
+        0.8 &  80.0 \\
+        1.0 &  99.4 \\
+        1.2 & 117.8 \\
+        1.4 & 138.3 \\
+        1.6 & 157.1 \\
+        1.8 & 178.0 \\
+        2.0 & 198.4 \\
+        2.2 & 217.7 \\
+        2.4 & 236.1 \\
+        2.6 & 254.9 \\
+        2.8 & 273.6 \\
+        3.0 & 292.0 \\
+        3.2 & 307.8 \\
+        3.4 & 324.9 \\
+        3.6 & 343.0 \\
+        3.8 & 361.2 \\
+        4.0 & 375.5 \\
+        4.2 & 392.5 \\
+        4.4 & 406.8 \\
+        4.6 & 421.3 \\
+        4.8 & 434.8 \\
+        5.0 & 448.5 \\
+        5.2 & 460.2 \\
+        5.4 & 473.2 \\
+        5.6 & 484.9 \\
+        5.8 & 495.6 \\
+        6.0 & 506.3 \\
+        6.2 & 514.9 \\
+        6.4 & 522.9 \\
+        6.6 & 530.7 \\
+        6.8 & 538.3 \\
+        7.0 & 546.5 \\
+        7.2 & 553.3 \\
+        7.4 & 559.0 \\
+        7.6 & 570.5 \\
+        7.8 & 575.8 \\
+        8.0 & 575.5 \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -66,7 +109,8 @@ Die Auswertung eines einzelnen Bilds erfolgt in den folgenden Schritten:
 
 \subsection{Untersuchung der roten Spektrallinie}
 Um den Landé-Faktor zum linear polarisierten roten Lichts der Cadmium-Linie zu bestimmen,
-wird der Abstand der Interferenzlinien mit und ohne Magnetfeld verglichen.
+wird der Abstand $\symup{\delta} s$ der Interferenzlinien ohne Magnetfeld
+mit dem Abstand $\symup{\Delta} s$ der aufgespaltenen Interferenzlinien im Magnetfeld verglichen.
 
 % \begin{align*}
 %     Δs &= \SI{247.8}{px} \\
@@ -113,9 +157,9 @@ folgt
         {$I \mathbin{/} \si{\ampere}$} & 0 & 8 \\
         {$B \mathbin{/} \si{\milli\tesla}$} & 0 & 573.67 \pm 35.62 \\
         \midrule
-        & {$\delta S$} & {$\Delta S$} \\ %TODO
+        & {$\symup{\delta} S$} & {$\symup{\Delta} S$} \\ %TODO
         \midrule
-        & 0.5 & 100 \\
+        \expandableinput{build/tab/rot.tex}
         \bottomrule
     \end{tabular}
 \end{table}
@@ -139,7 +183,35 @@ folgt
 \subsection{Untersuchung der blauen, sigma-polarisierten Spektrallinie}
 \lipsum[1]
 
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{build/plt/blau_sigma_1.pdf}
+    \caption{Bild mit ausgeschaltetem Elektromagneten.}
+    \label{fig:plt:blau_sigma_1}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{build/plt/blau_sigma_2.pdf}
+    \caption{Bild mit eingeschaltetem Elektromagneten.}
+    \label{fig:plt:blau_sigma_2}
+\end{figure}
+
 
 \FloatBarrier
 \subsection{Untersuchung der blauen, pi-polarisierten Spektrallinie}
 \lipsum[1]
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{build/plt/blau_pi_1.pdf}
+    \caption{Bild mit ausgeschaltetem Elektromagneten.}
+    \label{fig:plt:blau_pi_1}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{build/plt/blau_pi_2.pdf}
+    \caption{Bild mit eingeschaltetem Elektromagneten.}
+    \label{fig:plt:blau_pi_2}
+\end{figure}
