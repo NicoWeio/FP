@@ -7,6 +7,7 @@ import pint
 from rich.console import Console
 import rich
 # from rich import print
+from generate_table import generate_table
 import tools
 ureg = pint.UnitRegistry()
 ureg.setup_matplotlib()
@@ -83,7 +84,7 @@ FOO = [
         'λ': ureg('480.0 nm'),
         'n': 1.4635,
         'rotate_deg': -2.3,
-        'g_lit': 1.75,  # Mampfzwerg
+        'g_lit': 1.75,  # Mittelwert aus 1.5 und 2, da die Linien hier nicht unterscheidbar sind (→ NicoJG)
         'name': 'blau_sigma',  # TODO
         'images': [
             {
@@ -131,6 +132,8 @@ FOO = [
                     'min_height': 0.6,
                     'prominence': 0.0,
                 },
+                # 'δs': 22.972806096249755,  # für rel_height 0.5
+                'δs': 20.360053268318072,  # für rel_height 0.4
             },
         ],
     },
@@ -138,7 +141,7 @@ FOO = [
 
 
 MESSREIHEN = [
-    # FOO[0],
+    FOO[0],
     FOO[1],
     FOO[2],
 ]
@@ -180,11 +183,17 @@ for messreihe in MESSREIHEN:
     )
 
     # Analyse ohne B-Feld/Aufspaltung
-    Δs = np.diff(peaks1).mean()
+    Δs_all = np.diff(peaks1)
+    Δs = Δs_all.mean()
     # Δs /= 2  # !?
 
+    generate_table(f"tab/{messreihe['name']}_1", list(zip(Δs_all)), col_fmt=[{'d': 1}])
+
     # Analyse mit B-Feld/Aufspaltung
-    δs = get_δs_clean(img2, messreihe['images'][1]['find_peaks'])
+    if 'δs' in messreihe['images'][1]:
+        δs = messreihe['images'][1]['δs']
+    else:
+        δs = get_δs_clean(img2, messreihe['images'][1]['find_peaks'])
 
     print(f"Δs={Δs:.1f}")
     print(f"δs={δs:.1f}")
@@ -193,8 +202,9 @@ for messreihe in MESSREIHEN:
     Δλ_D.ito('pm')
     print(f"Δλ_D={Δλ_D:.3f}")
 
-    δλ = δs * Δλ_D / (2 * Δs)
-    print(f"{δλ.mean()=}")
+    δλ_all = δs * Δλ_D / (2 * Δs)
+    δλ = δλ_all.mean()
+    print(f"{δλ=}")
 
     # █ Bestimmung der Landé-Faktoren
     B = calc_B(messreihe['images'][1]['I'])
@@ -202,7 +212,7 @@ for messreihe in MESSREIHEN:
 
     # g_ij = m_j * g_j - m_i * g_i
     μ_B = ureg.e * ureg.hbar / (2 * ureg.m_e)
-    g_ij = δλ.mean() * ureg.h * ureg.c / (messreihe['λ']**2 * μ_B * B)  # Landé-Faktor
+    g_ij = δλ * ureg.h * ureg.c / (messreihe['λ']**2 * μ_B * B)  # Landé-Faktor
     g_ij.ito('dimensionless')
     print(f"{g_ij=}")
 
