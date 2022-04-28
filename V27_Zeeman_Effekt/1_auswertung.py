@@ -163,8 +163,7 @@ def get_δs_clean(img, opts):
     diffs = [b - a for a, b in pairs]
     print(f"{diffs=}")
 
-    δs = np.array(diffs).mean()
-    return δs
+    return np.array(diffs)
 
 
 for messreihe in MESSREIHEN:
@@ -187,13 +186,12 @@ for messreihe in MESSREIHEN:
     Δs = Δs_all.mean()
     # Δs /= 2  # !?
 
-    generate_table(f"tab/{messreihe['name']}_1", list(zip(Δs_all)), col_fmt=[{'d': 1}])
-
     # Analyse mit B-Feld/Aufspaltung
     if 'δs' in messreihe['images'][1]:
-        δs = messreihe['images'][1]['δs']
+        δs_all = np.array([messreihe['images'][1]['δs']]) #TODO
     else:
-        δs = get_δs_clean(img2, messreihe['images'][1]['find_peaks'])
+        δs_all = get_δs_clean(img2, messreihe['images'][1]['find_peaks'])
+    δs = δs_all.mean()
 
     print(f"Δs={Δs:.1f}")
     print(f"δs={δs:.1f}")
@@ -202,9 +200,13 @@ for messreihe in MESSREIHEN:
     Δλ_D.ito('pm')
     print(f"Δλ_D={Δλ_D:.3f}")
 
-    δλ_all = δs * Δλ_D / (2 * Δs)
-    δλ = δλ_all.mean()
+    δλ = δs * Δλ_D / (2 * Δs)
     print(f"{δλ=}")
+
+    # █ Tabelle
+    mydata = list(itertools.zip_longest(Δs_all, δs_all, fillvalue='-'))
+    print(f"{mydata=}")
+    generate_table(f"tab/{messreihe['name']}", mydata, col_fmt=[{'d': 1}, {'d': 1}])
 
     # █ Bestimmung der Landé-Faktoren
     B = calc_B(messreihe['images'][1]['I'])
