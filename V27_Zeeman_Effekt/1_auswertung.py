@@ -14,7 +14,7 @@ console = Console()
 
 # TODO: Auslagern in tools / env-Variable
 # steuert, ob Plots und Tabellen erstellt werden sollen
-BUILD = True
+# BUILD = True
 
 # █ Eichung des Elektromagneten
 
@@ -37,11 +37,11 @@ with tools.plot_context(plt, 'A', 'mT', 'I', 'B') as plt2:
 plt.grid()
 plt.legend()
 plt.tight_layout()
-if BUILD:
+if tools.BUILD:
     plt.savefig('build/plt/1_magnet.pdf')
 
 
-# █ Berechnung der Dispersionsgebiete
+# █ Bestimmung der Landé-Faktoren
 
 # Abmessungen der Lummer-Gehrcke-Platte:
 d = ureg('4 mm')  # Dicke
@@ -155,12 +155,12 @@ for messreihe in MESSREIHEN:
 
     δs = np.array(diffs).mean()
 
-    print(f"{Δs=}")
-    print(f"{δs=}")
+    print(f"Δs{Δs:.1f}")
+    print(f"δs{δs:.1f}")
 
     Δλ_D = messreihe['λ']**2 / (2*d * np.sqrt(messreihe['n']**2 - 1))
     Δλ_D.ito('pm')
-    print(f"Δλ_D ({messreihe['color']}) = {Δλ_D:.3f}")
+    print(f"Δλ_D={Δλ_D:.3f}")
 
     δλ = δs * Δλ_D / (2 * Δs)
     print(f"{δλ.mean()=}")

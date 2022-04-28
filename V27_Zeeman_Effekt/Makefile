@@ -7,7 +7,7 @@ plots: \
 
 
 build/plt/% &: 1_auswertung.py 1a_bildanalyse.py | build/plt
-		MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: python3 1_auswertung.py
+		MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/.. BUILD=true: python3 1_auswertung.py
 
 
 build/main.pdf: main.tex lit.bib plots | build
