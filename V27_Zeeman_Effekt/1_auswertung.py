@@ -13,6 +13,9 @@ ureg = pint.UnitRegistry()
 ureg.setup_matplotlib()
 console = Console()
 
+from wide_peaks import get_peaks as find_peaks_wide
+
+
 # TODO: Auslagern in tools / env-Variable
 # steuert, ob Plots und Tabellen erstellt werden sollen
 # BUILD = True
@@ -148,7 +151,7 @@ MESSREIHEN = [
 
 
 def get_δs_clean(img, opts):
-    """Analyse mit B-Feld/Aufspaltung"""
+    """Analyse mit B-Feld/Aufspaltung – für klar aufgespaltene Linien"""
     peaks2 = bildanalyse.get_peaks(
         img2,
         **opts,
@@ -164,6 +167,11 @@ def get_δs_clean(img, opts):
     print(f"{diffs=}")
 
     return np.array(diffs)
+
+
+def get_δs_wide(img, opts):
+    """Analyse mit B-Feld/Aufspaltung – für unscharf aufgespaltene Linien"""
+    return find_peaks_wide(img2)
 
 
 for messreihe in MESSREIHEN:
@@ -187,10 +195,8 @@ for messreihe in MESSREIHEN:
     # Δs /= 2  # !?
 
     # Analyse mit B-Feld/Aufspaltung
-    if 'δs' in messreihe['images'][1]:
-        δs_all = np.array([messreihe['images'][1]['δs']]) #TODO
-    else:
-        δs_all = get_δs_clean(img2, messreihe['images'][1]['find_peaks'])
+    δs_getter = get_δs_wide if ('δs' in messreihe['images'][1]) else get_δs_clean
+    δs_all = δs_getter(img2, messreihe['images'][1]['find_peaks'])
     δs = δs_all.mean()
 
     print(f"Δs={Δs:.1f}")

@@ -70,10 +70,10 @@ def get_peaks(img, min_distance=100, min_height=0.4, prominence=0.2, name=None, 
 
     # return peaks
     widths = peak_widths[0]
-    return widths.mean()
+    return widths
 
-w = get_peaks(
-    img,
-    show=True,
-)
-print(w)
+# w = get_peaks(
+#     img,
+#     show=True,
+# )
+# print(w)
