@@ -1,6 +1,9 @@
 \section{Auswertung}
 \label{sec:auswertung}
 
+Die Fehlerrechnung übernimmt die Python-Bibliothek \texttt{uncertainties}.
+% TODO trotzdem Formel, just in case
+
 \subsection{Eichung des Magnetfelds} \label{sec:auswertung:eichung}
 Um in den folgenden Auswertungsschritten
 die jeweilige magnetische Flussdichte zu kennen,
@@ -11,11 +14,11 @@ Die entsprechenden Messwerte sind in \autoref{tab:eichung} angegeben
 und in \autoref{fig:plt:eichung} grafisch dargestellt.
 
 Mithilfe einer Regressionsrechnung unter Verwendung der Python-Bibliothek \texttt{numpy} % genauer: np.polyfit
-ergeben sich folgende Parameter für ein Polynom dritten Grades
+ergeben sich für ein Polynom dritten Grades
 \[
     B(I) = aI^3 + bI^2 + cI + d
 \]
-mit den Parametern
+die Parameter
 \begin{align*}
     a &= \SI{-0.45 \pm 0.04}{\milli\tesla\per\cubic\ampere} \\
     b &= \SI{-0.1 \pm 0.4}{\milli\tesla\per\square\ampere} \\
@@ -62,10 +65,44 @@ Die Auswertung eines einzelnen Bilds erfolgt in den folgenden Schritten:
 \end{itemize}
 
 \subsection{Untersuchung der roten Spektrallinie}
+Um den Landé-Faktor zum linear polarisierten roten Lichts der Cadmium-Linie zu bestimmen,
+wird der Abstand der Interferenzlinien mit und ohne Magnetfeld verglichen.
+
+% \begin{align*}
+%     Δs &= \SI{247.8}{px} \\
+%     δs &= \SI{111.7}{px}
+% \end{align*}
+
 Das zweite Bild wurde bei einem Spulenstrom von \SI{8}{\ampere} aufgenommen,
 welcher nach \autoref{sec:auswertung:eichung} einer magnetischen Flussdichte von \SI{573.67 \pm 35.62}{\milli\tesla} entspricht.
+% TODO: Polarisierung
 
 Die Abstände zwischen den Linien werden in \autoref{tab:rot} aufgelistet.
+
+Das für die Wellenlänge X nach \autoref{eqn:dispersionsgebiet} berechnete Dispersionsgebiet ist
+\[
+    \symup{\Delta}\lambda_\text{D} = \SI{48.913}{\pico\meter} \ .
+\]
+
+Die Aufspaltung
+\[
+    \symup{\delta} \lambda = \frac{1}{2} \frac{\symup{\delta} s}{\symup{\Delta} s} \symup{\Delta} \lambda_\text{D}
+\]
+berechnet sich damit im Mittel zu
+\[
+    \symup{\delta} \lambda = \SI{11.02}{\pico\meter} \ .
+\]
+
+Mit
+\[
+    % TODO: auslagern
+    g = \frac{hc \symup{\delta} \lambda}{\lambda^2 \mu_{\symup{B}} B}
+\]
+folgt
+\[
+    g = \num{0.99 \pm 0.06}
+\]
+
 
 \begin{table}
     \centering
@@ -73,7 +110,7 @@ Die Abstände zwischen den Linien werden in \autoref{tab:rot} aufgelistet.
     \label{tab:rot}
     \begin{tabular}{S S S}
         \toprule
-        {$I \mathbin{/} \si{A}$} & 0 & 8 \\
+        {$I \mathbin{/} \si{\ampere}$} & 0 & 8 \\
         {$B \mathbin{/} \si{\milli\tesla}$} & 0 & 573.67 \pm 35.62 \\
         \midrule
         & {$\delta S$} & {$\Delta S$} \\ %TODO
@@ -97,9 +134,11 @@ Die Abstände zwischen den Linien werden in \autoref{tab:rot} aufgelistet.
     \label{fig:plt:rot_2}
 \end{figure}
 
+
 \FloatBarrier
 \subsection{Untersuchung der blauen, sigma-polarisierten Spektrallinie}
 \lipsum[1]
+
 
 \FloatBarrier
 \subsection{Untersuchung der blauen, pi-polarisierten Spektrallinie}
