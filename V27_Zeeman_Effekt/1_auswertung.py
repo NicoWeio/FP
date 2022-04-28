@@ -38,8 +38,8 @@ with tools.plot_context(plt, 'A', 'mT', 'I', 'B') as plt2:
 plt.grid()
 plt.legend()
 plt.tight_layout()
-if tools.BUILD:
-    plt.savefig('build/plt/1_magnet.pdf')
+# if tools.BUILD:
+plt.savefig('build/plt/1_magnet.pdf')
 
 
 # █ Bestimmung der Landé-Faktoren
@@ -116,7 +116,7 @@ FOO = [
         'images': [
             {
                 'I': ureg('0 A'),
-                'polarisation': 0,  #TODO
+                'polarisation': 0,  # TODO
                 'path': 'Bilder/blau/5_8A_pi/IMG_0033.JPG',
                 'find_peaks': {
                     'min_distance': 40,
@@ -124,8 +124,8 @@ FOO = [
             },
             {
                 'I': ureg('8 A'),  # TODO
-                'polarisation': 0,  #TODO
-                'path': 'Bilder/blau/5_8A_pi/IMG_0035.JPG',
+                'polarisation': 0,  # TODO
+                'path': 'Bilder/blau/5_8A_pi/IMG_0034.JPG',
                 'find_peaks': {
                     'min_distance': 1,
                     'min_height': 0.6,
@@ -143,6 +143,27 @@ MESSREIHEN = [
     FOO[2],
 ]
 
+
+def get_δs_clean(img, opts):
+    """Analyse mit B-Feld/Aufspaltung"""
+    peaks2 = bildanalyse.get_peaks(
+        img2,
+        **opts,
+        name=f"{messreihe['name']}_2",
+        show=False,
+    )
+
+    # group peaks into pairs of 2
+    pairs = list(itertools.pairwise(peaks2))[::2]
+    print(f"{pairs=}")
+
+    diffs = [b - a for a, b in pairs]
+    print(f"{diffs=}")
+
+    δs = np.array(diffs).mean()
+    return δs
+
+
 for messreihe in MESSREIHEN:
     console.rule(f"Messreihe {messreihe['name']}")
 
@@ -157,32 +178,13 @@ for messreihe in MESSREIHEN:
         name=f"{messreihe['name']}_1",
         show=False,
     )
-    peaks2 = bildanalyse.get_peaks(
-        img2,
-        **messreihe['images'][1]['find_peaks'],
-        name=f"{messreihe['name']}_2",
-        show=False,
-    )
 
     # Analyse ohne B-Feld/Aufspaltung
     Δs = np.diff(peaks1).mean()
     # Δs /= 2  # !?
 
     # Analyse mit B-Feld/Aufspaltung
-    # group peaks into pairs of 2
-    pairs = list(itertools.pairwise(peaks2))[::2]
-    print(f"{pairs=}")
-
-    diffs = [b - a for a, b in pairs]
-    print(f"{diffs=}")
-
-    # ↓ Ähm, mache ich das wirklich nicht schon in pairs?
-    # use only inner distances
-    # print("pre", diffs)
-    # diffs = diffs[::2]
-    # print("post", diffs)
-
-    δs = np.array(diffs).mean()
+    δs = get_δs_clean(img2, messreihe['images'][1]['find_peaks'])
 
     print(f"Δs={Δs:.1f}")
     print(f"δs={δs:.1f}")
