@@ -30,7 +30,7 @@ die Parameter
     d &= \SI{1.1 \pm 1.4}{\milli\tesla} \ .
 \end{align*}
 
-\begin{table}
+\begin{table}[H]
     \centering
     \caption{Magnetische Flussdichte in Abhängigkeit des Spulenstroms.}
     \label{tab:eichung}
@@ -94,6 +94,7 @@ die Parameter
 Die Auswertung eines einzelnen Bilds erfolgt in den folgenden Schritten:
 \begin{itemize}
     \item Die im Bild eingebettete Datumsangabe wird mit Schwarz übermalt, um die spätere Erkennung nicht zu stören.
+          Dies ist problemlos möglich, da die Datumsangabe nur unwesentlich mit den Linien überlappt.
     \item Das Bild wird so rotiert, dass die einzelnen Linien möglichst vertikal ausgerichtet sind.
     \item Da davon auszugehen ist, dass das Bild keine verwertbaren Farbinformationen enthält, werden die RGB-Kanäle summiert.
     \item Für jede Pixel-Spalte wird eine Summe gebildet, sodass ein eindimensionales Array verbleibt,
@@ -112,6 +113,8 @@ Um den Landé-Faktor zum linear polarisierten roten Licht der Cadmium-Linie zu b
 wird der Abstand $\symup{\delta} s$ der Interferenzlinien ohne Magnetfeld
 mit dem Abstand $\symup{\Delta} s$ der aufgespaltenen Interferenzlinien im Magnetfeld verglichen.
 Diese Abstände werden in \autoref{tab:rot} aufgelistet.
+\autoref{fig:plt:rot_1} und \autoref{fig:plt:rot_2} zeigen eine Überlagerung
+aus den aufgenommenen Bildern und der durchgeführten Analyse.
 
 Das zweite Bild wurde bei einem Spulenstrom von \SI{8}{\ampere} aufgenommen,
 welcher nach \autoref{sec:auswertung:eichung} einer magnetischen Flussdichte von \SI{573.67 \pm 35.62}{\milli\tesla} entspricht.
@@ -122,6 +125,10 @@ Die gemittelten Werte lauten
     Δs &= \SI{247.8}{px} \\
     δs &= \SI{111.7}{px} \ .
 \end{align*}
+
+Es wird auf die Angabe einer Unsicherheit verzichtet,
+da bekannt ist, dass diese Abstände von links nach rechts zunehmen \cite{versuchsanleitung},
+weshalb der Fehler andernfalls überschätzt würde.
 
 
 Das für die Wellenlänge $\lambda = \SI{643.8}{\nano\meter}$ nach \autoref{eqn:dispersionsgebiet} berechnete Dispersionsgebiet ist
@@ -146,13 +153,16 @@ Mit
 \end{equation}
 folgt
 \[
-    g = \num{0.99 \pm 0.06}
+    g = \num{0.99 \pm 0.06} \ .
 \]
 
 
-\begin{table}
+\begin{table}[H]
     \centering
-    \caption{Pixelabstände $\symup{\Delta} s$ und $\symup{\delta} s$ bei aus- beziehungsweise eingeschaltetem Magnetfeld.}
+    \caption{
+        Pixelabstände $\symup{\Delta} s$ und $\symup{\delta} s$ bei aus- beziehungsweise eingeschaltetem Magnetfeld.
+        Peaks sind durch rote Linien hervorgehoben.
+    }
     \label{tab:rot}
     \begin{tabular}{S S S}
         \toprule
@@ -166,17 +176,17 @@ folgt
     \end{tabular}
 \end{table}
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{build/plt/rot_1.pdf}
-    \caption{Bild mit ausgeschaltetem Elektromagneten.}
+    \caption{Bild/Plot mitausgeschaltetem Elektromagneten.}
     \label{fig:plt:rot_1}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{build/plt/rot_2.pdf}
-    \caption{Bild mit eingeschaltetem Elektromagneten.}
+    \caption{Bild/Plot miteingeschaltetem Elektromagneten.}
     \label{fig:plt:rot_2}
 \end{figure}
 
@@ -185,6 +195,8 @@ folgt
 \subsection{Untersuchung der blauen, sigma-polarisierten Spektrallinie}
 Die Abstände $\symup{\delta} s$ und $\symup{\Delta} s$ werden analog zum Vorgehen bei der roten Spektrallinie
 in \autoref{tab:blau_sigma} aufgelistet.
+\autoref{fig:plt:blau_sigma_1} und \autoref{fig:plt:blau_sigma_2} zeigen eine Überlagerung
+aus den aufgenommenen Bildern und der durchgeführten Analyse.
 
 Das zweite Bild wurde bei einem Spulenstrom von \SI{4.6}{\ampere} aufgenommen,
 welcher nach \autoref{sec:auswertung:eichung} einer magnetischen Flussdichte von \SI{419.45 \pm 12.13}{\milli\tesla} entspricht.
@@ -212,7 +224,7 @@ Mit \autoref{eqn:g_mess} folgt:
     g = \num{1.30 \pm 0.04} \ .
 \]
 
-\begin{table}
+\begin{table}[H]
     \centering
     \caption{Pixelabstände $\symup{\Delta} s$ und $\symup{\delta} s$ bei aus- beziehungsweise eingeschaltetem Magnetfeld.}
     \label{tab:blau_sigma}
@@ -228,25 +240,52 @@ Mit \autoref{eqn:g_mess} folgt:
     \end{tabular}
 \end{table}
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{build/plt/blau_sigma_1.pdf}
-    \caption{Bild mit ausgeschaltetem Elektromagneten.}
+    \caption{Bild/Plot mitausgeschaltetem Elektromagneten.}
     \label{fig:plt:blau_sigma_1}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{build/plt/blau_sigma_2.pdf}
-    \caption{Bild mit eingeschaltetem Elektromagneten.}
+    \caption{Bild/Plot miteingeschaltetem Elektromagneten.}
     \label{fig:plt:blau_sigma_2}
 \end{figure}
 
 
 \FloatBarrier
 \subsection{Untersuchung der blauen, pi-polarisierten Spektrallinie}
+Die Abstände $\symup{\delta} s$ und $\symup{\Delta} s$ werden analog zum Vorgehen bei der roten Spektrallinie
+in \autoref{tab:blau_sigma} aufgelistet.
+\autoref{fig:plt:blau_pi_1} und \autoref{fig:plt:blau_pi_2} zeigen eine Überlagerung
+aus den aufgenommenen Bildern und der durchgeführten Analyse.
 
-\begin{table}
+Das zweite Bild wurde bei einem Spulenstrom von \SI{8}{\ampere} aufgenommen,
+welcher nach \autoref{sec:auswertung:eichung} einer magnetischen Flussdichte von \SI{573.67 \pm 35.62}{\milli\tesla} entspricht.
+% TODO: Polarisierung
+
+Die gemittelten Werte lauten
+\begin{align*}
+    Δs &= \SI{53.2}{px} \\
+    δs &= \SI{23.2}{px} \ .
+\end{align*}
+
+
+Die Aufspaltung berechnet sich
+mit demselben $\symup{\Delta}\lambda_\text{D}$ aus \autoref{auswertung:blau_sigma}
+im Mittel zu
+\[
+    \symup{\delta} \lambda = \SI{26.952}{\pico\meter} \ .
+\]
+
+Mit \autoref{eqn:g_mess} folgt:
+\[
+    g = \num{0.99 \pm 0.06} \ .
+\]
+
+\begin{table}[H]
     \centering
     \caption{Pixelabstände $\symup{\Delta} s$ und $\symup{\delta} s$ bei aus- beziehungsweise eingeschaltetem Magnetfeld.}
     \label{tab:blau_pi}
@@ -262,16 +301,16 @@ Mit \autoref{eqn:g_mess} folgt:
     \end{tabular}
 \end{table}
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{build/plt/blau_pi_1.pdf}
-    \caption{Bild mit ausgeschaltetem Elektromagneten.}
+    \caption{Bild/Plot mitausgeschaltetem Elektromagneten.}
     \label{fig:plt:blau_pi_1}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{build/plt/blau_pi_2.pdf}
-    \caption{Bild mit eingeschaltetem Elektromagneten.}
+    \caption{Bild/Plot miteingeschaltetem Elektromagneten.}
     \label{fig:plt:blau_pi_2}
 \end{figure}
