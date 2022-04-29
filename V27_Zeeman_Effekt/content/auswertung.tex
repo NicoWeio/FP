@@ -108,40 +108,42 @@ Die Auswertung eines einzelnen Bilds erfolgt in den folgenden Schritten:
 \end{itemize}
 
 \subsection{Untersuchung der roten Spektrallinie}
-Um den Landé-Faktor zum linear polarisierten roten Lichts der Cadmium-Linie zu bestimmen,
+Um den Landé-Faktor zum linear polarisierten roten Licht der Cadmium-Linie zu bestimmen,
 wird der Abstand $\symup{\delta} s$ der Interferenzlinien ohne Magnetfeld
 mit dem Abstand $\symup{\Delta} s$ der aufgespaltenen Interferenzlinien im Magnetfeld verglichen.
-
-% \begin{align*}
-%     Δs &= \SI{247.8}{px} \\
-%     δs &= \SI{111.7}{px}
-% \end{align*}
+Diese Abstände werden in \autoref{tab:rot} aufgelistet.
 
 Das zweite Bild wurde bei einem Spulenstrom von \SI{8}{\ampere} aufgenommen,
 welcher nach \autoref{sec:auswertung:eichung} einer magnetischen Flussdichte von \SI{573.67 \pm 35.62}{\milli\tesla} entspricht.
 % TODO: Polarisierung
 
-Die Abstände zwischen den Linien werden in \autoref{tab:rot} aufgelistet.
+Die gemittelten Werte lauten
+\begin{align*}
+    Δs &= \SI{247.8}{px} \\
+    δs &= \SI{111.7}{px} \ .
+\end{align*}
 
-Das für die Wellenlänge X nach \autoref{eqn:dispersionsgebiet} berechnete Dispersionsgebiet ist
+
+Das für die Wellenlänge $\lambda = \SI{643.8}{\nano\meter}$ nach \autoref{eqn:dispersionsgebiet} berechnete Dispersionsgebiet ist
 \[
     \symup{\Delta}\lambda_\text{D} = \SI{48.913}{\pico\meter} \ .
 \]
 
 Die Aufspaltung
-\[
+\begin{equation}
+    \label{eqn:delta_lambda}
     \symup{\delta} \lambda = \frac{1}{2} \frac{\symup{\delta} s}{\symup{\Delta} s} \symup{\Delta} \lambda_\text{D}
-\]
+\end{equation}
 berechnet sich damit im Mittel zu
 \[
     \symup{\delta} \lambda = \SI{11.02}{\pico\meter} \ .
 \]
 
 Mit
-\[
-    % TODO: auslagern
+\begin{equation}
+    \label{eqn:g_mess}
     g = \frac{hc \symup{\delta} \lambda}{\lambda^2 \mu_{\symup{B}} B}
-\]
+\end{equation}
 folgt
 \[
     g = \num{0.99 \pm 0.06}
@@ -181,6 +183,34 @@ folgt
 
 \FloatBarrier
 \subsection{Untersuchung der blauen, sigma-polarisierten Spektrallinie}
+Die Abstände $\symup{\delta} s$ und $\symup{\Delta} s$ werden analog zum Vorgehen bei der roten Spektrallinie
+in \autoref{tab:blau_sigma} aufgelistet.
+
+Das zweite Bild wurde bei einem Spulenstrom von \SI{4.6}{\ampere} aufgenommen,
+welcher nach \autoref{sec:auswertung:eichung} einer magnetischen Flussdichte von \SI{419.45 \pm 12.13}{\milli\tesla} entspricht.
+% TODO: Polarisierung
+
+Die gemittelten Werte lauten
+\begin{align*}
+    Δs &= \SI{53.2}{px} \\
+    δs &= \SI{23.2}{px} \ .
+\end{align*}
+
+
+Das für die Wellenlänge $\lambda = \SI{480.0}{\nano\meter}$ nach \autoref{eqn:dispersionsgebiet} berechnete Dispersionsgebiet ist
+\[
+    \symup{\Delta}\lambda_\text{D} = \SI{26.952}{\pico\meter} \ .
+\]
+
+Die Aufspaltung berechnet sich damit (wie zuvor gemäß \autoref{eqn:delta_lambda}) im Mittel zu
+\[
+    \symup{\delta} \lambda = \SI{11.02}{\pico\meter} \ .
+\]
+
+Mit \autoref{eqn:g_mess} folgt:
+\[
+    g = \num{1.30 \pm 0.04} \ .
+\]
 
 \begin{table}
     \centering
