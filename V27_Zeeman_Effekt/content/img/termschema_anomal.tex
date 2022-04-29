@@ -1,4 +1,4 @@
-\documentclass[tikz]{standalone}
+% \documentclass[tikz]{standalone}
 \tikzset{
     level/.style = {
         ultra thick,
@@ -17,7 +17,7 @@
         text width=2cm
     }
 }
-\begin{document}
+% \begin{document}
 \begin{tikzpicture}
     % Draw all levels
     \draw[level] (0,+3) node[left] {$^1D_2$} -- (2,+3);
@@ -53,5 +53,12 @@
     \node[label] at (1.5,6) {$B = 0$};
     \node[label] at (5.5,6) {$B \neq 0$};
     \node[label] at (8.25,6) {$m$};
+
+    % \node[label, red] at ({3+0},-4.5-0) {$\mathrm\Delta m = -1$};
+    % \node[label, green] at ({3+2},-4.5-0.5) {$\mathrm\Delta m = 0$};
+    % \node[label, orange] at ({3+4},-4.5-1) {$\mathrm\Delta m = +1$};
+    \node[label, red] at ({3+0},-4.5) {$\mathrm\Delta m = -1$};
+    \node[label, green] at ({3+2},-4.5) {$\mathrm\Delta m = 0$};
+    \node[label, orange] at ({3+4},-4.5) {$\mathrm\Delta m = +1$};
 \end{tikzpicture}
-\end{document}
+% \end{document}
