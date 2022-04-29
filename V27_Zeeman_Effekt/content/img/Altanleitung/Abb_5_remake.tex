@@ -1,11 +1,13 @@
-\documentclass[tikz]{standalone}
+% siehe auch Abb. 13.5 auf S. 211 aus „Atom- und Quantenphysik“ von Haken/Wolf 1990
+
+% \documentclass[tikz]{standalone}
 
 % https://tex.stackexchange.com/a/36607
 \newcommand{\AxisRotator}[1][rotate=0]{%
     \tikz [x=5,y=10,-stealth,#1] \draw (0,0) arc (-150:150:1 and 1);%
 }
 
-\begin{document}
+% \begin{document}
 \begin{tikzpicture}
     \draw[ultra thick] (0,+2) -- (0,+3);
 
@@ -27,4 +29,4 @@
     \node[anchor=west] at (2,0.5) {mit Magnetfeld – transversale Beobachtung};
     \node[anchor=west] at (2,-1.5) {\phantom{mit Magnetfeld} – longitudinale Beobachtung};
 \end{tikzpicture}
-\end{document}
+% \end{document}
