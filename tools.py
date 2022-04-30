@@ -1,9 +1,23 @@
 import contextlib
 import numpy as np
+import os
 import pint
 import scipy as sp
 import scipy.stats
 from uncertainties import unumpy, ufloat, UFloat
+
+### Umgebungsvariablen ###
+BUILD = bool(os.getenv('BUILD'))
+print("build:", BUILD)
+# TODO: BUILD steuert gerade verschiedene Dinge:
+# 1. sollen Plots gespeichert werden?
+# 2. sollen Plots mit LaTeX generiert werden?
+
+if not BUILD:
+    # nutze Standard-Backend, nicht LaTeX
+    os.environ['MATPLOTLIBRC'] = ''
+
+### Funktionen ###
 
 def linregress(x, y):
     r = sp.stats.linregress(x.m, y.m)
@@ -20,7 +34,7 @@ def curve_fit(fit_fn, x, y, p0=None):
 
 
 def pint_curve_fit(fit_fn, x, y, param_units, p0=None):
-    #TODO: Abweichung mittels sigma-Parameter berücksichtigen
+    # TODO: Abweichung mittels sigma-Parameter berücksichtigen
     if p0:
         assert len(param_units) == len(p0)
         for p0_single, pu in zip(p0, param_units):
@@ -37,7 +51,8 @@ def pint_curve_fit(fit_fn, x, y, param_units, p0=None):
     except:
         raise Exception("Could not test fit_fn")
     if test_val.units != y.units:
-        raise Exception(f"Wrong param_units – fit_fn(x[0], *fit_params_nominal) returns '{test_val.units}' instead of '{y.units}'")
+        raise Exception(
+            f"Wrong param_units – fit_fn(x[0], *fit_params_nominal) returns '{test_val.units}' instead of '{y.units}'")
     return pint_params
 
 
@@ -46,11 +61,13 @@ def pint_polyfit(x, y, deg):
     errors = np.sqrt(np.diag(covariance_matrix))
     return [ufloat(param, error) * y.units / x.units**(deg-i) for i, (param, error) in enumerate(zip(params, errors))]
 
+
 def pintify(list):
     assert len(list) > 0
     units = list[0].units
     assert all(e.units == units for e in list)
     return [e.m for e in list] * units
+
 
 def uarray(nominal_values, std_devs):
     # assert len(nominal_values) == len(std_devs)
@@ -63,10 +80,12 @@ def nominal_values(list):
     units = list.units
     return [e.m.n for e in list] * units
 
+
 def std_devs(list):
     assert isinstance(list, pint.Quantity)
     units = list.units
     return [e.m.s for e in list] * units
+
 
 def nominal_value(v):
     units = v.units
@@ -187,7 +206,7 @@ def plot_context(plt, xunits, yunits, xname=None, yname=None):
             if not show_yerr:
                 y_s = None
 
-            #TODO Entwurf: Stelle Unsicherheit mit Farbfüllung statt Fehlerbalken dar.
+            # TODO Entwurf: Stelle Unsicherheit mit Farbfüllung statt Fehlerbalken dar.
             if show_yerr == 'fill':
                 plt.fill_between(x_n, y_n - y_s, y_n + y_s, alpha=0.2)
                 y_s = None
@@ -203,7 +222,10 @@ def plot_context(plt, xunits, yunits, xname=None, yname=None):
         if units == pint.Unit('dimensionless'):
             return f"${name}"
         else:
-            return f"${name}" + r" \mathbin{/} " + f"{units:Lx}$"
+            if BUILD:
+                return f"${name}" + r" \mathbin{/} " + f"{units:Lx}$"
+            else:
+                return f"${name}" + r" / " + f"{units}$"
 
     if xname:
         plt.xlabel(fmt_label(xname, xunits))
