@@ -10,8 +10,7 @@ plots &: 1_auswertung.py 1a_bildanalyse.py | build/plt
 		BUILD=true MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: python3 1_auswertung.py
 
 
-# TODO: plots wieder einfügen
-build/main.pdf: main.tex lit.bib $(wildcard content/*.tex) $(wildcard build/tab/*.tex) | build
+build/main.pdf: main.tex lit.bib $(wildcard content/*.tex) $(wildcard build/tab/*.tex) plots | build
 	  TEXINPUTS=build: \
 	  BIBINPUTS=build: \
 	  max_print_line=1048576 \
