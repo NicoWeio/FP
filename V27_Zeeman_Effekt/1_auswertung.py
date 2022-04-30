@@ -13,8 +13,6 @@ ureg = pint.UnitRegistry()
 ureg.setup_matplotlib()
 console = Console()
 
-from wide_peaks import get_peaks as find_peaks_wide
-
 
 # TODO: Auslagern in tools / env-Variable
 # steuert, ob Plots und Tabellen erstellt werden sollen
@@ -172,7 +170,7 @@ def get_δs_clean(img, opts):
 
 def get_δs_wide(img, opts):
     """Analyse mit B-Feld/Aufspaltung – für unscharf aufgespaltene Linien"""
-    return find_peaks_wide(img2)
+    return bildanalyse.find_peaks_wide(img2)
 
 
 for messreihe in MESSREIHEN:
