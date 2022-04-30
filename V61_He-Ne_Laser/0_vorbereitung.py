@@ -40,7 +40,8 @@ for num, mirror in enumerate(MIRRORS):
     g1 = calc_g(L, r1)
     g2 = calc_g(L, r2)
 
-    plt.plot(L, g1*g2, label=f"Anordnung {num} ($r_1 = {r1.to('m').m:.1f}, r_2 = {r2.to('m').m:.1f}$)")
+    with tools.plot_context(plt, 'm', 'dimensionless', 'x', 'x') as plt2:
+        plt2.plot(L, g1*g2, label=f"Anordnung {num} ($r_1 = {r1.to('m').m:.1f}, r_2 = {r2.to('m').m:.1f}$)")
 
     # TODO: Bereich farblich hervorheben
     plt.axhline(0, color='grey')
