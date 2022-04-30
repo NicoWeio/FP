@@ -6,7 +6,7 @@ plots: \
 		build/plt/rot_2.pdf \
 
 
-plots &: 1_auswertung.py 1a_bildanalyse.py | build/plt
+plots &: 1_auswertung.py 1a_bildanalyse.py $(wildcard img/*.jpg) | build/plt
 		BUILD=true MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: python3 1_auswertung.py
 
 

@@ -63,14 +63,14 @@ FOO = [
         'images': [
             {
                 'I': ureg('0 A'),
-                'path': 'Bilder/rot neu/IMG_0001.JPG',
+                'path': 'img/rot_1.jpg',
                 'find_peaks': {
                     'min_height': 0.6,  # entspricht der alten Analyse
                 },
             },
             {
                 'I': ureg('8 A'),
-                'path': 'Bilder/rot neu/IMG_0002.JPG',
+                'path': 'img/rot_2.jpg',
                 # 'min_distance': 70,
                 # 'min_height': 1600/2248,
                 #
@@ -93,7 +93,7 @@ FOO = [
             {
                 'I': ureg('0 A'),
                 'polarisation': 0,  # in °
-                'path': 'Bilder/blau/3_4.6A_sigma/IMG_0027.JPG',
+                'path': 'img/blau_sigma_1.jpg',
                 'find_peaks': {
                     'min_distance': 40,
                 }
@@ -101,7 +101,7 @@ FOO = [
             {
                 'I': ureg('4.6 A'),
                 'polarisation': 0,  # in °
-                'path': 'Bilder/blau/3_4.6A_sigma/IMG_0028.JPG',
+                'path': 'img/blau_sigma_2.jpg',
                 'find_peaks': {
                     'min_distance': 1,
                     'min_height': 0.6,
@@ -121,7 +121,7 @@ FOO = [
             {
                 'I': ureg('0 A'),
                 'polarisation': 0,  # TODO
-                'path': 'Bilder/blau/5_8A_pi/IMG_0033.JPG',
+                'path': 'img/blau_pi_1.jpg',
                 'find_peaks': {
                     'min_distance': 40,
                 }
@@ -129,7 +129,7 @@ FOO = [
             {
                 'I': ureg('8 A'),  # TODO
                 'polarisation': 0,  # TODO
-                'path': 'Bilder/blau/5_8A_pi/IMG_0034.JPG',
+                'path': 'img/blau_pi_2.jpg',
                 'find_peaks': {
                     'min_distance': 1,
                     'min_height': 0.6,
@@ -137,6 +137,7 @@ FOO = [
                 },
                 # 'δs': 22.972806096249755,  # für rel_height 0.5
                 'δs': 20.360053268318072,  # für rel_height 0.4
+                # TODO: kann weg? ↑
             },
         ],
     },

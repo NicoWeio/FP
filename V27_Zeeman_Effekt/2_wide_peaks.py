@@ -6,7 +6,7 @@ import scipy.signal
 from PIL import Image, ImageEnhance
 
 
-img = bildanalyse.preprocess_image('Bilder/blau/5_8A_pi/IMG_0034.JPG', rotate_deg=-2.3)
+img = bildanalyse.preprocess_image('img/blau_pi_2.jpg', rotate_deg=-2.3)
 
 
 def display_image(img):
