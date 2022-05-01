@@ -220,7 +220,7 @@ def plot_context(plt, xunits, yunits, xname=None, yname=None):
     # automatische Labels
     def fmt_label(name, units):
         if units == pint.Unit('dimensionless'):
-            return f"${name}"
+            return f"${name}$"
         else:
             if BUILD:
                 return f"${name}" + r" \mathbin{/} " + f"{units:Lx}$"
