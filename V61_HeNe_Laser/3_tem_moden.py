@@ -10,7 +10,7 @@ def calc_I(
     r,  # Parameter
     I0, r0, ω,  # Konstanten
 ):
-    """Theoretische Intensität in Abhängigkeit vom Abstand r von der Modenmitte."""
+    """TEM₀₀: Theoretische Intensität in Abhängigkeit vom Abstand r von der Modenmitte."""
     return I0 * np.exp(- (r - r0)**2 / (2 * ω**2))
 
 
