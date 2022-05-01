@@ -32,7 +32,8 @@ MIRRORS = [
     },
 ]
 
-L = np.arange(-0.5, 3, 0.01) * ureg.m
+# L = np.arange(-0.5, 3, 0.01) * ureg.m
+L = np.arange(0, 3 + 0.01, 0.01) * ureg.m
 
 
 for num, mirror in enumerate(MIRRORS):
@@ -40,16 +41,13 @@ for num, mirror in enumerate(MIRRORS):
     g1 = calc_g(L, r1)
     g2 = calc_g(L, r2)
 
-    with tools.plot_context(plt, 'm', 'dimensionless', 'x', 'x') as plt2:
+    with tools.plot_context(plt, 'm', 'dimensionless', 'L', 'g_1 \cdot g_2') as plt2:
         plt2.plot(L, g1*g2, label=f"Anordnung {num} ($r_1 = {r1.to('m').m:.1f}, r_2 = {r2.to('m').m:.1f}$)")
 
-    # TODO: Bereich farblich hervorheben
-    plt.axhline(0, color='grey')
-    plt.axhline(1, color='grey')
 
-    plt.grid()
-    plt.legend()
-    plt.tight_layout()
-    # plt.savefig('build/plt/….pdf')
-
+plt.fill_between(L, 0, 1, color='grey', alpha=0.5, label='stabil')
+plt.grid()
+plt.legend()
+plt.tight_layout()
+# plt.savefig('build/plt/….pdf')
 plt.show()
