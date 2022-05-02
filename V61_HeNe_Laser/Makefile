@@ -1,6 +1,13 @@
 all: build/main.pdf
 
-build/main.pdf: main.tex lit.bib | build
+plots: \
+	build/plt/2_stabilitaetsbedingung.pdf \
+
+
+build/plt/2_stabilitaetsbedingung.pdf: 2_stabilitaetsbedingung.py $(wildcard dat/2_stabilitaetsbedingung*.csv) | build/plt
+	BUILD=true python 2_stabilitaetsbedingung.py
+
+build/main.pdf: main.tex lit.bib plots | build
 	  TEXINPUTS=build: \
 	  BIBINPUTS=build: \
 	  max_print_line=1048576 \

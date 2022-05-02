@@ -16,16 +16,27 @@ DATA = [
     },
 ]
 
-with tools.plot_context(plt, 'cm', 'dimensionless', 'L', 'I') as plt2:
+
+def sort_xy(x, y):  # TODO: Auslagern in Tools
+    tuples = list(zip(x, y))
+    tuples.sort(key=lambda t: t[0])
+    x = tools.pintify([t[0] for t in tuples])
+    y = tools.pintify([t[1] for t in tuples])
+    return x, y
+
+
+with tools.plot_context(plt, 'cm', 'mW', 'L', 'I') as plt2:
     for setup in DATA:
         L, I = np.genfromtxt(setup['path'], delimiter=',', skip_header=1, unpack=True)
         L *= ureg('cm')
-        I *= ureg.dimensionless  # TODO
+        I *= ureg.mW
+
+        L, I = sort_xy(L, I)
 
         plt2.plot(L, I, '--o', zorder=5, label=setup['label'])
 
 plt.grid()
 plt.legend()
 plt.tight_layout()
-# plt.savefig('build/plt/….pdf')
-plt.show()
+plt.savefig('build/plt/2_stabilitaetsbedingung.pdf')
+# plt.show()
