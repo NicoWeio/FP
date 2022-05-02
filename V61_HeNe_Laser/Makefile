@@ -5,6 +5,7 @@ plots: \
 	build/plt/2_stabilitaetsbedingung_theorie.pdf \
 	build/plt/3_tem_00.pdf \
 	build/plt/3_tem_01.pdf \
+	build/plt/4_polarisation.pdf \
 
 build/plt/2_stabilitaetsbedingung_theorie.pdf: 0_vorbereitung.py | build/plt
 	MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: BUILD=true python 0_vorbereitung.py
@@ -14,6 +15,9 @@ build/plt/2_stabilitaetsbedingung.pdf: 2_stabilitaetsbedingung.py $(wildcard dat
 
 build/plt/3_tem_%.pdf &: 3_tem_moden.py $(wildcard dat/3_tem_*.csv) | build/plt
 	MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: BUILD=true python 3_tem_moden.py
+
+build/plt/4_polarisation.pdf: 4_polarisation.py dat/4_polarisation.csv | build/plt
+	MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: BUILD=true python 4_polarisation.py
 
 build/main.pdf: main.tex lit.bib plots | build
 	  TEXINPUTS=build: \
