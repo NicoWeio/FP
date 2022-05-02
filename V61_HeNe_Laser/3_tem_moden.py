@@ -8,18 +8,18 @@ ureg.setup_matplotlib()
 
 def calc_I_TEM00(
     r,  # Parameter
-    I0, r0, ω,  # Konstanten
+    I_max, I0, r0, ω,  # Konstanten
 ):
     """TEM₀₀: Theoretische Intensität in Abhängigkeit vom Abstand r von der Modenmitte."""
-    return I0 * np.exp(- (r - r0)**2 / (2 * ω**2))
+    return I_max * np.exp(- (r - r0)**2 / (2 * ω**2)) + I0
 
 def calc_I_TEM01(
     r,  # Parameter
-    I0, r0, ω,  # Konstanten
+    I_max, I0, r0, ω,  # Konstanten
 ):
     # Hermite-Polynome (zum Quadrat), nicht Laguerre-Polynome
     """TEM₀₁: Theoretische Intensität in Abhängigkeit vom Abstand r von der Modenmitte."""
-    return I0 * (4 * (r - r0)**2 / ω**2) * np.exp(- (r - r0)**2 / (2 * ω**2))
+    return I_max * (4 * (r - r0)**2 / ω**2) * np.exp(- (r - r0)**2 / (2 * ω**2)) + I0
 
 
 DATA = [
@@ -42,7 +42,7 @@ with tools.plot_context(plt, 'mm', 'microwatt', 'r', 'I') as plt2:
         calc_I = setup['calc_I']
 
         # Fit berechnen
-        params = tools.pint_curve_fit(calc_I, r, I, (ureg.microwatt, ureg.mm, ureg.mm))
+        params = tools.pint_curve_fit(calc_I, r, I, (ureg.microwatt, ureg.microwatt, ureg.mm, ureg.mm))
         print(f"params: {params}")
         nominal_params = [tools.nominal_value(p) for p in params]
         print(f"nominal_params: {nominal_params}")
