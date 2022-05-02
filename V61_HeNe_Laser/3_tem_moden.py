@@ -13,6 +13,7 @@ def calc_I_TEM00(
     """TEM₀₀: Theoretische Intensität in Abhängigkeit vom Abstand r von der Modenmitte."""
     return I_max * np.exp(- (r - r0)**2 / (2 * ω**2)) + I0
 
+
 def calc_I_TEM01(
     r,  # Parameter
     I_max, I0, r0, ω,  # Konstanten
@@ -25,34 +26,37 @@ def calc_I_TEM01(
 DATA = [
     {
         'path': 'dat/3_tem_00.csv',
+        'name': 'tem_00',
         'calc_I': calc_I_TEM00,
     },
     {
         'path': 'dat/3_tem_01.csv',
+        'name': 'tem_01',
         'calc_I': calc_I_TEM01,
     },
 ]
 
-with tools.plot_context(plt, 'mm', 'microwatt', 'r', 'I') as plt2:
-    for setup in DATA:
-        # Daten einlesen
-        r, I = np.genfromtxt(setup['path'], delimiter=',', skip_header=1, unpack=True)
-        r *= ureg('mm')
-        I *= ureg.microwatt  # TODO
-        calc_I = setup['calc_I']
+for setup in DATA:
+    # Daten einlesen
+    r, I = np.genfromtxt(setup['path'], delimiter=',', skip_header=1, unpack=True)
+    r *= ureg('mm')
+    I *= ureg.microwatt  # TODO
+    calc_I = setup['calc_I']
 
-        # Fit berechnen
-        params = tools.pint_curve_fit(calc_I, r, I, (ureg.microwatt, ureg.microwatt, ureg.mm, ureg.mm))
-        print(f"params: {params}")
-        nominal_params = [tools.nominal_value(p) for p in params]
-        print(f"nominal_params: {nominal_params}")
-        r_linspace = tools.linspace(*tools.bounds(r), 500)
+    # Fit berechnen
+    params = tools.pint_curve_fit(calc_I, r, I, (ureg.microwatt, ureg.microwatt, ureg.mm, ureg.mm))
+    print(f"params: {params}")
+    nominal_params = [tools.nominal_value(p) for p in params]
+    print(f"nominal_params: {nominal_params}")
+    r_linspace = tools.linspace(*tools.bounds(r), 500)
 
-        # Plotten
+    # Plotten
+    plt.figure()
+    with tools.plot_context(plt, 'mm', 'microwatt', 'r', 'I') as plt2:
         plt2.plot(r, I, 'x', zorder=5, label='Messwerte')
         plt2.plot(r_linspace, calc_I(r_linspace, *[tools.nominal_value(p) for p in params]), label='Fit')
-        plt.grid()
-        plt.legend()
-        plt.tight_layout()
-        # plt.savefig('build/plt/….pdf')
-        plt.show()
+    plt.grid()
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(f"build/plt/3_{setup['name']}.pdf")
+    # plt.show()
