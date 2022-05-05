@@ -6,9 +6,9 @@
 \subsection{Versuchsaufbau}
 \label{sec:versuchsaufbau}
 
-    Der Grundaufbau besteht aus einer Metallschiene,
+    Der Grundaufbau besteht aus einer optischen Bank, %TODO
     auf der auf der einen Seite ein Justierlaser mit grünem Licht befestigt ist.
-    In der Mitte befindet sich der ein Laserrohr,
+    In der Mitte befindet sich das mit einem Helium-Neon-Gasgemisch gefüllte Laserrohr,
     welches von zwei Spiegeln umgeben ist,
     die den Resonator bilden.
     Auf der anderen Seite der Schiene ist eine Photodiode befestigt,
@@ -27,37 +27,39 @@
 \subsection{Einjustierung des He-Ne-Lasers}
 
     Für die Justierung wird zunächst nur der Justierlaser betrachet.
-    Vor dem Justierlaser befindet sich eine Blende,
+    Vor dem Justierlaser befindet sich eine Lochblende,
     auf der ein Fadenkreuz aufgezeichnet ist.
     Mithilfe der Schrauben an den Halterungen der Resonatorspiegel werden diese nun horizontal und vertikal so ausgerichtet,
     dass die von den Spiegeln reflektierten Punkte mittig auf das Zentrum des Fadenkreuzes treffen.
-    Ist die richtige Einstellung gefunden,
-    fängt der He-Ne-Laser an zu strahlen und es ist ein roter Laserstrahl erkennbar.
+    % Man sieht vier Punkte; je Spiegel kann Licht an der Grenzfläche Luft—Spiegel oder Spiegel—Luft reflektiert werden.
+    Ist eine ausreichend gute Einstellung gefunden,
+    beginnt der He-Ne-Laser zu strahlen
+    und ein roter Laserstrahl ist erkennbar.
     Der Justierlaser kann dann abgeschaltet werden.\\
     \\
-    Für die folgenden Messungen werden konkave Resonatorspiegel mit einem Radius von $\SI{1400}{\milli\meter}$ verwendet.
+    Für die folgenden Messungen werden konkave Resonatorspiegel mit einem Radius von \SI{1400}{\milli\meter} verwendet.
 
 \subsection{Ausmessung der Wellenlänge des He-Ne-Lasers}
 
-    Nach Einjustierung des Lasers wird nun ein optisches Gitter zwischen den rechten Resonatorspiegel und die Photodiode eingefügt.
-    Die Photodiode selbst ist hier nicht notwenig und wird deshalb entfernt.
+    Nach Einjustierung des Lasers wird nun ein optisches Gitter am rechten Ende des Aufbaus eingesetzt.
+    Die Photodiode wird entfernt, da keine Intensitätsmessung vorgenommen werden soll.
     Die Aufspaltung des Strahls durch das Gitter ist auf einem Schirm zu erkennen.
-    Mithilfe eines Maßbandes werden nun für vier verschiedene Gitter die Abstände zwischen den Beugungsmaxima gemessen,
-    sowie der Abstand zwischen Gitter und Schirm bestimmt.
+    Mithilfe eines Maßbandes werden nun für vier verschiedene Gitter die Abstände zwischen den Beugungsmaxima gemessen
+    und der Abstand zwischen Gitter und Schirm bestimmt.
 
 \subsection{Polarisation}
 
     Für diese Messung wird die Photodiode wieder auf der Schiene befestigt,
     sowie ein Polarisationsfilter zwischen Resonatorspiegel und Photodiode eingebaut.
-    Nun wird der Polarisationsfilter in Schritten von $\SI{10}{\degree}$ verstellt und die jeweilige Intensität mithilfe der Photodiode gemessen.
-    Es werden volle $\SI{360}{\degree}$ durchlaufen.
+    Nun wird der Polarisationsfilter in Schritten von \SI{10}{\degree} verstellt und die jeweilige Intensität mithilfe der Photodiode gemessen.
+    Es werden volle \SI{360}{\degree} durchlaufen.
 
 \subsection{Stabilitätsbedingung und Messung der Moden}
 
     In diesem Versuchsteil sollen die maximal möglichen Resonatorlängen,
     die in \autoref{sec:stabilitaet} berechnet wurden,
     überprüft werden.
-    Dazu wird der Abstand der Resonatorspiegel langsam abwechselnd erhöht und dabei die Intensität gemessen.
+    Dazu wird der Abstand der beiden Resonatorspiegel im Wechsel langsam erhöht und dabei die Intensität gemessen.
     Der Abstand selbst wird wieder mit einem Maßband vermessen.
     Nachdem ein Spiegel verschoben wurde,
     muss neu justiert werden.
@@ -74,32 +76,36 @@
     Wenn im Laufe dessen der Strahl des He-Ne-Lasers verloren geht,
     kann mithilfe des Justierlasers nachjustiert werden,
     bis der rote Strahl wieder auftritt.\\
-    Wenn eine Laser-Intensität von $\SI{5}{\milli\watt}$ erreicht ist,
+    Wenn eine Laser-Intensität von \SI{5}{\milli\watt} erreicht ist,
     können die Moden ausgemessen werden.
-    In diesem Fall ergab sich bei einer Resonatorlänge von $\SI{162.9}{\centi\meter}$ eine Intensität von $\SI{5.1}{\milli\watt}$.
+    In diesem Fall ergab sich bei einer Resonatorlänge von \SI{162.9}{\centi\meter} eine Intensität von \SI{5.1}{\milli\watt}.
 
 \subsubsection{Die longitudinale Mode}
 
     Zur Messung der longitudinalen Mode wird eine mit einem Oszilloskop verbundene Photozelle verwendet.
     Diese muss so ausgerichtet werden,
     dass der Strahl genau auf das Eingangsfenster der Diode fällt.
-    Auf dem Oszilloskop sind nun Peaks zu sehen,
-    deren x- und y- Position mithilfe des Cursers vermessen werden.
+    Auf dem Oszilloskop wird das Frequenzspektrum dargestellt.
+    Die $x$- und $y$-Positionen der dabei sichtbraen Peaks
+    werden mithilfe des Cursors vermessen werden.
 
 \subsubsection{Die transversalen Moden}
 
-    Nun sollen die transversalen \TEM{00}- und \TEM{01}-Moden ausgemessen werden.
-    Dazu wird zwischen Resonatorspiegel und die Photodiode eine Vergrößerungslinse und eine Blende eingebaut,
-    welche vor und zurück um $\SI{10}{\milli\meter}$ verschoben werden kann.\\
+    Nun sollen die transversalen Moden \TEM{00} und \TEM{01} ausgemessen werden.
+    Dazu werden zwischen Resonatorspiegel und Photodiode eine Vergrößerungslinse und eine Blende eingebaut,
+    welche um \SI{10}{\milli\meter} vor und zurück verschoben werden können.\\ %TODO: Richtig?
     Die \TEM{00}-Mode kennzeichnet sich durch einen runden Lichtfleck auf dem Schirm aus.
+    % TODO: Abbildung?
     Unter Verschiebung der Blende kann nun die Intensitätsverteilung dieser Mode vermessen werden.\\
-    Für die \TEM{01}-Mode musste die Resonatorlänge auf $\SI{178.8}{\centi\meter}$ mit einer Intensität von $\SI{5.6}{\milli\watt}$ erhöht werden.
+    Für die \TEM{01}-Mode musste die Resonatorlänge auf \SI{178.8}{\centi\meter} mit einer Intensität von \SI{5.6}{\milli\watt} erhöht werden.
+    % TODO: Muss? Waren das nicht einfach unsere Messwerte?
     Um die Mode herauszufiltern,
     wird ein gespannter Goldfaden zwischen Laserrohr und Resonatorspiegel befestigt,
     welcher so in den Laserstrahl gelenkt werden muss,
-    dass sich das in \autoref{sec:moden} dargestellte Bild ergibt.
-    Auch hier wird die Intensitätsverteilung mit Verschieben der Blende vermessen.\\
+    dass sich das in \autoref{fig:TODO} dargestellte Bild ergibt.
+    Auch hier wird die Intensitätsverteilung durch Verschieben der Blende vermessen.\\
     \\
-    Nach dem Vermessen der Moden wird die Überprüfung der Stabilitätsbedingung bis zum maximal einstellbaren Resonatorlänge fortgeführt.\\
+    % TODO: Verschieben in den zugehörigen Abschnitt? ↓
+    Nach dem Vermessen der Moden wird die Überprüfung der Stabilitätsbedingung bis zur maximal einstellbaren Resonatorlänge fortgeführt.\\
     Abschließend wird die Messung der Stabilitätsbedingung für einen weiteren Resonator wiederholt,
     indem einer der konkaven Spiegel durch einen planen Spiegel ausgetauscht wird.
