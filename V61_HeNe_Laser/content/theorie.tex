@@ -5,44 +5,47 @@
 
 \subsection{Bestandteile und Funktionsweise eines Lasers}
 
-    Ein Laser besteht im Wesentlichen aus drei Bestandteilen,
+    Ein Laser besteht im Wesentlichen aus drei Bestandteilen:
     dem aktiven Medium, einer Energiepumpe und einem Resonator.
-    Der Resonator soll in \autoref{sec:stabilitaet} näher beschrieben werden.
+    Auf den Resonator wird in \autoref{sec:stabilitaet} näher eingegangen.
     In einem Laserrohr sind aktives Medium und Energiepumpe zusammengefasst,
     welche meist durch zwei Gase realisiert sind.
-    Mithilfe der Energiepumpe sollen die Atome des aktiven Medium durch Stöße angeregt werden,
+    Mithilfe der Energiepumpe sollen die Atome des aktiven Mediums durch Stöße angeregt werden,
     sodass sich eine sogenannte \textit{Besetzungsinversion} einstellt.
     Damit ist gemeint,
     dass sich im aktiven Medium mehr Elektronen auf einem höheren Energieniveau als auf einem niedrigeren befinden.
-    Mithilfe von Spontaner oder Stimulierter Emission,
+    Mithilfe von spontaner oder stimulierter Emission,
     welche in \autoref{fig:absorption_emission} dargestellt sind,
-    fallen die Elektronen wieder auf das niedrigere Energieniveau zurück und die entsprechende Energiedifferenz wird in Form eines Photons mit der entsprechenden Wellenlänge frei.
+    fallen die Elektronen wieder auf das niedrigere Energieniveau zurück
+    und die Energiedifferenz wird in Form eines Photons mit der entsprechenden Wellenlänge frei.
     Je größer die Besetzungsinversion ist,
-    also je mehr Elektronen sich auf einem höheren Niveau befinden,
+    je mehr Elektronen sich also auf einem höheren Niveau befinden,
     desto größer ist die Verstärkung des Laserlichts,
+    %TODO: Stil ↓
     da einfach mehr Elektronen in den niedrigeren Zustand zurückkehren.
-    %\begin{figure}[H]
-    %    \centering
-    %    \includegraphics[width=\textwidth]{}
-    %    \caption{Schematische Darstellung von Absorption, Spontaner und Stimulierter Emission in einem zwei-Niveau-System.}
-    %    \label{fig:absorption_emission}
-    %\end{figure}
-    Aufgrund der Maxwell-verteilten Besetzung der Elektronen in einem zwei-Niveau-System kann in diesem System keine Besetzungsinversion erreicht werden,
+    \begin{figure}[H]
+       \centering
+       \includegraphics[width=\textwidth]{content/img/Altanleitung/Abb_1.pdf}
+       \caption{Schematische Darstellung von Absorption, spontaner und stimulierter (\textit{ind.}) Emission in einem Zwei-Niveau-System.}
+       \label{fig:absorption_emission}
+    \end{figure}
+    Aufgrund der Maxwell-verteilten Besetzung der Elektronen in einem Zwei-Niveau-System kann in diesem System keine Besetzungsinversion erreicht werden;
     für einen Laser sind also mehr als zwei Niveaus erforderlich.\\
     \\
     Im Falle des He-Ne-Lasers wird das aktive Medium durch Neon realisiert,
     die Energiepumpe durch Helium-Atome,
-    welche zu Beginn durch Stöße mit Elektronen angeregt werden und die überschüssige Energie bei einem Stoß 2. Art an die Neon-Atome übertragen.
-    Der He-Ne-Laser ist ein drei-Niveau-Laser,
+    welche zu Beginn durch Stöße mit Elektronen angeregt werden und die überschüssige Energie bei einem Stoß zweiter Art an die Neon-Atome übertragen.
+    Der He-Ne-Laser ist ein Drei-Niveau-Laser,
     es werden die oberen $2s$- und $3s$-Niveaus im Neon besetzt.
     Aufgrund der Auswahlregel $\symup{\Delta} l = \pm 1$ können nur Übergänge in niedrigere $p$-Niveaus stattfinden.
-    Der hier beobachtete Übergang $3s_2 \to 2p_4$ entspricht einer Roten Linie mit der Wellenlänge $\lambda = \SI{633}{\nano\meter}$.
+    Der hier beobachtete Übergang $3s_2 \to 2p_4$ entspricht einer roten Linie mit der Wellenlänge $\lambda = \SI{632.816}{\nano\meter}$.
 
 \subsection{Stabilität der Resonatoren}
 \label{sec:stabilitaet}
+    % TODO: Erwähnen, dass die Spiegel semipermeabel sind, damit überhaupt Laserlicht auskoppeln kann…
 
     Der Resonator besteht aus zwei Spiegeln und umgibt das Laserrohr,
-    indem sich aktives Medium und Energiepumpe befinden.
+    in dem sich aktives Medium und Energiepumpe befinden.
     Er dient dazu,
     das emittierte Licht zu reflektieren,
     sodass sich zwischen den Resonatorspiegeln eine stehende Welle ausbildet.
@@ -51,7 +54,7 @@
     Dieses Phänomen wird Absorption genannt und ist ebenfalls in \autoref{fig:absorption_emission} dargestellt.\\
     Damit der Resonator eine stehende Welle ausbilden kann,
     also stabil ist,
-    muss die sogenannte \textit{Stabilitätsbedingung}
+    muss die \textit{Stabilitätsbedingung}
     \begin{equation}
         0 < g_i \cdot g_j < 1
         \label{eqn:stabilitaetsbedingung}
@@ -69,14 +72,14 @@
     Für die hier verwendeten Resonatoren,
     bestehend aus zwei konkaven Spiegeln mit Radius $r = \SI{1400}{\milli\meter}$ im ersten Fall und einem planen und einem konkaven Spiegel mit Radius $r = \SI{1400}{\milli\meter}$ im zweiten Fall,
     ergibt sich nach \autoref{eqn:stabilitaetsbedingung} im ersten Fall eine maximale Länge von $L_\text{konkav,konkav} = \SI{2800}{\milli\meter}$ und im zweiten Fall $L_\text{plan,konkav} = \SI{1400}{\milli\meter}$.
-    Der Verlauf der Stabilitätsbedingung $g_i \cdot g_j$ als Funktion der Resonatorlänge $L$ ist in \autoref{fig:resonatorlaenge_plot} für verschiedene Kombinationen von Spiegeln dargestellt.
-    %\begin{figure}[H]
-    %    \centering
-    %    \include[width=\textwidth]{}
-    %    \caption{Verlauf der Stabilität von verschiedenen Resonatoren als Funktion der Resonatorlänge.
-    %            Für die Längen, in denen $0 < g_i g_j < 1$ gilt, ist der Resonator stabil.}
-    %    \label{fig:resonatorlaenge_plot}
-    %\end{figure}
+    Der Verlauf der Stabilitätsbedingung $g_i \cdot g_j$ als Funktion der Resonatorlänge $L$ ist in \autoref{fig:plt:stabilitaetsbedingung_theorie} für verschiedene Kombinationen von Spiegeln dargestellt.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\textwidth]{build/plt/2_stabilitaetsbedingung_theorie.pdf}
+        \caption{Stabilitätsparameter $g_1 \cdot g_2$ in Abhängigkeit der Resonatorlänge $L$ für verschiedene Spiegelkonfigurationen.}
+        \label{fig:plt:stabilitaetsbedingung_theorie}
+    \end{figure}
+
 
 \subsection{Transversale und longitudinale Moden in einem Laser}
 \label{sec:moden}
@@ -85,11 +88,11 @@
     die aus longitudinalen und transversalen Moden besteht.
     Longitudinale Moden sind dabei längs der Ausbreitungsrichtung,
     die transversalen Moden senkrecht zur Ausbreitungsrichtung.
-    Die transversalen Moden werden auch $TEM_{mn}$-Moden genannt,
-    "Transversal electromagnetic".
-    Der Index $mn$ bezeichnet die Anzahl der Knoten in der hier xy-Ebene.\\
-    In diesem Versuch sollen die $TEM_{00}$- und die $TEM_{01}$-Mode untersucht werden.
-    Die $TEM_{00}$-Mode wird auch als \textit{Fundamentalmode} bezeichnet.
+    Die transversalen Moden werden auch \TEM{mn}-Moden genannt,
+    \enquote{Transversal electromagnetic}.
+    Der Index $mn$ bezeichnet die Anzahl der Knoten in der hier $xy$-Ebene.\\
+    In diesem Versuch sollen die \TEM{00}- und die \TEM{01}-Mode untersucht werden.
+    Die \TEM{00}-Mode wird auch als \textit{Fundamentalmode} bezeichnet.
     Ihre Intensitätsverteilung hat die Form einer Gauß-Kurve,
     wie in \autoref{fig:tem00} erkennbar.
     %TODO: Ich dachte hier an die Abb. aus dem Demtröder, S.170, Abb 5.8
@@ -97,16 +100,19 @@
     %\begin{figure}
     %    \centering
     %    \include[width=\textwidth]{}
-    %    \caption{Intensitätsverteilung der $TEM_{00}$-Mode.\cite{}}
+    %    \caption{Intensitätsverteilung der \TEM{00}-Mode.\cite{}}
     %    \label{fig:tem00}
     %\end{figure}
-    Die Intensitätsverteilung der $TEM_{01}$-Mode ist in \autoref{fig:tem01} dargestellt.
+
+    Die Intensitätsverteilung der \TEM{01}-Mode ist in \autoref{fig:tem01} dargestellt.
     %\begin{figure}
     %    \centering
     %    \include[width=\textwidth]{}
-    %    \caption{Intensitätsverteilung der $TEM_{01}$-Mode.\cite{}}
+    %    \caption{Intensitätsverteilung der \TEM{01}-Mode.\cite{}}
     %    \label{fig:tem01}
     %\end{figure}
+
+    % TODO: Modenblende erklären? ↓
     Die unterschiedlichen Moden können mithilfe einer Modenblende herausgefiltert werden.
 
 \subsection{Polarisation des Lasers}
