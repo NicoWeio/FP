@@ -45,8 +45,8 @@
 
     Der Resonator besteht aus zwei semipermeablen Spiegeln und umgibt das Laserrohr,
     in dem sich aktives Medium und Energiepumpe befinden.
-    Aufgrund der Beschaffenheit der Spiegel wird ein Teil des entstehenden Lichts reflektiert,
-    während der andere Teil durch die Spiegel hindurch geht.
+    % Damit Laserlicht ausgekoppelt und nutzbar gemacht werden kann,
+    % muss mindestens einer der Spiegel einen von Null verschiedenen Transmissionsgrad aufweisen.
     Er dient dazu,
     das emittierte Licht zu reflektieren,
     sodass sich zwischen den Resonatorspiegeln eine stehende Welle ausbildet.
@@ -69,18 +69,25 @@
     \end{equation}
     berechnet,
     wobei $L$ die Resonatorlänge und $r_i$ der Radius des verwendeten Spiegels ist.
+
     Für zwei plane Spiegel mit dem Radius $r = \infty$ wäre das Produkt $g_1 \cdot g_2 = 1$ und der Resonator damit metastabil.
     Auch in diesem Fall kann der Laser trotzdem funktionieren.
+    % TODO: Zu einer Tabelle machen – was ist das für ein Monster-Satz? 😂
     Für die hier verwendeten Resonatoren,
-    bestehend aus zwei konkaven Spiegeln mit Radius $r = \SI{1400}{\milli\meter}$ im ersten Fall und einem planen und einem konkaven Spiegel mit Radius $r = \SI{1400}{\milli\meter}$ im zweiten Fall,
-    ergibt sich nach \autoref{eqn:stabilitaetsbedingung} im ersten Fall eine maximale Länge von $L_\text{konkav,konkav} = \SI{2800}{\milli\meter}$ und im zweiten Fall $L_\text{plan,konkav} = \SI{1400}{\milli\meter}$.
-    Der Verlauf der Stabilitätsbedingung $g_1 \cdot g_2$ als Funktion der Resonatorlänge $L$ ist in \autoref{fig:plt:stabilitaetsbedingung_theorie} für verschiedene Kombinationen von Spiegeln dargestellt.
+    bestehend aus zwei konkaven Spiegeln mit Radius $r_1 = r_2 = \SI{1400}{\milli\meter}$ im ersten Fall
+    und einem planen ($r_1 = \infty$) und einem konkaven Spiegel mit Radius $r_2 = \SI{1400}{\milli\meter}$ im zweiten Fall,
+    ergibt sich nach \autoref{eqn:stabilitaetsbedingung} im ersten Fall eine maximale Länge von $L_\text{konkav, konkav} = r_1 + r_2 = \SI{2800}{\milli\meter}$
+    und im zweiten Fall $L_\text{plan, konkav} = r_2 = \SI{1400}{\milli\meter}$.
+    Der Verlauf der Stabilitätsbedingung $g_1 \cdot g_2$ als Funktion der Resonatorlänge $L$ ist in \autoref{fig:plt:stabilitaetsbedingung_theorie}
+    für verschiedene Kombinationen von Spiegeln dargestellt.
+
     \begin{figure}[H]
         \centering
         \includegraphics[width=0.8\textwidth]{build/plt/2_stabilitaetsbedingung_theorie.pdf}
         \caption{Stabilitätsparameter $g_1 \cdot g_2$ in Abhängigkeit der Resonatorlänge $L$ für verschiedene Spiegelkonfigurationen.}
         \label{fig:plt:stabilitaetsbedingung_theorie}
     \end{figure}
+
 
 
 \subsection{Transversale und longitudinale Moden in einem Laser}
