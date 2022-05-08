@@ -22,8 +22,7 @@ I *= ureg.microwatt
 # Fit berechnen
 # params = tools.pint_curve_fit(calc_I, ɑ, I, (ureg.deg, ureg.microwatt)) # zu niedrig…
 # params = tools.pint_curve_fit(calc_I, ɑ, I, (1*ureg.deg, 1*ureg.microwatt), p0=(90 * ureg.deg, max(I)))
-params = tools.pint_curve_fit(calc_I, ɑ, I, (1*ureg.deg, 1*ureg.microwatt), p0=(0 * ureg.deg, max(I)))
-params = tools.pint_curve_fit(calc_I, ɑ, I*1.5, (ureg.deg, ureg.microwatt))  # ACHTUNG: Fake-Daten
+params = tools.pint_curve_fit(calc_I, ɑ, I, (1*ureg.deg, 1*ureg.microwatt, 1*ureg.microwatt), p0=(0 * ureg.deg, max(I), 0 * ureg.microwatt))
 print(f"params: {params}")
 nominal_params = [tools.nominal_value(p) for p in params]
 print(f"nominal_params: {nominal_params}")
