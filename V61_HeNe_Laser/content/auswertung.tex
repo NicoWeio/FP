@@ -30,22 +30,86 @@ Hierbei ist zu beachten, dass bei Gleichheit nur noch ein metastabiler Zustand v
 
 
 \subsection{TEM-Moden}
-% Aufgabe 2 in der Versuchsanleitung
-\lipsum[1]
+% Aufgabe TODO in der Versuchsanleitung
 
-\begin{figure}
+\subsubsection{\TEM{00}-Mode}
+Die Lichtintensität der \TEM{00}-Mode wird (bei Betrachtung senkrecht zur Strahlachse) durch eine Gauß-Funktion beschrieben.
+Um die gemessene Intensitätsverteilung sinnvoll mit der theoretischen zu vergleichen,
+werden dabei zusätzliche Parameter für Hintergrund und Verschiebung der Strahlachse eingesetzt.
+Daraus ergibt sich \autoref{eqn:tem00_fitfn},
+deren Parameter mithilfe von \texttt{scipy.optimize.curve\_fit} an die Messwerte angepasst werden.
+
+\begin{equation}
+  I_\text{max} \cdot \exp \left( \frac{-(r - r_0)^2}{2ω^2} \right) + I_0
+  \label{eqn:tem00_fitfn}
+\end{equation}
+
+
+% \begin{description}
+%   \item[$I_\text{max}$] maximale Intensität
+%   \item[$I_0$] Hintergrund, beispielsweise durch Streulicht
+%   \item[$r_0$] Mittelpunkt des Laserstrahls % bzw. Verschiebung von Strahlachse
+%   \item[$ω$] Breite der Gauß-Verteilung
+% \end{description}
+
+Es ergeben sich die folgenden Parameter:
+\begin{align*}
+  I_\text{max} &= \SI{131.5 \pm 1.1}{\micro\watt}
+  \tag{maximale Intensität}
+  \\
+  I_0 &= \SI{1.7 \pm 0.5}{\micro\watt}
+  \tag{Hintergrund, beispielsweise durch Streulicht}
+  \\
+  r_0 &= \SI{0.082 \pm 0.018}{\milli\meter}
+  \tag{Mittelpunkt des Laserstrahls} % bzw. Verschiebung von Strahlachse
+  \\
+  ω &= \SI{1.968 \pm 0.021}{\milli\meter} % Vorzeichen ist irrelevant!
+  \tag{Breite der Gauß-Verteilung}
+  \\
+\end{align*}
+
+\begin{figure}[H]
   \centering
    \includegraphics[width=\textwidth]{build/plt/3_tem_00.pdf}
    \caption{Lichtintensität in Abhängigkeit der Distanz zur optischen Achse für die \TEM{00}-Mode.}
    \label{fig:plt:tem_00}
 \end{figure}
 
-\begin{figure}
+\subsubsection{\TEM{01}-Mode}
+Die Lichtintensität der \TEM{01}-Mode wird (bei Betrachtung senkrecht zur Strahlachse) durch \autoref{eqn:tem01_fitfn} beschrieben,
+wenn wieder zusätzliche Parameter für Hintergrund und Verschiebung der Strahlachse eingesetzt werden.
+Das Anpassen der Parameter an die Messwerte erfolgt erneut mit \texttt{scipy.optimize.curve\_fit}.
+
+\begin{equation}
+  I_\text{max} \cdot
+  \frac{4(r - r_0)^2}{ω^2} \cdot
+  \exp \left( \frac{-(r - r_0)^2}{2ω^2} \right) + I_0
+  \label{eqn:tem01_fitfn}
+\end{equation}
+
+Es ergeben sich die folgenden Parameter:
+\begin{align*}
+  I_\text{max} &= \SI{3.10 \pm 0.08}{\micro\watt}
+  \tag{maximale Intensität}
+  \\
+  I_0 &= \SI{1.13 \pm 0.09}{\micro\watt}
+  \tag{Hintergrund, beispielsweise durch Streulicht}
+  \\
+  r_0 &= \SI{0.304 \pm 0.024}{\milli\meter}
+  \tag{Mittelpunkt des Laserstrahls} % bzw. Verschiebung von Strahlachse
+  \\
+  ω &= \SI{1.141 \pm 0.017}{\milli\meter} % Vorzeichen ist irrelevant!
+  \tag{Breite der Gauß-Verteilung}
+  \\
+\end{align*}
+
+\begin{figure}[H]
   \centering
    \includegraphics[width=\textwidth]{build/plt/3_tem_01.pdf}
    \caption{Lichtintensität in Abhängigkeit der Distanz zur optischen Achse für die \TEM{01}-Mode.}
    \label{fig:plt:tem_01}
 \end{figure}
+
 
 
 \subsection{Polarisation}

@@ -1,10 +1,12 @@
-import tools
-import pint
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import pint
+import rich
+from rich.console import Console
+import tools
 ureg = pint.UnitRegistry()
 ureg.setup_matplotlib()
-
+console = Console()
 
 def calc_I_TEM00(
     r,  # Parameter
@@ -37,6 +39,7 @@ DATA = [
 ]
 
 for setup in DATA:
+    console.rule(setup['name'])
     # Daten einlesen
     r, I = np.genfromtxt(setup['path'], delimiter=',', skip_header=1, unpack=True)
     r *= ureg('mm')
