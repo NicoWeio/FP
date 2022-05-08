@@ -29,8 +29,9 @@
        \label{fig:absorption_emission}
     \end{figure}
     Aufgrund der Maxwell-verteilten Besetzung der Elektronen in einem Zwei-Niveau-System kann in diesem System keine Besetzungsinversion erreicht werden;
-    für einen Laser sind also mehr als zwei Niveaus erforderlich.\\
-    \\
+    für einen Laser sind also mehr als zwei Niveaus erforderlich.
+
+
     Im Falle des He-Ne-Lasers wird das aktive Medium durch Neon realisiert,
     die Energiepumpe durch Helium-Atome,
     welche zu Beginn durch Stöße mit Elektronen angeregt werden und die überschüssige Energie bei einem Stoß zweiter Art an die Neon-Atome übertragen.
@@ -51,31 +52,32 @@
     sodass sich zwischen den Resonatorspiegeln eine stehende Welle ausbildet.
     Der Resonator soll aufgrunddessen einen selbstschwingenden Oszillator bilden,
     da das Licht der stehenden Welle wieder auf die Neon-Atome trifft und so selbst wieder Atome anregt.
-    Dieses Phänomen wird Absorption genannt und ist ebenfalls in \autoref{fig:absorption_emission} dargestellt.\\
+    Dieses Phänomen wird Absorption genannt und ist ebenfalls in \autoref{fig:absorption_emission} dargestellt.
+
     Damit der Resonator eine stehende Welle ausbilden kann,
     also stabil ist,
     muss die \textit{Stabilitätsbedingung}
     \begin{equation}
-        0 < g_i \cdot g_j < 1
+        0 < g_1 \cdot g_2 < 1
         \label{eqn:stabilitaetsbedingung}
     \end{equation}
     erfüllt sein.
-    Die Parameter $g_i, g_j$ werden mithilfe von
+    Die Parameter $g_1, g_2$ werden mithilfe von
     \begin{equation}
-        g = 1 - \frac{L}{r_i}
+        g_i = 1 - \frac{L}{r_i}
         \label{eqn:stabilitaetsparameter}
     \end{equation}
     berechnet,
     wobei $L$ die Resonatorlänge und $r_i$ der Radius des verwendeten Spiegels ist.
-    Für zwei plane Spiegel mit dem Radius $r = \infty$ wäre das Produkt $g_ig_j = 1$ und der Resonator damit metastabil.
+    Für zwei plane Spiegel mit dem Radius $r = \infty$ wäre das Produkt $g_1 \cdot g_2 = 1$ und der Resonator damit metastabil.
     Auch in diesem Fall kann der Laser trotzdem funktionieren.
     Für die hier verwendeten Resonatoren,
     bestehend aus zwei konkaven Spiegeln mit Radius $r = \SI{1400}{\milli\meter}$ im ersten Fall und einem planen und einem konkaven Spiegel mit Radius $r = \SI{1400}{\milli\meter}$ im zweiten Fall,
     ergibt sich nach \autoref{eqn:stabilitaetsbedingung} im ersten Fall eine maximale Länge von $L_\text{konkav,konkav} = \SI{2800}{\milli\meter}$ und im zweiten Fall $L_\text{plan,konkav} = \SI{1400}{\milli\meter}$.
-    Der Verlauf der Stabilitätsbedingung $g_i \cdot g_j$ als Funktion der Resonatorlänge $L$ ist in \autoref{fig:plt:stabilitaetsbedingung_theorie} für verschiedene Kombinationen von Spiegeln dargestellt.
+    Der Verlauf der Stabilitätsbedingung $g_1 \cdot g_2$ als Funktion der Resonatorlänge $L$ ist in \autoref{fig:plt:stabilitaetsbedingung_theorie} für verschiedene Kombinationen von Spiegeln dargestellt.
     \begin{figure}[H]
         \centering
-        \includegraphics[width=\textwidth]{build/plt/2_stabilitaetsbedingung_theorie.pdf}
+        \includegraphics[width=0.8\textwidth]{build/plt/2_stabilitaetsbedingung_theorie.pdf}
         \caption{Stabilitätsparameter $g_1 \cdot g_2$ in Abhängigkeit der Resonatorlänge $L$ für verschiedene Spiegelkonfigurationen.}
         \label{fig:plt:stabilitaetsbedingung_theorie}
     \end{figure}
@@ -88,9 +90,11 @@
     die aus longitudinalen und transversalen Moden besteht.
     Longitudinale Moden sind dabei längs der Ausbreitungsrichtung,
     die transversalen Moden senkrecht zur Ausbreitungsrichtung.
-    Die transversalen Moden werden auch \TEM{mn}-Moden genannt,
-    \enquote{Transversal electromagnetic}.
-    Der Index $mn$ bezeichnet die Anzahl der Knoten in der hier $xy$-Ebene.\\
+    Die transversalen Moden werden auch als \TEM{mn}-Moden (englisch \enquote{\textbf{t}ransversal \textbf{e}lectro\textbf{m}agnetic}) bezeichnet.
+    Der Index $mn$ bezeichnet die Anzahl der Knoten in der transversalen Ebene.
+    % TODO: Modenblende erklären? ↓
+    Die unterschiedlichen Moden können mithilfe einer Modenblende herausgefiltert werden.
+
     In diesem Versuch sollen die \TEM{00}- und die \TEM{01}-Mode untersucht werden.
     Die \TEM{00}-Mode wird auch als \textit{Fundamentalmode} bezeichnet.
     Ihre Intensitätsverteilung hat die Form einer (zweidimensionalen) Gauß-Kurve,
