@@ -1,6 +1,8 @@
 all: build/main.pdf
 
 plots: \
+	build/plt/tem_00.png \
+	build/plt/tem_10.png \
 	build/plt/2_stabilitaetsbedingung.pdf \
 	build/plt/2_stabilitaetsbedingung_theorie.pdf \
 	build/plt/3_tem_00.pdf \
@@ -10,6 +12,9 @@ plots: \
 tables: \
 	build/tab/3_tem_00.tex \
 	build/tab/3_tem_01.tex \
+
+build/plt/tem_% &: 0_tem_moden_theorie.py | build/plt
+	MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: BUILD=true python 0_vorbereitung.py
 
 build/plt/2_stabilitaetsbedingung_theorie.pdf: 0_vorbereitung.py | build/plt
 	MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: BUILD=true python 0_vorbereitung.py
