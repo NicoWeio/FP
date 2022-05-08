@@ -3,15 +3,24 @@
 
 \subsection{Stabilitätsbedingung}
 % Aufgabe 2 in der Versuchsanleitung
-\lipsum[1]
+
+In \autoref{sec:stabilitaet} wurde anhand der \hyperref[eqn:stabilitaetsbedingung]{Stabilitätsbedingung} die maximale theoretische Resonatorlänge berechnet.
+Um diese experimentell zu überprüfen,
+wird die Intensität des Lasers für verschiedene Resonatorlängen und Spiegelkonfigurationen gemessen.
+In \autoref{fig:plt:stabilitaetsbedingung} sind diese Messwerte dargestellt.
+% TODO: Tabelle
+
+Dabei ist zu beachten, dass diejenigen Resonatorlängen, bei denen kein Lasern einsetzte, nicht angegeben sind.
+Andererseits waren aufgrund der begrenzten Länge der optischen Bank keine größeren Resonatorlängen als etwa \SI{212.8}{\centi\meter} möglich.
 
 \begin{figure}
   \centering
-   \includegraphics[width=\textwidth]{build/plt/2_stabilitaetsbedingung_theorie.pdf}
-   \caption{Stabilitätsparameter $g_1 \cdot g_2$ in Abhängigkeit der Resonatorlänge $L$ für verschiedene Spiegelkonfigurationen.}
-   \label{fig:plt:stabilitaetsbedingung_theorie}
+   \includegraphics[width=\textwidth]{build/plt/2_stabilitaetsbedingung.pdf}
+   \caption{Intensität $I$ in Abhängigkeit der Resonatorlänge $L$ für verschiedene Spiegelkonfigurationen.}
+   \label{fig:plt:stabilitaetsbedingung}
 \end{figure}
 
+% TODO: Mit Theorie-Abschnitt vereinigen
 Durch Lösen von \autoref{eqn:TODO} können die theoretisch größtmöglichen Resonatorlängen $L$ bestimmt werden.
 Hierbei ist zu beachten, dass bei Gleichheit nur noch ein metastabiler Zustand vorliegt.
 \begin{align*}

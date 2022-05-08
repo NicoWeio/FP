@@ -9,10 +9,12 @@ DATA = [
     {
         'path': 'dat/2_stabilitaetsbedingung_plan_konkav.csv',
         'label': 'plan + konkav',
+        'max_theo': 1400 * ureg.mm,
     },
     {
         'path': 'dat/2_stabilitaetsbedingung_konkav_konkav.csv',
         'label': 'konkav + konkav',
+        'max_theo': (1400+1400) * ureg.mm,
     },
 ]
 
@@ -26,7 +28,7 @@ def sort_xy(x, y):  # TODO: Auslagern in Tools
 
 
 with tools.plot_context(plt, 'cm', 'mW', 'L', 'I') as plt2:
-    for setup in DATA:
+    for index, setup in enumerate(DATA):
         L, I = np.genfromtxt(setup['path'], delimiter=',', skip_header=1, unpack=True)
         L *= ureg('cm')
         I *= ureg.mW
@@ -34,6 +36,7 @@ with tools.plot_context(plt, 'cm', 'mW', 'L', 'I') as plt2:
         L, I = sort_xy(L, I)
 
         plt2.plot(L, I, '--o', zorder=5, label=setup['label'])
+        plt.axvline(x=setup['max_theo'].to('cm'), linestyle='-', color=f'C{index}', label='↪ theoretisches Maximum')
 
 plt.grid()
 plt.legend()
