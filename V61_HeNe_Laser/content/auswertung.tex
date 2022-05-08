@@ -2,6 +2,7 @@
 \label{sec:auswertung}
 
 \subsection{Stabilitätsbedingung}
+\label{sec:auswertung:stabilitaetsbedingung}
 % Aufgabe 2 in der Versuchsanleitung
 
 In \autoref{sec:stabilitaet} wurde anhand der \hyperref[eqn:stabilitaetsbedingung]{Stabilitätsbedingung} die maximale theoretische Resonatorlänge berechnet.
@@ -30,6 +31,7 @@ Hierbei ist zu beachten, dass bei Gleichheit nur noch ein metastabiler Zustand v
 
 
 \subsection{TEM-Moden}
+\label{sec:auswertung:tem_moden}
 % Aufgabe TODO in der Versuchsanleitung
 
 \subsubsection{\TEM{00}-Mode}
@@ -38,6 +40,8 @@ Um die gemessene Intensitätsverteilung sinnvoll mit der theoretischen zu vergle
 werden dabei zusätzliche Parameter für Hintergrund und Verschiebung der Strahlachse eingesetzt.
 Daraus ergibt sich \autoref{eqn:tem00_fitfn},
 deren Parameter mithilfe von \texttt{scipy.optimize.curve\_fit} an die Messwerte angepasst werden.
+% TODO: Formulierung ↓
+\autoref{fig:plt:tem_00} stellt Messwerte und Theoriekurve dar; die zugrundeliegenden Daten sind in \autoref{tab:mess_tem_00} aufgeführt.
 
 \begin{equation}
   I_\text{max} \cdot \exp \left( \frac{-(r - r_0)^2}{2ω^2} \right) + I_0
@@ -45,12 +49,19 @@ deren Parameter mithilfe von \texttt{scipy.optimize.curve\_fit} an die Messwerte
 \end{equation}
 
 
-% \begin{description}
-%   \item[$I_\text{max}$] maximale Intensität
-%   \item[$I_0$] Hintergrund, beispielsweise durch Streulicht
-%   \item[$r_0$] Mittelpunkt des Laserstrahls % bzw. Verschiebung von Strahlachse
-%   \item[$ω$] Breite der Gauß-Verteilung
-% \end{description}
+\begin{table}
+  \centering
+  \caption{Messwerte zur Lichtintensität in Abhängigkeit der Distanz zur optischen Achse für die \TEM{00}-Mode.}
+  \label{tab:mess_tem_00}
+  \begin{tabular}{S S}
+  \toprule
+  {$r \mathbin{/} \si{\milli\meter}$} &
+  {$I \mathbin{/} \si{\micro\watt}$} \\
+  \midrule
+  \expandableinput{build/tab/3_tem_00.tex}
+  \bottomrule
+  \end{tabular}
+\end{table}
 
 Es ergeben sich die folgenden Parameter:
 \begin{align*}
@@ -71,7 +82,7 @@ Es ergeben sich die folgenden Parameter:
 \begin{figure}[H]
   \centering
    \includegraphics[width=\textwidth]{build/plt/3_tem_00.pdf}
-   \caption{Lichtintensität in Abhängigkeit der Distanz zur optischen Achse für die \TEM{00}-Mode.}
+   \caption{Lichtintensität $I$ in Abhängigkeit der Distanz $r$ zur optischen Achse für die \TEM{00}-Mode.}
    \label{fig:plt:tem_00}
 \end{figure}
 
@@ -106,7 +117,7 @@ Es ergeben sich die folgenden Parameter:
 \begin{figure}[H]
   \centering
    \includegraphics[width=\textwidth]{build/plt/3_tem_01.pdf}
-   \caption{Lichtintensität in Abhängigkeit der Distanz zur optischen Achse für die \TEM{01}-Mode.}
+   \caption{Lichtintensität $I$ in Abhängigkeit der Distanz $r$ zur optischen Achse für die \TEM{01}-Mode.}
    \label{fig:plt:tem_01}
 \end{figure}
 
@@ -118,7 +129,7 @@ Es ergeben sich die folgenden Parameter:
 \begin{figure}
   \centering
    \includegraphics[width=\textwidth]{build/plt/4_polarisation.pdf}
-   \caption{Lichtintensität in Abhängigkeit der Winkeleinstellung $\alpha$ des Polarisationsfilters.}
+   \caption{Lichtintensität $I$ in Abhängigkeit der Winkeleinstellung $\alpha$ des Polarisationsfilters.}
    \label{fig:plt:polarisation}
 \end{figure}
 
@@ -129,5 +140,6 @@ Es ergeben sich die folgenden Parameter:
 
 
 \subsection{Wellenlänge}
+\label{sec:auswertung:wellenlaenge}
 \lipsum[1]
 
