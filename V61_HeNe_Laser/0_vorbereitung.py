@@ -6,16 +6,10 @@ ureg = pint.UnitRegistry()
 ureg.setup_matplotlib()
 
 
-
-
-# with tools.plot_context(plt, 'A', 'dimensionless', 'I', 'dimensionless') as plt2:
-    # plt2.plot(I, B, 'x', zorder=5, label='Messwerte')
-    # plt2.plot(I, tools.nominal_values(slope*I+intercept), label='Regressionsgerade')
-
-
 def calc_g(L, r):
     """Resonatorparameter"""
     return 1 - L/r
+
 
 MIRRORS = [
     {
@@ -50,4 +44,4 @@ plt.grid()
 plt.legend()
 plt.tight_layout()
 plt.savefig('build/plt/2_stabilitaetsbedingung_theorie.pdf')
-plt.show()
+# plt.show()
