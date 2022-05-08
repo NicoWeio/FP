@@ -39,7 +39,7 @@ Die Lichtintensität der \TEM{00}-Mode wird (bei Betrachtung senkrecht zur Strah
 Um die gemessene Intensitätsverteilung sinnvoll mit der theoretischen zu vergleichen,
 werden dabei zusätzliche Parameter für Hintergrund und Verschiebung der Strahlachse eingesetzt.
 Daraus ergibt sich \autoref{eqn:tem00_fitfn},
-deren Parameter mithilfe von \texttt{scipy.optimize.curve\_fit} an die Messwerte angepasst werden.
+deren Parameter mithilfe von \scipycurvefit an die Messwerte angepasst werden.
 % TODO: Formulierung ↓
 \autoref{fig:plt:tem_00} stellt Messwerte und Theoriekurve dar; die zugrundeliegenden Daten sind in \autoref{tab:mess_tem_00} aufgeführt.
 
@@ -89,7 +89,7 @@ Es ergeben sich die folgenden Parameter:
 \subsubsection{\TEM{01}-Mode}
 Die Lichtintensität der \TEM{01}-Mode wird (bei Betrachtung senkrecht zur Strahlachse) durch \autoref{eqn:tem01_fitfn} beschrieben,
 wenn wieder zusätzliche Parameter für Hintergrund und Verschiebung der Strahlachse eingesetzt werden.
-Das Anpassen der Parameter an die Messwerte erfolgt erneut mit \texttt{scipy.optimize.curve\_fit}.
+Das Anpassen der Parameter an die Messwerte erfolgt erneut mit \scipycurvefit.
 
 \begin{equation}
   I_\text{max} \cdot
