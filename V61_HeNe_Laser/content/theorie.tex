@@ -93,25 +93,25 @@
     Der Index $mn$ bezeichnet die Anzahl der Knoten in der hier $xy$-Ebene.\\
     In diesem Versuch sollen die \TEM{00}- und die \TEM{01}-Mode untersucht werden.
     Die \TEM{00}-Mode wird auch als \textit{Fundamentalmode} bezeichnet.
-    Ihre Intensitätsverteilung hat die Form einer Gauß-Kurve,
-    wie in \autoref{fig:tem00} erkennbar.
-    %TODO: Ich dachte hier an die Abb. aus dem Demtröder, S.170, Abb 5.8
-    %Könnte dann auch eine Abbildung werden.
-    %\begin{figure}
-    %    \centering
-    %    \include[width=\textwidth]{}
-    %    \caption{Intensitätsverteilung der \TEM{00}-Mode.\cite{}}
-    %    \label{fig:tem00}
-    %\end{figure}
+    Ihre Intensitätsverteilung hat die Form einer (zweidimensionalen) Gauß-Kurve,
+    wie in \autoref{fig:theorie:tem_00} erkennbar ist.
+    Die Intensitätsverteilung der \TEM{01}-Mode ist in \autoref{fig:theorie:tem_01} dargestellt.
 
-    Die Intensitätsverteilung der \TEM{01}-Mode ist in \autoref{fig:tem01} dargestellt.
-    %\begin{figure}
-    %    \centering
-    %    \include[width=\textwidth]{}
-    %    \caption{Intensitätsverteilung der \TEM{01}-Mode.\cite{}}
-    %    \label{fig:tem01}
-    %\end{figure}
-
-    % TODO: Modenblende erklären? ↓
-    Die unterschiedlichen Moden können mithilfe einer Modenblende herausgefiltert werden.
-
+    \begin{figure}
+    \centering
+    \begin{subfigure}{.5\textwidth}
+        \centering
+        \includegraphics[width=.5\linewidth]{build/plt/tem_00.png}
+        \caption{\TEM{00}}
+        \label{fig:theorie:tem_00}
+    \end{subfigure}%
+    \begin{subfigure}{.5\textwidth}
+        \centering
+        % Ja, wirklich 10, nicht 01. So stimmt es mit Wikipedia und unserer Beobachtung überein. In der Versuchsanleitung steht es aber anders herum.
+        \includegraphics[width=.5\linewidth]{build/plt/tem_10.png}
+        \caption{\TEM{01}}
+        \label{fig:theorie:tem_01}
+    \end{subfigure}
+    \caption{Intensitätsverteilungen für verschiedene \TEM{}-Moden.}
+    \label{fig:theorie:tem}
+    \end{figure}
