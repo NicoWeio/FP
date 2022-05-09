@@ -10,16 +10,16 @@ console = Console()
 
 DATA = [
     {
+        'g': ureg('80 / mm'),
+        'e': ureg('63.0 cm'),
+    },
+    {
         'g': ureg('100 / mm'),  # Spalte pro Längeneinheit
         'e': ureg('90.5 cm'),  # Abstand Gitter—Schirm
     },
     {
         'g': ureg('600 / mm'),
-        'e': ureg('90.5 cm'),
-    },
-    {
-        'g': ureg('80 / mm'),
-        'e': ureg('63.0 cm'),
+        'e': ureg('30.7 cm'),
     },
     {
         'g': ureg('1200 / mm'),
