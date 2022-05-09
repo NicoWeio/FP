@@ -65,8 +65,8 @@ def pint_polyfit(x, y, deg):
 def pintify(list):
     assert len(list) > 0
     units = list[0].units
-    assert all(e.units == units for e in list)
-    return [e.m for e in list] * units
+    # assert all(e.units == units for e in list)
+    return [e.to(units).m for e in list] * units
 
 
 def uarray(nominal_values, std_devs):
