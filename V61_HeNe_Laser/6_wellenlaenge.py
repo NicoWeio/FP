@@ -35,18 +35,18 @@ for data in DATA:
     a_k *= ureg.cm  # Distanz vom Hauptmaximum
     print(f"({len(a_k)} Werte)")
 
-    # https://www.leifiphysik.de/optik/beugung-und-interferenz/grundwissen/vielfachspalt-und-gitter
-
-    d = 1 / data['g']  # Spaltabstand
-    e = ureg('90.5 cm')  # Abstand Gitter—Schirm
-
     # 0-Werte rauswerfen
     a_k = a_k[k != 0]
     k = k[k != 0]
 
-    # TODO: exakte Formel
-    # Näherung:
+    # https://www.leifiphysik.de/optik/beugung-und-interferenz/grundwissen/vielfachspalt-und-gitter
+    d = 1 / data['g']  # Spaltabstand
+    e = ureg('90.5 cm')  # Abstand Gitter—Schirm
 
-    all_λ = d * a_k / (k * e)
-    λ = abs(all_λ).mean().to('nm')
+    # Näherung:
+    # all_λ = d * a_k / (k * e)
+    # exakte Formel:
+    all_λ = d * a_k / (k * np.sqrt(e**2 + a_k**2))
+
+    λ = tools.ufloat_from_list(abs(all_λ).to('nm'))
     print(tools.fmt_compare_to_ref(λ, λ_lit))
