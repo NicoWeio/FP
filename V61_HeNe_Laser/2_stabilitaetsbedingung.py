@@ -1,7 +1,8 @@
-import tools
+from generate_table import generate_table_pint
 import matplotlib.pyplot as plt
 import numpy as np
 import pint
+import tools
 ureg = pint.UnitRegistry()
 ureg.setup_matplotlib()
 
@@ -32,8 +33,13 @@ with tools.plot_context(plt, 'cm', 'mW', 'L', 'I') as plt2:
         L, I = np.genfromtxt(setup['path'], delimiter=',', skip_header=1, unpack=True)
         L *= ureg('cm')
         I *= ureg.mW
-
         L, I = sort_xy(L, I)
+
+        # Tabelle erzeugen
+        generate_table_pint(
+            f"build/tab/2_stabilitaetsbedingung_{setup['label'].replace(' + ', '_')}.tex",
+            ('L', ureg.cm, L, 1), ('I', ureg.mW, I, 1)
+        )
 
         plt2.plot(L, I, '--o', zorder=5, label=setup['label'])
         plt.axvline(x=setup['max_theo'].to('cm'), linestyle='-', color=f'C{index}', label='↪ theoretisches Maximum')
