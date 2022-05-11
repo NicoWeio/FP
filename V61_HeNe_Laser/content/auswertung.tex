@@ -8,7 +8,7 @@
 In \autoref{sec:stabilitaet} wurde anhand der \hyperref[eqn:stabilitaetsbedingung]{Stabilitätsbedingung} die maximale theoretische Resonatorlänge berechnet.
 Um diese experimentell zu überprüfen,
 wird die Intensität des Lasers für verschiedene Resonatorlängen und Spiegelkonfigurationen gemessen.
-\autoref{fig:plt:stabilitaetsbedingung} stellt diese Messwerte dar; die zugrundeliegenden Daten sind in \autoref{fig:tab:stabilitaetsbedingung} aufgeführt.
+\autoref{fig:plt:stabilitaetsbedingung} stellt diese Messwerte dar; die zugrundeliegenden Daten sind in \autoref{tab:stabilitaetsbedingung} aufgeführt.
 % In \autoref{fig:plt:stabilitaetsbedingung} sind diese Messwerte dargestellt.
 
 Es ist zu beachten, dass diejenigen Resonatorlängen, bei denen kein Lasern einsetzte, nicht angegeben sind.
@@ -24,17 +24,17 @@ Andererseits waren aufgrund der begrenzten Länge der optischen Bank keine grö�
 \begin{table}
 \centering
 \caption{Messwerte zur Lichtintensität $I$ in Abhängigkeit der Resonatorlänge $L$ für verschiedene Spiegelkonfigurationen.}
-\label{fig:tab:stabilitaetsbedingung}
-\begin{subfigure}{.5\textwidth}
+\label{tab:stabilitaetsbedingung}
+\begin{subtable}{.5\textwidth}
     \centering
     \caption{\enquote{konkav + konkav}}
     \expandableinput{build/tab/2_stabilitaetsbedingung_konkav_konkav.tex}
-\end{subfigure}%
-\begin{subfigure}{.5\textwidth}
+\end{subtable}%
+\begin{subtable}{.5\textwidth}
     \centering
     \caption{\enquote{plan + konkav}}
     \expandableinput{build/tab/2_stabilitaetsbedingung_plan_konkav.tex}
-\end{subfigure}
+\end{subtable}
 \end{table}
 
 
@@ -90,13 +90,6 @@ Es ergeben sich die folgenden Parameter:
    \label{fig:plt:tem_00}
 \end{figure}
 
-\begin{table}
-  \centering
-  \caption{Messwerte zur Lichtintensität in Abhängigkeit der Distanz zur optischen Achse für die \TEM{00}-Mode.}
-  \label{tab:mess_tem_00}
-  \expandableinput{build/tab/3_tem_00.tex}
-\end{table}
-
 
 \subsubsection{\TEM{01}-Mode}
 Die Lichtintensität der \TEM{01}-Mode wird (bei Betrachtung senkrecht zur Strahlachse) durch \autoref{eqn:tem01_fitfn} beschrieben,
@@ -136,11 +129,23 @@ Es ergeben sich die folgenden Parameter:
    \label{fig:plt:tem_01}
 \end{figure}
 
-\begin{table}
-  \centering
-  \caption{Messwerte zur Lichtintensität in Abhängigkeit der Distanz zur optischen Achse für die \TEM{01}-Mode.}
-  \label{tab:mess_tem_01}
-  \expandableinput{build/tab/3_tem_01.tex}
+% --- für TEM00 und TEM01 ↓
+\begin{table}[H]
+\centering
+\caption{Messwerte zur Lichtintensität in Abhängigkeit der Distanz zur optischen Achse für verschiedene \TEM{}-Moden.}
+\label{tab:mess_tem}
+\begin{subtable}{.5\textwidth}
+    \centering
+    \caption{\TEM{00}}
+    \label{tab:mess_tem_00}
+    \expandableinput{build/tab/3_tem_00.tex}
+\end{subtable}%
+\begin{subtable}{.5\textwidth}
+    \centering
+    \caption{\TEM{01}}
+    \label{tab:mess_tem_01}
+    \expandableinput{build/tab/3_tem_01.tex}
+\end{subtable}
 \end{table}
 
 
