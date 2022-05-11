@@ -53,14 +53,7 @@ deren Parameter mithilfe von \scipycurvefit an die Messwerte angepasst werden.
   \centering
   \caption{Messwerte zur Lichtintensität in Abhängigkeit der Distanz zur optischen Achse für die \TEM{00}-Mode.}
   \label{tab:mess_tem_00}
-  \begin{tabular}{S S}
-  \toprule
-  {$r \mathbin{/} \si{\milli\meter}$} &
-  {$I \mathbin{/} \si{\micro\watt}$} \\
-  \midrule
   \expandableinput{build/tab/3_tem_00.tex}
-  \bottomrule
-  \end{tabular}
 \end{table}
 
 Es ergeben sich die folgenden Parameter:
@@ -97,6 +90,13 @@ Das Anpassen der Parameter an die Messwerte erfolgt erneut mit \scipycurvefit.
   \exp \left( \frac{-(r - r_0)^2}{2ω^2} \right) + I_0
   \label{eqn:tem01_fitfn}
 \end{equation}
+
+\begin{table}
+  \centering
+  \caption{Messwerte zur Lichtintensität in Abhängigkeit der Distanz zur optischen Achse für die \TEM{01}-Mode.}
+  \label{tab:mess_tem_01}
+  \expandableinput{build/tab/3_tem_01.tex}
+\end{table}
 
 Es ergeben sich die folgenden Parameter:
 \begin{align*}

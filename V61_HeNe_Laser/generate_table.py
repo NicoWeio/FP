@@ -8,21 +8,35 @@ class StringFormatter():
         return str(value)
 
 
-class PintFormatter():
-    def __init__(self, unit):
+class PintFormatter:
+    def __init__(self, unit, decimals=1):
         self.unit = unit
+        self.decimals = decimals
 
     def __call__(self, value):
         magnitude = value.to(self.unit).m
-        return f'{magnitude:.2f}'
+        # return f'{magnitude:.2f}'
+        return '{0:.{decimals}f}'.format(magnitude, decimals=self.decimals)
 
 
 class Column:
     # name = '?'
 
-    def __init__(self, data, formatter=None):
-        self.data = data
-        self.formatter = formatter or StringFormatter()
+    def __init__(self, input_tuple):
+        self.name: str = input_tuple[0]
+        self.unit: pint.Unit = input_tuple[1]
+        self.data = input_tuple[2]
+        if len(input_tuple) == 4:
+            assert isinstance(input_tuple[3], int)
+            self.formatter = PintFormatter(self.unit, decimals=input_tuple[3])
+        else:
+            self.formatter = PintFormatter(self.unit)
+
+        # verify input
+
+        if isinstance(self.unit, pint.Quantity) and self.unit.magnitude == 1:
+            raise TypeError(f'"{self.unit}" is not a pint.Unit. Hint: Use ureg.… instead of ureg("…")')
+        assert isinstance(self.unit, pint.Unit), f'"{self.unit}" is not a pint.Unit'
 
     def get_cell(self, row_index):
         cell_data = self.data[row_index]
@@ -64,31 +78,16 @@ def generate_table_content(*columns):
 
 
 def generate_table_pint(filename, *column_tuples):
-    names, units, raw_columns = zip(*column_tuples, strict=True)
-
-    # verify input
-    assert all(isinstance(n, str) for n in names)
-    assert all(isinstance(c, pint.Quantity) for c in raw_columns)
-    for u in units:
-        if isinstance(u, pint.Quantity) and u.magnitude == 1:
-            raise TypeError(f'"{u}" is not a pint.Unit. Hint: Use ureg.… instead of ureg("…")')
-        assert isinstance(u, pint.Unit), f'"{u}" is not a pint.Unit'
-    assert all(isinstance(u, pint.Unit) for u in units)
-
-    # generate output
-
-    formatters = [PintFormatter(u) for c, u in zip(raw_columns, units)]
-    columns = [Column(data=c, formatter=f) for c, f in zip(raw_columns, formatters)]
+    columns = [Column(ct) for ct in column_tuples]
 
     coltypes = ['S' for c in columns]  # TODO
-    units_siunitx = [f'{u:Lx}' for u in units]
 
     output = []
     output += [r"\begin{tabular}{" f"{' '.join(coltypes)}" "}"]
     output += [r"\toprule"]
     foo = [
-        f'${name}' r' \mathbin{/} ' f'{unit}$'
-        for name, unit in zip(names, units_siunitx)
+        f'${c.name}' r' \mathbin{/} ' f'{c.unit:Lx}$'
+        for c in columns
     ]
     output += [" & \n".join(foo) + r" \\"]
 
@@ -100,6 +99,7 @@ def generate_table_pint(filename, *column_tuples):
     final_output = '\n'.join(output)
 
     # write output
+
     with open(filename, 'w') as f:
         f.write(final_output)
 

@@ -49,7 +49,7 @@ for setup in DATA:
     calc_I = setup['calc_I']
 
     # Tabelle erzeugen
-    generate_table_pint(f"build/tab/3_{setup['name']}.tex", ('r', ureg.mm, r), ('I', ureg.microwatt, I))
+    generate_table_pint(f"build/tab/3_{setup['name']}.tex", ('r', ureg.mm, r, 0), ('I', ureg.microwatt, I, 1))
 
     # Fit berechnen
     params = tools.pint_curve_fit(calc_I, r, I, (ureg.microwatt, ureg.microwatt, ureg.mm, ureg.mm))
