@@ -1,6 +1,6 @@
 all: build/main.pdf
 
-plots: \
+PLOTS = \
 	build/plt/tem_00.png \
 	build/plt/tem_10.png \
 	build/plt/2_stabilitaetsbedingung.pdf \
@@ -9,7 +9,9 @@ plots: \
 	build/plt/3_tem_01.pdf \
 	build/plt/4_polarisation.pdf \
 
-tables: \
+TABLES = \
+	build/tab/2_stabilitaetsbedingung_konkav_konkav.tex \
+	build/tab/2_stabilitaetsbedingung_plan_konkav.tex \
 	build/tab/3_tem_00.tex \
 	build/tab/3_tem_01.tex \
 
@@ -19,7 +21,10 @@ build/plt/tem_% &: 0_tem_moden_theorie.py | build/plt
 build/plt/2_stabilitaetsbedingung_theorie.pdf: 0_vorbereitung.py | build/plt
 	MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: BUILD=true python 0_vorbereitung.py
 
-build/plt/2_stabilitaetsbedingung.pdf: 2_stabilitaetsbedingung.py $(wildcard dat/2_stabilitaetsbedingung_*.csv) | build/plt
+build/plt/2_stabilitaetsbedingung.pdf \
+build/tab/2_stabilitaetsbedingung_konkav_konkav.tex \
+build/tab/2_stabilitaetsbedingung_plan_konkav.tex \
+: 2_stabilitaetsbedingung.py $(wildcard dat/2_stabilitaetsbedingung_*.csv) | build/plt
 	MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: BUILD=true python 2_stabilitaetsbedingung.py
 
 build/plt/3_tem_%.pdf build/tab/3_tem_%.tex &: 3_tem_moden.py $(wildcard dat/3_tem_*.csv) | build/plt
@@ -28,7 +33,7 @@ build/plt/3_tem_%.pdf build/tab/3_tem_%.tex &: 3_tem_moden.py $(wildcard dat/3_t
 build/plt/4_polarisation.pdf: 4_polarisation.py dat/4_polarisation.csv | build/plt
 	MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: BUILD=true python 4_polarisation.py
 
-build/main.pdf: main.tex lit.bib plots tables | build
+build/main.pdf: ../header_common.tex main.tex $(wildcard content/*.tex) lit.bib $(PLOTS) $(TABLES) | build
 	  TEXINPUTS=build: \
 	  BIBINPUTS=build: \
 	  max_print_line=1048576 \
@@ -40,9 +45,7 @@ build/main.pdf: main.tex lit.bib plots tables | build
 	main.tex
 
 build build/plt build/tab &:
-	mkdir -p build
-	mkdir -p build/plt
-	mkdir -p build/tab
+	mkdir -p $@
 
 clean:
 	rm -rf build
