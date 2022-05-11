@@ -11,23 +11,83 @@ wird die Intensität des Lasers für verschiedene Resonatorlängen und Spiegelko
 In \autoref{fig:plt:stabilitaetsbedingung} sind diese Messwerte dargestellt.
 % TODO: Tabelle
 
-Dabei ist zu beachten, dass diejenigen Resonatorlängen, bei denen kein Lasern einsetzte, nicht angegeben sind.
+Es ist zu beachten, dass diejenigen Resonatorlängen, bei denen kein Lasern einsetzte, nicht angegeben sind.
 Andererseits waren aufgrund der begrenzten Länge der optischen Bank keine größeren Resonatorlängen als etwa \SI{212.8}{\centi\meter} möglich.
 
 \begin{figure}
   \centering
    \includegraphics[width=\textwidth]{build/plt/2_stabilitaetsbedingung.pdf}
-   \caption{Intensität $I$ in Abhängigkeit der Resonatorlänge $L$ für verschiedene Spiegelkonfigurationen.}
+   \caption{Lichtintensität $I$ in Abhängigkeit der Resonatorlänge $L$ für verschiedene Spiegelkonfigurationen.}
    \label{fig:plt:stabilitaetsbedingung}
 \end{figure}
 
+% \begin{table}
+%   \centering
+%   \caption{Messwerte zur Lichtintensität in Abhängigkeit der Resonatorlänge für die Konfiguration \enquote{konkav + konkav}.}
+%   \label{tab:mess_stabilitaet_konkav_konkav}
+%   \expandableinput{build/tab/2_stabilitaetsbedingung_konkav_konkav.tex}
+%   %
+%   \expandableinput{build/tab/2_stabilitaetsbedingung_plan_konkav.tex} %TEST
+% \end{table}
+
+% \begin{table}
+%   \centering
+%   \subfloat[caption A]{\expandableinput{build/tab/2_stabilitaetsbedingung_konkav_konkav.tex}}
+%   \subfloat[caption B]{\expandableinput{build/tab/2_stabilitaetsbedingung_plan_konkav.tex}}
+% \end{table}
+
+% \begin{table}
+% \parbox{.45\linewidth}{
+%   \centering
+%   \caption{Messwerte zur Lichtintensität in Abhängigkeit der Resonatorlänge für die Konfiguration \enquote{konkav + konkav}.}
+%   \expandableinput{build/tab/2_stabilitaetsbedingung_konkav_konkav.tex}
+% }
+% \hfill
+% \parbox{.45\linewidth}{
+%   \centering
+%   \caption{Messwerte zur Lichtintensität in Abhängigkeit der Resonatorlänge für die Konfiguration \enquote{plan + konkav}.}
+%   \expandableinput{build/tab/2_stabilitaetsbedingung_plan_konkav.tex}
+% }
+% \end{table}
+
+% \begin{tabular}{cc}
+%     \begin{minipage}{.5\linewidth}
+%         \caption{Messwerte zur Lichtintensität in Abhängigkeit der Resonatorlänge für die Konfiguration \enquote{konkav + konkav}.}
+%         \expandableinput{build/tab/2_stabilitaetsbedingung_konkav_konkav.tex}
+%     \end{minipage} &
+
+%     \begin{minipage}{.5\linewidth}
+%         \caption{Messwerte zur Lichtintensität in Abhängigkeit der Resonatorlänge für die Konfiguration \enquote{plan + konkav}.}
+%         \expandableinput{build/tab/2_stabilitaetsbedingung_plan_konkav.tex}
+%     \end{minipage}
+% \end{tabular}
+
+\begin{table}
+\centering
+\caption{Messwerte zur Lichtintensität $I$ in Abhängigkeit der Resonatorlänge $L$ für verschiedene Spiegelkonfigurationen.}
+\begin{subfigure}{.5\textwidth}
+    \centering
+    \caption{\enquote{konkav + konkav}}
+    \expandableinput{build/tab/2_stabilitaetsbedingung_konkav_konkav.tex}
+    \label{TODO:tem_00}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+    \centering
+    \caption{\enquote{plan + konkav}}
+    \expandableinput{build/tab/2_stabilitaetsbedingung_plan_konkav.tex}
+    \label{TODO:tem_01}
+\end{subfigure}
+\label{TODO:tem}
+\end{table}
+
+
 % TODO: Mit Theorie-Abschnitt vereinigen
-Durch Lösen von \autoref{eqn:TODO} können die theoretisch größtmöglichen Resonatorlängen $L$ bestimmt werden.
-Hierbei ist zu beachten, dass bei Gleichheit nur noch ein metastabiler Zustand vorliegt.
-\begin{align*}
-    L_\text{max, kk, theo} &= r_1 + r_2 \\
-    L_\text{max, pk, theo} &= r_2 \\
-\end{align*}
+% Durch Lösen von \autoref{eqn:TODO} können die theoretisch größtmöglichen Resonatorlängen $L$ bestimmt werden.
+% Hierbei ist zu beachten, dass bei Gleichheit nur noch ein metastabiler Zustand vorliegt.
+% \begin{align*}
+%     L_\text{max, kk, theo} &= r_1 + r_2 \\
+%     L_\text{max, pk, theo} &= r_2 \\
+% \end{align*}
 
 
 \subsection{TEM-Moden}
@@ -120,7 +180,6 @@ Es ergeben sich die folgenden Parameter:
    \caption{Lichtintensität $I$ in Abhängigkeit der Distanz $r$ zur optischen Achse für die \TEM{01}-Mode.}
    \label{fig:plt:tem_01}
 \end{figure}
-
 
 
 \subsection{Polarisation}
