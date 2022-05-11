@@ -19,6 +19,7 @@ if not BUILD:
 
 ### Funktionen ###
 
+
 def linregress(x, y):
     r = sp.stats.linregress(x.m, y.m)
     return (
@@ -35,12 +36,18 @@ def curve_fit(fit_fn, x, y, p0=None):
 
 def pint_curve_fit(fit_fn, x, y, param_units, p0=None):
     # TODO: Abweichung mittels sigma-Parameter berücksichtigen
+    # TODO: Bounds unterstützen
+
+    def convert(value, unit):
+        return value.to(unit).m
+
+    if x.units == ureg.deg or y.units == ureg.deg:
+        print("⚠️ You are trying to pass degrees to a function that probably expects radians!")
+        # Since fit_fn only receives magnitudes, degrees won't behave as expected in e.g. np.sin(…).
+        # TODO: Best solution would be to write a wrapper for fit_fn
+
     if p0:
-        assert len(param_units) == len(p0)
-        for p0_single, pu in zip(p0, param_units):
-            if p0_single.units != pu.units:
-                raise Exception(f"Wrong unit in p0 – got '{p0_single.units}' instead of '{pu.units}'")
-        p0 = tuple(p0_s.m for p0_s in p0)
+        p0 = [convert(p, unit) for p, unit in zip(p0, param_units, strict=True)]
 
     u_params = curve_fit(fit_fn, x.m, y.m, p0)
     pint_params = tuple(p * u for p, u in zip(u_params, param_units))

@@ -20,9 +20,18 @@ def calc_I(
 I *= ureg.microwatt
 
 # Fit berechnen
-# params = tools.pint_curve_fit(calc_I, ɑ, I, (ureg.deg, ureg.microwatt)) # zu niedrig…
+# NOPE ↓
+# params = tools.pint_curve_fit(calc_I, ɑ, I, (ureg.deg, ureg.microwatt, ureg.microwatt))
+params = tools.pint_curve_fit(calc_I, ɑ, I, (ureg.rad, ureg.microwatt, ureg.microwatt), p0=(0 * ureg.deg, max(I), 0 * ureg.microwatt))
 
-params = tools.pint_curve_fit(calc_I, ɑ.to('rad'), I.to('µW'), (1*ureg.rad, 1*ureg.microwatt, 1*ureg.microwatt), p0=(0 * ureg.rad, max(I).to('µW'), 0 * ureg.microwatt))
+# YES ↓
+# params = tools.pint_curve_fit(calc_I, ɑ.to('rad'), I.to('µW'), (1*ureg.rad, 1*ureg.microwatt, 1*ureg.microwatt), p0=(0 * ureg.rad, max(I).to('µW'), 0 * ureg.microwatt))
+# params = tools.pint_curve_fit(calc_I, ɑ.to('rad'), I.to('µW'), (ureg.rad, ureg.microwatt, ureg.microwatt), p0=(0 * ureg.rad, max(I).to('µW'), 0 * ureg.microwatt))
+# params = tools.pint_curve_fit(calc_I, ɑ.to('rad'), I, (ureg.rad, ureg.microwatt, ureg.microwatt), p0=(0 * ureg.rad, max(I), 0 * ureg.microwatt))
+# params = tools.pint_curve_fit(calc_I, ɑ.to('rad'), I, (ureg.rad, ureg.microwatt, ureg.microwatt), p0=(0 * ureg.deg, max(I), 0 * ureg.microwatt))
+params = tools.pint_curve_fit(calc_I, ɑ.to('deg'), I, (ureg.deg, ureg.microwatt, ureg.microwatt), p0=(0 * ureg.deg, max(I), 0 * ureg.microwatt))
+
+
 
 print(f"params: {params}")
 nominal_params = [tools.nominal_value(p) for p in params]
