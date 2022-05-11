@@ -21,32 +21,8 @@ I *= ureg.microwatt
 
 # Fit berechnen
 # params = tools.pint_curve_fit(calc_I, ɑ, I, (ureg.deg, ureg.microwatt)) # zu niedrig…
-# params = tools.pint_curve_fit(calc_I, ɑ, I, (1*ureg.deg, 1*ureg.microwatt), p0=(90 * ureg.deg, max(I)))
-# params = tools.pint_curve_fit(calc_I, ɑ, I, (1*ureg.deg, 1*ureg.microwatt, 1*ureg.microwatt), p0=(0 * ureg.deg, max(I), 0 * ureg.microwatt))
-# params = tools.pint_curve_fit(calc_I, ɑ, I*1.5, (ureg.deg, ureg.microwatt))  # ACHTUNG: Fake-Daten
-# params = tools.pint_curve_fit(calc_I, ɑ, I, (1*ureg.deg, 1*ureg.microwatt, 1*ureg.microwatt), p0=(0 * ureg.deg, max(I), 0 * ureg.microwatt))
-
-# params = tools.pint_curve_fit(calc_I, ɑ, I.to('µW'), (1*ureg.deg, 1*ureg.microwatt, 1*ureg.microwatt), p0=(0 * ureg.deg, max(I).to('µW'), 0 * ureg.microwatt))
-
-# params = tools.pint_curve_fit(calc_I, ɑ, I, (1*ureg.deg, 1*ureg.microwatt, 1*ureg.microwatt), p0=(0 * ureg.deg, max(I), 0 * ureg.microwatt))
-
-# x = ɑ.to('rad').m * ureg.dimensionless
-# y = I.to('µW').m * ureg.dimensionless
-
-# params = tools.pint_curve_fit(calc_I, x, y,
-#     (1*ureg.dimensionless, 1*ureg.dimensionless, 1*ureg.dimensionless ))
-
-# params = [
-#     params[0] * ureg.rad,
-#     params[1] * ureg.microwatt,
-#     params[2] * ureg.microwatt,
-# ]
 
 params = tools.pint_curve_fit(calc_I, ɑ.to('rad'), I.to('µW'), (1*ureg.rad, 1*ureg.microwatt, 1*ureg.microwatt), p0=(0 * ureg.rad, max(I).to('µW'), 0 * ureg.microwatt))
-
-
-# params = list(params)
-# params[1] *= 10
 
 print(f"params: {params}")
 nominal_params = [tools.nominal_value(p) for p in params]
