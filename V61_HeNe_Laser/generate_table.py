@@ -2,13 +2,22 @@ import numpy as np
 import pint
 from uncertainties import ufloat
 
-stringFormatter = str
+
+class StringFormatter():
+    def __call__(self, value):
+        return str(value)
+
+
+class PintFormatter():
+    def __call__(self, value):
+        magnitude = value.m
+        return f'{magnitude:.2f}'
 
 
 class Column:
-    def __init__(self, data):
+    def __init__(self, data, formatter=None):
         self.data = data
-        self.formatter = stringFormatter  # TODO
+        self.formatter = formatter or StringFormatter()
 
     def get_cell(self, row_index):
         cell_data = self.data[row_index]
@@ -26,13 +35,23 @@ class Column:
         # TODO: This doesn't check placeholder widths
         return max([len(self.formatter(x)) for x in self.data])
 
+    @property
+    def units(self):
+        first_cell = self.data[0]
+        if isinstance(first_cell, pint.Quantity):
+            return first_cell.units
+        else:
+            return None
 
-def generate_table(*columns):
+    name = '?'  # TODO
+
+
+def generate_table_content(*columns):
     """
     Generate a table from a list of columns.
     """
     output_columns = []
-    columns = [Column(data=c) for c in columns]
+    # columns = [Column(data=c) for c in columns]
     max_rows = max([len(c.data) for c in columns])
     for row_index in range(max_rows):
         cells = [c.get_cell(row_index) for c in columns]
@@ -41,9 +60,40 @@ def generate_table(*columns):
     return '\n'.join(output_columns)
 
 
-print(generate_table(
-    [1, 2, 3, 4],
-    [5, 6, 7, 8],
-    [9, 10, 11, 12],
-)
-)
+def generate_table(*columns):
+    formatters = [PintFormatter() for c in columns]
+    columns = [Column(data=c, formatter=f) for c, f in zip(columns, formatters)]
+    # TODO: Assuming all-pint for now
+    coltypes = ['S' for c in columns]  # TODO
+    units_siunitx = [f'{c.units:Lx}' for c in columns]
+    names = [f'{c.name}' for c in columns]
+
+    output = []
+    output += [r"\begin{tabular}{" f"{' '.join(coltypes)}" "}"]
+    output += [r"\toprule"]
+    foo = [
+        f'${name}' r' \mathbin{/} ' f'{unit}$'
+        for name, unit in zip(names, units_siunitx)
+    ]
+    output += [" & \n".join(foo) + r" \\"]
+
+    output += [r"\midrule"]
+    output += [generate_table_content(*columns)]
+    output += [r"\bottomrule"]
+    output += [r"\end{tabular}"]
+
+    return '\n'.join(output)
+
+
+# print(generate_table(
+#     [1, 2, 3, 4],
+#     [5, 6, 7, 8],
+#     [9, 10, 11, 12],
+# ))
+
+ureg = pint.UnitRegistry()
+r = np.arange(0, 10) * ureg('m')
+I = np.arange(0, 10) * ureg('dBm')
+
+tab = generate_table(r, I)
+print(tab)
