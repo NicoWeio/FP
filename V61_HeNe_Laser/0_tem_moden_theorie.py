@@ -20,6 +20,7 @@ def draw_tem(ax, l, m):
 
 
 def draw_tem_grid(gridsize):
+    # Sollte aussehen wie https://en.wikipedia.org/wiki/Gaussian_beam#/media/File:Hermite-gaussian.png
     fig, axes = plt.subplots(gridsize, gridsize)
 
     for i in range(gridsize):
