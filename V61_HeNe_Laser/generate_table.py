@@ -16,13 +16,14 @@ class Column:
             # format the cell data
             s = self.formatter(cell_data)
             # pad the cell data with spaces to the width of the column
-            s = f'{0: >{self.max_width}}'.format(s)
+            s = '{0: >{width}}'.format(s, width=self.max_width)
             return s
         else:
             return "–"
 
     @property
     def max_width(self):
+        # TODO: This doesn't check placeholder widths
         return max([len(self.formatter(x)) for x in self.data])
 
 
@@ -30,14 +31,14 @@ def generate_table(*columns):
     """
     Generate a table from a list of columns.
     """
-    output = ""
-    columns = [Column(c) for c in columns]
+    output_columns = []
+    columns = [Column(data=c) for c in columns]
     max_rows = max([len(c.data) for c in columns])
     for row_index in range(max_rows):
         cells = [c.get_cell(row_index) for c in columns]
-        output += " & ".join(cells) + r" \\" + "\n"
+        output_columns += [" & ".join(cells) + r" \\"]
 
-    return output
+    return '\n'.join(output_columns)
 
 
 print(generate_table(
