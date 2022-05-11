@@ -9,12 +9,17 @@ class StringFormatter():
 
 
 class PintFormatter():
+    def __init__(self, unit):
+        self.unit = unit
+
     def __call__(self, value):
-        magnitude = value.m
+        magnitude = value.to(self.unit).m
         return f'{magnitude:.2f}'
 
 
 class Column:
+    # name = '?'
+
     def __init__(self, data, formatter=None):
         self.data = data
         self.formatter = formatter or StringFormatter()
@@ -35,15 +40,13 @@ class Column:
         # TODO: This doesn't check placeholder widths
         return max([len(self.formatter(x)) for x in self.data])
 
-    @property
-    def units(self):
-        first_cell = self.data[0]
-        if isinstance(first_cell, pint.Quantity):
-            return first_cell.units
-        else:
-            return None
-
-    name = '?'  # TODO
+    # @property
+    # def units(self):
+    #     first_cell = self.data[0]
+    #     if isinstance(first_cell, pint.Quantity):
+    #         return first_cell.units
+    #     else:
+    #         return None
 
 
 def generate_table_content(*columns):
@@ -60,13 +63,25 @@ def generate_table_content(*columns):
     return '\n'.join(output_columns)
 
 
-def generate_table(*columns):
-    formatters = [PintFormatter() for c in columns]
-    columns = [Column(data=c, formatter=f) for c, f in zip(columns, formatters)]
-    # TODO: Assuming all-pint for now
+def generate_table_pint(*column_tuples):
+    names, units, raw_columns = zip(*column_tuples, strict=True)
+
+    # verify input
+    assert all(isinstance(n, str) for n in names)
+    assert all(isinstance(c, pint.Quantity) for c in raw_columns)
+    for u in units:
+        if isinstance(u, pint.Quantity) and u.magnitude == 1:
+            raise TypeError(f'"{u}" is not a pint.Unit. Hint: Use ureg.… instead of ureg("…")')
+        assert isinstance(u, pint.Unit), f'"{u}" is not a pint.Unit'
+    assert all(isinstance(u, pint.Unit) for u in units)
+
+    # generate output
+
+    formatters = [PintFormatter(u) for c, u in zip(raw_columns, units)]
+    columns = [Column(data=c, formatter=f) for c, f in zip(raw_columns, formatters)]
+
     coltypes = ['S' for c in columns]  # TODO
-    units_siunitx = [f'{c.units:Lx}' for c in columns]
-    names = [f'{c.name}' for c in columns]
+    units_siunitx = [f'{u:Lx}' for u in units]
 
     output = []
     output += [r"\begin{tabular}{" f"{' '.join(coltypes)}" "}"]
@@ -95,5 +110,5 @@ ureg = pint.UnitRegistry()
 r = np.arange(0, 10) * ureg('m')
 I = np.arange(0, 10) * ureg('dBm')
 
-tab = generate_table(r, I)
+tab = generate_table_pint(('r', ureg.cm, r), ('I', ureg.dBm, I))
 print(tab)
