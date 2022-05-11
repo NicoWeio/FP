@@ -57,21 +57,15 @@ Um die gemessene Intensitätsverteilung sinnvoll mit der theoretischen zu vergle
 werden dabei zusätzliche Parameter für Hintergrund und Verschiebung der Strahlachse eingesetzt.
 Daraus ergibt sich \autoref{eqn:tem00_fitfn},
 deren Parameter mithilfe von \scipycurvefit an die Messwerte angepasst werden.
-% TODO: Formulierung ↓
-\autoref{fig:plt:tem_00} stellt Messwerte und Theoriekurve dar; die zugrundeliegenden Daten sind in \autoref{tab:mess_tem_00} aufgeführt.
+\autoref{fig:plt:tem_00} stellt Messwerte und Theoriekurve grafisch dar;
+die zugrundeliegenden Daten sind in \autoref{tab:mess_tem_00} aufgeführt.
 
 \begin{equation}
+  I =
   I_\text{max} \cdot \exp \left( \frac{-(r - r_0)^2}{2ω^2} \right) + I_0
   \label{eqn:tem00_fitfn}
 \end{equation}
 
-
-\begin{table}
-  \centering
-  \caption{Messwerte zur Lichtintensität in Abhängigkeit der Distanz zur optischen Achse für die \TEM{00}-Mode.}
-  \label{tab:mess_tem_00}
-  \expandableinput{build/tab/3_tem_00.tex}
-\end{table}
 
 Es ergeben sich die folgenden Parameter:
 \begin{align*}
@@ -89,31 +83,35 @@ Es ergeben sich die folgenden Parameter:
   \\
 \end{align*}
 
-\begin{figure}[H]
+\begin{figure}
   \centering
    \includegraphics[width=\textwidth]{build/plt/3_tem_00.pdf}
    \caption{Lichtintensität $I$ in Abhängigkeit der Distanz $r$ zur optischen Achse für die \TEM{00}-Mode.}
    \label{fig:plt:tem_00}
 \end{figure}
 
+\begin{table}
+  \centering
+  \caption{Messwerte zur Lichtintensität in Abhängigkeit der Distanz zur optischen Achse für die \TEM{00}-Mode.}
+  \label{tab:mess_tem_00}
+  \expandableinput{build/tab/3_tem_00.tex}
+\end{table}
+
+
 \subsubsection{\TEM{01}-Mode}
 Die Lichtintensität der \TEM{01}-Mode wird (bei Betrachtung senkrecht zur Strahlachse) durch \autoref{eqn:tem01_fitfn} beschrieben,
-wenn wieder zusätzliche Parameter für Hintergrund und Verschiebung der Strahlachse eingesetzt werden.
+wenn wie zuvor zusätzliche Parameter für Hintergrund und Verschiebung der Strahlachse eingesetzt werden.
 Das Anpassen der Parameter an die Messwerte erfolgt erneut mit \scipycurvefit.
+\autoref{fig:plt:tem_01} stellt Messwerte und Theoriekurve grafisch dar;
+die zugrundeliegenden Daten sind in \autoref{tab:mess_tem_01} aufgeführt.
 
 \begin{equation}
+  I =
   I_\text{max} \cdot
   \frac{4(r - r_0)^2}{ω^2} \cdot
   \exp \left( \frac{-(r - r_0)^2}{2ω^2} \right) + I_0
   \label{eqn:tem01_fitfn}
 \end{equation}
-
-\begin{table}
-  \centering
-  \caption{Messwerte zur Lichtintensität in Abhängigkeit der Distanz zur optischen Achse für die \TEM{01}-Mode.}
-  \label{tab:mess_tem_01}
-  \expandableinput{build/tab/3_tem_01.tex}
-\end{table}
 
 Es ergeben sich die folgenden Parameter:
 \begin{align*}
@@ -131,12 +129,19 @@ Es ergeben sich die folgenden Parameter:
   \\
 \end{align*}
 
-\begin{figure}[H]
+\begin{figure}
   \centering
    \includegraphics[width=\textwidth]{build/plt/3_tem_01.pdf}
    \caption{Lichtintensität $I$ in Abhängigkeit der Distanz $r$ zur optischen Achse für die \TEM{01}-Mode.}
    \label{fig:plt:tem_01}
 \end{figure}
+
+\begin{table}
+  \centering
+  \caption{Messwerte zur Lichtintensität in Abhängigkeit der Distanz zur optischen Achse für die \TEM{01}-Mode.}
+  \label{tab:mess_tem_01}
+  \expandableinput{build/tab/3_tem_01.tex}
+\end{table}
 
 
 \subsection{Polarisation}
