@@ -63,7 +63,7 @@ def generate_table_content(*columns):
     return '\n'.join(output_columns)
 
 
-def generate_table_pint(*column_tuples):
+def generate_table_pint(filename, *column_tuples):
     names, units, raw_columns = zip(*column_tuples, strict=True)
 
     # verify input
@@ -97,18 +97,16 @@ def generate_table_pint(*column_tuples):
     output += [r"\bottomrule"]
     output += [r"\end{tabular}"]
 
-    return '\n'.join(output)
+    final_output = '\n'.join(output)
+
+    # write output
+    with open(filename, 'w') as f:
+        f.write(final_output)
 
 
-# print(generate_table(
-#     [1, 2, 3, 4],
-#     [5, 6, 7, 8],
-#     [9, 10, 11, 12],
-# ))
+# ureg = pint.UnitRegistry()
+# r = np.arange(0, 10) * ureg('m')
+# I = np.arange(0, 10) * ureg('dBm')
 
-ureg = pint.UnitRegistry()
-r = np.arange(0, 10) * ureg('m')
-I = np.arange(0, 10) * ureg('dBm')
-
-tab = generate_table_pint(('r', ureg.cm, r), ('I', ureg.dBm, I))
-print(tab)
+# tab = generate_table_pint(('r', ureg.cm, r), ('I', ureg.dBm, I))
+# print(tab)

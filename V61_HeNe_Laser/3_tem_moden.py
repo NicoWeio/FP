@@ -4,10 +4,11 @@ import pint
 import rich
 from rich.console import Console
 import tools
-from generate_table import generate_table
+from generate_table import generate_table_pint
 ureg = pint.UnitRegistry()
 ureg.setup_matplotlib()
 console = Console()
+
 
 def calc_I_TEM00(
     r,  # Parameter
@@ -48,7 +49,7 @@ for setup in DATA:
     calc_I = setup['calc_I']
 
     # Tabelle erzeugen
-    generate_table(f"tab/3_{setup['name']}", sorted(zip(r, I)), col_fmt=[{'d': 0}, {'d': 1}])
+    generate_table_pint(f"build/tab/3_{setup['name']}.tex", ('r', ureg.mm, r), ('I', ureg.microwatt, I))
 
     # Fit berechnen
     params = tools.pint_curve_fit(calc_I, r, I, (ureg.microwatt, ureg.microwatt, ureg.mm, ureg.mm))
