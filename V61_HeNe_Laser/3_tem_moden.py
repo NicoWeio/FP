@@ -54,8 +54,6 @@ for setup in DATA:
     # Fit berechnen
     params = tools.pint_curve_fit(calc_I, r, I, (ureg.microwatt, ureg.microwatt, ureg.mm, ureg.mm))
     print(f"params: {params}")
-    nominal_params = [tools.nominal_value(p) for p in params]
-    print(f"nominal_params: {nominal_params}")
     r_linspace = tools.linspace(*tools.bounds(r), 500)
 
     # Plotten
