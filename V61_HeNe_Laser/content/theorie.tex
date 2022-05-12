@@ -102,6 +102,20 @@
     % TODO: Modenblende erklären? ↓
     Die unterschiedlichen Moden können mithilfe einer Modenblende herausgefiltert werden.
 
+    Eine qualitative Beschreibung der Amplitude von \TEM{mn}-Moden ist durch
+    \def\H{\symbf{\symup{H}}}
+    \begin{equation}
+        % https://en.wikipedia.org/wiki/Gaussian_beam#Hermite-Gaussian_modes
+        A_{mn}(x, y) =
+        \H_l(x) \cdot \H_m(y) \cdot \exp(-(x^2 + y^2))
+        \label{eqn:tem}
+    \end{equation}
+    gegeben,
+    wobei $\H_J$ das Hermite-Polynom der Ordnung $J$ ist.
+    Das Betragsquadrat $|A_{mn}(x, y)|^2$ entspricht der Intensität.
+
+
+
     In diesem Versuch sollen die \TEM{00}- und die \TEM{01}-Mode untersucht werden.
     Die \TEM{00}-Mode wird auch als \textit{Fundamentalmode} bezeichnet.
     Ihre Intensitätsverteilung hat die Form einer (zweidimensionalen) Gauß-Kurve,
