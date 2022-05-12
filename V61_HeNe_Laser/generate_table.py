@@ -86,7 +86,7 @@ def generate_table_pint(filename, *column_tuples):
     output += [r"\begin{tabular}{" f"{' '.join(coltypes)}" "}"]
     output += [r"\toprule"]
     foo = [
-        f'${c.name}' r' \mathbin{/} ' f'{c.unit:Lx}$'
+        '{' + ((f'${c.name}' r' \mathbin{/} ' f'{c.unit:Lx}$') if str(c.unit) != 'dimensionless' else f'${c.name}$') + '}'
         for c in columns
     ]
     output += [" & \n".join(foo) + r" \\"]
