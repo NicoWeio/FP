@@ -10,6 +10,7 @@
     dass der Laser in der Konfiguration \enquote{plan + konkav} auch für größere Resonatorlängen funktioniert hätte,
     da das Nichtvorhandensein eines Laserstrahls ebenso die Folge von unzureichender Justage hätte sein können.
 
+
     Die gewünschten \hyperref[sec:auswertung:tem_moden]{TEM-Moden} wurden erfolgreich vermessen.
     Das theoretische Modell der Intensitätsverteilung passt
     – unter Berücksichtigung der Störeinflüsse –
@@ -17,26 +18,23 @@
     wie in den Abbildungen \ref{fig:plt:tem_00} und \ref{fig:plt:tem_01} zu sehen ist.
     Die Unsicherheiten in den Fit-Parametern sind \autoref{sec:auswertung:tem_moden} zu entnehmen.
 
+
     Die Erwartungen zur \hyperref[sec:auswertung:polarisation]{Polarisation des Laserlichts} wurden erfüllt,
     wie \autoref{fig:plt:polarisation} verdeutlicht.
     Im Rahmen der Unsicherheiten erscheint das Licht vollständig p-polarisiert.
 
 
-    % Multimodenbetrieb
     Die \hyperref[sec:auswertung:frequenzspektrum]{gemessenen Moden} stimmen sehr gut mit der theoretischen Vorhersage überein:
     Die relativen Abweichungen von $f$ zu $f_\text{theo}$ in \autoref{tab:frequenzspektrum} betragen maximal \SI{0.16}{\percent}.
 
-    % Wellenlänge
+
     Die \hyperref[sec:auswertung:wellenlaenge]{Wellenlänge} des Lasers konnte mit verschiedenen Gittern unterschiedlich gut gemessen werden.
     Der zugehörige Theoriewert ist $\lambda = \SI{632.816}{\nano\meter}$.
-    % Sowohl für das gröbste ($\sfrac{1}{d} = \SI[per-mode=reciprocal]{80}{\per\milli\meter}$)
-    % als auch für das feinste ($\sfrac{1}{d} = \SI[per-mode=reciprocal]{1200}{\per\milli\meter}$; nur zwei Messwerte) Gitter
-    % sind die Abweichungen von diesem immens,
     Nur für ein Gitter ($\sfrac{1}{d} = \SI[per-mode=reciprocal]{100}{\per\milli\meter}$)
     ist die relative Abweichung zufriedenstellend,
     wie auch \autoref{tab:wellenlaenge_relerr} zu entnehmen ist.
-
-    Der Mittelwert über die vier berechneten Wellenlängen,
+    %
+    Der Mittelwert über die je Gitter berechneten Wellenlängen,
     \SI{426.85 \pm 7.44}{\nano\meter},
     weicht immer noch um \SI{32.55}{\percent} vom theoretischen Wert ab.
 
@@ -58,7 +56,48 @@
     \end{table}
 
     …
-    % TODO: Zu den Fehlerquellen ↓
+    % TODO: Zu den Fehlerquellen  verschoben…
+
+
+\subsection{Mögliche Fehlerquellen}
+    Für die \hyperref[sec:auswertung:stabilitaetsbedingung]{Überprüfung der Stabilitätsbedingung}
+    wurde der Abstand zwischen den Resonatorspiegeln ebenfalls[TODO] nur mit einem Maßband vermessen;
+    es können also auch hier wieder Messfehler aufgetreten sein.
+    Zudem wurde das Maßband durch das zwischenstehende Laserrohr leicht nach oben gebogen,
+    die Länge also leicht überschätzt.
+    Der in \autoref{sec:stabilitaet} berechnete theoretische Wert für den Resonator aus zwei konkaven Spiegeln
+    konnte aufgrund der nicht ausreichenden Länge der Metallschiene nicht erreicht werden.
+
+
+    Bei der \hyperref[sec:auswertung:tem_moden]{Vermessung der Moden}
+    gelang es erst bei höheren Intensitäten und nach mehreren Versuchen,
+    die \TEM{01}-Mode zu stabilisieren und in eine ungefähre Position zu verschieben.
+    Ein wesentliches Problem bestand im manuellen Nachführen der Photodiode.
+    Dieses war erforderlich, da der Lichtpunkt durch Verschieben der Lochblende ebenfalls bewegt wurde
+    und keine Vorrichtung zur Verfügung stand,
+    um beide parallel zu bewegen.
+    Somit ist die Neigung und Positionierung der Photodiode nicht über den Messvorgang hinweg konstant und trägt zur Unsicherheit bei.
+
+
+    Bei der Messung der \hyperref[sec:auswertung:frequenzspektrum]{longitudinalen Mode}
+    gab es Probleme mit der Einstellung des Oszilloskops,
+    sodass möglicherweise Peaks nicht angezeigt und somit auch nicht aufgenommen wurden.
+
+
+    Bei der \hyperref[sec:auswertung:wellenlaenge]{Ausmessung der Wellenlänge} durch Messung der Abstände der Beugungsmaxima wurde zur Messung ein einfaches Maßband verwendet.
+    Da die Beugungsmaxima auf einen großen Schirm gestrahlt wurden und der Raum vollständig abgedunkelt war,
+    ist es gut möglich,
+    dass beim Ablesen der Abstände Fehler aufgetreten sind.
+    % TODO: Vermindert das nicht vielmehr die Fehler? ↑
+    % Gemeint war das Ablesen *des Maßbands*
+    Die Maxima hatten zudem eine gewisse Ausdehnung,
+    welche beim Abstand nicht berücksichtigt wurde.
+    Gerade bei den optischen Gittern mit vielen Linien pro Millimeter waren nur drei Maxima zu erkennen,
+    da das Gitter auf der Schiene nicht weiter verschoben werden konnte.
+    Für diese Fälle stehen demnach weniger Messwerte zur Verfügung,
+    was eine größere Unsicherheit im Mittelwert bedeutet.
+
+    % ---
     Wenn der Schirm nicht genau senkrecht zur Strahlachse ausgerichtet ist,
     erhöht sich der gemessene Abstand der Intensitätsmaxima und somit gemäß \autoref{eqn:wellenlaenge} auch die Wellenlänge.
     Dieser Effekt konnte durch Mittelung nur teilweise kompensiert werden,
@@ -68,51 +107,16 @@
     \textit{kleiner} als die theoretische Wellenlänge sind.
 
 
-\subsection{Mögliche Fehlerquellen}
-    Bei der \hyperref[sec:auswertung:wellenlaenge]{Ausmessung der Wellenlänge} durch Messung der Abstände der Beugungsmaxima wurde zur Messung ein einfaches Maßband verwendet.
-    Da die Beugungsmaxima auf einen großen Schirm gestrahlt wurden und der Raum vollständig abgedunkelt war,
-    ist es gut möglich,
-    dass beim Ablesen der Abstände Fehler aufgetreten sind.
-    % TODO: Vermindert das nicht vielmehr die Fehler? ↑
-    % Gemeint war das Ablesen *des Maßbands*
-    Die Maxima hatten zudem eine gewisse Ausdehnung,
-    welche beim Abstand nicht berücksichtigt wurde.
-    Gerade bei den optischen Gittern mit vielen Linien pro \si{\milli\meter} waren nur drei Maxima zu erkennen,
-    da das Gitter auf der Schiene nicht weiter verschoben werden konnte.
-    Für diese Fälle stehen demnach weniger Messwerte zur Verfügung,
-    was eine größere Unsicherheit im Mittelwert bedeutet.
-
-
-    Bei der \hyperref[sec:auswertung:tem_moden]{Vermessung der Moden} konnte die verwendete Blende nur \SI{10}{\milli\meter} in beide Richtungen verschoben werden,
-    sodass möglicherweise nicht die ganze Modenverteilung ausgemessen werden konnte.
-    Zudem gelang es erst bei höheren Intensitäten
-    die \TEM{01}-Mode zu stabilisieren und in eine ungefähre Position zu verschieben,
-    damit sie ausgemessen werden konnte.
-    Es hätte bestimmt eine bessere Position geben können,
-    um die Mode vollständig aufnehmen zu können.\\
-    Bei der longitudinalen Mode konnte das Oszilloskop nicht gut verstellt werden,
-    sodass möglicherweise nicht angezeigte Peaks nicht mit aufgenommen wurden.
-
-
-    Für die \hyperref[sec:auswertung:stabilitaetsbedingung]{Überprüfung der Stabilitätsbedingung}
-    wurde der Abstand zwischen den Resonatorspiegeln ebenfalls nur mit einem Maßband vermessen;
-    es können also auch hier wieder Messfehler aufgetreten sein.
-    Zudem wurde das Maßband durch das zwischenstehende Laserrohr leicht nach oben gebogen,
-    sodass sich keine Gerade ergab.
-    Der in \autoref{sec:stabilitaet} berechnete theoretische Wert für den Resonator aus zwei konkaven Spiegeln
-    konnte aufgrund der nicht ausreichenden Länge der Metallschiene nicht erreicht werden.
-
-
     Schließlich ist anzumerken,
     dass die Spiegel zwischendurch gereinigt werden mussten,
     da aufgrund von während der Durchführung dort abgelagerten Staubpartikeln kein Laserstrahl entstehen konnte.
     Diese Staubpartikel können auch bei funktionierendem Laser die Intensität beeinflusst haben.
-    Das Verstellen der Spiegel für eine maximale Intensität geschah nach Fingergefühl und Augenmaß,
+    Das Verstellen der Spiegel für eine maximale Intensität geschah nach Fingergefühl und Augenmaß
+    in einer begrenzten Anzahl von Schritten,
     es könnte also eine bessere Spiegelkonfiguration zur Messung der Intensitäten gegeben haben.
 
 % TODO: Dies waren meine Ideen. Sie sind ggf. noch in den Text zu integrieren.
 \begin{itemize}
-    \item Manuelles Nachführen der Photodiode
     \item Ablesen der Beugungsmaxima von der Seite
     \item Streu-/Restlicht im Raum
     \item Starke Schwankungen der gemessenen Intensität
