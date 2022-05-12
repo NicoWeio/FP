@@ -23,12 +23,46 @@
 
     % Multimodenbetrieb
 
-
     % Wellenlänge
+    Die \hyperref[sec:auswertung:wellenlaenge]{Wellenlänge} des Lasers konnte mit verschiedenen Gittern unterschiedlich gut gemessen werden.
+    Der zugehörige Theoriewert ist $\lambda = \SI{632.816}{\nano\meter}$.
+    % Sowohl für das gröbste ($\sfrac{1}{d} = \SI[per-mode=reciprocal]{80}{\per\milli\meter}$)
+    % als auch für das feinste ($\sfrac{1}{d} = \SI[per-mode=reciprocal]{1200}{\per\milli\meter}$; nur zwei Messwerte) Gitter
+    % sind die Abweichungen von diesem immens,
+    Nur für ein Gitter ($\sfrac{1}{d} = \SI[per-mode=reciprocal]{100}{\per\milli\meter}$)
+    ist die relative Abweichung zufriedenstellend,
+    wie auch \autoref{tab:wellenlaenge_relerr} zu entnehmen ist.
+
+    Der Mittelwert über die vier berechneten Wellenlängen,
+    \SI{426.85 \pm 7.44}{\nano\meter},
+    weicht immer noch um \SI{32.55}{\percent} vom theoretischen Wert ab.
+
+    \begin{table}[H]
+    \centering
+    \caption{Relative Abweichungen der gemessenen Wellenlängen je Gitter.}
+    \label{tab:wellenlaenge_relerr}
+    \begin{tabular}{S S}
+    \toprule
+    $\sfrac{1}{d} \mathbin{/} \si{\per\milli\meter}$ &
+    $\text{rel. Abweichung} \mathbin{/} \si{\percent}$ \\
+    \midrule
+      80 & 27.30 \\ % \pm 0.86
+     100 &  1.73 \\ % \pm 1.19
+     600 & 56.53 \\ % \pm 3.68
+    1200 & 48.09 \\ % \pm 2.54
+    \bottomrule
+    \end{tabular}
+    \end{table}
+
     …
+    % TODO: Zu den Fehlerquellen ↓
+    Wenn der Schirm nicht genau senkrecht zur Strahlachse ausgerichtet ist,
+    erhöht sich der gemessene Abstand der Intensitätsmaxima und somit gemäß \autoref{eqn:wellenlaenge} auch die Wellenlänge.
     Dieser Effekt konnte durch Mittelung nur teilweise kompensiert werden,
     da links und rechts vom Hauptmaximum unterschiedlich viele Nebenmaxima vermessen werden konnten.
-
+    Allerdings kann dieser Effekt nicht hauptsächlich für die Abweichungen verantwortlich sein,
+    da die gemessenen Wellenlängen (mit Ausnahme des Gitters mit $\sfrac{1}{d} = \SI[per-mode=reciprocal]{100}{\per\milli\meter}$)
+    \textit{kleiner} als die theoretische Wellenlänge sind.
 
 
 \subsection{Mögliche Fehlerquellen}

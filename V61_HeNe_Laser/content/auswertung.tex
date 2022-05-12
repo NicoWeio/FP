@@ -199,7 +199,6 @@ Es ergeben sich die folgenden Parameter:
 \end{table}
 
 
-\FloatBarrier %TODO: nicht mehr nötig, sobald header_common aktualisiert ist!
 \subsection{Multimodenbetrieb und Frequenzspektrum des Lasers}
 % \subsection{Longitudinale Moden}
 % 5. Multimodenbetrieb und Frequenzspektrum des Lasers
@@ -211,14 +210,15 @@ Die Distanzen $\symup{\Delta}f$ selbiger betragen
 \SI{276}{\mega\hertz} und
 \SI{277}{\mega\hertz}.
 
-Die theoretische TODO-Verschiebung lässt sich anhand von \autoref{eqn:TODO} ermitteln:
+Der theoretische Modenabstand lässt sich anhand von \autoref{eqn:modenabstand} ermitteln,
+wobei $c$ die Lichtgeschwindigkeit ist:
 \begin{equation}
-  \symup{\Delta}f = \frac{c}{2L} \ .
-  \label{eqn:TODO}
+  \symup{\Delta}f_\text{theo} = \frac{c}{2L} \ .
+  \label{eqn:modenabstand}
 \end{equation}
 Mit der oben angegebenen Resonatorlänge ist
 \[
-  \symup{\Delta}f = \SI{920.2}{\mega\hertz} \ .
+  \symup{\Delta}f_\text{theo} = \SI{920.2}{\mega\hertz} \ .
 \]
 
 
@@ -263,7 +263,7 @@ ist.
 Die Messwerte, anhand derer die Wellenlänge nun bestimmt wird, sind in \autoref{tab:mess_wellenlaenge} zu finden.
 Dort sind auch die nach \autoref{eqn:wellenlaenge} bestimmten Wellenlängen für jede Messreihe angegeben.
 % TODO ↓
-Im Mittel ergibt sich $\bar\lambda = \SI{12345}{\micro\meter}$.
+Im Mittel über die vier Messreihen ergibt sich $\bar\lambda = \SI{426.85 \pm 7.44}{\micro\meter}$.
 
 % Die Ordnung $k$ ist natürlich nicht wirklich vorzeichenbehaftet.
 % TODO: In der Tabelle Vorzeichen streichen?
@@ -272,6 +272,7 @@ Im Mittel ergibt sich $\bar\lambda = \SI{12345}{\micro\meter}$.
   \centering
   \caption{
     Abstände der Interferenzmaxima der Ordnung $k$ vom Hauptmaximum für verschiedene optische Gitter.
+    (Das Vorzeichen von $k$ ist nicht wirklich vorzeichenbehaftet.)
     Zusätzlich sind der Spaltabstand (inverse Gitterkonstante) $\sfrac{1}{d}$, der Abstand zum Schirm $e$ und die jeweils berechnete Wellenlänge $\lambda$ angegeben.
   }
   \label{tab:mess_wellenlaenge}
@@ -296,7 +297,7 @@ Im Mittel ergibt sich $\bar\lambda = \SI{12345}{\micro\meter}$.
 
   & \multicolumn{4}{c}{$\lambda \mathbin{/} \si{\nano\meter}$} \\
   \cmidrule(lr){2-5}
-  & 460.05 \pm 5.46 & 643.74 \pm 7.53 & 641.60 \pm 7.96 & 328.51 \pm 16.07 \\
+  & 460.05 \pm 5.46 & 643.74 \pm 7.53 & 275.09 \pm 23.27 & 328.51 \pm 16.07 \\
   \bottomrule
   \end{tabular}
 \end{table}
