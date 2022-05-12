@@ -23,7 +23,8 @@ def calc_I(
 
 # Fit berechnen
 params, pcov = sp.optimize.curve_fit(
-    calc_I, ɑ, I, p0=(0, max(I), 0),
+    calc_I, ɑ, I,
+    # p0=(0, max(I), 0),
     # bounds=[
     #     (0, 2*np.pi),
     #     (0, 2*max(I)),
