@@ -10,6 +10,7 @@ ureg.setup_matplotlib()
 def calc_I(
     ɑ,  # Parameter
     ɑ0, I_max, I_0,  # Konstanten
+    # TODO: alpha0 ans Ende für Konsistenz :)
 ):
     """TEM₀₀: Theoretische Intensität in Abhängigkeit vom Abstand r von der Modenmitte."""
     return I_max * np.sin(ɑ + ɑ0)**2 + I_0
@@ -28,14 +29,7 @@ generate_table_pint(f'build/tab/4_polarisation.tex', (r'\alpha', ureg.deg, ɑ, 0
 params = tools.pint_curve_fit(
     calc_I, ɑ.to('rad'), I,
     (ureg.rad, ureg.microwatt, ureg.microwatt),
-    # bounds=[
-    #     # (ureg('0 °'), ureg('360 °')),
-    #     # (ureg('-180 °'), ureg('180 °')),
-    #     (ureg('-5 °'), ureg('5 °')),
-    #     None,
-    #     None
-    # ],
-    p0=[ureg('0 °'), max(I), ureg('0 µW')]
+    p0=[ureg('0 °'), max(I), ureg('0 µW')],
 )
 params[0].ito('°')
 print(f"params: {params}")
@@ -53,5 +47,5 @@ plt.gca().xaxis.set_ticks(np.arange(0, 360 * 9/8, 360/8))
 plt.grid()
 plt.legend()
 plt.tight_layout()
-# plt.savefig('build/plt/4_polarisation.pdf')
-plt.show()
+plt.savefig('build/plt/4_polarisation.pdf')
+# plt.show()

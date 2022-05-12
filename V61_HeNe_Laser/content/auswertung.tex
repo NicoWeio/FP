@@ -150,7 +150,38 @@ Es ergeben sich die folgenden Parameter:
 
 
 \subsection{Polarisation}
-\lipsum[1]
+Wie in \autoref{sec:versuchsaufbau} beschrieben,
+ist eine nahezu vollständige p-Polarisation des Laserlichts zu erwarten.
+Um diese Erwartung zu überprüfen,
+wird die Lichtintensität in Abhängigkeit von der Ausrichtung eines Polarisationsfilters gemessen.
+
+Eine theoretische Beschreibung ist durch \autoref{eqn:polarisation_fitfn} gegeben,
+%TODO: Ist „Nullwinkel“ überhaupt ein Wort?
+wenn zusätzliche Parameter für Hintergrund und Verschiebung des Nullwinkels eingesetzt werden.
+Das Anpassen der Parameter an die Messwerte erfolgt erneut mit \scipycurvefit.
+\autoref{fig:plt:polarisation} stellt Messwerte und Theoriekurve grafisch dar;
+die zugrundeliegenden Daten sind in \autoref{tab:mess_polarisation} aufgeführt.
+
+Es ergeben sich die folgenden Parameter:
+\begin{align*}
+  I_\text{max} &= \SI{860 \pm 1}{\micro\watt}
+  \tag{maximale Intensität}
+  \\
+  I_0 &= \SI{-6 \pm 8}{\micro\watt}
+  \tag{Hintergrund, beispielsweise durch Streulicht}
+  \\
+  \alpha_0 &= \SI{0.5 \pm 0.4}{\milli\meter}
+  \tag{Nullwinkel}
+  \\
+\end{align*}
+
+\begin{equation}
+  I =
+  I_\text{max} \cdot \sin(\alpha + \alpha_0)^2 + I_0
+  \label{eqn:polarisation_fitfn}
+\end{equation}
+
+
 
 \begin{figure}
   \centering
@@ -159,36 +190,36 @@ Es ergeben sich die folgenden Parameter:
    \label{fig:plt:polarisation}
 \end{figure}
 
+\begin{table}
+  \centering
+  \caption{Messwerte zur Lichtintensität $I$ in Abhängigkeit des Polarisationswinkels $\alpha$.}
+  \label{tab:mess_polarisation}
+  \expandableinput{build/tab/4_polarisation.tex}
+\end{table}
 
+
+\FloatBarrier %TODO: nicht mehr nötig, sobald header_common aktualisiert ist!
 \subsection{Multimodenbetrieb und Frequenzspektrum des Lasers}
 % \subsection{Longitudinale Moden}
 % 5. Multimodenbetrieb und Frequenzspektrum des Lasers
 Für $L = \SI{162.9}{\centi\meter}$ wird mithilfe eines Oszilloskops das Frequenzspektrum des Lasers im Multimodenbetrieb ausgemessen,
 wie in \autoref{fig:screenshot_oszilloskop} gezeigt.
-Die Peaks sind in \autoref{tab:mess_frequenzspektrum} angegeben.
+Die ermittelten Peaks sind in \autoref{tab:mess_frequenzspektrum} angegeben.
 
 \begin{figure}
   \centering
    \includegraphics[width=0.75\textwidth]{content/img/5_frequenzspektrum_oszilloskop_inverted.jpg}
-   \caption{Bildschirmfoto des Oszilloskops.}
+   \caption{Bildschirmaufnahme des Oszilloskops.}
    \label{fig:screenshot_oszilloskop}
 \end{figure}
 
 \begin{table}
   \centering
-  \caption{Messwerte zur [TODO].}
+  \caption{Messwerte zu den Peaks im Frequenzspektrum. $f$ bezeichnet die Frequenz, $I$ die Intensität.}
+  % Intensität hier in dBm=Decibelmilliwatt
+  \def\belmilliwatt{Bm} %TODO
   \label{tab:mess_frequenzspektrum}
-  \begin{tabular}{S S}
-  \toprule
-  {$f \mathbin{/} \si{\mega\hertz}$} &
-  {$I \mathbin{/} \si{dBm}$} \\ % Decibelmilliwatt
-  \midrule
-  276 & -3.4 \\
-  553 & -7.1 \\
-  829 & -12 \\
-  1106 & -29 \\
-  \bottomrule
-  \end{tabular}
+  \expandableinput{build/tab/5_frequenzspektrum.tex}
 \end{table}
 
 
@@ -215,6 +246,7 @@ ist.
 
 Die Messwerte, anhand derer die Wellenlänge nun bestimmt wird, sind in \autoref{tab:mess_wellenlaenge} zu finden.
 Dort sind auch die nach \autoref{eqn:wellenlaenge} bestimmten Wellenlängen für jede Messreihe angegeben.
+% TODO ↓
 Im Mittel ergibt sich $\bar\lambda = \SI{12345}{\micro\meter}$.
 
 % Die Ordnung $k$ ist natürlich nicht wirklich vorzeichenbehaftet.
@@ -224,7 +256,7 @@ Im Mittel ergibt sich $\bar\lambda = \SI{12345}{\micro\meter}$.
   \centering
   \caption{
     Abstände der Interferenzmaxima der Ordnung $k$ vom Hauptmaximum für verschiedene optische Gitter.
-    Zusätzlich sind die inverse Gitterkonstante $\sfrac{1}{d}$, der Abstand zum Schirm $e$ und die jeweils berechnete Wellenlänge $\lambda$ angegeben.
+    Zusätzlich sind der Spaltabstand (inverse Gitterkonstante) $\sfrac{1}{d}$, der Abstand zum Schirm $e$ und die jeweils berechnete Wellenlänge $\lambda$ angegeben.
   }
   \label{tab:mess_wellenlaenge}
   \begin{tabular}{S S S S S}
