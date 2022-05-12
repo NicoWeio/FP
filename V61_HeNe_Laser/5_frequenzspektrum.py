@@ -27,7 +27,17 @@ generate_table_pint(
 
 Δf_theo = (ureg.c / (2 * L)).to('MHz')
 
-Δf_all = np.diff(f)
-print(f'Δf_all = {Δf_all}')
-Δf = tools.ufloat_from_list(Δf_all)
-print(tools.fmt_compare_to_ref(Δf, Δf_theo))
+f_theo = Δf_theo * np.arange(1, (max(f) // Δf_theo).m + 1)
+print(f'f_mess = {f:.2f}')
+print(f'f_theo = {f_theo:.2f}')
+
+for single_f in f:
+    best_n = np.argmin(np.abs(f_theo - single_f))  # off-by-one!
+    print(f'Mess: {single_f} ↔ Theo: {f_theo[best_n]} (n={best_n+1}) → Abweichung: {(f_theo[best_n] - single_f):.2f}')
+
+
+# Ansatz siehe Mampfzwerg. Keine schönen Ergebnisse…
+# Δf_all = np.diff(f)
+# print(f'Δf_all = {Δf_all}')
+# Δf = tools.ufloat_from_list(Δf_all)
+# print(tools.fmt_compare_to_ref(Δf, Δf_theo))
