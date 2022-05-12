@@ -28,17 +28,23 @@ def linregress(x, y):
     )
 
 
-def curve_fit(fit_fn, x, y, p0=None):
-    params, pcov = sp.optimize.curve_fit(fit_fn, x, y, p0)
+def curve_fit(fit_fn, x, y, **kwargs):
+    """Wrapper for `sp.optimize.curve_fit` that returns `ufloat`s"""
+    if kwargs.get('bounds', False) is None:
+        del kwargs['bounds']
+
+    params, pcov = sp.optimize.curve_fit(fit_fn, x, y, **kwargs)
     param_errors = np.sqrt(np.diag(pcov))
     return tuple(ufloat(p, e) for p, e in zip(params, param_errors))
 
 
-def pint_curve_fit(fit_fn, x, y, param_units, p0=None):
+def pint_curve_fit(fit_fn, x, y, param_units, bounds=None, p0=None):
+    """Wrapper for `sp.optimize.curve_fit` that accepts pint units."""
     # TODO: Abweichung mittels sigma-Parameter berücksichtigen
-    # TODO: Bounds unterstützen
 
     def convert(value, unit):
+        # if value is None:
+        #     return None
         return value.to(unit).m
 
     # if x.units == ureg.deg or y.units == ureg.deg:
@@ -46,10 +52,19 @@ def pint_curve_fit(fit_fn, x, y, param_units, p0=None):
     #     # Since fit_fn only receives magnitudes, degrees won't behave as expected in e.g. np.sin(…).
     #     # TODO: Best solution would be to write a wrapper for fit_fn
 
-    if p0:
+    if bounds is not None:
+        # first, [(lower, upper)]
+        bounds = [
+            (b[0].to(u).m, b[1].to(u).m) if (b is not None) else (-np.infty, np.infty)
+            for b, u in zip(bounds, param_units)
+        ]
+        # then, ([lower], [uppper])
+        bounds = tuple(zip(*bounds))
+
+    if p0 is not None:
         p0 = [convert(p, unit) for p, unit in zip(p0, param_units, strict=True)]
 
-    u_params = curve_fit(fit_fn, x.m, y.m, p0)
+    u_params = curve_fit(fit_fn, x.m, y.m, p0=p0, bounds=bounds)
     pint_params = tuple(p * u for p, u in zip(u_params, param_units))
 
     try:
