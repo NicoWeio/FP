@@ -28,5 +28,6 @@ generate_table_pint(
 Δf_theo = (ureg.c / (2 * L)).to('MHz')
 
 Δf_all = np.diff(f)
+print(f'Δf_all = {Δf_all}')
 Δf = tools.ufloat_from_list(Δf_all)
 print(tools.fmt_compare_to_ref(Δf, Δf_theo))
