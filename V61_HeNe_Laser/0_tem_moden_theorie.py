@@ -9,11 +9,11 @@ def draw_tem(ax, l, m):
         # ohne Phaseninformation und Skalierung
         return hermite(n=l)(x) * hermite(n=m)(y) * np.exp(-(x**2 + y**2))
 
-    size = 3
+    size = 2
     x = np.linspace(-size, size, 1000)
     y = np.linspace(-size, size, 1000)
     X, Y = np.meshgrid(x, y)
-    I = abs(E(X, Y))
+    I = abs(E(X, Y))**2
     ax.imshow(I, cmap='gray')
     ax.set_xticks([])
     ax.set_yticks([])
