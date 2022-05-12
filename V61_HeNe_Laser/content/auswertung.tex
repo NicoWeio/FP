@@ -200,6 +200,7 @@ Es ergeben sich die folgenden Parameter:
 
 
 \subsection{Multimodenbetrieb und Frequenzspektrum des Lasers}
+\label{sec:auswertung:frequenzspektrum}
 % \subsection{Longitudinale Moden}
 % 5. Multimodenbetrieb und Frequenzspektrum des Lasers
 Für $L = \SI{162.9}{\centi\meter}$ wird mithilfe eines Oszilloskops das Frequenzspektrum des Lasers im Multimodenbetrieb ausgemessen,
@@ -220,6 +221,12 @@ Mit der oben angegebenen Resonatorlänge ist
 \[
   \symup{\Delta}f_\text{theo} = \SI{920.2}{\mega\hertz} \ .
 \]
+Die beobachteten Moden sollen Vielfache von $\symup{\Delta}f_\text{theo}$ sein,
+es soll also
+\[
+  f = n \cdot \symup{\Delta}f_\text{theo} = n\frac{c}{2L}
+\]
+gelten.
 
 
 \begin{figure}
@@ -231,10 +238,15 @@ Mit der oben angegebenen Resonatorlänge ist
 
 \begin{table}
   \centering
-  \caption{Messwerte zu den Peaks im Frequenzspektrum. $f$ bezeichnet die Frequenz, $I$ die Intensität.}
+  \caption{
+    Messwerte zu den Peaks im Frequenzspektrum.
+    $f$ bezeichnet die Frequenz, $I$ die Intensität.
+    Es wird dasjenige $n$ angegeben, welches $|f_\text{theo} - f|$ minimiert;
+    dabei ist $f_\text{theo} = n \cdot \symup{\Delta}f_\text{theo}$.
+  }
   % Intensität hier in dBm=Decibelmilliwatt
-  \def\belmilliwatt{Bm} %TODO
-  \label{tab:mess_frequenzspektrum}
+  \def\belmilliwatt{Bm}
+  \label{tab:frequenzspektrum}
   \expandableinput{build/tab/5_frequenzspektrum.tex}
 \end{table}
 
