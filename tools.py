@@ -41,10 +41,10 @@ def pint_curve_fit(fit_fn, x, y, param_units, p0=None):
     def convert(value, unit):
         return value.to(unit).m
 
-    if x.units == ureg.deg or y.units == ureg.deg:
-        print("⚠️ You are trying to pass degrees to a function that probably expects radians!")
-        # Since fit_fn only receives magnitudes, degrees won't behave as expected in e.g. np.sin(…).
-        # TODO: Best solution would be to write a wrapper for fit_fn
+    # if x.units == ureg.deg or y.units == ureg.deg:
+    #     print("⚠️ You are trying to pass degrees to a function that probably expects radians!")
+    #     # Since fit_fn only receives magnitudes, degrees won't behave as expected in e.g. np.sin(…).
+    #     # TODO: Best solution would be to write a wrapper for fit_fn
 
     if p0:
         p0 = [convert(p, unit) for p, unit in zip(p0, param_units, strict=True)]
