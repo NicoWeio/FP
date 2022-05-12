@@ -69,10 +69,10 @@ for data in DATA:
     global_λ.append(λ)
     global_all_λ.extend(all_λ)
 
-console.rule("Mittelwert A")
+console.rule("Mittelwert je Gitter")
 λ_mean = tools.pintify(global_λ).to('nm').m.mean() * ureg('nm')  # Workaround: die einzelnen λ haben bereits eine Unsicherheit
 print(tools.fmt_compare_to_ref(λ_mean, λ_lit))
 
-console.rule("Mittelwert B")
+console.rule("Mittelwert je Messwert")
 λ_mean = tools.pintify(global_all_λ).to('nm').m.mean() * ureg('nm')
 print(tools.fmt_compare_to_ref(λ_mean, λ_lit))
