@@ -55,18 +55,15 @@
     \end{tabular}
     \end{table}
 
-    …
-    % TODO: Zu den Fehlerquellen  verschoben…
-
 
 \subsection{Mögliche Fehlerquellen}
-    Für die \hyperref[sec:auswertung:stabilitaetsbedingung]{Überprüfung der Stabilitätsbedingung}
-    wurde der Abstand zwischen den Resonatorspiegeln ebenfalls[TODO] nur mit einem Maßband vermessen;
-    es können also auch hier wieder Messfehler aufgetreten sein.
-    Zudem wurde das Maßband durch das zwischenstehende Laserrohr leicht nach oben gebogen,
-    die Länge also leicht überschätzt.
+    Der Abstand zwischen den Resonatorspiegeln,
+    welcher unter anderem für die \hyperref[sec:auswertung:stabilitaetsbedingung]{Überprüfung der Stabilitätsbedingung} benötigt wurde,
+    konnte nur mit einem Maßband vermessen werden.
+    Dabei wurde das Maßband durch das zwischenstehende Laserrohr leicht nach oben gebogen,
+    die Länge also leicht überschätzt.\\
     Der in \autoref{sec:stabilitaet} berechnete theoretische Wert für den Resonator aus zwei konkaven Spiegeln
-    konnte aufgrund der nicht ausreichenden Länge der Metallschiene nicht erreicht werden.
+    konnte aufgrund der nicht ausreichenden Länge der optischen Bank nicht erreicht werden.
 
 
     Bei der \hyperref[sec:auswertung:tem_moden]{Vermessung der Moden}
@@ -75,51 +72,54 @@
     Ein wesentliches Problem bestand im manuellen Nachführen der Photodiode.
     Dieses war erforderlich, da der Lichtpunkt durch Verschieben der Lochblende ebenfalls bewegt wurde
     und keine Vorrichtung zur Verfügung stand,
-    um beide parallel zu bewegen.
+    um beide synchron zu bewegen.
     Somit ist die Neigung und Positionierung der Photodiode nicht über den Messvorgang hinweg konstant und trägt zur Unsicherheit bei.
 
 
-    Bei der Messung der \hyperref[sec:auswertung:frequenzspektrum]{longitudinalen Mode}
+    Bei der Messung des \hyperref[sec:auswertung:frequenzspektrum]{Frequenzspektrums}
     gab es Probleme mit der Einstellung des Oszilloskops,
-    sodass möglicherweise Peaks nicht angezeigt und somit auch nicht aufgenommen wurden.
+    sodass möglicherweise einige Peaks nicht angezeigt und somit auch nicht aufgenommen wurden.
 
 
-    Bei der \hyperref[sec:auswertung:wellenlaenge]{Ausmessung der Wellenlänge} durch Messung der Abstände der Beugungsmaxima
-    wurde zur Messung ein einfaches Maßband verwendet.
-    Da die Beugungsmaxima auf einen großen Schirm gestrahlt wurden und der Raum vollständig abgedunkelt war,
+    Auch für die \hyperref[sec:auswertung:wellenlaenge]{Bestimmung der Wellenlänge}
+    durch Messung der Abstände von Beugungsmaxima
+    wurde ein einfaches Maßband verwendet.
+    Da die Beugungsmaxima von der Seite des großen Schirms aus vermessen wurden,
+    während der Raum vollständig abgedunkelt war,
     ist es gut möglich,
-    dass beim Ablesen der Abstände Fehler aufgetreten sind.
-    % TODO: Vermindert das nicht vielmehr die Fehler? ↑
-    % Gemeint war das Ablesen *des Maßbands*
-    Die Maxima hatten zudem eine gewisse Ausdehnung,
-    welche beim Abstand nicht berücksichtigt wurde.
-    Gerade bei den optischen Gittern mit vielen Linien pro Millimeter waren nur drei Maxima zu erkennen,
+    dass beim Ablesen der Abstände Fehler aufgetreten sind.\\
+    %
+    Gerade bei den optischen Gittern mit vielen Linien pro Millimeter waren nur wenige
+    – im Extremfall nur drei –
+    Maxima zu erkennen,
     da das Gitter auf der Schiene nicht weiter verschoben werden konnte.
     Für diese Fälle stehen demnach weniger Messwerte zur Verfügung,
-    was eine größere Unsicherheit im Mittelwert bedeutet.
-
-    % ---
+    was eine größere Unsicherheit im Mittelwert bedeutet.\\
+    %
     Wenn der Schirm nicht genau senkrecht zur Strahlachse ausgerichtet ist,
     erhöht sich der gemessene Abstand der Intensitätsmaxima und somit gemäß \autoref{eqn:wellenlaenge} auch die Wellenlänge.
     Dieser Effekt konnte durch Mittelung nur teilweise kompensiert werden,
     da links und rechts vom Hauptmaximum unterschiedlich viele Nebenmaxima vermessen werden konnten.
     Allerdings kann dieser Effekt nicht hauptsächlich für die Abweichungen verantwortlich sein,
-    da die gemessenen Wellenlängen (mit Ausnahme des Gitters mit $\sfrac{1}{d} = \SI[per-mode=reciprocal]{100}{\per\milli\meter}$)
+    da die gemessenen Wellenlängen
+    (mit Ausnahme des Gitters mit $\sfrac{1}{d} = \SI[per-mode=reciprocal]{100}{\per\milli\meter}$)
     \textit{kleiner} als die theoretische Wellenlänge sind.
 
 
+    % Allgemeines ↓
+    Während einiger Messungen schwankte der
+    auf dem an die Photodiode angeschlossenen Messgerät angezeigte
+    Wert für die Intensität sehr stark.
+    Hier wurde versucht, nach Augenmaß einen mittleren Wert auszumachen.
+    Offensichtlich war die Präzision jedoch verringert.\\
+    %
+    Ebenfalls auf die gemessene Intensität wirkte sich Streu- und Restlicht aus.
+    Der Großteil schien dabei von der Seite des Laserrohrs auszugehen und an den dahinter befindlichen Gerätschaften gestreut zu werden.\\
+    %
     Schließlich ist anzumerken,
     dass die Spiegel zwischendurch gereinigt werden mussten,
     da aufgrund von während der Durchführung dort abgelagerten Staubpartikeln kein Laserstrahl entstehen konnte.
     Diese Staubpartikel können auch bei funktionierendem Laser die Intensität beeinflusst haben.
     Das Verstellen der Spiegel für eine maximale Intensität geschah nach Fingergefühl und Augenmaß
-    in einer begrenzten Anzahl von Schritten,
+    in einer begrenzten Anzahl von Schritten;
     es könnte also eine bessere Spiegelkonfiguration zur Messung der Intensitäten gegeben haben.
-
-% TODO: Dies waren meine Ideen. Sie sind ggf. noch in den Text zu integrieren.
-\begin{itemize}
-    \item Ablesen der Beugungsmaxima von der Seite
-    \item Streu-/Restlicht im Raum
-    \item Starke Schwankungen der gemessenen Intensität
-    \item Stabilitätsbedingung: Begrenzte Zeit, um Spiegel jeweils einzujustieren
-\end{itemize}
