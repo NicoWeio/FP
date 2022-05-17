@@ -6,7 +6,7 @@ import uncertainties.unumpy as unp
 ureg = pint.UnitRegistry()
 
 
-def b_helmholtz(r, N, I):
+def calc_B_helmholtz(r, N, I):
     B = 8 * ureg.mu_0 * I * N / (np.sqrt(125) * r)
     return B
 
@@ -23,7 +23,7 @@ def quad_zeemann(g_f, B, E_HFS, m_f):
     return g_f**2 * (ureg.e * ureg.h/(4 * np.pi * ureg.m_e))**2 * B**2 * (1 - 2 * m_f)/E_HFS
 
 
-# Daten einlesen
+# █ Daten einlesen
 rf_freq, U1_hor, U1_sweep, U2_hor, U2_sweep = np.genfromtxt("data.txt", unpack=True)
 rf_freq *= ureg.Hz  # TODO: Einheit korrekt?
 U1_hor *= ureg.V
@@ -46,17 +46,16 @@ U2_hor -= ureg('13.8 V')
 # Sweepspule:
 r_sweep = ureg('16.39 cm')  # Radius
 N_sweep = 11  # Windungen
-R_sweep = 10 * ureg.ohm  # Widerstand
+R_sweep = 10 * ureg.ohm  # Widerstand # [Quelle unbekannt]
 
 # Horizontalspule:
 r_hor = ureg('15.79 cm')
 N_hor = 154
-R_hor = 10/3 * ureg.ohm
+R_hor = 10/3 * ureg.ohm  # [Quelle unbekannt]
 
 # Vertikalspule:
 r_ver = ureg('11.735 cm')
 N_ver = 20
-
 
 I1_hor = U1_hor/R_hor
 I2_hor = U2_hor/R_hor
@@ -64,15 +63,12 @@ I1_sweep = U1_sweep/R_sweep
 I2_sweep = U2_sweep/R_sweep
 
 
-# ---
-
-
-B1_hor = b_helmholtz(r_hor, N_hor, I1_hor)
-B1_sweep = b_helmholtz(r_sweep, N_sweep, I1_sweep)
+B1_hor = calc_B_helmholtz(r_hor, N_hor, I1_hor)
+B1_sweep = calc_B_helmholtz(r_sweep, N_sweep, I1_sweep)
 B1_ges = B1_hor + B1_sweep
 
-B2_hor = b_helmholtz(r_hor, N_hor, I2_hor)
-B2_sweep = b_helmholtz(r_sweep, N_sweep, I2_sweep)
+B2_hor = calc_B_helmholtz(r_hor, N_hor, I2_hor)
+B2_sweep = calc_B_helmholtz(r_sweep, N_sweep, I2_sweep)
 B2_ges = B2_hor + B2_sweep
 print(B2_ges)
 #print("Gesamte horizontale Magnetfeldstärke in Tesla")
@@ -122,7 +118,7 @@ print(f"85Rb: I={I_2}")
 
 U_vert = unp.uarray(2.26, 0.01) * ureg.V
 I_vert = U_vert/R_sweep
-B_vert = b_helmholtz(r_ver, N_ver, I_vert)
+B_vert = calc_B_helmholtz(r_ver, N_ver, I_vert)
 print("Vertikale Magnetfeldkomponente in µT aus Spannung der vertikalen Spule")
 print(B_vert)
 
