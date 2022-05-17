@@ -1,18 +1,14 @@
-import numpy as np
 import matplotlib.pyplot as plt
-import scipy.constants as const
-import uncertainties.unumpy as unp
-from uncertainties.unumpy import (nominal_values as noms, std_devs as stds)
-from scipy.optimize import curve_fit
-
+import numpy as np
 import pint
-ureg = pint.UnitRegistry()
 import tools
+import uncertainties.unumpy as unp
+ureg = pint.UnitRegistry()
 
 
 def b_helmholtz(r, N, I):
     B = 8 * ureg.mu_0 * I * N / (np.sqrt(125) * r)
-    return B.to('µT')
+    return B
 
 
 def g(m):
@@ -26,9 +22,10 @@ def calc_kernspin(g_f, J):
 def quad_zeemann(g_f, B, E_HFS, m_f):
     return g_f**2 * (ureg.e * ureg.h/(4 * np.pi * ureg.m_e))**2 * B**2 * (1 - 2 * m_f)/E_HFS
 
+
 # Daten einlesen
 rf_freq, U1_hor, U1_sweep, U2_hor, U2_sweep = np.genfromtxt("data.txt", unpack=True)
-rf_freq *= ureg.Hz #TODO: Einheit korrekt?
+rf_freq *= ureg.Hz  # TODO: Einheit korrekt?
 U1_hor *= ureg.V
 U2_hor *= ureg.V
 U1_sweep *= ureg.V
@@ -46,17 +43,17 @@ U2_hor -= ureg('13.8 V')
 
 
 # █ Daten zu den Spulen [Versuchsanleitung]
-#Sweepspule:
-r_sweep = ureg('16.39 cm') # Radius
-N_sweep = 11 # Windungen
-R_sweep = 10 * ureg.ohm # Widerstand
+# Sweepspule:
+r_sweep = ureg('16.39 cm')  # Radius
+N_sweep = 11  # Windungen
+R_sweep = 10 * ureg.ohm  # Widerstand
 
-#Horizontalspule:
+# Horizontalspule:
 r_hor = ureg('15.79 cm')
 N_hor = 154
 R_hor = 10/3 * ureg.ohm
 
-#Vertikalspule:
+# Vertikalspule:
 r_ver = ureg('11.735 cm')
 N_ver = 20
 
@@ -96,10 +93,10 @@ print(f"m, b von 87Rb: {params_87}")
 rf_freq_linspace = tools.linspace(*tools.bounds(rf_freq))
 with tools.plot_context(plt, 'kHz', 'µT', 'f', 'B') as plt2:
     plt2.plot(rf_freq_linspace, tools.nominal_values(params_85[0]*rf_freq_linspace + params_85[1]), label=r"$^{85}$Rb")
-    plt2.plot(rf_freq, B2_ges, 'x') # TODO: Errorbars sollten erscheinen, sobald U eine Unsicherheit erhält.
+    plt2.plot(rf_freq, B2_ges, 'x')  # TODO: Errorbars sollten erscheinen, sobald U eine Unsicherheit erhält.
 
     plt2.plot(rf_freq_linspace, tools.nominal_values(params_87[0]*rf_freq_linspace + params_87[1]), label=r"$^{87}$Rb")
-    plt2.plot(rf_freq, B1_ges, 'x') # TODO: Errorbars sollten erscheinen, sobald U eine Unsicherheit erhält.
+    plt2.plot(rf_freq, B1_ges, 'x')  # TODO: Errorbars sollten erscheinen, sobald U eine Unsicherheit erhält.
 plt.legend()
 # plt.savefig("build/plt/Rb_85_87.pdf")
 # plt.show()
