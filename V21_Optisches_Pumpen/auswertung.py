@@ -118,68 +118,50 @@ with tools.plot_context(plt, 'kHz', 'µT', 'f', 'B') as plt2:
     plt2.plot(rf_freq, B1_ges, 'x') # TODO: Errorbars sollten erscheinen, sobald U eine Unsicherheit erhält.
 plt.legend()
 # plt.savefig("build/plt/Rb_85_87.pdf")
-plt.show()
+# plt.show()
 
-
-# ---
-
-
-#x = np.linspace(0,1000000)
-#plt.plot(x, linear(x, *params_1), label=r"$^{87}$Rb")
-#plt.errorbar(rf_freq, noms(B1_ges),yerr=stds(B1_ges), fmt='rx')
-#plt.ylabel("B-Feld in $\mu$T")
-#plt.xlabel("RF-Freq in kHz")
-#plt.legend()
-#plt.savefig("build/plt/Rb_87.pdf")
 
 # g-Faktoren berechnen
 
-# ---
-
-
-g_f1 = g(unp.uarray(params_1[0], errors1[0]))
-g_f2 = g(unp.uarray(params_2[0], errors2[0]))
-print(f"Rb-85: g_f={g_f2}")
+g_f1 = g(params_87[0])
+g_f2 = g(params_85[0])
 print(f"Rb-87: g_f={g_f1}")
+print(f"Rb-85: g_f={g_f2}")
 
 # ---
 
 I_1 = kernspin(g_f1, 1/2)
 I_2 = kernspin(g_f2, 1/2)
 
-print(f"Rb-85: I={I_2}")
 print(f"Rb-87: I={I_1}")
+print(f"Rb-85: I={I_2}")
 
 
 # Erdmagnetfeld in vertikaler und horizontaler Richtung bestimmen
-#
 
 #Spannung in Volt
-U_vert = unp.uarray(2.26, 0.01)
+U_vert = unp.uarray(2.26, 0.01) * ureg.V
 I_vert = U_vert/R_sweep
 B_vert = b_helmholtz(r_ver, N_ver, I_vert)
-print("Vertikale Magnetfeldkomponente in muT aus Spannung der vertikalen Spule")
-print(B_vert * 1000000)
+print("Vertikale Magnetfeldkomponente in µT aus Spannung der vertikalen Spule")
+print(B_vert)
 
 
 # ---
 
 
-B_hor = (unp.uarray(params_1[1], errors1[1]) + unp.uarray(params_2[1], errors2[1]))/2
-print("Horizontale Magnetfeldkomponente in muT aus y-Achsenabschnitt des lin. Zusammenhangs zwischen B-Feld unf RF-Frequenz")
-print(B_hor * 1000000)
+B_hor = (params_87[1] + params_85[1])/2
+print("Horizontale Magnetfeldkomponente in µT aus y-Achsenabschnitt des lin. Zusammenhangs zwischen B-Feld unf RF-Frequenz")
+print(B_hor)
 
 
 # Vergleichswerte:
-# horizontale Magntefledkomponente ~20 Mikrotesla; vertikale Magnetfeldkomponente ~40 Mikrotesla
+# horizontale Magntefledkomponente ~20 µT; vertikale Magnetfeldkomponente ~40 µT
 
-# Das Verhältnis der beiden Isotope lässt sich anhand des Amplitudenverhältnis der beiden Dips (1. Dip Rb-87 und 2. Dip Rb-85) ablesen. Es beträgt Rb-87 = 0.5 * Rb-85
+# Das Verhältnis der beiden Isotope lässt sich anhand des Amplitudenverhältnis der beiden Dips (1. Dip Rb-87 und 2. Dip Rb-85) ablesen.
+# Es beträgt Rb-87 = 0.5 * Rb-85
 
 # Abschätzung des quadratischen Zeemann-Effekts:
-#
-
-# ---
-
 
 E_HFS_87 = 4.53 * 10**(-24)
 E_HFS_85 = 2.01 * 10**(-24)
@@ -187,4 +169,4 @@ E_QZ_87 = quad_zeemann(g_f1, B1_ges[9], E_HFS_87, 1)
 E_QZ_85 = quad_zeemann(g_f2, B2_ges[9], E_HFS_85, 1)
 
 #print("Aufspaltung durch den quadratischen Zeemann-Effekt bei höheren Magnetfeldstärken")
-print(f"Rb-87:{abs(E_QZ_87)} J bei {max(B1_ges)*1000000} Mikrotesla, Rb-85: {abs(E_QZ_85)} J bei {max(B2_ges)*1000000} Mikrotesla")
+print(f"Rb-87:{abs(E_QZ_87)} J bei {max(B1_ges)}, Rb-85: {abs(E_QZ_85)} J bei {max(B2_ges)}")
