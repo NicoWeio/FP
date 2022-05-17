@@ -109,17 +109,14 @@ print(f"m, b von Rb-87: {params_87}")
 
 # Kernspin aus Steigung berechnen
 
-# ---
-
-
 rf_freq_linspace = tools.linspace(*tools.bounds(rf_freq))
-plt.plot(rf_freq_linspace, tools.nominal_values(params_85[0]*rf_freq_linspace + params_85[1]), label=r"$^{85}$Rb")
-plt.errorbar(rf_freq, noms(B2_ges), yerr=stds(B2_ges), fmt='rx')
-plt.plot(rf_freq_linspace, tools.nominal_values(params_87[0]*rf_freq_linspace + params_87[1]), label=r"$^{87}$Rb")
-plt.errorbar(rf_freq, noms(B1_ges), yerr=stds(B1_ges), fmt='rx')
-plt.ylabel("B-Feld in $\mu$T")
-plt.xlabel("RF-Freq in kHz")
-plt.legend(loc="best")
+with tools.plot_context(plt, 'kHz', 'µT', 'f', 'B') as plt2:
+    plt2.plot(rf_freq_linspace, tools.nominal_values(params_85[0]*rf_freq_linspace + params_85[1]), label=r"$^{85}$Rb")
+    plt2.plot(rf_freq, B2_ges, 'x') # TODO: Errorbars sollten erscheinen, sobald U eine Unsicherheit erhält.
+
+    plt2.plot(rf_freq_linspace, tools.nominal_values(params_87[0]*rf_freq_linspace + params_87[1]), label=r"$^{87}$Rb")
+    plt2.plot(rf_freq, B1_ges, 'x') # TODO: Errorbars sollten erscheinen, sobald U eine Unsicherheit erhält.
+plt.legend()
 # plt.savefig("build/plt/Rb_85_87.pdf")
 plt.show()
 
@@ -132,7 +129,7 @@ plt.show()
 #plt.errorbar(rf_freq, noms(B1_ges),yerr=stds(B1_ges), fmt='rx')
 #plt.ylabel("B-Feld in $\mu$T")
 #plt.xlabel("RF-Freq in kHz")
-#plt.legend(loc="best")
+#plt.legend()
 #plt.savefig("build/plt/Rb_87.pdf")
 
 # g-Faktoren berechnen
