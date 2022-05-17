@@ -9,12 +9,6 @@ import pint
 ureg = pint.UnitRegistry()
 import tools
 
-# ---
-
-
-def linear(x, m, b):
-    return m*x+b
-
 
 def b_helmholtz(r, N, I):
     B = 8 * ureg.mu_0 * I * N / (np.sqrt(125) * r)
@@ -25,7 +19,7 @@ def g(m):
     return 4 * np.pi * ureg.m_e / (m * ureg.e)
 
 
-def kernspin(g_f, J):
+def calc_kernspin(g_f, J):
     return J * (2/g_f - 1)
 
 
@@ -47,9 +41,6 @@ U2_sweep *= ureg.V
 # U2_sweep = unp.uarray(U2_sweep, 0.01)
 
 
-# ---
-
-
 #Horizontalspule:
 r_hor = ureg('0.1579 m') # Radius
 N_hor = 154 # Windungen
@@ -65,15 +56,10 @@ r_ver = ureg('0.11735 m')
 N_ver = 20
 
 
-# ---
-
-
-#Spannungen in Volt
-# TODO: !?
+# TODO: Was passiert hier!?
 U1_hor -= ureg('13.8 V')
 U2_hor -= ureg('13.8 V')
 
-#Stromstärken in Ampere
 I1_hor = U1_hor/R_hor
 I2_hor = U2_hor/R_hor
 I1_sweep = U1_sweep/R_sweep
@@ -92,14 +78,11 @@ B2_sweep = b_helmholtz(r_sweep, N_sweep, I2_sweep)
 B2_ges = B2_hor + B2_sweep
 print(B2_ges)
 #print("Gesamte horizontale Magnetfeldstärke in Tesla")
-print(f"Dip1:{max(B1_ges), np.argmax(B1_ges)}, Dip2:{max(B2_ges), np.argmax(B2_ges)}")
+print(f"Dip1: {max(B1_ges), np.argmax(B1_ges)}, Dip2: {max(B2_ges), np.argmax(B2_ges)}")
 
 
 # ---
 
-
-# params_87 = tools.pint_curve_fit(linear, rf_freq, tools.nominal_values(B1_ges), ) # sigma=stds(B1_ges)
-# params_85 = tools.pint_curve_fit(linear, rf_freq, tools.nominal_values(B2_ges), ) # sigma=stds(B2_ges)
 
 params_87 = tools.linregress(rf_freq, B1_ges)
 params_85 = tools.linregress(rf_freq, B2_ges)
@@ -130,8 +113,8 @@ print(f"Rb-85: g_f={g_f2}")
 
 # ---
 
-I_1 = kernspin(g_f1, 1/2)
-I_2 = kernspin(g_f2, 1/2)
+I_1 = calc_kernspin(g_f1, 1/2)
+I_2 = calc_kernspin(g_f2, 1/2)
 
 print(f"Rb-87: I={I_1}")
 print(f"Rb-85: I={I_2}")
@@ -139,7 +122,6 @@ print(f"Rb-85: I={I_2}")
 
 # Erdmagnetfeld in vertikaler und horizontaler Richtung bestimmen
 
-#Spannung in Volt
 U_vert = unp.uarray(2.26, 0.01) * ureg.V
 I_vert = U_vert/R_sweep
 B_vert = b_helmholtz(r_ver, N_ver, I_vert)
@@ -163,8 +145,8 @@ print(B_hor)
 
 # Abschätzung des quadratischen Zeemann-Effekts:
 
-E_HFS_87 = 4.53 * 10**(-24)
-E_HFS_85 = 2.01 * 10**(-24)
+E_HFS_87 = 4.53e-24
+E_HFS_85 = 2.01e-24
 E_QZ_87 = quad_zeemann(g_f1, B1_ges[9], E_HFS_87, 1)
 E_QZ_85 = quad_zeemann(g_f2, B2_ges[9], E_HFS_85, 1)
 
