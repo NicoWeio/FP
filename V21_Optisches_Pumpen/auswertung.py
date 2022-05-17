@@ -7,6 +7,7 @@ from scipy.optimize import curve_fit
 
 import pint
 ureg = pint.UnitRegistry()
+import tools
 
 # ---
 
@@ -21,7 +22,7 @@ def b_helmholtz(r, N, I):
 
 
 def g(m):
-    return 4 * np.pi * const.m_e / (m * const.e)
+    return 4 * np.pi * ureg.m_e / (m * ureg.e)
 
 
 def kernspin(g_f, J):
@@ -29,7 +30,7 @@ def kernspin(g_f, J):
 
 
 def quad_zeemann(g_f, B, E_HFS, m_f):
-    return g_f**2 * (const.e * const.h/(4 * np.pi * const.m_e))**2 * B**2 * (1 - 2 * m_f)/E_HFS
+    return g_f**2 * (ureg.e * ureg.h/(4 * np.pi * ureg.m_e))**2 * B**2 * (1 - 2 * m_f)/E_HFS
 
 
 # Werte auslesen. rf_freq zunächst in kHz | U1_hor, U1_sweep, U2_hor, U2_sweep alles in V und hor hat 13.8V offset
@@ -97,13 +98,11 @@ print(f"Dip1:{max(B1_ges), np.argmax(B1_ges)}, Dip2:{max(B2_ges), np.argmax(B2_g
 # ---
 
 
-params_1, cov_1 = curve_fit(linear, rf_freq, noms(B1_ges), sigma=stds(B1_ges))
-errors1 = np.sqrt(np.diag(cov_1))
-params_2, cov_2 = curve_fit(linear, rf_freq, noms(B2_ges), sigma=stds(B2_ges))
-errors2 = np.sqrt(np.diag(cov_2))
+# params_87 = tools.pint_curve_fit(linear, rf_freq, tools.nominal_values(B1_ges), ) # sigma=stds(B1_ges)
+# params_85 = tools.pint_curve_fit(linear, rf_freq, tools.nominal_values(B2_ges), ) # sigma=stds(B2_ges)
 
-params_85 = unp.uarray(params_2, errors2)
-params_87 = unp.uarray(params_1, errors1)
+params_87 = tools.linregress(rf_freq, B1_ges)
+params_85 = tools.linregress(rf_freq, B2_ges)
 
 print(f"m, b von Rb-85: {params_85}")
 print(f"m, b von Rb-87: {params_87}")
@@ -113,27 +112,28 @@ print(f"m, b von Rb-87: {params_87}")
 # ---
 
 
-x = np.linspace(0, 1000000)
-plt.plot(x/1000, linear(x, *params_2)*1000000, label=r"${}^{85}$Rb")
-plt.errorbar(rf_freq/1000, noms(B2_ges)*1000000, yerr=stds(B2_ges)*1000000, fmt='rx')
-plt.plot(x/1000, linear(x, *params_1)*1000000, label=r"${}^{87}$Rb")
-plt.errorbar(rf_freq/1000, noms(B1_ges)*1000000, yerr=stds(B1_ges)*1000000, fmt='rx')
+rf_freq_linspace = tools.linspace(*tools.bounds(rf_freq))
+plt.plot(rf_freq_linspace, tools.nominal_values(params_85[0]*rf_freq_linspace + params_85[1]), label=r"$^{85}$Rb")
+plt.errorbar(rf_freq, noms(B2_ges), yerr=stds(B2_ges), fmt='rx')
+plt.plot(rf_freq_linspace, tools.nominal_values(params_87[0]*rf_freq_linspace + params_87[1]), label=r"$^{87}$Rb")
+plt.errorbar(rf_freq, noms(B1_ges), yerr=stds(B1_ges), fmt='rx')
 plt.ylabel("B-Feld in $\mu$T")
 plt.xlabel("RF-Freq in kHz")
 plt.legend(loc="best")
-plt.savefig("Rb_85_87.pdf")
+# plt.savefig("build/plt/Rb_85_87.pdf")
+plt.show()
 
 
 # ---
 
 
 #x = np.linspace(0,1000000)
-#plt.plot(x/1000, linear(x, *params_1)*1000000, label=r"${}^{87}$Rb")
-#plt.errorbar(rf_freq/1000, noms(B1_ges)*1000000,yerr=stds(B1_ges)*1000000, fmt='rx')
+#plt.plot(x, linear(x, *params_1), label=r"$^{87}$Rb")
+#plt.errorbar(rf_freq, noms(B1_ges),yerr=stds(B1_ges), fmt='rx')
 #plt.ylabel("B-Feld in $\mu$T")
 #plt.xlabel("RF-Freq in kHz")
 #plt.legend(loc="best")
-#plt.savefig("Rb_87.pdf")
+#plt.savefig("build/plt/Rb_87.pdf")
 
 # g-Faktoren berechnen
 
