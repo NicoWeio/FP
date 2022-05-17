@@ -11,7 +11,7 @@ def calc_B_helmholtz(r, N, I):
     return B
 
 
-def g(m):
+def calc_g(m):
     return 4 * np.pi * ureg.m_e / (m * ureg.e)
 
 
@@ -19,7 +19,7 @@ def calc_kernspin(g_f, J):
     return J * (2/g_f - 1)
 
 
-def quad_zeemann(g_f, B, E_HFS, m_f):
+def calc_quad_zeemann(g_f, B, E_HFS, m_f):
     return g_f**2 * (ureg.e * ureg.h/(4 * np.pi * ureg.m_e))**2 * B**2 * (1 - 2 * m_f)/E_HFS
 
 
@@ -81,8 +81,8 @@ print(f"Dip1: {max(B1_ges), np.argmax(B1_ges)}, Dip2: {max(B2_ges), np.argmax(B2
 params_87 = tools.linregress(rf_freq, B1_ges)
 params_85 = tools.linregress(rf_freq, B2_ges)
 
-print(f"m, b von 85Rb: {params_85}")
-print(f"m, b von 87Rb: {params_87}")
+print(f"85Rb: (m, b)={params_85}")
+print(f"87Rb: (m, b)={params_87}")
 
 # Kernspin aus Steigung berechnen
 
@@ -98,17 +98,17 @@ plt.legend()
 # plt.show()
 
 
-# g-Faktoren berechnen
+# g-Faktoren berechnen [d) in der Versuchsanleitung]
 
-g_f1 = g(params_87[0])
-g_f2 = g(params_85[0])
+g_f1 = calc_g(params_87[0])
+g_f2 = calc_g(params_85[0])
 print(f"87Rb: g_f={g_f1}")
 print(f"85Rb: g_f={g_f2}")
 
 # ---
 
-I_1 = calc_kernspin(g_f1, 1/2)
-I_2 = calc_kernspin(g_f2, 1/2)
+I_1 = calc_kernspin(g_f1, J=1/2)
+I_2 = calc_kernspin(g_f2, J=1/2)
 
 print(f"87Rb: I={I_1}")
 print(f"85Rb: I={I_2}")
@@ -147,8 +147,8 @@ E_HFS_85 = 2.01e-24
 
 # QZ = quadratischer Zeeman-Effekt
 # TODO: Argmax (9) nicht hardcoden ↓
-E_QZ_87 = quad_zeemann(g_f1, B1_ges[9], E_HFS_87, 1)
-E_QZ_85 = quad_zeemann(g_f2, B2_ges[9], E_HFS_85, 1)
+E_QZ_87 = calc_quad_zeemann(g_f1, B1_ges[9], E_HFS_87, 1)
+E_QZ_85 = calc_quad_zeemann(g_f2, B2_ges[9], E_HFS_85, 1)
 
 #print("Aufspaltung durch den quadratischen Zeemann-Effekt bei höheren Magnetfeldstärken")
 print(f"87Rb:{abs(E_QZ_87)} J bei {max(B1_ges)}, 85Rb: {abs(E_QZ_85)} J bei {max(B2_ges)}")
