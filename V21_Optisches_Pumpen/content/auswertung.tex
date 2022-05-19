@@ -40,11 +40,19 @@ Mit \autoref{tab:spulen} und \autoref{eqn:helmholtz} folgt daraus für die verti
 \subsection{Gyromagnetische Faktoren}
 Aus den gemäß \autoref{sec:durchfuehrung:todo} gemessenen Resonanzpositionen können die…
 
-Indem die magnetische Flussdichte in Abhängigkeit der RF-Frequenz, also als $B(f)$, ausgedrückt wird,
-ergibt sich ein linearer Zusammenhang ($B(f) = m·f+b$),
+Indem die magnetische Flussdichte aus \autoref{eqn:todo}
+in Abhängigkeit der RF-Frequenz, also als $B(f)$, ausgedrückt wird,
+ergibt sich ein linearer Zusammenhang
+\begin{equation*}
+    % TODO: Mit Theorie angleichen; \omega oder f gemessen?
+    B(f) = \underbrace{\frac{\hbar}{g_F \mu_B}}_m · \underbrace{2\pi f}_\omega
+    + {\color{blue} b} \ ,
+\end{equation*}
 welcher mithilfe einer Regressionsrechnung
 (unter Verwendung von \texttt{scipy.stats.linregress})
 quantifiziert wird.
+Der Summand $\color{blue} b$ dient hierbei einzig der Berücksichtigung möglicher systematischer Abweichungen.
+
 Es ergeben sich die Parameter
 \begin{align*}
     m_{\Rb{87}} &= \SI{0}{\micro\tesla\per\hertz} \\
@@ -54,17 +62,19 @@ Es ergeben sich die Parameter
     b_{\Rb{85}} &= \SI{0}{\micro\tesla} \ .
 \end{align*}
 
-Durch Einsetzen in … folgt für die gyromagnetischen Faktoren
+
+Aus
+\[
+    m = \frac{\hbar}{g_F \mu_B}
+    \Leftrightarrow
+    g_F = \frac{\hbar}{m \mu_B}
+\]
+folgt für die gyromagnetischen Faktoren
 \begin{align*}
-    m_{\Rb{87}} &= \SI{0}{} \\
-    m_{\Rb{85}} &= \SI{0}{} \ .
+    g_{F, \Rb{87}} &= \SI{0}{} \\
+    g_{F, \Rb{85}} &= \SI{0}{} \ .
 \end{align*}
 
-% TODO: Mit Theorie angleichen; \omega oder f gemessen?
-Durch Umstellen von \autoref{eqn:todo} ergibt sich
-\begin{equation*}
-    B(f) = \underbrace{\frac{\hbar}{g_F µ_B}}_m · \underbrace{2\pi f}_\omega \ .
-\end{equation*}
 
 \begin{figure}
     \centering
@@ -73,6 +83,13 @@ Durch Umstellen von \autoref{eqn:todo} ergibt sich
     \label{fig:plt:g_F}
 \end{figure}
 
+% TODO: Tabelle mit Messwerten
+\begin{table}
+    \centering
+    \caption{Messwerte zu …}
+    \label{tab:lande_ab}
+    % \expandableinput{build/tab/messwerte.tex}
+\end{table}
 
 \subsection{Kernspin}
 
