@@ -1,3 +1,4 @@
+import generate_table
 import matplotlib.pyplot as plt
 import numpy as np
 import pint
@@ -76,6 +77,12 @@ B2_hor = calc_B_helmholtz(r_hor, N_hor, I2_hor)
 B2_sweep = calc_B_helmholtz(r_sweep, N_sweep, I2_sweep)
 B2_ges = B2_hor + B2_sweep
 
+# █ Tabelle generieren
+generate_table.generate_table_pint(
+    'build/tab/messwerte.tex',
+    (r'B1_\text{hor}', ureg.microtesla, B1_hor),
+    (r'B2_\text{hor}', ureg.microtesla, B2_hor),
+)
 
 dip1 = np.argmax(B1_ges)
 dip2 = np.argmax(B2_ges)
