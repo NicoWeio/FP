@@ -1,2 +1,83 @@
 \section{Auswertung}
 \label{sec:auswertung}
+
+% \subsection{Magnetfeld der Helmholtz-Spulenpaare}
+\subsection{Erdmagnetfeld}
+
+Die magnetische Flussdichte $B$ im Zentrum eines Helmholtz-Spulenpaars ist durch
+\begin{equation}
+    B = \frac{8}{\sqrt{125}} \frac{\mu_0 NI}{R}
+    \label{eqn:helmholtz}
+\end{equation}
+gegeben,
+wobei $N$ die Windungszahl, $I$ den Spulenstrom, und $R$ den Radius der beiden Spulen bezeichnet. %Oxford-Komma
+
+\begin{table}
+    \centering
+    \caption{Daten zu den verwendeten Helmholtz-Spulen.}
+    \label{tab:spulen}
+    \begin{tabular}{l S S}
+        \toprule
+        Spule &
+        {$N$} &
+        {$R \mathbin{/} \si{\centi\meter}$} \\
+        \midrule
+        Sweep      &  11 & 16.39  \\
+        Horizontal & 154 & 15.79  \\
+        Vertikal   &  20 & 11.735 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Es wurde experimentell bestimmt,
+dass der Effekt des Erdmagnetfelds minimal ist,
+wenn die Vertikal-Spule mit einem Strom von $I = \SI{123}{\ampere}$ betrieben wird.
+Mit \autoref{tab:spulen} und \autoref{eqn:helmholtz} folgt daraus für die vertikale Komponente des Erdmagnetfelds
+\[ B_\text{vert} = \SI{1234}{\micro\tesla} \ . \]
+% Vergleichswert: 44 µT [Wikipedia]
+
+
+\subsection{Gyromagnetische Faktoren}
+Aus den gemäß \autoref{sec:durchfuehrung:todo} gemessenen Resonanzpositionen können die…
+
+Indem die magnetische Flussdichte in Abhängigkeit der RF-Frequenz, also als $B(f)$, ausgedrückt wird,
+ergibt sich ein linearer Zusammenhang ($B(f) = m·f+b$),
+welcher mithilfe einer Regressionsrechnung
+(unter Verwendung von \texttt{scipy.stats.linregress})
+quantifiziert wird.
+Es ergeben sich die Parameter
+\begin{align*}
+    m_{\Rb{87}} &= \SI{0}{\micro\tesla\per\hertz} \\
+    b_{\Rb{87}} &= \SI{0}{\micro\tesla} \\
+    \intertext{und}
+    m_{\Rb{85}} &= \SI{0}{\micro\tesla\per\hertz} \\
+    b_{\Rb{85}} &= \SI{0}{\micro\tesla} \ .
+\end{align*}
+
+Durch Einsetzen in … folgt für die gyromagnetischen Faktoren
+\begin{align*}
+    m_{\Rb{87}} &= \SI{0}{} \\
+    m_{\Rb{85}} &= \SI{0}{} \ .
+\end{align*}
+
+% TODO: Mit Theorie angleichen; \omega oder f gemessen?
+Durch Umstellen von \autoref{eqn:todo} ergibt sich
+\begin{equation*}
+    B(f) = \underbrace{\frac{\hbar}{g_F µ_B}}_m · \underbrace{2\pi f}_\omega \ .
+\end{equation*}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{build/plt/g_F.pdf}
+    \caption{Messwerte und Regressionsgeraden zu TODO.}
+    \label{fig:plt:g_F}
+\end{figure}
+
+
+\subsection{Kernspin}
+
+
+\subsection{Isotopenverhältnis}
+
+
+\subsection{Quadratischer Zeeman-Effekt}

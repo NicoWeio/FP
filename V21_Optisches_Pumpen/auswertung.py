@@ -82,6 +82,7 @@ dip2 = np.argmax(B2_ges)
 print(f"Dip1: {max(B1_ges), dip1}, Dip2: {max(B2_ges), dip2}")
 
 # TODO: Plot, weil ich nicht verstehe, was hier abgeht.
+plt.figure()
 plt.stackplot(rf_freq, B1_hor, B1_sweep, labels=['Horizontalspule', 'Sweepspule'])
 plt.axvline(rf_freq[dip1], color='k', linestyle='--', label='Dip-Dings')
 # plt.stackplot(rf_freq, B2_hor, B2_sweep, labels=['Horizontalspule', 'Sweepspule'])
@@ -90,26 +91,27 @@ plt.legend()
 # plt.show()
 
 
-console.rule("lineare Regression")
+console.rule("g-Faktoren [d) in der Versuchsanleitung]")
+# █ lineare Regression
 params_87 = tools.linregress(rf_freq, B1_ges)
 params_85 = tools.linregress(rf_freq, B2_ges)
 print(f"87Rb: (m, b)={params_87}")
 print(f"85Rb: (m, b)={params_85}")
 
-
+# █ Plot
 rf_freq_linspace = tools.linspace(*tools.bounds(rf_freq))
+plt.figure()
 with tools.plot_context(plt, 'kHz', 'µT', 'f', 'B') as plt2:
-    plt2.plot(rf_freq_linspace, tools.nominal_values(params_85[0]*rf_freq_linspace + params_85[1]), label=r"$^{85}$Rb")
-    plt2.plot(rf_freq, B2_ges, 'x')  # TODO: Errorbars sollten erscheinen, sobald U eine Unsicherheit erhält.
+    plt2.plot(rf_freq, B2_ges, 'x', zorder=5, label=r"Messwerte zu $^{85}$Rb")  # TODO: Errorbars sollten erscheinen, sobald U eine Unsicherheit erhält.
+    plt2.plot(rf_freq_linspace, tools.nominal_values(params_85[0]*rf_freq_linspace + params_85[1]), label=r"Ausgleichsgerade zu $^{85}$Rb")
 
-    plt2.plot(rf_freq_linspace, tools.nominal_values(params_87[0]*rf_freq_linspace + params_87[1]), label=r"$^{87}$Rb")
-    plt2.plot(rf_freq, B1_ges, 'x')  # TODO: Errorbars sollten erscheinen, sobald U eine Unsicherheit erhält.
+    plt2.plot(rf_freq, B1_ges, 'x', zorder=5, label=r"Messwerte zu $^{87}$Rb")  # TODO: Errorbars sollten erscheinen, sobald U eine Unsicherheit erhält.
+    plt2.plot(rf_freq_linspace, tools.nominal_values(params_87[0]*rf_freq_linspace + params_87[1]), label=r"Ausgleichsgerade zu $^{87}$Rb")
 plt.legend()
-# plt.savefig("build/plt/Rb_85_87.pdf")
+plt.savefig("build/plt/g_F.pdf")
 # plt.show()
 
-
-console.rule("g-Faktoren [d) in der Versuchsanleitung]")
+# █ Berechnung
 g_F_87 = calc_g(params_87[0])
 g_F_85 = calc_g(params_85[0])
 print(f"87Rb: g_F={g_F_87}")
