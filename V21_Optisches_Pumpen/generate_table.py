@@ -54,6 +54,13 @@ class Column:
         # TODO: This doesn't check placeholder widths
         return max([len(self.formatter(x)) for x in self.data])
 
+    @property
+    def header(self):
+        return (
+            (f'${self.name}' r' \mathbin{/} ' f'{self.unit:Lx}$')
+            if str(self.unit) != 'dimensionless'
+            else f'${self.name}$')
+
     # @property
     # def units(self):
     #     first_cell = self.data[0]
@@ -85,10 +92,7 @@ def generate_table_pint(filename, *column_tuples):
     output = []
     output += [r"\begin{tabular}{" f"{' '.join(coltypes)}" "}"]
     output += [r"\toprule"]
-    foo = [
-        '{' + ((f'${c.name}' r' \mathbin{/} ' f'{c.unit:Lx}$') if str(c.unit) != 'dimensionless' else f'${c.name}$') + '}'
-        for c in columns
-    ]
+    foo = ['{' + c.header + '}' for c in columns]
     output += [" & \n".join(foo) + r" \\"]
 
     output += [r"\midrule"]
