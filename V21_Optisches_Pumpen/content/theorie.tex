@@ -1,2 +1,97 @@
 \section{Theorie}
 \label{sec:theorie}
+
+    Im folgenden Abschnitt werden die theoretischen Grundlagen für den Versuch erläutert.
+
+\subsection{Energieniveaus und Quantenzahlen eines Atoms}
+
+    Bei der Betrachtung eines Atoms ist es sinnvoll,
+    zwischen Kern und Atomhülle zu unterscheiden.
+
+    Die Atomhülle besitzt einen Gesamtdrehimpuls $\vec{J}$,
+    welcher sich aus dem Bahndrehimpuls $\vec{L}$ und dem Spin $\vec{S}$ der sich in der Hülle befindenden Elektronen zusammensetzt.
+    Zu jedem dieser Drehimpulse gehört außerdem ein magnetisches Moment,
+    welches durch
+    \begin{gather}
+        \vec{\mu}_J = -g_J \mu_\text{B} \vec{J} \\
+        \vec{\mu}_L = -g_L \mu_\text{B} \vec{L} \\
+        \vec{\mu}_S = -g_S \mu_\text{B} \vec{S}
+    \end{gather}
+    beschrieben werden kann,
+    wobei $g_L = 1$ und $g_S \approx 2$ ist.
+    Der Faktor $\mu_\text{B} = \frac{e \hbar}{2m_\text{e}}$ bezeichnet das Bohr'sche Magneton und $g_J$ stellt den Landé-Faktor der Elektronenhülle dar,
+    welcher mit
+    \begin{equation}
+        g_J = 1 + \frac{J(J+1) + S(S+1) - L(L+1)}{2J(J+1)}
+        \label{eqn:landeJ}
+    \end{equation}
+    berechnet werden kann.
+
+    Die Elektronenkonfiguration innerhalb der Atomhülle kann über die Quantenzahlen $n, l, m$ beschrieben werden,
+    wobei $n \in \symbb{N}$ die Energie- oder Hauptquantenzahl,
+    $l \in \{0, 1, 2, ..., n-1\}$ die Bahndrehimpulsquantenzahl und $m \in \{-l, -l+1, ..., l-1, l\}$ die magnetische Quantenzahl ist.
+    Das hier betrachtete Rubidium hat eine Elektronenkonfiguration von $1s^2 2s^2 2p^6 3s^2 3p^6 3d^{10} 4s^2 4p^6 5s$.
+    Mithilfe der Hund'schen Regeln kann ein Gesamtspin von $S=\frac{1}{2}$,
+    ein Gesamtbahndrehimpuls $L=0$ und ein Gesamtdrehimpuls von $J = \lvert L \pm S \rvert = \frac{1}{2}$ für die Atomhülle berechnet werden.
+
+    Aufgrund der Wechselwirkung der magnetischen Momente von Spin $\mu_s$ und Bahndrehimpuls $\mu_l$ mit dem Magnetfeld des Kerns entsteht eine Aufspaltung der Energieniveaus,
+    welche als \textit{Feinstrukturaufspaltung} oder \textit{LS-Kopplung} bezeichnet wird.
+
+    Der Kern hat den Spin $\vec{I}$.
+    Im Falle von $\ce{^{85}Rb}$ ergibt sich ein Spin von $I = \frac{5}{2}$ und für $\ce{^{87}Rb}$ gilt $I = \frac{3}{2}$.
+    Der Spin lässt sich mithilfe der Spinkonfiguration von Protonen und Neutronen bestimmen.
+    Mit Betrachtung des Kernspins tritt ein weiterer Effekt bei der Aufspaltung der Energieniveaus auf,
+    die sogenannte \textit{Hyperfeinstruktur},
+    welche aus der Wechselwirkung der magnetischen Momente des Kernspins $\mu_I$ und dem des Gesamtbahndrehimpuls der Atomhülle $\mu_J$ resultiert.
+
+    Für das gesamte Atom ergibt sich ein Atomdrehimpuls $\vec{F} = \vec{I} + \vec{J}$ mit der magnetischen Quantenzahl $M = \{-\lvert I+J \rvert, ..., \lvert I+J \rvert\}$.
+    Für das entsprechende magnetische Moment gilt
+    \begin{equation}
+        \vec{\mu_F} = - M g_F \mu_\text{B} \vec{F} \ ,
+    \end{equation}
+    wobei
+    \begin{equation}
+        g_F = g_J \cdot \frac{F(F+1) + J(J+1) - I(I+1)}{2F(F+1)}
+        \label{eqn:landeF}
+    \end{equation}
+    der Landé-Faktor des Atoms ist,
+    mit $g_J$ aus \autoref{eqn:landeJ}.
+
+    Wird nun ein externes Magnetfeld angelegt,
+    wird der \textit{Zeeman-Effekt} relevant.
+    Es findet eine Aufspaltung der Energienievaus nach der magnetischen Quantenzahl $M$ statt,
+    wodurch $2F+1$ Zustände entstehen.
+    Die Energiedifferenz zwischen diesen Zuständen wird mithilfe von
+    \begin{equation}
+        \symup{\Delta} E_\text{Z} = g_F \mu_\text{B} B \symup{\Delta} m_J
+        \label{eqn:zeemanaufspaltung}
+    \end{equation}
+    berechnet.
+    Die \autoref{fig:aufspaltung} zeigt die Feinstrukturaufspaltung,
+    die Hyperfeinstrukturaufspaltung sowie die Aufspaltung durch den Zeeman-Effekt im Falle des Grundzustands $^2S_{1/2}$ und angeregten Zustands $^2P_{1/2}$.
+    %\begin{figure}
+    %    \centering
+    %    \includegraphics[width=\textwidth]{}
+    %    \caption{Aufspaltung der Energieniveaus durch Kopplungen innerhalb des Atoms und externe Magnetfelder.}
+    %    \label{fig:aufspaltung}
+    %\end{figure}
+    Zwischen den Energieniveaus können Übergänge stattfinden,
+    wobei ein Elektron aus einem höhreren Niveau in ein niedrigeres zurückfällt und dabei ein Photon mit der entsprechenden Energiedifferenz emittiert.
+    Es können nur Übergänge stattfinden,
+    bei denen die Auswahlregeln für elektrische und magnetische Dipolübergänge erfüllt sind.
+    Es gilt $\symup{\Delta} L = \pm 1$, $\symup{\Delta} S = 0$, $\symup{\Delta} J = 0, \pm 1$ und $\symup{\Delta} F = 0, \pm 1$.
+    Entsprechend ergibt sich $\symup{\Delta} M = 0, \pm 1$.
+    Abhängig davon,
+    welchen Wert $\symup{\Delta} M$ bei einem Übergang annimmt,
+    ist das entstehende Photon entweder linear ($\pi$-) polarisiert ($\symup{\Delta}M = 0$) oder zirkular ($\sigma^{\pm}$-) polarisiert ($\symup{\Delta}M = \pm 1$).
+    Umgekehrt kann also nur ein $\sigma^{\pm}$-Übergang mit $\symup{\Delta} M = \pm 1$ stattfinden,
+    wenn das Atom mit zirkular polarisiertem Licht bestrahlt wird.
+
+    Es wird nun zusätzlich zwischen \textit{Spontaner} und \textit{Stimulierter Emission} unterschieden.
+    Bei der Spontanen Emission wird ein Photon beim Rückfall eines Atoms aus einem angeregten Zustand in den Grundzustand erzeugt.
+    Bei der Stimulierten Emission trifft ein Photon auf ein angeregtes Atom,
+    welches daraufhin unter Aussendung von Photonen in den Grundzustan zurückfällt.
+    Das einfallende und die emittierten Photonen sind dabei kohärent,
+    haben also die gleiche Wellenlänge, Polarisation, Frequenz, Richtung und Phasenbeziehung.
+
+
