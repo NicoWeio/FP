@@ -1,7 +1,7 @@
 \section{Theorie}
 \label{sec:theorie}
 
-    Im folgenden Abschnitt werden die theoretischen Grundlagen für den Versuch erläutert.
+    Im folgenden Abschnitt werden die theoretischen Grundlagen des Versuchs erläutert.
 
 \subsection{Energieniveaus und Quantenzahlen eines Atoms}
 \label{sec:energieaufspaltung}
@@ -13,11 +13,11 @@
     welcher sich aus dem Bahndrehimpuls $\vec{L}$ und dem Spin $\vec{S}$ der sich in der Hülle befindenden Elektronen zusammensetzt.
     Zu jedem dieser Drehimpulse gehört außerdem ein magnetisches Moment,
     welches durch
-    \begin{gather}
+    \begin{gather*}
         \vec{\mu}_J = -g_J \mu_\text{B} \vec{J} \\
         \vec{\mu}_L = -g_L \mu_\text{B} \vec{L} \\
         \vec{\mu}_S = -g_S \mu_\text{B} \vec{S}
-    \end{gather}
+    \end{gather*}
     beschrieben werden kann,
     wobei $g_L = 1$ und $g_S \approx 2$ ist.
     Der Faktor $\mu_\text{B} = \frac{e \hbar}{2m_\text{e}}$ bezeichnet das Bohr'sche Magneton und $g_J$ stellt den Landé-Faktor der Elektronenhülle dar,
@@ -31,17 +31,20 @@
     Die Elektronenkonfiguration innerhalb der Atomhülle kann über die Quantenzahlen $n, l, m$ beschrieben werden,
     wobei $n \in \symbb{N}$ die Energie- oder Hauptquantenzahl,
     $l \in \{0, 1, 2, ..., n-1\}$ die Bahndrehimpulsquantenzahl und $m \in \{-l, -l+1, ..., l-1, l\}$ die magnetische Quantenzahl ist.
-    Das hier betrachtete Rubidium hat eine Elektronenkonfiguration von $1s^2 2s^2 2p^6 3s^2 3p^6 3d^{10} 4s^2 4p^6 5s$.
+    Das hier betrachtete Rubidium hat eine Elektronenkonfiguration von
+    \[
+        \ce{1s^2 \, 2s^2 \, 2p^6 \, 3s^2 \, 3p^6 \, 3d^10 \, 4s^2 \, 4p^6 \, 5s} \ .
+    \]
     Wie jedes Alkali-Metall hat Rubidium ein einzelnes Valenzelektron in der äußersten Schale,
     welches alleinig zum Drehimpuls der Hülle beiträgt.
-    Mithilfe der Hund'schen Regeln kann ein Gesamtspin von $S=\frac{1}{2}$,
-    ein Gesamtbahndrehimpuls $L=0$ und ein Gesamtdrehimpuls von $J = \lvert L \pm S \rvert = \frac{1}{2}$ für die Atomhülle berechnet werden.
+    Mithilfe der Hund'schen Regeln kann ein Gesamtspin von $S = \sfrac{1}{2}$,
+    ein Gesamtbahndrehimpuls $L=0$ und ein Gesamtdrehimpuls von $J = \lvert L \pm S \rvert = \sfrac{1}{2}$ für die Atomhülle berechnet werden.
 
     Aufgrund der Wechselwirkung der magnetischen Momente von Spin $\vec{\mu}_s$ und Bahndrehimpuls $\vec{\mu}_l$ mit dem Magnetfeld des Kerns entsteht eine Aufspaltung der Energieniveaus,
     welche als \textit{Feinstrukturaufspaltung} oder \textit{LS-Kopplung} bezeichnet wird.
 
     Der Kern hat den Spin $\vec{I}$.
-    Im Falle von $\ce{^{85}Rb}$ ergibt sich ein Spin von $I = \frac{5}{2}$ und für $\ce{^{87}Rb}$ gilt $I = \frac{3}{2}$.
+    Im Falle von \Rb{85} ergibt sich ein Spin von $I = \sfrac{5}{2}$ und für \Rb{87} gilt $I = \sfrac{3}{2}$.
     Der Spin lässt sich mithilfe der Spinkonfiguration von Protonen und Neutronen bestimmen.
     Mit Betrachtung des Kernspins tritt ein weiterer Effekt bei der Aufspaltung der Energieniveaus auf,
     die sogenannte \textit{Hyperfeinstruktur},
@@ -71,12 +74,12 @@
         \label{eqn:zeemanaufspaltung}
     \end{equation}
     berechnet.
-    Die \autoref{fig:aufspaltung} zeigt die Feinstrukturaufspaltung,
-    die Hyperfeinstrukturaufspaltung sowie die Aufspaltung durch den Zeeman-Effekt im Falle des zwei-Niveau-Systems mit Grundzustands $^2S_{1/2}$ und angeregtem Zustands $^2P_{1/2}$ von $\ce{^{87}Rb}$.
+    \autoref{fig:aufspaltung} zeigt die Feinstrukturaufspaltung,
+    die Hyperfeinstrukturaufspaltung sowie die Aufspaltung durch den Zeeman-Effekt im Falle des zwei-Niveau-Systems mit Grundzustands $^2S_{1/2}$ und angeregtem Zustands $^2P_{1/2}$ von \Rb{87}.
     \begin{figure}
         \centering
         \includegraphics[width=\textwidth]{content/img/Lit2_Abb_2D-3.png}
-        \caption{Aufspaltung der Energieniveaus durch Kopplungen innerhalb des Atoms und externe Magnetfelder.\cite{caltech}}
+        \caption{Aufspaltung der Energieniveaus durch Kopplungen innerhalb des Atoms und externe Magnetfelder. \cite{caltech}}
         \label{fig:aufspaltung}
     \end{figure}
     Zwischen den Energieniveaus können Übergänge stattfinden,
@@ -91,44 +94,46 @@
     wenn das Atom mit zirkular polarisiertem Licht bestrahlt wird.
     Dabei ist Licht mit $\symup{\Delta} M = +1$ rechts herum und Licht mit $\symup{\Delta} M =-1$ links herum polarisiert.
 
+
 \subsection{Das optische Pumpen}
 
     Die Grundlage des optischen Pumpens ist durch die Absorption von Photonen in einem Atom gegeben,
     wenn das einfallende Licht mit der Energiedifferenz und den in \autoref{sec:energieaufspaltung} genannten Auswahlregeln kompatibel ist.
-    Es wird nun zusätzlich zwischen \textit{Spontaner} und \textit{Stimulierter Emission} unterschieden.
-    Bei der Spontanen Emission wird ein Photon beim Rückfall eines Atoms aus einem angeregten Zustand in den Grundzustand erzeugt.
+    Es wird nun zusätzlich zwischen \textit{spontaner} und \textit{stimulierter Emission} unterschieden.
+    Bei der spontanen Emission wird ein Photon beim Rückfall eines Atoms aus einem angeregten Zustand in den Grundzustand erzeugt.
     Die Wahrscheinlichkeit für einen Übergang durch spontane Emission ist durch den Einstein-Koeffizienten $A_{nm}$ gegeben,
     wobei die Indizes $nm$ die Energieniveaus $E_n$ und $E_m$ bezeichnen.
-    Bei der Stimulierten Emission trifft ein Photon auf ein angeregtes Atom,
+    Bei der stimulierten Emission trifft ein Photon auf ein angeregtes Atom,
     welches daraufhin unter Aussendung von Photonen in den Grundzustand zurückfällt.
     Das einfallende und die emittierten Photonen sind dabei kohärent,
     haben also die gleiche Wellenlänge, Polarisation, Frequenz, Richtung und Phasenbeziehung.
     Die Übergangswahrscheinlichkeit ist durch den Einstein-Koeffizienten $B_{nm}$ gegeben.
 
-    Es wird nun ein zwei-Niveau-System mit dem Grundzustand $^2S_{1/2}$ und dem ersten angeregten Zustand $^2S_{1/2}$ betrachtet,
+    Es wird nun ein Zwei-Niveau-System mit dem Grundzustand $^2S_{1/2}$ und dem ersten angeregten Zustand $^2P_{1/2}$ betrachtet,
     wobei die Elektronen im thermischen Gleichgewicht nach der Boltzmann-Statistik verteilt sind.
     Der Übergang zwischen den beiden Niveaus wird als $D_1$ bezeichnet,
     die Energiedifferenz entspricht einer Wellenlänge von $\lambda = \SI{794.8}{\nano\meter}$ \cite{versuchsanleitung}.
     Wenn nun das System mit Licht dieser Wellenlänge,
-    welches rechts herum polarisiert ($\symup{\Delta}M = +1$) ist,
+    welches rechts herum polarisiert ist ($\symup{\Delta}M = +1$),
     bestrahlt wird,
     können solche Elektronen angeregt werden,
     für die ein Übergang mit $\symup{\Delta}M = +1$ möglich ist.
     Dies ist in \autoref{fig:aufspaltung} zu sehen.
     Wenn alle möglichen Absorptionsübergänge stattgefunden haben,
     kann keine weitere Absorption stattfinden,
-    das Gas wird nun als \textit{transparent} bezeichnet.
+    das Gas wird daher nun als \textit{transparent} bezeichnet.
     Nun können die Elektronen durch spontane oder stimulierte Emission wieder in den Grundzustand zurückkehren.
     Bei der spontanen Emission entstehen stochastisch verteilte Photonen,
-    es ist jede Konfiguration von $\symup{\Delta}M = 0, \pm 1$ möglich,
-    während bei der stimulierten Emission aufgrund der Kohärenzbedingung nur Übergänge mit $\symup{\Delta}M = +1$ erlaubt sind.
-    \begin{figure}[H]
+    – es ist jede Konfiguration von $\symup{\Delta}M = 0, \pm 1$ möglich –
+    während bei stimulierter Emission aufgrund der Kohärenzbedingung nur Übergänge mit $\symup{\Delta}M = +1$ erlaubt sind.
+
+    Der gesamte Vorgang des optischen Pumpens ist in \autoref{fig:pumpen} dargestellt.
+    \begin{figure}
         \centering
         \includegraphics[scale=0.8]{content/img/Lit2_Abb_8.pdf}
         \caption{Übergänge im zwei-Niveau-System beim optischen Pumpen. \cite{caltech}}
         \label{fig:pumpen}
     \end{figure}
-    Der gesamte Vorgang des optischen Pumpens ist in \autoref{fig:pumpen} dargestellt.
 
 
 
