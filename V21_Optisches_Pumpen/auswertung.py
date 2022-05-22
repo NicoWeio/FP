@@ -31,7 +31,7 @@ def calc_quad_zeemann(g_F, B, E_HFS, m_f):
 
 # █ Daten einlesen
 rf_freq, U1_hor, U1_sweep, U2_hor, U2_sweep = np.genfromtxt("data.txt", unpack=True)
-rf_freq *= ureg.Hz  # TODO: Einheit korrekt?
+rf_freq *= ureg.kHz
 U1_hor *= ureg.V
 U2_hor *= ureg.V
 U1_sweep *= ureg.V
@@ -121,14 +121,14 @@ plt.savefig("build/plt/g_F.pdf")
 # █ Berechnung
 g_F_87 = calc_g(params_87[0])
 g_F_85 = calc_g(params_85[0])
-print(f"87Rb: g_F={g_F_87}")
-print(f"85Rb: g_F={g_F_85}")
+print(f"87Rb:\n", tools.fmt_compare_to_ref(g_F_87, 1/2))
+print(f"85Rb:\n", tools.fmt_compare_to_ref(g_F_85, 1/3))
 
 console.rule("Kernspins [e) in der Versuchsanleitung]")
 I_1 = calc_kernspin(g_F_87, J=1/2)
 I_2 = calc_kernspin(g_F_85, J=1/2)
-print(f"87Rb: I={I_1}")
-print(f"85Rb: I={I_2}")
+print("87Rb:\n", tools.fmt_compare_to_ref(I_1, 1.5))
+print("85Rb:\n", tools.fmt_compare_to_ref(I_2, 2.5))
 
 
 console.rule("Erdmagnetfeld: vertikal")
