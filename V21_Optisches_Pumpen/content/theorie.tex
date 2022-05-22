@@ -4,6 +4,7 @@
     Im folgenden Abschnitt werden die theoretischen Grundlagen für den Versuch erläutert.
 
 \subsection{Energieniveaus und Quantenzahlen eines Atoms}
+\label{sec:energieaufspaltung}
 
     Bei der Betrachtung eines Atoms ist es sinnvoll,
     zwischen Kern und Atomhülle zu unterscheiden.
@@ -31,10 +32,12 @@
     wobei $n \in \symbb{N}$ die Energie- oder Hauptquantenzahl,
     $l \in \{0, 1, 2, ..., n-1\}$ die Bahndrehimpulsquantenzahl und $m \in \{-l, -l+1, ..., l-1, l\}$ die magnetische Quantenzahl ist.
     Das hier betrachtete Rubidium hat eine Elektronenkonfiguration von $1s^2 2s^2 2p^6 3s^2 3p^6 3d^{10} 4s^2 4p^6 5s$.
+    Wie jedes Alkali-Metall hat Rubidium ein einzelnes Valenzelektron in der äußersten Schale,
+    welches alleinig zum Drehimpuls der Hülle beiträgt.
     Mithilfe der Hund'schen Regeln kann ein Gesamtspin von $S=\frac{1}{2}$,
     ein Gesamtbahndrehimpuls $L=0$ und ein Gesamtdrehimpuls von $J = \lvert L \pm S \rvert = \frac{1}{2}$ für die Atomhülle berechnet werden.
 
-    Aufgrund der Wechselwirkung der magnetischen Momente von Spin $\mu_s$ und Bahndrehimpuls $\mu_l$ mit dem Magnetfeld des Kerns entsteht eine Aufspaltung der Energieniveaus,
+    Aufgrund der Wechselwirkung der magnetischen Momente von Spin $\vec{\mu}_s$ und Bahndrehimpuls $\vec{\mu}_l$ mit dem Magnetfeld des Kerns entsteht eine Aufspaltung der Energieniveaus,
     welche als \textit{Feinstrukturaufspaltung} oder \textit{LS-Kopplung} bezeichnet wird.
 
     Der Kern hat den Spin $\vec{I}$.
@@ -42,13 +45,14 @@
     Der Spin lässt sich mithilfe der Spinkonfiguration von Protonen und Neutronen bestimmen.
     Mit Betrachtung des Kernspins tritt ein weiterer Effekt bei der Aufspaltung der Energieniveaus auf,
     die sogenannte \textit{Hyperfeinstruktur},
-    welche aus der Wechselwirkung der magnetischen Momente des Kernspins $\mu_I$ und dem des Gesamtbahndrehimpuls der Atomhülle $\mu_J$ resultiert.
+    welche aus der Wechselwirkung der magnetischen Momente des Kernspins $\vec{\mu}_I$ und dem des Gesamtbahndrehimpuls der Atomhülle $\vec{\mu}_J$ resultiert.
 
     Für das gesamte Atom ergibt sich ein Atomdrehimpuls $\vec{F} = \vec{I} + \vec{J}$ mit der magnetischen Quantenzahl $M = \{-\lvert I+J \rvert, ..., \lvert I+J \rvert\}$.
     Für das entsprechende magnetische Moment gilt
     \begin{equation}
-        \vec{\mu_F} = - M g_F \mu_\text{B} \vec{F} \ ,
+        \vec{\mu}_F = - M g_F \mu_\text{B} \vec{F} \ ,
     \end{equation}
+    %TODO: IST DIE GLEICHUNG SO RICHTIG?
     wobei
     \begin{equation}
         g_F = g_J \cdot \frac{F(F+1) + J(J+1) - I(I+1)}{2F(F+1)}
@@ -68,16 +72,15 @@
     \end{equation}
     berechnet.
     Die \autoref{fig:aufspaltung} zeigt die Feinstrukturaufspaltung,
-    die Hyperfeinstrukturaufspaltung sowie die Aufspaltung durch den Zeeman-Effekt im Falle des Grundzustands $^2S_{1/2}$ und angeregten Zustands $^2P_{1/2}$.
-    %\begin{figure}
-    %    \centering
-    %    \includegraphics[width=\textwidth]{}
-    %    \caption{Aufspaltung der Energieniveaus durch Kopplungen innerhalb des Atoms und externe Magnetfelder.}
-    %    \label{fig:aufspaltung}
-    %\end{figure}
+    die Hyperfeinstrukturaufspaltung sowie die Aufspaltung durch den Zeeman-Effekt im Falle des zwei-Niveau-Systems mit Grundzustands $^2S_{1/2}$ und angeregtem Zustands $^2P_{1/2}$ von $\ce{^{87}Rb}$.
+    \begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{content/img/Lit2_Abb_2D-3.png}
+        \caption{Aufspaltung der Energieniveaus durch Kopplungen innerhalb des Atoms und externe Magnetfelder.\cite{caltech}}
+        \label{fig:aufspaltung}
+    \end{figure}
     Zwischen den Energieniveaus können Übergänge stattfinden,
-    wobei ein Elektron aus einem höhreren Niveau in ein niedrigeres zurückfällt und dabei ein Photon mit der entsprechenden Energiedifferenz emittiert.
-    Es können nur Übergänge stattfinden,
+    allerdings nur solche,
     bei denen die Auswahlregeln für elektrische und magnetische Dipolübergänge erfüllt sind.
     Es gilt $\symup{\Delta} L = \pm 1$, $\symup{\Delta} S = 0$, $\symup{\Delta} J = 0, \pm 1$ und $\symup{\Delta} F = 0, \pm 1$.
     Entsprechend ergibt sich $\symup{\Delta} M = 0, \pm 1$.
@@ -86,12 +89,71 @@
     ist das entstehende Photon entweder linear ($\pi$-) polarisiert ($\symup{\Delta}M = 0$) oder zirkular ($\sigma^{\pm}$-) polarisiert ($\symup{\Delta}M = \pm 1$).
     Umgekehrt kann also nur ein $\sigma^{\pm}$-Übergang mit $\symup{\Delta} M = \pm 1$ stattfinden,
     wenn das Atom mit zirkular polarisiertem Licht bestrahlt wird.
+    Dabei ist Licht mit $\symup{\Delta} M = +1$ rechts herum und Licht mit $\symup{\Delta} M =-1$ links herum polarisiert.
 
+\subsection{Das optische Pumpen}
+
+    Die Grundlage des optischen Pumpens ist durch die Absorption von Photonen in einem Atom gegeben,
+    wenn das einfallende Licht mit der Energiedifferenz und den in \autoref{sec:energieaufspaltung} genannten Auswahlregeln kompatibel ist.
     Es wird nun zusätzlich zwischen \textit{Spontaner} und \textit{Stimulierter Emission} unterschieden.
     Bei der Spontanen Emission wird ein Photon beim Rückfall eines Atoms aus einem angeregten Zustand in den Grundzustand erzeugt.
+    Die Wahrscheinlichkeit für einen Übergang durch spontane Emission ist durch den Einstein-Koeffizienten $A_{nm}$ gegeben,
+    wobei die Indizes $nm$ die Energieniveaus $E_n$ und $E_m$ bezeichnen.
     Bei der Stimulierten Emission trifft ein Photon auf ein angeregtes Atom,
-    welches daraufhin unter Aussendung von Photonen in den Grundzustan zurückfällt.
+    welches daraufhin unter Aussendung von Photonen in den Grundzustand zurückfällt.
     Das einfallende und die emittierten Photonen sind dabei kohärent,
     haben also die gleiche Wellenlänge, Polarisation, Frequenz, Richtung und Phasenbeziehung.
+    Die Übergangswahrscheinlichkeit ist durch den Einstein-Koeffizienten $B_{nm}$ gegeben.
+
+    Es wird nun ein zwei-Niveau-System mit dem Grundzustand $^2S_{1/2}$ und dem ersten angeregten Zustand $^2S_{1/2}$ betrachtet,
+    wobei die Elektronen im thermischen Gleichgewicht nach der Boltzmann-Statistik verteilt sind.
+    Der Übergang zwischen den beiden Niveaus wird als $D_1$ bezeichnet,
+    die Energiedifferenz entspricht einer Wellenlänge von $\lambda = \SI{794.8}{\nano\meter}$ \cite{versuchsanleitung}.
+    Wenn nun das System mit Licht dieser Wellenlänge,
+    welches rechts herum polarisiert ($\symup{\Delta}M = +1$) ist,
+    bestrahlt wird,
+    können solche Elektronen angeregt werden,
+    für die ein Übergang mit $\symup{\Delta}M = +1$ möglich ist.
+    Dies ist in \autoref{fig:aufspaltung} zu sehen.
+    Wenn alle möglichen Absorptionsübergänge stattgefunden haben,
+    kann keine weitere Absorption stattfinden,
+    das Gas wird nun als \textit{transparent} bezeichnet.
+    Nun können die Elektronen durch spontane oder stimulierte Emission wieder in den Grundzustand zurückkehren.
+    Bei der spontanen Emission entstehen stochastisch verteilte Photonen,
+    es ist jede Konfiguration von $\symup{\Delta}M = 0, \pm 1$ möglich,
+    während bei der stimulierten Emission aufgrund der Kohärenzbedingung nur Übergänge mit $\symup{\Delta}M = +1$ erlaubt sind.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.8]{content/img/Lit2_Abb_8.pdf}
+        \caption{Übergänge im zwei-Niveau-System beim optischen Pumpen. \cite{caltech}}
+        \label{fig:pumpen}
+    \end{figure}
+    Der gesamte Vorgang des optischen Pumpens ist in \autoref{fig:pumpen} dargestellt.
+
+
+
+
+
+    %Wenn nun das Rubidium-Gas mit rechts polarisiertem Licht bestrahlt wird,
+    %werden die Photonen absorbiert,
+    %sofern Übergänge mit $\symup{\Delta} M = +1$ möglich sind.
+    %Die Polarisation des einfallenden Lichtes kann über ein angelegtes Magnetfeld kontrolliert werden.
+    %Dies geschieht solange,
+    %bis sich alle Elektronen im angeregten Zustand $^2P_{1/2}$ befinden und keine Übergänge mit $\symup{\Delta} M = +1$ mehr möglich sind.
+    %Wenn das der Fall ist,
+    %wird das Gas als \textit{transparent} bezeichnet.
+    %Die angeregten Elektronen können nun durch spontane oder induzierte Emission wieder in den Grundzustand $^2S_{1/2}$ zurückkehren,
+    %sodass das Gas intransparent wird.
+    %Der Verlauf dieser Vorgänge ist in Abhängigkeit der Magnetfeldstärke $B$ in \autoref{fig:transparenz} dargestellt.
+    %\begin{figure}
+    %    \centering
+    %    \includegraphics[width=\textwidth]{content/img/Abb_2.png}
+    %    \caption{Verlauf der Transparenz des Gases durch Absorption und Emission von Photonen in Abhängigkeit der angelegten Magnetfeldstärke. \cite{versuchsanleitung}}
+    %    \label{fig:transparenz}
+    %\end{figure}
+    %Für den Fall,
+    %dass kein Magnetfeld angeschaltet ist,
+    %also $B = 0$ gilt,
+    %findet der Zeeman-Effekt nicht mehr statt und damit werden die Energieniveaus nicht mehr in $m$ aufgespalten.
 
 
