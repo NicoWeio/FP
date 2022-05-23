@@ -21,6 +21,7 @@ def calc_g(m):
 
 
 def calc_kernspin(g_F, J):
+    # TODO: BenediktSan hat die 2 im Nenner
     return J * (2/g_F - 1)
 
 
@@ -30,16 +31,16 @@ def calc_quad_zeemann(g_F, B, E_HFS, m_f):
 
 
 # █ Daten einlesen
-rf_freq, U1_hor, U1_sweep, U2_hor, U2_sweep = np.genfromtxt("data.txt", unpack=True)
+rf_freq, I_hor, U1_sweep, U2_sweep = np.genfromtxt("data.txt", unpack=True)
 rf_freq *= ureg.kHz
-U1_hor *= ureg.V
-U2_hor *= ureg.V
+I_hor *= ureg.mA
+# U0_sweep *= ureg.V
 U1_sweep *= ureg.V
 U2_sweep *= ureg.V
 
 # Offset korrigieren
-U1_hor -= ureg('13.8 V')
-U2_hor -= ureg('13.8 V')
+# U1_hor -= ureg('0.45 V')
+# U2_hor -= ureg('0.45 V')
 
 # Unsicherheiten einfügen
 # U1_hor = unp.uarray(U1_hor, 0.02)
@@ -63,39 +64,32 @@ R_hor = 10/3 * ureg.ohm  # [Quelle unbekannt]
 r_ver = ureg('11.735 cm')
 N_ver = 20
 
-I1_hor = U1_hor/R_hor
-I2_hor = U2_hor/R_hor
-I1_sweep = U1_sweep/R_sweep
-I2_sweep = U2_sweep/R_sweep
+B_hor = calc_B_helmholtz(r_hor, N_hor, I_hor)
 
-
-B1_hor = calc_B_helmholtz(r_hor, N_hor, I1_hor)
-B1_sweep = calc_B_helmholtz(r_sweep, N_sweep, I1_sweep)
-B1_ges = B1_hor + B1_sweep
-
-B2_hor = calc_B_helmholtz(r_hor, N_hor, I2_hor)
-B2_sweep = calc_B_helmholtz(r_sweep, N_sweep, I2_sweep)
-B2_ges = B2_hor + B2_sweep
+B1_sweep = calc_B_helmholtz(r_sweep, N_sweep, I=(U1_sweep / R_sweep))
+B1_ges = B_hor + B1_sweep
+B2_sweep = calc_B_helmholtz(r_sweep, N_sweep, I=(U2_sweep / R_sweep))
+B2_ges = B_hor + B2_sweep
 
 # █ Tabelle generieren
-generate_table.generate_table_pint(
-    'build/tab/messwerte.tex',
-    (r'B1_\text{hor}', ureg.microtesla, B1_hor),
-    (r'B2_\text{hor}', ureg.microtesla, B2_hor),
-)
+# generate_table.generate_table_pint(
+#     'build/tab/messwerte.tex',
+#     (r'B1_\text{hor}', ureg.microtesla, B1_hor),
+#     (r'B2_\text{hor}', ureg.microtesla, B2_hor),
+# )
 
 dip1 = np.argmax(B1_ges)
 dip2 = np.argmax(B2_ges)
 print(f"Dip1: {max(B1_ges), dip1}, Dip2: {max(B2_ges), dip2}")
 
-# TODO: Plot, weil ich nicht verstehe, was hier abgeht.
-plt.figure()
-plt.stackplot(rf_freq, B1_hor, B1_sweep, labels=['Horizontalspule', 'Sweepspule'])
-plt.axvline(rf_freq[dip1], color='k', linestyle='--', label='Dip-Dings')
-# plt.stackplot(rf_freq, B2_hor, B2_sweep, labels=['Horizontalspule', 'Sweepspule'])
-# plt.axvline(rf_freq[dip2], color='k', linestyle='--', label='Dip-Dings')
-plt.legend()
-# plt.show()
+# # TODO: Plot, weil ich nicht verstehe, was hier abgeht.
+# plt.figure()
+# plt.stackplot(rf_freq, B_hor, B1_sweep, labels=['Horizontalspule', 'Sweepspule'])
+# plt.axvline(rf_freq[dip1], color='k', linestyle='--', label='Dip-Dings')
+# # plt.stackplot(rf_freq, B2_hor, B2_sweep, labels=['Horizontalspule', 'Sweepspule'])
+# # plt.axvline(rf_freq[dip2], color='k', linestyle='--', label='Dip-Dings')
+# plt.legend()
+# # plt.show()
 
 
 console.rule("g-Faktoren [d) in der Versuchsanleitung]")
@@ -109,14 +103,16 @@ print(f"85Rb: (m, b)={params_85}")
 rf_freq_linspace = tools.linspace(*tools.bounds(rf_freq))
 plt.figure()
 with tools.plot_context(plt, 'kHz', 'µT', 'f', 'B') as plt2:
-    plt2.plot(rf_freq, B2_ges, 'x', zorder=5, label=r"Messwerte zu $^{85}$Rb")  # TODO: Errorbars sollten erscheinen, sobald U eine Unsicherheit erhält.
+    # TODO: Errorbars sollten erscheinen, sobald U eine Unsicherheit erhält.
+    plt2.plot(rf_freq, B2_ges, 'x', zorder=5, label=r"Messwerte zu $^{85}$Rb")
     plt2.plot(rf_freq_linspace, tools.nominal_values(params_85[0]*rf_freq_linspace + params_85[1]), label=r"Ausgleichsgerade zu $^{85}$Rb")
 
-    plt2.plot(rf_freq, B1_ges, 'x', zorder=5, label=r"Messwerte zu $^{87}$Rb")  # TODO: Errorbars sollten erscheinen, sobald U eine Unsicherheit erhält.
+    # TODO: Errorbars sollten erscheinen, sobald U eine Unsicherheit erhält.
+    plt2.plot(rf_freq, B1_ges, 'x', zorder=5, label=r"Messwerte zu $^{87}$Rb")
     plt2.plot(rf_freq_linspace, tools.nominal_values(params_87[0]*rf_freq_linspace + params_87[1]), label=r"Ausgleichsgerade zu $^{87}$Rb")
 plt.legend()
-plt.savefig("build/plt/g_F.pdf")
-# plt.show()
+# plt.savefig("build/plt/g_F.pdf")
+plt.show()
 
 # █ Berechnung
 g_F_87 = calc_g(params_87[0])
