@@ -77,11 +77,11 @@ B2_ges = (  # Sweepspule + Horizontalspule
 )
 
 # █ Tabelle generieren
-# generate_table.generate_table_pint(
-#     'build/tab/messwerte.tex',
-#     (r'B1_\text{hor}', ureg.microtesla, B1_hor),
-#     (r'B2_\text{hor}', ureg.microtesla, B2_hor),
-# )
+generate_table.generate_table_pint(
+    'build/tab/messwerte.tex',
+    (r'B1_\text{ges}', ureg.microtesla, B1_ges),
+    (r'B2_\text{ges}', ureg.microtesla, B2_ges),
+)
 
 console.rule("g-Faktoren [d) in der Versuchsanleitung]")
 # █ lineare Regression
