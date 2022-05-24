@@ -31,20 +31,16 @@ def calc_quad_zeemann(g_F, B, E_HFS, m_f):
 
 
 # █ Daten einlesen
-rf_freq, I_hor, U1_sweep, U2_sweep = np.genfromtxt("data.txt", unpack=True)
+rf_freq, I1_hor, U1_sweep, I2_hor, U2_sweep = np.genfromtxt("data.txt", unpack=True)
 rf_freq *= ureg.kHz
-I_hor *= ureg.mA
-# U0_sweep *= ureg.V
+I1_hor *= ureg.mA
+I2_hor *= ureg.mA
 U1_sweep *= ureg.V
 U2_sweep *= ureg.V
 
-# Offset korrigieren
-# U1_hor -= ureg('0.45 V')
-# U2_hor -= ureg('0.45 V')
-
 # Unsicherheiten einfügen
-# U1_hor = unp.uarray(U1_hor, 0.02)
-# U2_hor = unp.uarray(U2_hor, 0.02)
+# I1_hor = unp.uarray(U1_hor, 0.02)
+# I2_hor = unp.uarray(U2_hor, 0.02)
 # U1_sweep = unp.uarray(U1_sweep, 0.01)
 # U2_sweep = unp.uarray(U2_sweep, 0.01)
 
@@ -64,12 +60,13 @@ R_hor = 10/3 * ureg.ohm  # [Quelle unbekannt]
 r_ver = ureg('11.735 cm')
 N_ver = 20
 
-B_hor = calc_B_helmholtz(r_hor, N_hor, I_hor)
 
 B1_sweep = calc_B_helmholtz(r_sweep, N_sweep, I=(U1_sweep / R_sweep))
-B1_ges = B_hor + B1_sweep
+B1_hor = calc_B_helmholtz(r_hor, N_hor, I1_hor)
+B1_ges = B1_hor + B1_sweep
 B2_sweep = calc_B_helmholtz(r_sweep, N_sweep, I=(U2_sweep / R_sweep))
-B2_ges = B_hor + B2_sweep
+B2_hor = calc_B_helmholtz(r_hor, N_hor, I2_hor)
+B2_ges = B2_hor + B2_sweep
 
 # █ Tabelle generieren
 # generate_table.generate_table_pint(
@@ -77,20 +74,6 @@ B2_ges = B_hor + B2_sweep
 #     (r'B1_\text{hor}', ureg.microtesla, B1_hor),
 #     (r'B2_\text{hor}', ureg.microtesla, B2_hor),
 # )
-
-dip1 = np.argmax(B1_ges)
-dip2 = np.argmax(B2_ges)
-print(f"Dip1: {max(B1_ges), dip1}, Dip2: {max(B2_ges), dip2}")
-
-# # TODO: Plot, weil ich nicht verstehe, was hier abgeht.
-# plt.figure()
-# plt.stackplot(rf_freq, B_hor, B1_sweep, labels=['Horizontalspule', 'Sweepspule'])
-# plt.axvline(rf_freq[dip1], color='k', linestyle='--', label='Dip-Dings')
-# # plt.stackplot(rf_freq, B2_hor, B2_sweep, labels=['Horizontalspule', 'Sweepspule'])
-# # plt.axvline(rf_freq[dip2], color='k', linestyle='--', label='Dip-Dings')
-# plt.legend()
-# # plt.show()
-
 
 console.rule("g-Faktoren [d) in der Versuchsanleitung]")
 # █ lineare Regression
@@ -111,8 +94,9 @@ with tools.plot_context(plt, 'kHz', 'µT', 'f', 'B') as plt2:
     plt2.plot(rf_freq, B1_ges, 'x', zorder=5, label=r"Messwerte zu $^{87}$Rb")
     plt2.plot(rf_freq_linspace, tools.nominal_values(params_87[0]*rf_freq_linspace + params_87[1]), label=r"Ausgleichsgerade zu $^{87}$Rb")
 plt.legend()
-# plt.savefig("build/plt/g_F.pdf")
-plt.show()
+plt.tight_layout()
+plt.savefig("build/plt/g_F.pdf")
+# plt.show()
 
 # █ Berechnung
 g_F_87 = calc_g(params_87[0])
@@ -130,16 +114,13 @@ print("85Rb:\n", tools.fmt_compare_to_ref(I_2, 2.5))
 console.rule("Erdmagnetfeld: vertikal")
 # Vertikale Magnetfeldkomponente in µT aus Spannung der vertikalen Spule
 U_vert = unp.uarray(2.26, 0.01) * ureg.V  # TODO: eigene Werte!
-I_vert = U_vert/R_sweep
-B_vert = calc_B_helmholtz(r_ver, N_ver, I_vert)
-print(f"B_vert = {B_vert}")
+B_vert = calc_B_helmholtz(r_ver, N_ver, I=(U_vert / R_sweep))
 print(tools.fmt_compare_to_ref(B_vert, ureg('40 µT')))  # TODO: Quelle unbekannt
 
 
 console.rule("Erdmagnetfeld: horizontal")
 # Horizontale Magnetfeldkomponente aus y-Achsenabschnitt des lin. Zusammenhangs zwischen B-Feld und RF-Frequenz
-B_hor = (params_87[1] + params_85[1])/2
-print(f"B_hor = {B_hor}")
+B_hor = (params_87[1] + params_85[1])/2 # Mittelwert aus den Achsenabschnitten der beiden Regressionsgeraden
 print(tools.fmt_compare_to_ref(B_hor, ureg('20 µT')))  # TODO: Quelle unbekannt
 
 
