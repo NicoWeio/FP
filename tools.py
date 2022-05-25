@@ -143,13 +143,13 @@ def fmt_err(o, r, precise=False):
     return f'{fmt_rel_err_percent(o, r, precise)} | {fmt_abs_err(o, r, precise)}'
 
 
-def fmt_compare_to_ref(o, r, name=None, unit=None):
+def fmt_compare_to_ref(o, r, name=None, precision=2, unit=None):
     my_o = o.to(unit) if unit else o
     my_r = r.to(unit) if unit else r
     my_name = f'{name}:\n' if name else ''
     return my_name + (
-        f'- ist: {my_o:.2f}\n'
-        f'- soll: {my_r:.2f}\n'
+        f'- ist: {my_o:.{precision}f}\n'
+        f'- soll: {my_r:.{precision}f}\n'
         f'- abs. Abweichung: {fmt_abs_err(my_o, my_r)}\n'
         f'- rel. Abweichung: {fmt_rel_err_percent(o, r)}'
     )
