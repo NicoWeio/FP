@@ -3,12 +3,12 @@ all: build/main.pdf
 PLOTS = \
 	build/plt/g_F.pdf \
 
-# TABLES = \
-# 	build/tab/….tex \
+TABLES = \
+	build/tab/messwerte.tex \
 
 PYTHONENV = MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: BUILD=true
 
-build/plt/g_F.pdf: auswertung.py | build/plt
+build/plt/g_F.pdf build/tab/messwerte.tex &: auswertung.py | build/plt build/tab
 	$(PYTHONENV) python auswertung.py
 
 build/main.pdf: ../header_common.tex main.tex $(wildcard content/*.tex) lit.bib $(PLOTS) $(TABLES) | build
