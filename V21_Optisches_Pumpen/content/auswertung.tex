@@ -1,8 +1,7 @@
 \section{Auswertung}
 \label{sec:auswertung}
 
-% \subsection{Magnetfeld der Helmholtz-Spulenpaare}
-\subsection{Erdmagnetfeld}
+\subsection{Vertikales Erdmagnetfeld}
 
 Die magnetische Flussdichte $B$ im Zentrum eines Helmholtz-Spulenpaars ist durch
 \begin{equation}
@@ -10,11 +9,11 @@ Die magnetische Flussdichte $B$ im Zentrum eines Helmholtz-Spulenpaars ist durch
     \label{eqn:helmholtz}
 \end{equation}
 gegeben,
-wobei $N$ die Windungszahl, $I$ den Spulenstrom, und $R$ den Radius der beiden Spulen bezeichnet. %Oxford-Komma
+wobei $N$ die Windungszahl, $I$ den Spulenstrom, und $R$ den Radius der beiden Spulen bezeichnet. % Oxford-Komma
 
 \begin{table}
     \centering
-    \caption{Daten zu den verwendeten Helmholtz-Spulen.}
+    \caption{Daten zu den verwendeten Helmholtz-Spulen. \cite{versuchsanleitung}}
     \label{tab:spulen}
     \begin{tabular}{l S S}
         \toprule
@@ -22,59 +21,78 @@ wobei $N$ die Windungszahl, $I$ den Spulenstrom, und $R$ den Radius der beiden S
         {$N$} &
         {$R \mathbin{/} \si{\centi\meter}$} \\
         \midrule
-        Sweep      &  11 & 16.39  \\
-        Horizontal & 154 & 15.79  \\
         Vertikal   &  20 & 11.735 \\
+        Horizontal & 154 & 15.79  \\
+        Sweep      &  11 & 16.39  \\
+        % Die RF-Spule gibt es auch noch, aber wir haben und brauchen dazu keine Daten.
         \bottomrule
     \end{tabular}
 \end{table}
 
 Es wurde experimentell bestimmt,
 dass der Effekt des Erdmagnetfelds minimal ist,
-wenn die Vertikal-Spule mit einem Strom von $I = \SI{123}{\ampere}$ betrieben wird.
-Mit \autoref{tab:spulen} und \autoref{eqn:helmholtz} folgt daraus für die vertikale Komponente des Erdmagnetfelds
-\[ B_\text{vert} = \SI{1234}{\micro\tesla} \ . \]
+der Peak also am schmalsten ist,
+wenn die Vertikal-Spule mit einem Strom von ${ I = \SI{0.23(1)}{\ampere} }$ betrieben wird.
+Mit den Spulen-Parametern aus \autoref{tab:spulen} und \autoref{eqn:helmholtz}
+folgt daraus für die vertikale Komponente des Erdmagnetfelds
+\[ B_\text{vert} = \SI{35.25(15)}{\micro\tesla} \ . \]
 % Vergleichswert: 44 µT [Wikipedia]
 
 
-\subsection{Gyromagnetische Faktoren}
-Aus den gemäß \autoref{sec:durchfuehrung:todo} gemessenen Resonanzpositionen können die…
+\subsection{Gyromagnetische Faktoren und horizontales Erdmagnetfeld}
+Aus den gemäß \autoref{sec:durchfuehrung:messung} gemessenen Resonanzpositionen
+können die gyromagnetischen Faktoren von \Rb{87} und \Rb{85} berechnet werden.
 
-Indem die magnetische Flussdichte aus \autoref{eqn:todo}
+
+Indem die magnetische Flussdichte aus \autoref{eqn:zeemanaufspaltung} %TODO: richtige Gleichung verlinkt?
 in Abhängigkeit der RF-Frequenz, also als $B(f)$, ausgedrückt wird,
+wobei $\symup{\Delta} m_J = 1$, $\symup{\Delta} E_\text{Z} = hf$ und ein konstanter Parameter ${\color{blue} \beta}$ eingesetzt werden,
 ergibt sich ein linearer Zusammenhang
-\begin{equation*}
-    % TODO: Mit Theorie angleichen; \omega oder f gemessen?
-    B(f) = \underbrace{\frac{\hbar}{g_F \mu_B}}_m · \underbrace{2\pi f}_\omega
-    + {\color{blue} b} \ ,
-\end{equation*}
+\begin{align*}
+    \symup{\Delta} E_\text{Z} &= g_F \mu_\text{B} B \symup{\Delta} m_J \tag{\ref{eqn:zeemanaufspaltung}} \\
+    % \Leftrightarrow
+    % B &= \frac{\symup{\Delta} E_\text{Z}}{g_F \mu_\text{B} \symup{\Delta} m_J}
+    \Rightarrow
+    B &= \underbrace{\frac{\symup{\Delta} h}{g_F \mu_\text{B}}}_{\color{blue} \alpha} · f
+    + {\color{blue} \beta} \ ,
+\end{align*}
 welcher mithilfe einer Regressionsrechnung
 (unter Verwendung von \texttt{scipy.stats.linregress})
 quantifiziert wird.
-Der Summand $\color{blue} b$ dient hierbei einzig der Berücksichtigung möglicher systematischer Abweichungen.
+Dazu werden die Messwerte aus \autoref{tab:mess} verwendet.
 
 Es ergeben sich die Parameter
 \begin{align*}
-    m_{\Rb{87}} &= \SI{0}{\micro\tesla\per\hertz} \\
-    b_{\Rb{87}} &= \SI{0}{\micro\tesla} \\
+    {\color{blue} \alpha_{\Rb{87}}} &= \SI{0.1420 \pm 0.0006}{\micro\tesla\per\kilo\hertz} \\
+    {\color{blue} \beta_{\Rb{87}}} &= \SI{25.7 \pm 0.4}{\micro\tesla} \\
     \intertext{und}
-    m_{\Rb{85}} &= \SI{0}{\micro\tesla\per\hertz} \\
-    b_{\Rb{85}} &= \SI{0}{\micro\tesla} \ .
+    {\color{blue} \alpha_{\Rb{85}}} &= \SI{0.206 \pm 0.004}{\micro\tesla\per\kilo\hertz} \\
+    {\color{blue} \beta_{\Rb{85}}} &= \SI{28.2 \pm 2.3}{\micro\tesla} \ ;
 \end{align*}
-
+in \autoref{fig:plt:g_F} sind Messwerte und Regressionsgeraden visualisiert.
 
 Aus
 \[
-    m = \frac{\hbar}{g_F \mu_B}
+    {\color{blue} \alpha} = \frac{\hbar}{g_F \mu_B}
     \Leftrightarrow
-    g_F = \frac{\hbar}{m \mu_B}
+    g_F = \frac{\hbar}{{\color{blue} \alpha} \mu_B}
 \]
 folgt für die gyromagnetischen Faktoren
 \begin{align*}
-    g_{F, \Rb{87}} &= \SI{0}{} \\
-    g_{F, \Rb{85}} &= \SI{0}{} \ .
+    g_{F, \Rb{87}} &= \num{0.503 \pm 0.002} \\
+    g_{F, \Rb{85}} &= \num{0.347 \pm 0.006} \ .
 \end{align*}
 
+
+Der eingeführte Parameter $\color{blue} \beta$ steht
+(unter Vernachlässigung möglicher systematischer Fehler)
+für die horizontale Komponente des Erdmagnetfelds.
+Im arithmetischen Mittel ist
+\[
+    B_\text{erd, hor}
+    = \frac{{\color{blue} \beta_{\Rb{87}}} + \color{blue} \beta_{\Rb{85}}}{2}
+    = \SI{26.94 \pm 1.16}{\micro\tesla}
+\]
 
 \begin{figure}
     \centering
@@ -83,18 +101,34 @@ folgt für die gyromagnetischen Faktoren
     \label{fig:plt:g_F}
 \end{figure}
 
-% TODO: Tabelle mit Messwerten
 \begin{table}
     \centering
-    \caption{Messwerte zu …}
-    \label{tab:lande_ab}
-    % \expandableinput{build/tab/messwerte.tex}
+    \caption{Magnetfelder zu den Peaks beider Rubidium-Isotope für verschiedene Frequenzen $f_\text{RF}$.}
+    \label{tab:mess}
+    \expandableinput{build/tab/messwerte.tex}
 \end{table}
 
+% \subsubsection{horizontales Erdmagnetfeld}
+
+
 \subsection{Kernspin}
+% Code sagt: I = J * (2/g_F - 1)
+% MagischeMiesmuschel: I = g_J / (2*g_F - ½)
+% elliekayl: I = ½((g_J/g_F) - 1)
+
+% F = I + J
+
+\autoref{eqn:landeF} umstellen nach $I$ ergibt:
+\[
+    I = \frac{1}{2} \left( \frac{g_J}{g_F} - 1 \right)
+\]
+mit $g_J = \num{2.0023}$ und $g_F$ aus dem vorherigen Abschnitt.
 
 
 \subsection{Isotopenverhältnis}
+Anhand eines Oszilloskop-Bilds wie in \autoref{fig:peaks} kann das Isotopenverhältnis
+als Verhältnis der Höhe ihrer jeweiligen Peaks ermittelt weden.
+…
 
 
 \subsection{Quadratischer Zeeman-Effekt}
