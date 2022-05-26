@@ -88,8 +88,9 @@ B2_ges = (  # Sweepspule + Horizontalspule
 # █ Tabelle generieren
 generate_table.generate_table_pint(
     'build/tab/messwerte.tex',
-    (r'B1_\text{ges}', ureg.microtesla, B1_ges),
-    (r'B2_\text{ges}', ureg.microtesla, B2_ges),
+    (r'f_\text{RF}', ureg.kHz, rf_freq, 0),
+    (r'B_{\text{ges}, \ce{^87Rb}}', ureg.microtesla, B1_ges),
+    (r'B_{\text{ges}, \ce{^85Rb}}', ureg.microtesla, B2_ges),
 )
 
 console.rule("g-Faktoren [d) in der Versuchsanleitung]")
