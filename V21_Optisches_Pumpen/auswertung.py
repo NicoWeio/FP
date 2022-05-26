@@ -72,6 +72,7 @@ print(tools.fmt_compare_to_ref(B_vert, ureg('44 µT')))  # Quelle: https://de.wi
 
 
 # Gesamt-Magnetfelder berechnen
+# (das Vertikalfeld ist hierbei zu 0 kompensiert)
 I_sweep_87 = (U_sweep_87 / dat_sweep['R'])
 B_ges_87 = (  # Sweepspule + Horizontalspule
     calc_B_helmholtz(dat_sweep['r'], dat_sweep['N'], I_sweep_87) +
@@ -87,7 +88,7 @@ B_ges_85 = (  # Sweepspule + Horizontalspule
 # █ Tabelle generieren
 # generate_table.generate_table_pint(
 #     'build/tab/messwerte.tex',
-#     (r'f_\text{RF}', ureg.kHz, rf_freq, 0),
+#     (r'f', ureg.kHz, rf_freq, 0),
 #     (r'I_\text{hor}', ureg.mA, I_hor_87),
 #     (r'I_\text{sweep}', ureg.mA, I_sweep_87),
 #     (r'B_\text{ges}', ureg.microtesla, B_ges_87),
@@ -135,7 +136,7 @@ print(tools.fmt_compare_to_ref(I_2, 2.5, name='I (85Rb)'))
 console.rule("Erdmagnetfeld: horizontal")
 # Horizontale Magnetfeldkomponente aus y-Achsenabschnitt des lin. Zusammenhangs zwischen B-Feld und RF-Frequenz
 B_hor = (params_87[1] + params_85[1])/2  # Mittelwert aus den Achsenabschnitten der beiden Regressionsgeraden
-print(tools.fmt_compare_to_ref(B_hor, ureg('20 µT')))  # TODO: Quelle unbekannt
+print(tools.fmt_compare_to_ref(B_hor, ureg('20 µT')))  # Quelle: https://de.wikipedia.org/wiki/Erdmagnetfeld
 
 
 console.rule("Isotopenverhältnis")
