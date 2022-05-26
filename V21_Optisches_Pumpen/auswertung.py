@@ -16,8 +16,9 @@ def calc_B_helmholtz(r, N, I):
     return B.to('µT')
 
 
-def calc_g(m):
-    g = 4 * np.pi * ureg.m_e / (m * ureg.e)
+def calc_g(ɑ):
+    # g = 4 * np.pi * ureg.m_e / (ɑ * ureg.e) # ✓
+    g = ureg.h / (ɑ * ureg.mu_B)
     return g.to('dimensionless')
 
 
@@ -27,8 +28,10 @@ def calc_kernspin(g_F, J):
 
 
 def calc_quad_zeemann(g_F, B, E_HFS, m_F):
-    E = g_F * ureg.mu_B * B + g_F**2 * ureg.mu_B**2 * B**2 * (1 - 2*m_F) / E_HFS
-    return E.to('J')
+    E_lin = g_F * ureg.mu_B * B
+    E_quad = g_F**2 * ureg.mu_B**2 * B**2 * (1 - 2*m_F) / E_HFS
+    # E = E_lin + E_quad
+    return (E_lin.to('J'), E_quad.to('J'))
 
 
 # █ Daten einlesen
