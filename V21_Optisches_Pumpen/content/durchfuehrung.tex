@@ -19,7 +19,7 @@
         \label{fig:aufbau}
     \end{figure}
 
-    Wie in \autoref{sec:optisches_pumpen} erläutert,
+    Wie in \autoref{sec:theorie:optisches_pumpen} erläutert,
     soll nun rechts polarisiertes Licht mit der Wellenlänge des $D_1$-Übergangs verwendet werden.
     Dazu sind verschiedene optische Elemente gegeben:
     Mithilfe von \textbf{plan-konkaven Sammellinsen} soll der entstehende Lichtstrahl fokussiert werden.
@@ -64,34 +64,38 @@
     dass der Strahlengang in Nord-Süd-Richtung ausgerichtet ist.
     Auch hier soll der Peak möglichst schmal werden.
 
-\subsection{Messung der Magnetfeldstärke der Rubidium-Isotope}
+\subsection{Messung der Magnetfeldstärke der Rubidium-Isotope} %TODO: komische Bezeichnung
+\label{sec:durchfuehrung:messung}
 
-    Für diese Messung wird das erste Mal ein Strom durch die Modulationsspule gegeben,
+    Für diese Messung wird zum ersten Mal ein Strom durch die Modulationsspule geleitet,
     welcher sinusförmig ist und eine Frequenz $f$ hat.
-    Die Frequenz wird in der folgenden Messung von \SI{100}{\kilo\hertz} an in Schritten von \SI{100}{\kilo\hertz} bis auf \SI{100}{\mega\hertz} erhöht.
+    Diese Frequenz wird in der folgenden Messung von \SI{100}{\kilo\hertz} an in Schritten von \SI{100}{\kilo\hertz} bis auf \SI{1000}{\kilo\hertz} erhöht.
 
-    Beim Anlegen einer Frequenz von \SI{100}{\kilo\hertz} ergibt sich eine Darstellung wie in \autoref{fig:peaks},
+    Bei einer Frequenz von \SI{100}{\kilo\hertz} und unter Verwendung der Sweep-Spule ergibt sich eine Darstellung wie in \autoref{fig:peaks},
     welche während der Messung aufgenommen wurde.
-    %\begin{figure}
-    %    \centering
-    %    \includegraphics[width=\textwidth]{}
-    %    \caption{}
-    %    \label{fig:peaks}
-    %\end{figure}
+    \begin{figure}[H]
+       \centering
+       \includegraphics[width=0.5\textwidth]{content/img/oszilloskop1.png}
+       \caption{
+            Bildschirmfoto des Oszilloskops bei $f = \SI{100}{\kilo\hertz}$.
+            In der Abszissenachse ist der Sweep-Spulenstrom, in der Ordinatenachse die gemessene Lichtintensität aufgetragen.
+        }
+       \label{fig:peaks}
+    \end{figure}
 
-    Der größte Peak entspricht $B = 0$,
-    dort beginnt der Sweep.
-    Die beiden kleineren Peaks rechts davon stellen die Rubidium-Isotope dar,
-    welche aufgrund des Sweeps symmetrisch um den Null-Peak sind.
-    Es ist ausreichend nur auf einer Seite zu messen.
+    Der größte Peak entspricht $B_\text{ges} = \SI{0}{\tesla}$;
+    etwa dort beginnt anfangs der Sweep.
+    Die beiden kleineren Peaks rechts stammen von den Resonanzen der Rubidium-Isotope.
+    Sie sind nur vom Betrag des äußeren Magnetfelds abhängig und daher symmetrisch um den \enquote{$B=0$}-Peak angeordnet.
+    Es genügt also – wie in der Abbildung – nur eine Seite zu vermessen.
 
     Das Oszilloskop wird nun so eingestellt,
     dass mit Erhöhen der Stromstärke in der horizontalen Sweep-Spule der Verlauf der Kurve mithilfe eines anderen Potentiometers abgelaufen werden kann,
     wobei jeweils der Stromwert notiert wird,
     für den die Spitze eines der Isotopen-Peaks erreicht wird.
-    Sollte die Feldstärke der Sweep-Spule nicht ausreichen,
-    kann zur Darstellung der Peaks die Stromstärke in der horizontalen Spule erhöht werden.
-    Der Gesamtwert der entsprechenden Stromstärke ergibt sich aus Summation der Werte aus beiden Spulen.
+    Sollte die Feldstärke der Sweep-Spule zum Erreichen der Peaks nicht ausreichen,
+    kann die Stromstärke in der horizontalen Spule erhöht werden.
+    Der Gesamtwert des entsprechenden Magnetfelds ergibt sich aus Summation der Magnetfelder beider Spulen.
     Diese Messung wird für jede Frequenz aus dem oben genannten Bereich wiederholt.
 
     Zuletzt wird für eine Frequenz von \SI{100}{\kilo\hertz} die Amplitude der beiden Isotopen-Peaks auf dem Oszilloskop vermessen.
