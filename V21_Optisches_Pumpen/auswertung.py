@@ -148,8 +148,8 @@ E_HFS_87 = 4.53e-24 * ureg.J
 E_HFS_85 = 2.01e-24 * ureg.J
 
 # quadratischer Zeeman-Effekt
-E_QZ_87 = calc_quad_zeemann(g_F_87, max(B_ges_87), E_HFS_87, m_f=1)
-E_QZ_85 = calc_quad_zeemann(g_F_85, max(B_ges_85), E_HFS_85, m_f=1)
+E_QZ_87 = calc_quad_zeemann(g_F_87, max(B_ges_87), E_HFS_87)
+E_QZ_85 = calc_quad_zeemann(g_F_85, max(B_ges_85), E_HFS_85)
 
 #print("Aufspaltung durch den quadratischen Zeemann-Effekt bei höheren Magnetfeldstärken")
 print(f"87Rb: {abs(E_QZ_87)} bei {max(B_ges_87):.2f}")
