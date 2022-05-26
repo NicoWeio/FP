@@ -4,7 +4,7 @@ PLOTS = \
 	build/plt/g_F.pdf \
 
 TABLES = \
-	build/tab/messwerte.tex \
+	# build/tab/messwerte.tex \
 
 PYTHONENV = MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: BUILD=true
 

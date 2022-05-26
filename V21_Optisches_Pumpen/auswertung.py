@@ -69,23 +69,29 @@ print(tools.fmt_compare_to_ref(B_vert, ureg('44 µT')))  # Quelle: https://de.wi
 
 
 # Gesamt-Magnetfelder berechnen
-# (das Vertikalfeld ist zu 0 kompensiert)
+I_sweep_87 = (U_sweep_87 / dat_sweep['R'])
 B_ges_87 = (  # Sweepspule + Horizontalspule
-    calc_B_helmholtz(dat_sweep['r'], dat_sweep['N'], I=(U_sweep_87 / dat_sweep['R'])) +
+    calc_B_helmholtz(dat_sweep['r'], dat_sweep['N'], I_sweep_87) +
     calc_B_helmholtz(dat_hor['r'], dat_hor['N'], I_hor_87)
 )
+
+I_sweep_85 = (U_sweep_85 / dat_sweep['R'])
 B_ges_85 = (  # Sweepspule + Horizontalspule
-    calc_B_helmholtz(dat_sweep['r'], dat_sweep['N'], I=(U_sweep_85 / dat_sweep['R'])) +
+    calc_B_helmholtz(dat_sweep['r'], dat_sweep['N'], I_sweep_85) +
     calc_B_helmholtz(dat_hor['r'], dat_hor['N'], I_hor_85)
 )
 
 # █ Tabelle generieren
-generate_table.generate_table_pint(
-    'build/tab/messwerte.tex',
-    (r'f_\text{RF}', ureg.kHz, rf_freq, 0),
-    (r'B_{\text{ges}, \ce{^87Rb}}', ureg.microtesla, B_ges_87),
-    (r'B_{\text{ges}, \ce{^85Rb}}', ureg.microtesla, B_ges_85),
-)
+# generate_table.generate_table_pint(
+#     'build/tab/messwerte.tex',
+#     (r'f_\text{RF}', ureg.kHz, rf_freq, 0),
+#     (r'I_\text{hor}', ureg.mA, I_hor_87),
+#     (r'I_\text{sweep}', ureg.mA, I_sweep_87),
+#     (r'B_\text{ges}', ureg.microtesla, B_ges_87),
+#     (r'I_\text{hor}', ureg.mA, I_hor_85),
+#     (r'I_\text{sweep}', ureg.mA, I_sweep_85),
+#     (r'B_\text{ges}', ureg.microtesla, B_ges_85),
+# )
 
 console.rule("g-Faktoren [d) in der Versuchsanleitung]")
 # █ lineare Regression
