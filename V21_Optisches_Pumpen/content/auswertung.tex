@@ -114,21 +114,23 @@ Im arithmetischen Mittel ist
     \expandableinput{build/tab/messwerte.tex}
 \end{table}
 
-% \subsubsection{horizontales Erdmagnetfeld}
-
 
 \subsection{Kernspin}
-% Code sagt: I = J * (2/g_F - 1)
-% MagischeMiesmuschel: I = g_J / (2*g_F - ½)
-% elliekayl: I = ½((g_J/g_F) - 1)
-
-% F = I + J
-
-\autoref{eqn:landeF} umstellen nach $I$ ergibt:
-\[
+Durch Umstellen von \autoref{eqn:landeF} nach $I$ kann
+mit $g_F$ aus dem \hyperref[sec:auswertung:g_F]{vorherigen Abschnitt}
+und $g_J \approx \num{2.0023}$
+der Kernspin $I$ gemäß
+\begin{equation*}
     I = \frac{1}{2} \left( \frac{g_J}{g_F} - 1 \right)
-\]
-mit $g_J = \num{2.0023}$ und $g_F$ aus dem vorherigen Abschnitt.
+\end{equation*}
+berechnet werden.
+% ↑ Kann man bestimmt, aber nachgerechnet habe ich das nicht.
+
+Somit lauten die berechneten Kernspins
+\begin{align*}
+    I_{\Rb{87}} &= \num{1.49 \pm 0.01} \\
+    I_{\Rb{85}} &= \num{2.39 \pm 0.05} \ .
+\end{align*}
 
 
 \subsection{Isotopenverhältnis}
