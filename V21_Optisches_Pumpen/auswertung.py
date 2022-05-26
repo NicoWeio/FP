@@ -109,8 +109,8 @@ plt.savefig("build/plt/g_F.pdf")
 # █ Berechnung
 g_F_87 = calc_g(params_87[0])
 g_F_85 = calc_g(params_85[0])
-print(tools.fmt_compare_to_ref(g_F_87, 1/2, name='g_F (87Rb)'))
-print(tools.fmt_compare_to_ref(g_F_85, 1/3, name='g_F (85Rb)'))
+print(tools.fmt_compare_to_ref(g_F_87, 1/2, name='g_F (87Rb)', precision=3))
+print(tools.fmt_compare_to_ref(g_F_85, 1/3, name='g_F (85Rb)', precision=3))
 
 console.rule("Kernspins [e) in der Versuchsanleitung]")
 I_1 = calc_kernspin(g_F_87, J=1/2)
