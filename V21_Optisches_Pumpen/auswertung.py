@@ -32,18 +32,12 @@ def calc_quad_zeemann(g_F, B, E_HFS, m_f):
 
 
 # █ Daten einlesen
-rf_freq, I1_hor, U1_sweep, I2_hor, U2_sweep = np.genfromtxt("data.txt", unpack=True)
+rf_freq, I_hor_87, U_sweep_87, I_hor_85, U_sweep_85 = np.genfromtxt("data.txt", unpack=True)
 rf_freq *= ureg.kHz
-I1_hor *= ureg.mA
-I2_hor *= ureg.mA
-U1_sweep *= ureg.V
-U2_sweep *= ureg.V
-
-# Unsicherheiten einfügen
-# I1_hor = unp.uarray(U1_hor, 0.02)
-# I2_hor = unp.uarray(U2_hor, 0.02)
-# U1_sweep = unp.uarray(U1_sweep, 0.01)
-# U2_sweep = unp.uarray(U2_sweep, 0.01)
+I_hor_87 *= ureg.mA
+I_hor_85 *= ureg.mA
+U_sweep_87 *= ureg.V
+U_sweep_85 *= ureg.V
 
 
 # █ Daten zu den Spulen [Versuchsanleitung]
@@ -76,27 +70,27 @@ print(tools.fmt_compare_to_ref(B_vert, ureg('44 µT')))  # Quelle: https://de.wi
 
 # Gesamt-Magnetfelder berechnen
 # (das Vertikalfeld ist zu 0 kompensiert)
-B1_ges = (  # Sweepspule + Horizontalspule
-    calc_B_helmholtz(dat_sweep['r'], dat_sweep['N'], I=(U1_sweep / dat_sweep['R'])) +
-    calc_B_helmholtz(dat_hor['r'], dat_hor['N'], I1_hor)
+B_ges_87 = (  # Sweepspule + Horizontalspule
+    calc_B_helmholtz(dat_sweep['r'], dat_sweep['N'], I=(U_sweep_87 / dat_sweep['R'])) +
+    calc_B_helmholtz(dat_hor['r'], dat_hor['N'], I_hor_87)
 )
-B2_ges = (  # Sweepspule + Horizontalspule
-    calc_B_helmholtz(dat_sweep['r'], dat_sweep['N'], I=(U2_sweep / dat_sweep['R'])) +
-    calc_B_helmholtz(dat_hor['r'], dat_hor['N'], I2_hor)
+B_ges_85 = (  # Sweepspule + Horizontalspule
+    calc_B_helmholtz(dat_sweep['r'], dat_sweep['N'], I=(U_sweep_85 / dat_sweep['R'])) +
+    calc_B_helmholtz(dat_hor['r'], dat_hor['N'], I_hor_85)
 )
 
 # █ Tabelle generieren
 generate_table.generate_table_pint(
     'build/tab/messwerte.tex',
     (r'f_\text{RF}', ureg.kHz, rf_freq, 0),
-    (r'B_{\text{ges}, \ce{^87Rb}}', ureg.microtesla, B1_ges),
-    (r'B_{\text{ges}, \ce{^85Rb}}', ureg.microtesla, B2_ges),
+    (r'B_{\text{ges}, \ce{^87Rb}}', ureg.microtesla, B_ges_87),
+    (r'B_{\text{ges}, \ce{^85Rb}}', ureg.microtesla, B_ges_85),
 )
 
 console.rule("g-Faktoren [d) in der Versuchsanleitung]")
 # █ lineare Regression
-params_87 = tools.linregress(rf_freq, B1_ges)
-params_85 = tools.linregress(rf_freq, B2_ges)
+params_87 = tools.linregress(rf_freq, B_ges_87)
+params_85 = tools.linregress(rf_freq, B_ges_85)
 print(f"87Rb: (m, b)={params_87}")
 print(f"85Rb: (m, b)={params_85}")
 
@@ -104,11 +98,11 @@ print(f"85Rb: (m, b)={params_85}")
 rf_freq_linspace = tools.linspace(*tools.bounds(rf_freq))
 plt.figure()
 with tools.plot_context(plt, 'kHz', 'µT', 'f', 'B') as plt2:
-    plt2.plot(rf_freq, B2_ges, 'x', zorder=5, label=r"Messwerte zu $^{85}$Rb")
+    plt2.plot(rf_freq, B_ges_85, 'x', zorder=5, label=r"Messwerte zu $^{85}$Rb")
     plt2.plot(rf_freq_linspace, tools.nominal_values(
         params_85[0]*rf_freq_linspace + params_85[1]), label=r"Ausgleichsgerade zu $^{85}$Rb")
 
-    plt2.plot(rf_freq, B1_ges, 'x', zorder=5, label=r"Messwerte zu $^{87}$Rb")
+    plt2.plot(rf_freq, B_ges_87, 'x', zorder=5, label=r"Messwerte zu $^{87}$Rb")
     plt2.plot(rf_freq_linspace, tools.nominal_values(
         params_87[0]*rf_freq_linspace + params_87[1]), label=r"Ausgleichsgerade zu $^{87}$Rb")
 plt.legend()
@@ -148,9 +142,9 @@ E_HFS_87 = 4.53e-24 * ureg.J
 E_HFS_85 = 2.01e-24 * ureg.J
 
 # quadratischer Zeeman-Effekt
-E_QZ_87 = calc_quad_zeemann(g_F_87, max(B1_ges), E_HFS_87, m_f=1)
-E_QZ_85 = calc_quad_zeemann(g_F_85, max(B2_ges), E_HFS_85, m_f=1)
+E_QZ_87 = calc_quad_zeemann(g_F_87, max(B_ges_87), E_HFS_87, m_f=1)
+E_QZ_85 = calc_quad_zeemann(g_F_85, max(B_ges_85), E_HFS_85, m_f=1)
 
 #print("Aufspaltung durch den quadratischen Zeemann-Effekt bei höheren Magnetfeldstärken")
-print(f"87Rb: {abs(E_QZ_87)} bei {max(B1_ges):.2f}")
-print(f"85Rb: {abs(E_QZ_85)} bei {max(B2_ges):.2f}")
+print(f"87Rb: {abs(E_QZ_87)} bei {max(B_ges_87):.2f}")
+print(f"85Rb: {abs(E_QZ_85)} bei {max(B_ges_85):.2f}")

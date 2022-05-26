@@ -1,4 +1,4 @@
-#RF-Freq[kHz] | I1_hor[mA] | U1_sweep[V] | I2_hor[mA] | U2_sweep[V]
+#RF-Freq[kHz] | I_hor_87[mA] | U_sweep_87[V] | I_hor_85[mA] | U_sweep_85[V]
 100 0.00 6.815 0.00 7.99
 200 23.2 5.5 23.2 7.91
 300 52.6 3.605 52.6 7.17
