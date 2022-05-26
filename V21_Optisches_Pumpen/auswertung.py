@@ -51,18 +51,20 @@ U2_sweep *= ureg.V
 dat_sweep = {
     'r': ureg('16.39 cm'),  # Radius
     'N': 11,  # Windungen
-    'R': 10 * ureg.ohm,  # Widerstand # [Quelle unbekannt]
+    'R': 10 * ureg.ohm,  # Widerstand („1 Umdrehung = 0.1 A“)
 }
 # Horizontalspule:
 dat_hor = {
     'r': ureg('15.79 cm'),
     'N': 154,
-    'R':  10/3 * ureg.ohm,  # [Quelle unbekannt]
+    # Nicht verwendet, da das Potenziometer defekt war und auf eine externe Stromversorgung mit Amperemeter zurückgegriffen wurde. ↓
+    # 'R': 10/3 * ureg.ohm,  # („1 Umdrehung = 0.3 A“)
 }
 # Vertikalspule:
 dat_vert = {
     'r': ureg('11.735 cm'),
     'N': 20,
+    'R': 10 * ureg.ohm,  # („1 Umdrehung = 0.1 A“)
 }
 
 console.rule("Erdmagnetfeld: vertikal")
