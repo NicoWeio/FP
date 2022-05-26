@@ -23,13 +23,12 @@ def calc_g(ɑ):
 
 
 def calc_kernspin(g_F):
-    J = 1/2
-    g_S = g_J = 2.0023  # Landé-Faktor eines freien Elektrons – sicher auch g_J!?
-    I_v1 = J * (2/g_F - 1)  # BenediktSan(?)
-    I_v2 = (1/2) * (g_J/g_F - 1)  # elliekayl
-    print(f"I_v1: {I_v1}")
-    print(f"I_v2: {I_v2}")
-    return I_v2
+    # S = 1/2
+    # L = 0
+    # J = 1/2
+    g_J = 2.0023  # https://de.wikipedia.org/wiki/Land%C3%A9-Faktor#Elektron
+    I = (g_J/g_F - 1) / 2
+    return I.to('dimensionless')
 
 
 def calc_quad_zeemann(g_F, B, E_HFS, m_F):
@@ -132,8 +131,8 @@ print(tools.fmt_compare_to_ref(g_F_87, 1/2, name='g_F (87Rb)', precision=3))
 print(tools.fmt_compare_to_ref(g_F_85, 1/3, name='g_F (85Rb)', precision=3))
 
 console.rule("Kernspins [e) in der Versuchsanleitung]")
-I_1 = calc_kernspin(g_F_87, J=1/2)
-I_2 = calc_kernspin(g_F_85, J=1/2)
+I_1 = calc_kernspin(g_F_87)
+I_2 = calc_kernspin(g_F_85)
 print(tools.fmt_compare_to_ref(I_1, 1.5, name='I (87Rb)'))
 print(tools.fmt_compare_to_ref(I_2, 2.5, name='I (85Rb)'))
 
