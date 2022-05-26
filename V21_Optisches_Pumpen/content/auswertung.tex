@@ -138,3 +138,32 @@ als Verhältnis der Höhe ihrer jeweiligen Peaks ermittelt weden.
 
 
 \subsection{Quadratischer Zeeman-Effekt}
+Schließlich wird die Energieaufspaltung des quadratischen Zeeman-Effekts abgeschätzt.
+Die Hyperfeinstrukturaufspaltung des Grundzustands wird dazu aus \cite{versuchsanleitung} übernommen:
+\begin{align*}
+    \symup{\Delta}E_\text{HFS, \Rb{87}} &= \SI{4.53E-24}{\joule} \\
+    \symup{\Delta}E_\text{HFS, \Rb{85}} &= \SI{2.01E-24}{\joule} \ .
+\end{align*}
+Für die maximalen Magnetfelder je Isotop
+% (siehe \autoref{tab:mess})
+\begin{align*}
+    \max(B_{\Rb{87}}) &= \SI{168.19}{\micro\tesla} \\
+    \max(B_{\Rb{85}}) &= \SI{235.75}{\micro\tesla} \\
+\end{align*}
+wird dann anhand von \autoref{eqn:quadr_zeeman} die Aufspaltung berechnet.
+
+So ergibt sich
+\begin{align*}
+    % \symup{\Delta}E_\text{QZ, \Rb{87}} &= \SI{1.360(11)E-31}{\joule} \\
+    % \symup{\Delta}E_\text{QZ, \Rb{85}} &= \SI{2.86(10)E-31}{\joule} \ .
+    \symup{\Delta}E_\text{QZ, \Rb{87}} &=
+        \underbrace{\SI{7.85(03)E-28}{\joule}}_{\propto B} +
+        \underbrace{\SI{-4.08(03)E-31}{\joule}}_{\propto B^2} \\
+        &= \SI{7.84(03)E-28}{\joule}
+    \\
+    \\
+    \symup{\Delta}E_\text{QZ, \Rb{85}} &=
+        \underbrace{\SI{7.58(14)E-28}{\joule}}_{\propto B} +
+        \underbrace{\SI{-1.43(05)E-30}{\joule}}_{\propto B^2} \\
+        &= \SI{7.57(14)E-28}{\joule}
+\end{align*}
