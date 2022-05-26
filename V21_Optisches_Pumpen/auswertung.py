@@ -160,5 +160,17 @@ E_QZ_87_parts = calc_quad_zeemann(g_F_87, max(B_ges_87), E_HFS_87, m_F=2)
 E_QZ_85_parts = calc_quad_zeemann(g_F_85, max(B_ges_85), E_HFS_85, m_F=3)
 
 #print("Aufspaltung durch den quadratischen Zeemann-Effekt bei höheren Magnetfeldstärken")
-print(f"87Rb: linearer Term {E_QZ_87_parts[0]:.2e} + quadratischer Term {E_QZ_87_parts[1]:.2e} = {sum(E_QZ_87_parts):.2e} | B={max(B_ges_87):.2f}")
-print(f"85Rb: linearer Term {E_QZ_85_parts[0]:.2e} + quadratischer Term {E_QZ_85_parts[1]:.2e} = {sum(E_QZ_85_parts):.2e} | B={max(B_ges_85):.2f}")
+print(
+    "87Rb:",
+    f"linearer Term {E_QZ_87_parts[0]:.2e}",
+    f"+ quadratischer Term {E_QZ_87_parts[1]:.2e}",
+    f"= {sum(E_QZ_87_parts):.2e}",
+    f"| B = {max(B_ges_87):.2f}",
+)
+print(
+    "85Rb:",
+    f"linearer Term {E_QZ_85_parts[0]:.2e}",
+    f"+ quadratischer Term {E_QZ_85_parts[1]:.2e}",
+    f"= {sum(E_QZ_85_parts):.2e}",
+    f"| B = {max(B_ges_85):.2f}",
+)
