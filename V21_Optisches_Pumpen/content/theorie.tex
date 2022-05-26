@@ -52,9 +52,9 @@
 
     Für das gesamte Atom ergibt sich ein Atomdrehimpuls $\vec{F} = \vec{I} + \vec{J}$ mit der magnetischen Quantenzahl $M = \{-\lvert I+J \rvert, \ldots, \lvert I+J \rvert\}$.
     Für das entsprechende magnetische Moment gilt
-    \begin{equation}
+    \begin{equation*}
         \vec{\mu}_F = - M g_F \mu_\text{B} \vec{F} \ ,
-    \end{equation}
+    \end{equation*}
     %TODO: IST DIE GLEICHUNG SO RICHTIG?
     wobei
     \begin{equation}
@@ -91,7 +91,7 @@
     ist das entstehende Photon entweder linear ($\pi$-) polarisiert ($\symup{\Delta}M = 0$) oder zirkular ($\sigma^{\pm}$-) polarisiert ($\symup{\Delta}M = \pm 1$).
     Umgekehrt kann also nur ein $\sigma^{\pm}$-Übergang mit $\symup{\Delta} M = \pm 1$ stattfinden,
     wenn das Atom mit zirkular polarisiertem Licht bestrahlt wird.
-    Dabei ist Licht mit $\symup{\Delta} M = +1$ rechts herum und Licht mit $\symup{\Delta} M =-1$ links herum polarisiert.
+    Dabei ist Licht mit $\symup{\Delta} M = +1$ rechts herum und Licht mit $\symup{\Delta} M = -1$ links herum polarisiert.
 
     Abhängig von der Feldstärke des angelegten Magnetfelds werden weitere Terme des Hamilton-Operator für die Energieaufspaltung beim Zeeman-Effekt relevant.
     Bei der hier verwendeten mittleren Feldstärke muss der \textit{quadratische Zeeman-Effekt} betrachtet werden.
@@ -149,16 +149,6 @@
         \label{fig:pumpen}
     \end{figure}
 
-    Wird nun die angelegte Magentfeldstärke variiert,
-    ergibt sich die Darstellung in \autoref{fig:transparenz}.
-    Die Peaks entstehen bei einer Magnetfeldstärke $B_\text{m}$ dann,
-    wenn die Frequenz des eingestrahlten Lichts einem der Übergänge entspricht,
-    sodass es zu stimulierter Emission kommt und sich wieder mehr Elektronen im Grundzustand befinden.
-    Für dieses Phänomen gilt die Beziehung
-    \begin{align}
-        E_\text{Rf} = \symup{\Delta} E_\text{Z} & \iff h \nu = \hbar \omega_\text{Rf} = g_F \mu_\text{B} B \symup{\Delta} M
-        \
-    \end{align}
     \begin{figure}
         \centering
         \includegraphics[scale=0.5]{content/img/Abb_2.png}
@@ -166,19 +156,21 @@
         \label{fig:transparenz}
     \end{figure}
 
+    Wird nun die angelegte Magnetfeldstärke variiert,
+    ergibt sich die Darstellung in \autoref{fig:transparenz}.
+    Die Peaks entstehen bei einer Magnetfeldstärke $B_\text{m}$ dann,
+    wenn die Frequenz des eingestrahlten Lichts einem der Übergänge entspricht,
+    sodass es zu stimulierter Emission kommt und sich wieder mehr Elektronen im Grundzustand befinden.
+    Für dieses Phänomen gilt die Beziehung
+    \begin{align*}
+        E_\text{Rf} = \symup{\Delta} E_\text{Z}
+        \Leftrightarrow
+        h \nu = \hbar \omega_\text{RF} = g_F \mu_\text{B} B \symup{\Delta} M
+        \ .
+    \end{align*}
+
     Dieser Effekt tritt auch auf,
     wenn kein Magnetfeld angelegt ist,
     also $B = 0$ gilt.
     In diesem Fall ist keine Aufspaltung in $M$ zu beobachten,
-    die Photonen werden allerdings trotzdem absorbiert und können stimulierte Emission anregen.
-
-
-
-
-
-
-
-
-
-
-
+    die Photonen werden allerdings trotzdem absorbiert und können Emission stimulieren.
