@@ -22,9 +22,14 @@ def calc_g(ɑ):
     return g.to('dimensionless')
 
 
-def calc_kernspin(g_F, J):
-    # TODO: BenediktSan hat die 2 im Nenner
-    return J * (2/g_F - 1)
+def calc_kernspin(g_F):
+    J = 1/2
+    g_S = g_J = 2.0023  # Landé-Faktor eines freien Elektrons – sicher auch g_J!?
+    I_v1 = J * (2/g_F - 1)  # BenediktSan(?)
+    I_v2 = (1/2) * (g_J/g_F - 1)  # elliekayl
+    print(f"I_v1: {I_v1}")
+    print(f"I_v2: {I_v2}")
+    return I_v2
 
 
 def calc_quad_zeemann(g_F, B, E_HFS, m_F):
