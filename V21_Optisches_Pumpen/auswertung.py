@@ -26,8 +26,8 @@ def calc_kernspin(g_F, J):
     return J * (2/g_F - 1)
 
 
-def calc_quad_zeemann(g_F, B, E_HFS, m_f):
-    E = g_F**2 * (ureg.e * ureg.h/(4 * np.pi * ureg.m_e))**2 * B**2 * (1 - 2 * m_f)/E_HFS
+def calc_quad_zeemann(g_F, B, E_HFS, m_F):
+    E = g_F * ureg.mu_B * B + g_F**2 * ureg.mu_B**2 * B**2 * (1 - 2*m_F) / E_HFS
     return E.to('J')
 
 
@@ -148,9 +148,9 @@ E_HFS_87 = 4.53e-24 * ureg.J
 E_HFS_85 = 2.01e-24 * ureg.J
 
 # quadratischer Zeeman-Effekt
-E_QZ_87 = calc_quad_zeemann(g_F_87, max(B_ges_87), E_HFS_87)
-E_QZ_85 = calc_quad_zeemann(g_F_85, max(B_ges_85), E_HFS_85)
+E_QZ_87_parts = calc_quad_zeemann(g_F_87, max(B_ges_87), E_HFS_87, m_F=2)
+E_QZ_85_parts = calc_quad_zeemann(g_F_85, max(B_ges_85), E_HFS_85, m_F=3)
 
 #print("Aufspaltung durch den quadratischen Zeemann-Effekt bei höheren Magnetfeldstärken")
-print(f"87Rb: {abs(E_QZ_87)} bei {max(B_ges_87):.2f}")
-print(f"85Rb: {abs(E_QZ_85)} bei {max(B_ges_85):.2f}")
+print(f"87Rb: linearer Term {E_QZ_87_parts[0]:.2e} + quadratischer Term {E_QZ_87_parts[1]:.2e} = {sum(E_QZ_87_parts):.2e} | B={max(B_ges_87):.2f}")
+print(f"85Rb: linearer Term {E_QZ_85_parts[0]:.2e} + quadratischer Term {E_QZ_85_parts[1]:.2e} = {sum(E_QZ_85_parts):.2e} | B={max(B_ges_85):.2f}")
