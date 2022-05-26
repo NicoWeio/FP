@@ -65,6 +65,13 @@ dat_vert = {
     'N': 20,
 }
 
+console.rule("Erdmagnetfeld: vertikal")
+# Vertikale Magnetfeldkomponente aus Spannung der vertikalen Spule
+U_vert = unp.uarray(2.3, 0.01) * ureg.V  # TODO: eigene Werte!
+B_vert = calc_B_helmholtz(dat_vert['r'], dat_vert['N'], I=(U_vert / dat_vert['R']))
+print(tools.fmt_compare_to_ref(B_vert, ureg('44 µT')))  # Quelle: https://de.wikipedia.org/wiki/Erdmagnetfeld
+
+
 # Gesamt-Magnetfelder berechnen
 # (das Vertikalfeld ist zu 0 kompensiert)
 B1_ges = (  # Sweepspule + Horizontalspule
@@ -117,13 +124,6 @@ I_1 = calc_kernspin(g_F_87, J=1/2)
 I_2 = calc_kernspin(g_F_85, J=1/2)
 print(tools.fmt_compare_to_ref(I_1, 1.5, name='I (87Rb)'))
 print(tools.fmt_compare_to_ref(I_2, 2.5, name='I (85Rb)'))
-
-
-console.rule("Erdmagnetfeld: vertikal")
-# Vertikale Magnetfeldkomponente in µT aus Spannung der vertikalen Spule
-U_vert = unp.uarray(2.26, 0.01) * ureg.V  # TODO: eigene Werte!
-B_vert = calc_B_helmholtz(dat_vert['r'], dat_vert['N'], I=(U_vert / dat_sweep['R'])) # TODO: warum dat_sweep?
-print(tools.fmt_compare_to_ref(B_vert, ureg('40 µT')))  # TODO: Quelle unbekannt
 
 
 console.rule("Erdmagnetfeld: horizontal")
