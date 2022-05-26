@@ -40,7 +40,7 @@
     Mithilfe der Hund'schen Regeln kann ein Gesamtspin von $S = \sfrac{1}{2}$,
     ein Gesamtbahndrehimpuls $L=0$ und ein Gesamtdrehimpuls von $J = \lvert L \pm S \rvert = \sfrac{1}{2}$ für die Atomhülle berechnet werden.
 
-    Aufgrund der Wechselwirkung der magnetischen Momente von Spin $\vec{\mu}_s$ und Bahndrehimpuls $\vec{\mu}_l$ mit dem Magnetfeld des Kerns entsteht eine Aufspaltung der Energieniveaus,
+    Aufgrund der Wechselwirkung der magnetischen Momente von Spin $\vec{\mu}_S$ und Bahndrehimpuls $\vec{\mu}_L$ mit dem Magnetfeld des Kerns entsteht eine Aufspaltung der Energieniveaus,
     welche als \textit{Feinstrukturaufspaltung} oder \textit{LS-Kopplung} bezeichnet wird.
 
     Der Kern hat den Spin $\vec{I}$.
@@ -69,13 +69,13 @@
     wodurch $2F+1$ Zustände entstehen und die Entartung der Niveaus in $M$ damit aufgehoben wird.
     Die Energiedifferenz zwischen diesen Zuständen wird mithilfe von
     \begin{equation}
-        \symup{\Delta} E_\text{Z} = g_F \mu_\text{B} B \symup{\Delta} m_J
+        \symup{\Delta} E_\text{Z} = g_F \mu_\text{B} B \symup{\Delta} M
         \label{eqn:zeemanaufspaltung}
     \end{equation}
     berechnet.
     \autoref{fig:aufspaltung} zeigt die Feinstrukturaufspaltung,
     die Hyperfeinstrukturaufspaltung sowie die Aufspaltung durch den Zeeman-Effekt im Falle des zwei-Niveau-Systems mit Grundzustands $^2S_{1/2}$ und angeregtem Zustands $^2P_{1/2}$ von \Rb{87}.
-    \begin{figure}
+    \begin{figure}[H]
         \centering
         \includegraphics[width=\textwidth]{content/img/Lit2_Abb_2D-3.png}
         \caption{Aufspaltung der Energieniveaus durch Kopplungen innerhalb des Atoms und externe Magnetfelder. \cite{caltech}}
@@ -93,15 +93,30 @@
     wenn das Atom mit zirkular polarisiertem Licht bestrahlt wird.
     Dabei ist Licht mit $\symup{\Delta} M = +1$ rechts herum und Licht mit $\symup{\Delta} M =-1$ links herum polarisiert.
 
+    Abhängig von der Feldstärke des angelegten Magnetfelds werden weitere Terme des Hamilton-Operator für die Energieaufspaltung beim Zeeman-Effekt relevant.
+    Bei der hier verwendeten mittleren Feldstärke muss der \textit{quadratische Zeeman-Effekt} betrachtet werden.
+    In diesem Fall ergibt sich mithilfe von Störungstheorie ein Energieterm der Gestalt
+    \begin{equation}
+        \symup{\Delta} E_\text{Z} = g_f \mu_\text{B} B + g^2_F \mu^2_\text{B} B^2 \frac{1 - 2M}{\symup{\Delta}E_\text{Hfs}} \ ,
+        \label{eqn:quadr_zeeman}
+    \end{equation}
+    wobei $\symup{\Delta}E_\text{Hfs}$ die Energiedifferenz zwischen den aufgespaltenen Energienievaus der Hyperfeinstruktur beschreibt.
+
 
 \subsection{Das optische Pumpen}
+\label{sec:optisches_pumpen}
 
     Die Grundlage des optischen Pumpens ist durch die Absorption von Photonen in einem Atom gegeben,
     wenn das einfallende Licht mit der Energiedifferenz und den in \autoref{sec:energieaufspaltung} genannten Auswahlregeln kompatibel ist.
+    Aufgrunddessen entsteht eine Besetzungsinversion im Atom.
     Es wird zusätzlich zwischen \textit{spontaner} und \textit{stimulierter Emission} unterschieden.
     Bei der spontanen Emission wird ein Photon beim Rückfall eines Atoms aus einem angeregten Zustand in den Grundzustand erzeugt.
     Die Wahrscheinlichkeit für einen Übergang durch spontane Emission ist durch den Einstein-Koeffizienten $A_{nm}$ gegeben,
     wobei die Indizes $nm$ die Energieniveaus $E_n$ und $E_m$ bezeichnen.
+    Außerdem ist die Wahrscheinlichkeit der spontanen Emission $\propto \nu^3$,
+    wobei $\nu$ die Frequenz des emittierten Photons beschreibt,
+    was dazu führt,
+    dass Übergänge mit einer größeren Energiedifferenz wahrscheinlicher sind.
     Bei der stimulierten Emission trifft ein Photon auf ein angeregtes Atom,
     welches daraufhin unter Aussendung von Photonen in den Grundzustand zurückfällt.
     Das einfallende und die emittierten Photonen sind dabei kohärent,
@@ -127,12 +142,36 @@
     während bei stimulierter Emission aufgrund der Kohärenzbedingung nur Übergänge mit $\symup{\Delta}M = +1$ erlaubt sind.
 
     Der gesamte Vorgang des optischen Pumpens ist in \autoref{fig:pumpen} dargestellt.
-    \begin{figure}
+    \begin{figure}[H]
         \centering
-        \includegraphics[scale=0.8]{content/img/Lit2_Abb_8.pdf}
+        \includegraphics[scale=1]{content/img/Lit2_Abb_8.pdf}
         \caption{Übergänge im zwei-Niveau-System beim optischen Pumpen. \cite{caltech}}
         \label{fig:pumpen}
     \end{figure}
+
+    Wird nun die angelegte Magentfeldstärke variiert,
+    ergibt sich die Darstellung in \autoref{fig:transparenz}.
+    Die Peaks entstehen bei einer Magnetfeldstärke $B_\text{m}$ dann,
+    wenn die Frequenz des eingestrahlten Lichts einem der Übergänge entspricht,
+    sodass es zu stimulierter Emission kommt und sich wieder mehr Elektronen im Grundzustand befinden.
+    Für dieses Phänomen gilt die Beziehung
+    \begin{align}
+        E_\text{Rf} = \symup{\Delta} E_\text{Z} & \iff h \nu = \hbar \omega_\text{Rf} = g_F \mu_\text{B} B \symup{\Delta} M
+        \
+    \end{align}
+    \begin{figure}
+        \centering
+        \includegraphics[scale=0.5]{content/img/Abb_2.png}
+        \caption{Verlauf der Transparenz des Gases in Abhängigkeit der Magnetfeldstärke. \cite{versuchsanleitung}}
+        \label{fig:transparenz}
+    \end{figure}
+
+    Dieser Effekt tritt auch auf,
+    wenn kein Magnetfeld angelegt ist,
+    also $B = 0$ gilt.
+    In diesem Fall ist keine Aufspaltung in $M$ zu beobachten,
+    die Photonen werden allerdings trotzdem absorbiert und können stimulierte Emission anregen.
+
 
 
 
