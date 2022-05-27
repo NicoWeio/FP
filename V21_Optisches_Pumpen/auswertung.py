@@ -70,7 +70,7 @@ dat_vert = {
 
 console.rule("Erdmagnetfeld: vertikal")
 # Vertikale Magnetfeldkomponente aus Spannung der vertikalen Spule
-U_vert = unp.uarray(2.3, 0.01) * ureg.V  # TODO: eigene Werte!
+U_vert = unp.uarray(2.3, 0.01) * ureg.V
 B_vert = calc_B_helmholtz(dat_vert['r'], dat_vert['N'], I=(U_vert / dat_vert['R']))
 print(tools.fmt_compare_to_ref(B_vert, ureg('44 µT')))  # Quelle: https://de.wikipedia.org/wiki/Erdmagnetfeld
 
@@ -146,7 +146,11 @@ print(tools.fmt_compare_to_ref(B_hor, ureg('20 µT')))  # Quelle: https://de.wik
 console.rule("Isotopenverhältnis")
 # Idee: Peak-Tiefe ~ Anteil des Isotops
 # Das Verhältnis der beiden Isotope lässt sich anhand des Amplitudenverhältnis der beiden Dips (1. Dip 87Rb und 2. Dip 85Rb) ablesen.
-print("[…]")
+y_87 = 3
+y_85 = 6
+r_87_85 = (y_87 / y_85) * ureg.dimensionless
+r_87_85_lit = ureg('27.83(2) %') / ureg('72.17(2) %')
+print(tools.fmt_compare_to_ref(r_87_85, r_87_85_lit, name='(Rb87 : Rb85)'))
 
 
 console.rule("Abschätzung des quadratischen Zeemann-Effekts")
