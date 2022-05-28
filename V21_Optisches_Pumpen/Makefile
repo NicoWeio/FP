@@ -9,7 +9,7 @@ TABLES = \
 PYTHONENV = MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: BUILD=true
 
 build/plt/g_F.pdf build/tab/messwerte.tex &: auswertung.py | build/plt build/tab
-	$(PYTHONENV) python auswertung.py
+	$(PYTHONENV) BUILD=true python auswertung.py
 
 build/main.pdf: ../header_common.tex main.tex $(wildcard content/*.tex) lit.bib $(PLOTS) $(TABLES) | build
 	  TEXINPUTS=build: \
