@@ -33,9 +33,9 @@ n = m / M
 # Loschmidtsche Zahl von CODATA
 Nl = ufloat(2.6516467, 0.0000015)*1e25 * ureg('1/m^3')
 # longitudinale Phasengeschwindigkeit in Kupfer
-v_long = 4.7*1e3 * ureg('m/s')
+v_long = ureg('4.7 km/s')
 # transversale Phasengeschwindigkeit in Kupfer
-v_trans = 2.26*1e3 * ureg('m/s')
+v_trans = ureg('2.26 km/s')
 # Volumen der Probe
 Vp = V0 * n * ureg('m^3')
 # Avogadro-Konstante
@@ -72,18 +72,15 @@ assert Cp.check('J/(mol·K)')
 # █ b) Man errechne daraus C_v […]
 
 # Einlesen der Werte von alpha, aus der Tabelle der Anleitung
-Talpha, alpha = np.genfromtxt('dat/alpha_KarlSchiller.txt', unpack=True)
-Talpha -= 273.15                # Umrechnen K in grd
-alpha *= 1e-6                    # in 1/grd
-Talpha *= ureg.degC
-alpha /= ureg.delta_degC
-Talpha.ito('K')  # https://pint.readthedocs.io/en/latest/nonmult.html
+T_ɑ, ɑ = np.genfromtxt('dat/alpha_KarlSchiller.txt', unpack=True)
+T_ɑ *= ureg.K
+ɑ *= 1e-6
+ɑ /= ureg.delta_degC
 
 # Bestimmung einer allgemeinen Funktion von alpha
 print('Regression für alpha')
-params = tools.pint_polyfit(Talpha, alpha, 4)  # TODO: irgendwie mit Einheiten!
+params = tools.pint_polyfit(T_ɑ, ɑ, 4)
 print(params)
-a, b, c, d, e = params
 
 
 def poly4(T, a, b, c, d, e):
@@ -94,29 +91,30 @@ def poly4(T, a, b, c, d, e):
 # Plotten von alpha
 plt.figure()
 with tools.plot_context(plt, '°C', '1/°C', 'T', 'ɑ') as plt2:
-    plt2.plot(Talpha, alpha, 'bx', label='Stützstellen')
-    Tplot = np.linspace(Talpha[0], Talpha[-1], 500)
+    plt2.plot(T_ɑ, ɑ, 'bx', label='Stützstellen')
+    Tplot = np.linspace(T_ɑ[0], T_ɑ[-1], 500)
     plt2.plot(Tplot, tools.nominal_values(poly4(Tplot, *params)), 'k-', label='Regression')
 plt.grid()
 plt.tight_layout()
 # plt.savefig('build/alpha.pdf')
-plt.show()
+# plt.show()
 plt.clf()
 
 # Berechne Cv mittels Korrekturformel
-Tmittel = (iTp.to('K') + fTp.to('K'))/2
-Cv = Cp - 9 * poly4(Tmittel, *params)**2 * κ * V0 * Tmittel # Quelle: Versuchsanleitung
+T_avg = (iTp.to('K') + fTp.to('K'))/2
+Cv = Cp - 9 * poly4(T_avg, *params)**2 * κ * V0 * T_avg # Quelle: Versuchsanleitung
 assert Cv.check('J/(mol·K)')
 
 # Plotten von Cv
 plt.figure()
 with tools.plot_context(plt, '°C', 'J/(mol·°C)', 'T', 'V') as plt2:
     # plt.errorbar(x=noms(Tmittel), xerr=stds(Tmittel), y=noms(Cv), yerr=stds(Cv), color='b', fmt='x', label='Stützstellen')
-    plt2.plot(Tmittel, tools.nominal_values(Cv), 'x', color='b', label='Stützstellen')
-    # Tmax = ureg('170 K')
-    # plt.axvline(x=Tmax.to('°C'), color='k')
+    plt2.plot(T_avg, tools.nominal_values(Cv), 'x', color='b', label='Stützstellen')
+    # „Man berücksichtige hierfür nur Messwerte bis T_max“ […]“
+    T_max = ureg('170 K')
+    plt.axvline(x=T_max.to('°C'), color='k')
 plt.grid()
 plt.tight_layout()
 # plt.savefig('build/plt/cv.pdf')
-plt.show()
+# plt.show()
 plt.clf()
