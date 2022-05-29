@@ -74,8 +74,7 @@ assert Cp.check('J/(mol·K)')
 # Einlesen der Werte von alpha, aus der Tabelle der Anleitung
 T_ɑ, ɑ = np.genfromtxt('dat/alpha_KarlSchiller.txt', unpack=True)
 T_ɑ *= ureg.K
-ɑ *= 1e-6
-ɑ /= ureg.delta_degC
+ɑ *= 1e-6 / ureg.delta_degC
 
 # Bestimmung einer allgemeinen Funktion von alpha
 print('Regression für alpha')
@@ -98,23 +97,25 @@ plt.grid()
 plt.tight_layout()
 # plt.savefig('build/alpha.pdf')
 # plt.show()
-plt.clf()
 
 # Berechne Cv mittels Korrekturformel
 T_avg = (iTp.to('K') + fTp.to('K'))/2
-Cv = Cp - 9 * poly4(T_avg, *params)**2 * κ * V0 * T_avg # Quelle: Versuchsanleitung
+Cv = Cp - 9 * poly4(T_avg, *params)**2 * κ * V0 * T_avg  # Quelle: Versuchsanleitung
 assert Cv.check('J/(mol·K)')
+
+# █ c) Man versuche, die gemessenen (Cv,T)-Wertepaare durch Wahl einer geeigneten Debye-Temperatur θ_D in der universellen Debye-Kurve anzupassen.
+# Man berücksichtige hierfür nur Messwerte bis T_max = 170K.
+# Welchen Wert für θ_D erhält man?
 
 # Plotten von Cv
 plt.figure()
-with tools.plot_context(plt, '°C', 'J/(mol·°C)', 'T', 'V') as plt2:
+with tools.plot_context(plt, '°C', 'J/(mol·°C)', 'T', 'C_V') as plt2:
     # plt.errorbar(x=noms(Tmittel), xerr=stds(Tmittel), y=noms(Cv), yerr=stds(Cv), color='b', fmt='x', label='Stützstellen')
     plt2.plot(T_avg, tools.nominal_values(Cv), 'x', color='b', label='Stützstellen')
-    # „Man berücksichtige hierfür nur Messwerte bis T_max“ […]“
+    # „Man berücksichtige hierfür nur Messwerte bis T_max“ […]“ – aber erst in c)
     T_max = ureg('170 K')
     plt.axvline(x=T_max.to('°C'), color='k')
 plt.grid()
 plt.tight_layout()
 # plt.savefig('build/plt/cv.pdf')
-# plt.show()
-plt.clf()
+plt.show()
