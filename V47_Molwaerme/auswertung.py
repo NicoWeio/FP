@@ -95,28 +95,31 @@ with tools.plot_context(plt, '°C', '1/°C', 'T', 'ɑ') as plt2:
     plt2.plot(T_ɑ, ɑ, 'x', zorder=5, label='Messwerte')
     plt2.plot(T_linspace, tools.nominal_values(poly4(T_linspace, *params)), label='Fit')
 plt.grid()
+plt.legend()
 plt.tight_layout()
 # plt.savefig('build/alpha.pdf')
 # plt.show()
 
-# Berechne Cv mittels Korrekturformel
+# Berechne C_V mittels Korrekturformel
 T_avg = (iT_probe.to('K') + fT_probe.to('K'))/2
-Cv = C_p - 9 * poly4(T_avg, *params)**2 * κ * V0 * T_avg  # Quelle: Versuchsanleitung
-assert Cv.check('J/(mol·K)')
+C_V = C_p - 9 * poly4(T_avg, *params)**2 * κ * V0 * T_avg  # Quelle: Versuchsanleitung
+assert C_V.check('J/(mol·K)')
 
-# █ c) Man versuche, die gemessenen (Cv,T)-Wertepaare durch Wahl einer geeigneten Debye-Temperatur θ_D in der universellen Debye-Kurve anzupassen.
+# █ c) Man versuche, die gemessenen (C_V,T)-Wertepaare durch Wahl einer geeigneten Debye-Temperatur θ_D in der universellen Debye-Kurve anzupassen.
 # Man berücksichtige hierfür nur Messwerte bis T_max = 170K.
 # Welchen Wert für θ_D erhält man?
 
-# Plotten von Cv
+# Plotten von C_V
 plt.figure()
-with tools.plot_context(plt, '°C', 'J/(mol·°C)', 'T', 'C_V') as plt2:
-    # plt.errorbar(x=noms(Tmittel), xerr=stds(Tmittel), y=noms(Cv), yerr=stds(Cv), color='b', fmt='x', label='Stützstellen')
-    plt2.plot(T_avg, tools.nominal_values(Cv), 'x', color='b', label='Stützstellen')
+with tools.plot_context(plt, 'K', 'J/(mol·K)', 'T', 'C_V') as plt2:
+    # plt.errorbar(x=noms(Tmittel), xerr=stds(Tmittel), y=noms(C_V), yerr=stds(C_V), fmt='x', label='Stützstellen')
+    plt2.plot(T_avg, tools.nominal_values(C_V), 'o--', label='Messwerte')
+    plt2.plot(T_avg, C_p, 'x', label='Messwerte $C_p$')
     # „Man berücksichtige hierfür nur Messwerte bis T_max“ […]“
     T_max = ureg('170 K')
-    plt.axvline(x=T_max.to('°C'), linestyle='--', color='grey')
+    plt.axvline(x=T_max, linestyle='--', color='grey')
 plt.grid()
+plt.legend()
 plt.tight_layout()
 # plt.savefig('build/plt/cv.pdf')
 plt.show()
