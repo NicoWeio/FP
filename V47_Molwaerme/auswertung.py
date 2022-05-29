@@ -23,24 +23,23 @@ def calc_T(R):
 # Masse der Probe
 m = 0.342 * ureg('kg')
 # Kompressionsmodul Kupfer
-kappa = 139e9 * ureg('N/m^2')
+κ = 139e9 * ureg('N/m^2')
 # Molvolumen Kupfer
 V0 = 7.11e-6 * ureg('m^3/mol')
 # Molare Masse Kupfer
 M = 63.55*1e-3 * ureg('kg/mol')
 # Stoffmenge der Probe
-# n = m / M * ureg('mol')  # TODO: fuzzy
 n = m / M
 # Loschmidtsche Zahl von CODATA
 Nl = ufloat(2.6516467, 0.0000015)*1e25 * ureg('1/m^3')
 # longitudinale Phasengeschwindigkeit in Kupfer
-vlong = 4.7*1e3 * ureg('m/s')
+v_long = 4.7*1e3 * ureg('m/s')
 # transversale Phasengeschwindigkeit in Kupfer
-vtrans = 2.26*1e3 * ureg('m/s')
+v_trans = 2.26*1e3 * ureg('m/s')
 # Volumen der Probe
 Vp = V0 * n * ureg('m^3')
 # Avogadro-Konstante
-Na = ureg.avogadro_constant
+# Na = ureg.avogadro_constant
 
 
 # █ Messwerte einlesen
@@ -79,29 +78,25 @@ alpha *= 1e-6                    # in 1/grd
 Talpha *= ureg.degC
 alpha /= ureg.delta_degC
 Talpha.ito('K')  # https://pint.readthedocs.io/en/latest/nonmult.html
-print(Talpha.units, "|", alpha.units)
 
 # Bestimmung einer allgemeinen Funktion von alpha
 print('Regression für alpha')
-params = tools.pint_polyfit(Talpha, alpha, 4) #TODO: irgendwie mit Einheiten!
+params = tools.pint_polyfit(Talpha, alpha, 4)  # TODO: irgendwie mit Einheiten!
 print(params)
 a, b, c, d, e = params
 
 
 def poly4(T, a, b, c, d, e):
     """Polynom 4. Ordnung"""
-    return a * T**4 + b * T**3 + c * T**2 + d * T**1 + e
+    return a * T**4 + b * T**3 + c * T**2 + d * T + e
 
 
 # Plotten von alpha
 plt.figure()
-plt.plot(Talpha, alpha, 'bx', label='Stützstellen')
-Tplot = np.linspace(Talpha[0], Talpha[-1], 500)
-plt.plot(Tplot, tools.nominal_values(poly4(Tplot, *params)), 'k-', label='Regression')
-plt.xlabel(r'$T\;\mathrm{in}\;\mathrm{°C}$')
-plt.ylabel(r'$\alpha\;\mathrm{in}\;10^{-6}\mathrm{grd}^{-1}$')
-# plt.xlim(60, 310)
-# plt.ylim(6.70, 16.95)
+with tools.plot_context(plt, '°C', '1/°C', 'T', 'ɑ') as plt2:
+    plt2.plot(Talpha, alpha, 'bx', label='Stützstellen')
+    Tplot = np.linspace(Talpha[0], Talpha[-1], 500)
+    plt2.plot(Tplot, tools.nominal_values(poly4(Tplot, *params)), 'k-', label='Regression')
 plt.grid()
 plt.tight_layout()
 # plt.savefig('build/alpha.pdf')
@@ -110,19 +105,16 @@ plt.clf()
 
 # Berechne Cv mittels Korrekturformel
 Tmittel = (iTp.to('K') + fTp.to('K'))/2
-Cv = Cp - 9 * poly4(Tmittel, *params)**2 * kappa * V0 * Tmittel
+Cv = Cp - 9 * poly4(Tmittel, *params)**2 * κ * V0 * Tmittel # Quelle: Versuchsanleitung
 assert Cv.check('J/(mol·K)')
 
 # Plotten von Cv
 plt.figure()
-# plt.errorbar(x=noms(Tmittel), xerr=stds(Tmittel), y=noms(Cv), yerr=stds(Cv), color='b', fmt='x', label='Stützstellen')
-plt.plot(Tmittel, tools.nominal_values(Cv), color='b', label='Stützstellen')
-# Tmax = 170 - 273.15                 # in grd
-# plt.axvline(x=Tmax, color='k')
-plt.xlabel(r'$T\;\mathrm{in}\;\mathrm{°C}$')
-plt.ylabel(r'$C_{\mathrm{V}}\;\mathrm{in}\;\mathrm{J/(mol\;grd)}$')
-# plt.xlim(60, 310)
-# plt.ylim(6.70, 16.95)
+with tools.plot_context(plt, '°C', 'J/(mol·°C)', 'T', 'V') as plt2:
+    # plt.errorbar(x=noms(Tmittel), xerr=stds(Tmittel), y=noms(Cv), yerr=stds(Cv), color='b', fmt='x', label='Stützstellen')
+    plt2.plot(Tmittel, tools.nominal_values(Cv), 'x', color='b', label='Stützstellen')
+    # Tmax = ureg('170 K')
+    # plt.axvline(x=Tmax.to('°C'), color='k')
 plt.grid()
 plt.tight_layout()
 # plt.savefig('build/plt/cv.pdf')
