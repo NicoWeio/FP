@@ -1,19 +1,150 @@
 \section{Theorie}
 \label{sec:theorie}
 
-    Die Wärmekapazität eines Festkörpers gibt die Wärmemenge an,
-    die benötigt wird um die Temperatur des Festkörpers um \SI{1}{\kelvin} zu erhöhen.
-    Allgemein kann diese Wärmekapazität mithilfe von
+    Die Wärmekapazität eines Festkörpers bezeichnet die Wärmemenge $\symup{\Delta}$,
+    die bnötigt wird Temperatur $T$ dieses Festkörpers um \SI{1}{\kelvin} zu erhöhen.
+    Es gilt
     \begin{equation*}
-        C = \frac{\symup{\Delta Q}}{\symup{\Delta} T}
+        C = \frac{\symup{\Delta}Q}{\symup{\Delta}T} \ .
     \end{equation*}
-    berechnet werden.
-    Außerdem wird zwischen der Wärmekapazität bei konstantem Volumen
+    Die Wärmekapazität ist dabei material-spezifisch und wird deshalb oft in Bezug auf eine Stoffmenge,
+    ein Volumen oder eine Masse angegeben.
+    Dies wird als \textit{Spezifische Wärmekapazität} bezeichnet.
+    Diese ergibt sich nach \cite{grossmarx} entsprechend zu
+    \begin{align}
+        c^\text{mol} = \frac{C}{mol} && c^\text{V} = \frac{C}{V} && c^\text{mass} = \frac{C}{m} \ .
+    \end{align}
+    Mithilfe des ersten Hautptsatzes der Thermodynamik
     \begin{equation}
-        C_V = \frac{\partial Q}{\partial T} \Bigl|_V
+        \symup{d}Q = \symup{d}U - \symup{d}W = \symup{d}U + p\symup{d}V
+        \label{eqn:theorie:hauptsatz}
     \end{equation}
-    und der Wärmekapazität mit konstantem Druck
+    kann zwischen der Wärmekapazität bei konstantem Volumen $C_V$ und konstantem Druck $C_p$ unterschieden werden.
+    Hierbei gilt
+    \begin{align}
+        C_V &= \frac{\partial Q}{\partial T} \Bigl|_V = \frac{\partial U}{\partial T} \Bigl|_V
+        \label{eqn:theorie:c_vconst} \\
+        C_p &= \frac{\partial Q}{\partial T} \Bigl|_p = \frac{\partial U}{\partial T} \Bigl|_p
+        \label{eqn:theorie:c_pconst} \ .
+    \end{align}
+    Weiterhin ergibt sich die Differenz
     \begin{equation}
-        C_p = \frac{\partial Q}{\partial T} \Bigl|_p
+        C_p - C_V = T \alpha^2_V B V = 9 \alpha^2 \kappa V_0 T
+        \label{eqn:theorie:c_differenz}
     \end{equation}
-    unterschieden.
+    mit dem Ausdehnungskoeffizenten $\alpha$,
+    dem Bulkmodul $B$ und dem Kompressionsmodul $\kappa$.
+    Diese Differenz ist im Allgemeinen $\geq 0$,
+    da $C_p \geq C_V$ ist,
+    was daran liegt,
+    dass nach \autoref{eqn:theorie:hauptsatz} bei konstantem Druck mehr Energie auf die Ausdehnung des Volumens aufgewendet werden muss,
+    sodass mehr Wärme benötigt wird,
+    um die gleiche Temperatur zu erreichen.
+    Aus diesem Grund ist die Differenz \autoref{eqn:theorie:c_differenz} im Falle eines Festkörpers geringer als bei einem idealen Gas,
+    da sich der Festkörper weniger stark ausdehnt,
+    wenn er erwärmt wird.
+
+    Im Folgenden wird zwischen klassischer und quantenmechanischer Betrachtung unterschieden.
+    Zusätzlich werden die Schwingungsmoden im Festkörper als harmonische Oszillatoren behandelt.
+
+    In der klassischen Betrachtung kann ein System,
+    welches in Kontakt mit einem Wärmebad ist,
+    bei jeder Temperatur angeregt werden,
+    da der klassische harmonische Oszillator ein kontinuierliches Energiespektrum besitzt.
+    Jede Schwingungsmode hat dabei eine mittlere Energie von $\sfrac{1}{2} k_\text{B} T$.
+    Ein dreidimensionales System mit $N$ Atomen,
+    drei Ortsfreiheitsgraden und drei Impulsfreiheitsgraden hat demnach eine Energie von $3Nk_\text{B}T$ und demnach eine Wärmekapazität von $3Nk_\text{B}$.
+    Dieser Zusammenhang wird als \textit{Dulong-Petit-Gesetz} bezeichnet und stellt den Hochtemperaturgrenzfall der Wärmekapazität dar.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    %Die Wärmekapazität eines Festkörpers gibt die Wärmemenge an,
+    %die benötigt wird um die Temperatur des Festkörpers um \SI{1}{\kelvin} zu erhöhen.
+    %Allgemein kann diese Wärmekapazität mithilfe von
+    %\begin{equation*}
+    %    C = \frac{\symup{\Delta Q}}{\symup{\Delta} T}
+    %\end{equation*}
+    %berechnet werden.
+    %Außerdem wird zwischen der Wärmekapazität bei konstantem Volumen $C_V$ und bei konstantem Druck $C_p$
+    %%\begin{equation}
+    %%    C_V = \frac{\partial Q}{\partial T} \Bigl|_V = \frac{\partial U}{\partial T} \Bigl|_V
+    %%    \label{eqn:theorie:volumen}
+    %%\end{equation}
+    %%und der Wärmekapazität mit konstantem Druck
+    %%\begin{equation}
+    %%    C_p = \frac{\partial Q}{\partial T} \Bigl|_p = \frac{\partial U}{\partial T} \Bigl|_p
+    %%\end{equation}
+    %unterschieden,
+    %wobei der 1. Hautptsatz der Thermodynamik $\symup{d}Q = \symup{d}U - \symup{d}W = \symup{d}U + p \symup{d}V$ verwendet wird.
+    %Demnach gilt
+    %\begin{align}
+    %    C_V = \frac{\partial Q}{\partial T} \Bigl|_V = \frac{\partial U}{\partial T} \Bigl|_V & \
+    %    C_p = \frac{\partial Q}{\partial T} \Bigl|_p = \frac{\partial U}{\partial T} \Bigl|_p \ .
+    %\end{align}
+    %Da die Wärmekapazität Stoff- und Mengenabhängig ist,
+    %wird oft die spezielle Wärmekapazität verwendet
+    %\begin{equation*}
+    %    c = \frac{C}{m} \ .
+    %\end{equation*}
+    %Zwischen $C_V$ und $C_p$ gilt der Zusammenhang
+    %\begin{equation}
+    %    C_p - C_V = T \alpha^2_V B V  = 9 \alpha^2 \kappa V_0 T \ ,
+    %    \label{eqn:theorie:diff_waermekapazitaet}
+    %\end{equation}
+    %wobei $\alpha_V$ den Ausdehnungskoeffizenten und $B$ den Bulk-Modul bezeichnet.
+    %Die Differenz in \autoref{eqn:theorie} ist im Falle eines Festkörpers sehr viel geringer als bei einem idealen Gas,
+    %da
+
+    %Es wird nun zusätzlich zwischen der klassischen und quantenmechanischen Betrachtung eines Systems in Kontakt mit einem Wärembad unterschieden.
+    %In der klassischen Betrachtung besitzen die Schwingungsmoden eine Energie von $\sfrac{1}{2} k_\text{B} T$.
+    %Mit $N$ Atomen mit jeweils drei Orts- und drei Impulsfreiheitsgraden ergibt sich eine innere Energie $U = 3Nk_\text{B}T$.
+    %Nach \autoref{eqn:theorie:volumen} gilt für die Wärmekapazität bei konstantem Volumen
+    %\begin{equation}
+    %    C_V = 3 N k_\text{B} \ .
+    %\end{equation}
+    %Diese Beziehung wird auch als \textit{Dulong-Petit-Gesetz} bezeichnet.
+    %Aufgrund des Kontakts mit dem Wärmebad findet eine Anregung der Atome statt,
+    %wobei hier der harmonische Oszillator angenommen wird.
+    %Im klassischen System kann das System für jede Temperatur $T$ angeregt werden.
