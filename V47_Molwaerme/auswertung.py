@@ -161,3 +161,6 @@ tab_C_V = np.flip(tab_C_V)
 print(f"{θ_D_div_T=}")
 θ_D = θ_D_div_T * T_avg.to('K')
 print(f"{θ_D=}")
+
+θ_D_lit = ureg('343 K') # TODO: Quelle
+print(tools.fmt_compare_to_ref(θ_D, θ_D_lit, name='θ_D'))
