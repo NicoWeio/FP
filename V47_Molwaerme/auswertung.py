@@ -164,3 +164,11 @@ print(f"{θ_D=}")
 
 θ_D_lit = ureg('343 K') # TODO: Quelle
 print(tools.fmt_compare_to_ref(θ_D, θ_D_lit, name='θ_D'))
+
+# --
+
+ω_D_tothe3 = (18 * np.pi**2 * ureg.N_A / V0 / ((1/v_long**3) + (2/v_trans)**3))
+print(f"{ω_D_tothe3.to('Hz³')=}")
+# ω_D = ω_D_tothe3**(1/3)
+ω_D = np.cbrt(ω_D_tothe3)
+print(f"{ω_D.to('Hz'):.2e}")
