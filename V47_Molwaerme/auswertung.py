@@ -44,21 +44,20 @@ V_probe = V0 * n * ureg('m^3')
 
 
 # █ Messwerte einlesen
-dt, U, I, iR_probe, iR_zylinder, fR_probe, fR_zylinder = np.genfromtxt('dat/messung_KarlSchiller.txt', unpack=True)
+dt, U, I, R_probe, R_zylinder = np.genfromtxt('dat/messung.txt', unpack=True)
 dt *= ureg.s
 U *= ureg.V
 I *= ureg.mA
-# i = init, f = final
-iR_probe *= ureg.ohm
-iR_zylinder *= ureg.ohm
-fR_probe *= ureg.ohm
-fR_zylinder *= ureg.ohm
+R_probe *= ureg.ohm
+R_zylinder *= ureg.ohm
+
+# dt sei die Zeitdifferenz zwischen aktueller und nächster Zeile;
+# somit wird der letzte Eintrag für dt verworfen, wenn Differenzen betrachtet werden.
+# dt = dt[:-1]
 
 # Temperaturen aus den Widerständen berechnen
-iT_probe = calc_T(iR_probe)
-iT_zylinder = calc_T(iR_zylinder)
-fT_probe = calc_T(fR_probe)
-fT_zylinder = calc_T(fR_zylinder)  # NOTE: War vorher auch fTp – scheinbar ein Fehler bei KarlSchiller
+T_probe = calc_T(R_probe)
+T_zylinder = calc_T(R_zylinder)  # NOTE: War vorher auch fTp – scheinbar ein Fehler bei KarlSchiller
 
 # █ a) Man messe die Molwärme C_p von Kupfer in Abhängigkeit von der Temperatur im Bereich von ca 80 bis 300 K.
 
@@ -67,7 +66,7 @@ W_el = U * I * dt
 assert W_el.check('[energy]')
 
 # C_p aus den Messwerten
-C_p = W_el / (abs(fT_probe - iT_probe) * n)
+C_p = W_el[:-1] / (np.diff(T_probe) * n)
 assert C_p.check('J/(mol·K)')
 
 
@@ -101,7 +100,8 @@ plt.tight_layout()
 # plt.show()
 
 # Berechne C_V mittels Korrekturformel
-T_avg = (iT_probe.to('K') + fT_probe.to('K'))/2
+# T_avg = (iT_probe.to('K') + T_probe.to('K'))/2
+T_avg = T_probe.to('K')[:-1]  # TODO…
 C_V = C_p - 9 * poly4(T_avg, *params)**2 * κ * V0 * T_avg  # Quelle: Versuchsanleitung
 assert C_V.check('J/(mol·K)')
 
