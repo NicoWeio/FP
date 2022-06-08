@@ -141,7 +141,6 @@ generate_table.generate_table_pint(
 
 # Bestimmung der Debye-Temperatur
 T_max_mask = T_probe < T_max
-print(f"{T_max_mask=}")
 C_V_avg = C_V[T_max_mask[:-1]].mean()
 print(f"{C_V_avg.to('J/(K·mol)')=}")
 T_avg = T_probe[T_max_mask].mean()
