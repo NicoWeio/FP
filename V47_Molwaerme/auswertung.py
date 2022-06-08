@@ -5,6 +5,7 @@ import pint
 import scipy as sp
 import tools
 from uncertainties import ufloat
+import generate_table
 ureg = pint.UnitRegistry()
 ureg.setup_matplotlib()
 
@@ -123,3 +124,15 @@ plt.legend()
 plt.tight_layout()
 # plt.savefig('build/plt/cv.pdf')
 plt.show()
+
+
+# → Tabelle
+generate_table.generate_table_pint(
+    'build/tab/mess.tex',
+    (r'\mathrm{\Delta} t', ureg.s, dt),
+    ('U', ureg.V, U),
+    ('I', ureg.mA, I),
+    (r'R_\text{Probe}', ureg.ohm, R_probe),
+    (r'R_\text{Zylinder}', ureg.ohm, R_zylinder),
+)
+
