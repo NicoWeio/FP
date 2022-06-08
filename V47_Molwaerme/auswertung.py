@@ -18,7 +18,7 @@ def calc_T(R):
     R_ = R.to('ohm').m
     T_ = 0.00134 * R_**2 + 2.296 * R_ - 243.02
     T = T_ * ureg.degC
-    return T
+    return T.to('K')
 
 
 # █ Konstanten
@@ -49,8 +49,8 @@ dt, U, I, R_probe, R_zylinder = np.genfromtxt('dat/messung.txt', unpack=True)
 dt *= ureg.s
 U *= ureg.V
 I *= ureg.mA
-R_probe *= ureg.ohm
-R_zylinder *= ureg.ohm
+R_probe *= ureg.kiloohm
+R_zylinder *= ureg.kiloohm
 
 # dt sei die Zeitdifferenz zwischen aktueller und nächster Zeile;
 # somit wird der letzte Eintrag für dt verworfen, wenn Differenzen betrachtet werden.
@@ -106,6 +106,9 @@ T_avg = T_probe.to('K')[:-1]  # TODO…
 C_V = C_p - 9 * poly4(T_avg, *params)**2 * κ * V0 * T_avg  # Quelle: Versuchsanleitung
 assert C_V.check('J/(mol·K)')
 
+# „Man berücksichtige hierfür nur Messwerte bis T_max […]“
+T_max = ureg('170 K')
+
 # █ c) Man versuche, die gemessenen (C_V,T)-Wertepaare durch Wahl einer geeigneten Debye-Temperatur θ_D in der universellen Debye-Kurve anzupassen.
 # Man berücksichtige hierfür nur Messwerte bis T_max = 170K.
 # Welchen Wert für θ_D erhält man?
@@ -116,8 +119,7 @@ with tools.plot_context(plt, 'K', 'J/(mol·K)', 'T', 'C_V') as plt2:
     # plt.errorbar(x=noms(Tmittel), xerr=stds(Tmittel), y=noms(C_V), yerr=stds(C_V), fmt='x', label='Stützstellen')
     plt2.plot(T_avg, tools.nominal_values(C_V), 'o--', label='Messwerte')
     plt2.plot(T_avg, C_p, 'x', label='Messwerte $C_p$')
-    # „Man berücksichtige hierfür nur Messwerte bis T_max“ […]“
-    T_max = ureg('170 K')
+
     plt.axvline(x=T_max, linestyle='--', color='grey')
 plt.grid()
 plt.legend()
@@ -136,3 +138,26 @@ generate_table.generate_table_pint(
     (r'R_\text{Zylinder}', ureg.ohm, R_zylinder),
 )
 
+
+# Bestimmung der Debye-Temperatur
+T_max_mask = T_probe < T_max
+print(f"{T_max_mask=}")
+C_V_avg = C_V[T_max_mask[:-1]].mean()
+print(f"{C_V_avg.to('J/(K·mol)')=}")
+T_avg = T_probe[T_max_mask].mean()
+print(f"{T_avg=}")
+
+# Versuchsanleitung, Tabelle 1
+# Zahlenwerte der Debye-Funktion für R = 8,31439 J/(mol · °C)
+# θ_D/T [–], C_V[J/(mol · °C)]
+tab_θ_D_div_T, tab_C_V = np.genfromtxt('dat/Tab_1.csv', delimiter=',', skip_header=1, unpack=True)
+
+# np.interp erwartet aufsteigende x-Werte
+tab_θ_D_div_T = np.flip(tab_θ_D_div_T)
+tab_C_V = np.flip(tab_C_V)
+
+θ_D_div_T = np.interp(C_V_avg.to('J/(mol·K)').m.n, tab_C_V, tab_θ_D_div_T)
+θ_D_div_T *= ureg.dimensionless
+print(f"{θ_D_div_T=}")
+θ_D = θ_D_div_T * T_avg.to('K')
+print(f"{θ_D=}")
