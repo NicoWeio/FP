@@ -3,8 +3,8 @@ all: build/main.pdf
 PLOTS = build/plt/c_v.pdf
 TABLES = build/tab/mess.tex
 
-build/plt/c_v.pdf build/tab/mess.tex: dat/messung.txt | build/plt build/tab
-	MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: python3 auswertung.py
+build/plt/c_v.pdf build/tab/mess.tex: auswertung.py dat/messung.txt | build/plt build/tab
+	BUILD=true MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: python3 auswertung.py
 
 build/main.pdf: main.tex lit.bib $(wildcard content/*.tex) $(PLOTS) $(TABLES) | build
 	  TEXINPUTS=build: \

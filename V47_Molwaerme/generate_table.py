@@ -85,6 +85,9 @@ def generate_table_content(*columns):
 
 
 def generate_table_pint(filename, *column_tuples):
+    """
+    column_tuples: (name, unit, data) or (name, unit, data, decimals)
+    """
     columns = [Column(ct) for ct in column_tuples]
 
     coltypes = ['S' for c in columns]  # TODO

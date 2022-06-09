@@ -104,14 +104,14 @@ console.rule('c)')
 
 # Plotten von C_V
 plt.figure()
-with tools.plot_context(plt, 'K', 'J/(mol·K)', 'T', 'C_V') as plt2:
+with tools.plot_context(plt, 'K', 'J/(mol·K)', 'T', 'C_i') as plt2:  # C_{(\cdot)}
     # plt.errorbar(x=noms(Tmittel), xerr=stds(Tmittel), y=noms(C_V), yerr=stds(C_V), fmt='x', label='Stützstellen')
-    plt2.plot(T_avg, C_V, 'o--', label='Messwerte')
-    plt2.plot(T_avg, C_p, 'x', label='Messwerte $C_p$')
+    plt2.plot(T_avg, C_p, 'x', zorder=5, label='gemessene Werte $C_p$')
+    plt2.plot(T_avg, C_V, 'x', zorder=5, label='berechnete Werte $C_V$')
 
-    plt.axvline(x=T_max, linestyle='--', color='grey')
+    plt.axvline(x=T_max, linestyle='--', color='grey', label=f'$T = {T_max.to("K"):Lx}$')
 plt.grid()
-plt.legend()
+plt.legend(loc='lower right')
 plt.tight_layout()
 plt.savefig('build/plt/c_v.pdf')
 # plt.show()
@@ -169,7 +169,7 @@ print(f"{θ_D_div_T=}")
 θ_D = θ_D_div_T * T_avg.to('K')
 print(f"{θ_D=}")
 
-θ_D_lit = ureg('343 K')  # TODO: Quelle
+θ_D_lit = ureg('343 K')  # Quelle: Gross, Marx – Festkörperpysik (Abb. 6.9)
 print(tools.fmt_compare_to_ref(θ_D, θ_D_lit, name='θ_D'))
 
 # --
