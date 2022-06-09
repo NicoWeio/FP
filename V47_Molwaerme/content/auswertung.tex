@@ -19,7 +19,7 @@ der (linear interpolierte) Ausdehnungskoeffizent aus \cite[Tabelle 2]{versuchsan
 der Kompressionsmodul $K = \SI{140}{\giga\pascal}$ \cite{periodictable} und
 das Molvolumen $V_0 = \SI{7.0922e-6}{\cubic\meter\per\mol}$ eingesetzt.
 
-In \autoref{fig:auswertung:c_v} sind beide Wärmekapazitäten gegen $T$ aufgetragen.
+In \autoref{fig:auswertung:waermekapazitaeten} sind beide Wärmekapazitäten gegen $T$ aufgetragen.
 Die zugrundeliegenden Messwerte sind in \autoref{tab:mess},
 die daraus berechneten Wärmekapazitäten in \autoref{tab:warmekapazitaeten} aufgeführt.
 
@@ -27,7 +27,7 @@ die daraus berechneten Wärmekapazitäten in \autoref{tab:warmekapazitaeten} auf
     \centering
     \includegraphics[width=\textwidth]{build/plt/c_v.pdf}
     \caption{Gemessene Wärmekapazitäten $c_p$ und daraus berechnete $c_V$ in Abhängigkeit der Temperatur.}
-    \label{fig:auswertung:c_v}
+    \label{fig:auswertung:waermekapazitaeten}
 \end{figure}
 
 \begin{table}
@@ -59,11 +59,35 @@ Somit ist
 \]
 die Bestimmungsgleichung, um mit $T$ und $c_V$ aus \autoref{tab:warmekapazitaeten} die Debye-Temperatur zu bestimmen.
 
+Bei Berücksichtigung der Messwerte bis $T_\text{max} = \SI{170}{\kelvin}$ (gestrichelte Linie in \autoref{fig:auswertung:waermekapazitaeten})
+ergibt sich
+\[
+    \Theta_\text{D} = \SI{317.81}{\kelvin} \ .
+\]
 
-\subsection{TODO Integral Forderung Dings}
+
+\subsection{Bestimmung der Debye-Temperatur aus der Schallgeschwindigkeit}
+Aus der Forderung in \autoref{eqn:theorie:debye_int}
+kann bei bekannter Schallgeschwindigkeit $v$ die Debye-Temperatur $T_\text{D}$ bestimmt werden.
+
+Die gegebenen Schallgeschwindigkeiten je Richtung sind gegeben als \cite{versuchsanleitung}
+\begin{align*}
+    v_\text{long} &= \SI{4.7}{\kilo\meter\per\second} \\
+    v_\text{trans} &= \SI{2.26}{\kilo\meter\per\second} \ .
+\end{align*}
+Gemäß \autoref{eqn:theorie:schallgeschwindigkeit} ist die gesamte Schallgeschwindigkeit somit TODO.
+
+
+
 \begin{equation*}
     \omega_\text{D}
     = \left(
         \frac{18 \pi^2 N_\text{A}}{V_0} · \frac{1}{\frac{2}{v_\text{trans}} + \frac{1}{v_\text{long}}}
     \right)^{\frac{1}{3}}
 \end{equation*}
+Dabei ist $N_\text{A}$ die Avogadro-Konstante…
+
+% ↓ siehe Theorie…
+\[
+    \Theta_\text{D} = \frac{\hbar\omega_\text{D}}{k_\text{B}}
+\]
