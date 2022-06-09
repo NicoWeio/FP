@@ -1,11 +1,12 @@
-import tools
+import generate_table
 import matplotlib.pyplot as plt
+import tools
 import numpy as np
 import pint
+from rich.console import Console
 import scipy as sp
 import tools
-from uncertainties import ufloat
-import generate_table
+console = Console()
 ureg = pint.UnitRegistry()
 ureg.setup_matplotlib()
 
@@ -24,24 +25,19 @@ def calc_T(R):
 # █ Konstanten
 # Masse der Probe
 m = ureg('342 g')  # Quelle: Versuchsanleitung
-# Kompressionsmodul Kupfer
-κ = 139e9 * ureg('N/m^2')
+# Kompressionsmodul Kupfer (=1/Kompressibilität!)
+K = ureg('140 GPa')  # Quelle: https://periodictable.com/Elements/029/data.html → „Bulk Modulus“
 # Molvolumen Kupfer
-V0 = 7.11e-6 * ureg('m^3/mol')
+V0 = 7.0922e-6 * ureg('m^3/mol')  # Quelle: https://periodictable.com/Elements/029/data.html → „Molar Volume“
 # Molare Masse Kupfer
-M = 63.55e-3 * ureg('kg/mol')
+M = 63.546e-3 * ureg('kg/mol')  # Quelle: https://periodictable.com/Elements/029/data.html → „Atomic Weight“
 # Stoffmenge der Probe
 n = m / M
-# Loschmidtsche Zahl (CODATA)
-Nl = sp.constants.value('Loschmidt constant (273.15 K, 100 kPa)') * ureg('1/m^3')
+print(f"n = {n.to('mol'):.2f}")
 # longitudinale Phasengeschwindigkeit in Kupfer
-v_long = ureg('4.7 km/s')
+v_long = ureg('4.7 km/s')  # Quelle: Versuchsanleitung
 # transversale Phasengeschwindigkeit in Kupfer
-v_trans = ureg('2.26 km/s')
-# Volumen der Probe
-V_probe = V0 * n * ureg('m^3')
-# Avogadro-Konstante
-# Na = ureg.avogadro_constant
+v_trans = ureg('2.26 km/s')  # Quelle: Versuchsanleitung
 
 
 # █ Messwerte einlesen
@@ -61,6 +57,7 @@ T_probe = calc_T(R_probe)
 T_zylinder = calc_T(R_zylinder)  # NOTE: War vorher auch fTp – scheinbar ein Fehler bei KarlSchiller
 
 # █ a) Man messe die Molwärme C_p von Kupfer in Abhängigkeit von der Temperatur im Bereich von ca 80 bis 300 K.
+console.rule('a)')
 
 # elektrische Arbeit pro Zeitintervall
 ΔW_el = U * I * dt
@@ -73,6 +70,7 @@ assert C_p.check('J/(mol·K)')
 
 
 # █ b) Man errechne daraus C_v […]
+console.rule('b)')
 
 # Einlesen der Werte von alpha, aus der Tabelle der Anleitung
 tab_T_ɑ, tab_ɑ = np.genfromtxt('dat/Tab_2.csv', delimiter=',', skip_header=1, unpack=True)
@@ -91,13 +89,14 @@ def calc_ɑ(T):
 # Berechne C_V mittels Korrekturformel
 # T_avg = (iT_probe.to('K') + T_probe.to('K'))/2
 T_avg = T_probe.to('K')[:-1]  # TODO…
-C_V = C_p - 9 * calc_ɑ(T_avg)**2 * κ * V0 * T_avg  # Quelle: Versuchsanleitung
+C_V = C_p - 9 * calc_ɑ(T_avg)**2 * K * V0 * T_avg  # Quelle: Versuchsanleitung
 assert C_V.check('J/(mol·K)')
 
 # „Man berücksichtige hierfür nur Messwerte bis T_max […]“
 T_max = ureg('170 K')
 
 # █ c) Man versuche, die gemessenen (C_V,T)-Wertepaare durch Wahl einer geeigneten Debye-Temperatur θ_D in der universellen Debye-Kurve anzupassen.
+console.rule('c)')
 # Man berücksichtige hierfür nur Messwerte bis T_max = 170K.
 # Welchen Wert für θ_D erhält man?
 
