@@ -23,13 +23,13 @@ def calc_T(R):
 
 # █ Konstanten
 # Masse der Probe
-m = 0.342 * ureg('kg')
+m = ureg('342 g')  # Quelle: Versuchsanleitung
 # Kompressionsmodul Kupfer
 κ = 139e9 * ureg('N/m^2')
 # Molvolumen Kupfer
 V0 = 7.11e-6 * ureg('m^3/mol')
 # Molare Masse Kupfer
-M = 63.55*1e-3 * ureg('kg/mol')
+M = 63.55e-3 * ureg('kg/mol')
 # Stoffmenge der Probe
 n = m / M
 # Loschmidtsche Zahl (CODATA)
@@ -63,11 +63,12 @@ T_zylinder = calc_T(R_zylinder)  # NOTE: War vorher auch fTp – scheinbar ein F
 # █ a) Man messe die Molwärme C_p von Kupfer in Abhängigkeit von der Temperatur im Bereich von ca 80 bis 300 K.
 
 # elektrische Arbeit pro Zeitintervall
-W_el = U * I * dt
-assert W_el.check('[energy]')
+ΔW_el = U * I * dt
+assert ΔW_el.check('[energy]')
 
 # C_p aus den Messwerten
-C_p = W_el[:-1] / (np.diff(T_probe) * n)
+ΔT_probe = np.diff(T_probe)
+C_p = ΔW_el[:-1] / (ΔT_probe * n)
 assert C_p.check('J/(mol·K)')
 
 
@@ -124,18 +125,37 @@ with tools.plot_context(plt, 'K', 'J/(mol·K)', 'T', 'C_V') as plt2:
 plt.grid()
 plt.legend()
 plt.tight_layout()
-# plt.savefig('build/plt/cv.pdf')
-plt.show()
+plt.savefig('build/plt/c_v.pdf')
+# plt.show()
 
 
 # → Tabelle
 generate_table.generate_table_pint(
     'build/tab/mess.tex',
-    (r'\mathrm{\Delta} t', ureg.s, dt),
+    (r'\symup{\Delta} t', ureg.s, dt, 0),
     ('U', ureg.V, U),
     ('I', ureg.mA, I),
     (r'R_\text{Probe}', ureg.ohm, R_probe),
+    (r'T_\text{Probe}', ureg.kelvin, T_probe),
     (r'R_\text{Zylinder}', ureg.ohm, R_zylinder),
+    (r'T_\text{Zylinder}', ureg.kelvin, T_zylinder),
+)
+
+# print(
+#     T_probe.shape,
+#     ΔT_probe.shape,
+#     ΔW_el.shape,
+#     C_p.shape,
+#     C_V.shape,
+# )
+
+generate_table.generate_table_pint(
+    'build/tab/warmekapazitaeten.tex',
+    (r'T_\text{Probe}', ureg.kelvin, T_probe[:-1]),
+    (r'\symup{\Delta} T_\text{Probe}', ureg.kelvin, ΔT_probe),
+    (r'\symup{\Delta} E_\text{Probe}', ureg.joule, ΔW_el[:-1]),
+    (r'C_p', (ureg.joule / ureg.mol / ureg.kelvin), C_p),
+    (r'C_V', (ureg.joule / ureg.mol / ureg.kelvin), tools.nominal_values(C_V)),
 )
 
 
