@@ -75,36 +75,23 @@ assert C_p.check('J/(mol·K)')
 # █ b) Man errechne daraus C_v […]
 
 # Einlesen der Werte von alpha, aus der Tabelle der Anleitung
-T_ɑ, ɑ = np.genfromtxt('dat/Tab_2.csv', delimiter=',', skip_header=1, unpack=True)
-T_ɑ *= ureg.K
-ɑ *= 1e-6 / ureg.delta_degC
-
-# Bestimmung einer allgemeinen Funktion von alpha
-params = tools.pint_polyfit(T_ɑ, ɑ, deg=4)
-print("Fit-Parameter für T_ɑ(ɑ):", params)
+tab_T_ɑ, tab_ɑ = np.genfromtxt('dat/Tab_2.csv', delimiter=',', skip_header=1, unpack=True)
+# tab_T_ɑ *= ureg.K
+# tab_ɑ *= 1e-6 / ureg.delta_degC
 
 
-def poly4(T, a, b, c, d, e):
-    """Polynom 4. Ordnung"""
-    return a * T**4 + b * T**3 + c * T**2 + d * T + e
+def calc_ɑ(T):
+    """
+    Berechne den linearen Ausdehnungskoeffizienten `ɑ` aus der Temperatur `T`
+    durch lineare Interpolation zwischen den in Tabelle 2 der Versuchsanleitung gegebenen Werten.
+    """
+    return np.interp(T.to('K').m, tab_T_ɑ, tab_ɑ) * 1e-6 / ureg.delta_degC
 
-
-# Plotten von alpha
-T_linspace = tools.linspace(*tools.bounds(T_ɑ), 500)
-plt.figure()
-with tools.plot_context(plt, '°C', '1/°C', 'T', 'ɑ') as plt2:
-    plt2.plot(T_ɑ, ɑ, 'x', zorder=5, label='Messwerte')
-    plt2.plot(T_linspace, tools.nominal_values(poly4(T_linspace, *params)), label='Fit')
-plt.grid()
-plt.legend()
-plt.tight_layout()
-# plt.savefig('build/alpha.pdf')
-# plt.show()
 
 # Berechne C_V mittels Korrekturformel
 # T_avg = (iT_probe.to('K') + T_probe.to('K'))/2
 T_avg = T_probe.to('K')[:-1]  # TODO…
-C_V = C_p - 9 * poly4(T_avg, *params)**2 * κ * V0 * T_avg  # Quelle: Versuchsanleitung
+C_V = C_p - 9 * calc_ɑ(T_avg)**2 * κ * V0 * T_avg  # Quelle: Versuchsanleitung
 assert C_V.check('J/(mol·K)')
 
 # „Man berücksichtige hierfür nur Messwerte bis T_max […]“
@@ -118,7 +105,7 @@ T_max = ureg('170 K')
 plt.figure()
 with tools.plot_context(plt, 'K', 'J/(mol·K)', 'T', 'C_V') as plt2:
     # plt.errorbar(x=noms(Tmittel), xerr=stds(Tmittel), y=noms(C_V), yerr=stds(C_V), fmt='x', label='Stützstellen')
-    plt2.plot(T_avg, tools.nominal_values(C_V), 'o--', label='Messwerte')
+    plt2.plot(T_avg, C_V, 'o--', label='Messwerte')
     plt2.plot(T_avg, C_p, 'x', label='Messwerte $C_p$')
 
     plt.axvline(x=T_max, linestyle='--', color='grey')
@@ -155,7 +142,7 @@ generate_table.generate_table_pint(
     (r'\symup{\Delta} T_\text{Probe}', ureg.kelvin, ΔT_probe),
     (r'\symup{\Delta} E_\text{Probe}', ureg.joule, ΔW_el[:-1]),
     (r'C_p', (ureg.joule / ureg.mol / ureg.kelvin), C_p),
-    (r'C_V', (ureg.joule / ureg.mol / ureg.kelvin), tools.nominal_values(C_V)),
+    (r'C_V', (ureg.joule / ureg.mol / ureg.kelvin), C_V),
 )
 
 
@@ -175,19 +162,16 @@ tab_θ_D_div_T, tab_C_V = np.genfromtxt('dat/Tab_1.csv', delimiter=',', skip_hea
 tab_θ_D_div_T = np.flip(tab_θ_D_div_T)
 tab_C_V = np.flip(tab_C_V)
 
-θ_D_div_T = np.interp(C_V_avg.to('J/(mol·K)').m.n, tab_C_V, tab_θ_D_div_T)
+θ_D_div_T = np.interp(C_V_avg.to('J/(mol·K)').m, tab_C_V, tab_θ_D_div_T)
 θ_D_div_T *= ureg.dimensionless
 print(f"{θ_D_div_T=}")
 θ_D = θ_D_div_T * T_avg.to('K')
 print(f"{θ_D=}")
 
-θ_D_lit = ureg('343 K') # TODO: Quelle
+θ_D_lit = ureg('343 K')  # TODO: Quelle
 print(tools.fmt_compare_to_ref(θ_D, θ_D_lit, name='θ_D'))
 
 # --
 
-ω_D_tothe3 = (18 * np.pi**2 * ureg.N_A / V0 / ((1/v_long**3) + (2/v_trans)**3))
-print(f"{ω_D_tothe3.to('Hz³')=}")
-# ω_D = ω_D_tothe3**(1/3)
-ω_D = np.cbrt(ω_D_tothe3)
+ω_D = np.cbrt(18 * np.pi**2 * ureg.N_A / V0 / ((1/v_long**3) + (2/v_trans)**3))
 print(f"{ω_D.to('Hz'):.2e}")
