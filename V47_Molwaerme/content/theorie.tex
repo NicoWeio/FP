@@ -2,32 +2,36 @@
 \label{sec:theorie}
 
     Die Wärmekapazität eines Festkörpers bezeichnet die Wärmemenge $\symup{\Delta} Q$,
-    die benötigt wird um die Temperatur $T$ dieses Festkörpers um \SI{1}{\kelvin} zu erhöhen.
+    die benötigt wird,
+    um die Temperatur $T$ dieses Festkörpers um \SI{1}{\kelvin} zu erhöhen.
     Es gilt
     \begin{equation*}
         C = \frac{\symup{\Delta}Q}{\symup{\Delta}T} \ .
     \end{equation*}
-    Die Wärmekapazität ist dabei material-spezifisch und wird deshalb oft in Bezug auf eine Stoffmenge,
+    Die Wärmekapazität ist dabei materialspezifisch und wird deshalb oft in Bezug auf eine Stoffmenge,
     ein Volumen oder eine Masse angegeben.
-    Dies wird als \textit{Spezifische Wärmekapazität} bezeichnet.
+    Dies wird als \textit{spezifische Wärmekapazität} bezeichnet.
     Diese ergibt sich nach \cite{grossmarx} entsprechend zu
     \begin{align*}
         c^\text{mol} = \frac{C}{\si{\mol}} && c^\text{V} = \frac{C}{V} && c^\text{mass} = \frac{C}{m} \ .
     \end{align*}
-    Mithilfe des ersten Hautptsatzes der Thermodynamik
+    Im Folgenden wird für die molare Wärmekapazität $c^\text{mol}$ das Superskript weggelassen.
+
+    Mithilfe des ersten Hauptsatzes der Thermodynamik
     \begin{equation}
         \symup{d}Q = \symup{d}U - \symup{d}W = \symup{d}U + p\symup{d}V
         \label{eqn:theorie:hauptsatz}
     \end{equation}
     kann zwischen der Wärmekapazität bei konstantem Volumen $C_V$ und konstantem Druck $C_p$ unterschieden werden.
     Hierbei gilt
-    \begin{align*}
+    \begin{align}
         C_V &= \frac{\partial Q}{\partial T} \Bigl|_V = \frac{\partial U}{\partial T} \Bigl|_V
-        %\label{eqn:theorie:c_vconst}
+        % \label{eqn:theorie:c_v}
+        % \notag
         \\
         C_p &= \frac{\partial Q}{\partial T} \Bigl|_p = \frac{\partial U}{\partial T} \Bigl|_p \ .
-        %\label{eqn:theorie:c_pconst}
-    \end{align*}
+        \label{eqn:theorie:c_p}
+    \end{align}
     Weiterhin ergibt sich die Differenz
     \begin{equation}
         C_p - C_V

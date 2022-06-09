@@ -1,9 +1,9 @@
 all: build/main.pdf
 
-PLOTS = build/plt/c_v.pdf
+PLOTS = build/plt/waermekapazitaet.pdf
 TABLES = build/tab/mess.tex
 
-build/plt/c_v.pdf build/tab/mess.tex: auswertung.py dat/messung.txt | build/plt build/tab
+build/plt/waermekapazitaet.pdf build/tab/mess.tex: auswertung.py dat/messung.txt | build/plt build/tab
 	BUILD=true MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: python3 auswertung.py
 
 build/main.pdf: main.tex lit.bib $(wildcard content/*.tex) $(PLOTS) $(TABLES) | build

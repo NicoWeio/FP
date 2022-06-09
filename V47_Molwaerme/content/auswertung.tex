@@ -2,7 +2,7 @@
 \label{sec:auswertung}
 
 \subsection{Temperaturabhängige Wärmekapazität}
-Um für jedes Messintervall die Wärmekapazität $C_p$ zu bestimmen,
+Um für jedes Messintervall die Wärmekapazität $c_p$ zu bestimmen,
 wird die über die Heizspule auf die Probe übertragene Wärmeenergie
 gemäß \autoref{eqn:theorie:c_p} % TODO: Die Formel dort ist nicht pro mol! Auch die Versuchsanleitung schreibt aber ein großes C_V in diesem Kontext!
 ins Verhältnis zu der gemessenen Erhöhung der Temperatur gesetzt.
@@ -13,7 +13,7 @@ Aus der Probenmasse $m = \SI{342}{\gram}$ \cite{versuchsanleitung}
 und der molaren Masse von Kupfer $M = \SI{63.546e-3}{\kilogram\per\mol}$ \cite{periodictable}
 folgt für die Stoffmenge $n = \frac{m}{M} = \SI{5.38}{\mol}$.
 
-Mittels \autoref{eqn:theorie:c_differenz} kann schließlich von $C_p$ auf $C_V$ geschlossen werden.
+Mittels \autoref{eqn:theorie:c_differenz} kann schließlich von $c_p$ auf $c_V$ geschlossen werden.
 Dazu werden
 der (linear interpolierte) Ausdehnungskoeffizent aus \cite[Tabelle 2]{versuchsanleitung},
 der Kompressionsmodul $K = \SI{140}{\giga\pascal}$ \cite{periodictable} und
@@ -26,7 +26,7 @@ die daraus berechneten Wärmekapazitäten in \autoref{tab:warmekapazitaeten} auf
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{build/plt/c_v.pdf}
-    \caption{Gemessene Wärmekapazitäten $C_p$ und daraus berechnete $C_V$ in Abhängigkeit der Temperatur.}
+    \caption{Gemessene Wärmekapazitäten $c_p$ und daraus berechnete $c_V$ in Abhängigkeit der Temperatur.}
     \label{fig:auswertung:c_v}
 \end{figure}
 
@@ -47,17 +47,17 @@ die daraus berechneten Wärmekapazitäten in \autoref{tab:warmekapazitaeten} auf
 
 \subsection{Experimentelle Bestimmung der Debye-Temperatur}
 Unter Zuhilfenahme der in \cite[Tabelle 1]{versuchsanleitung}
-in der Form $f: \frac{\Theta_\text{D}}{T} \longrightarrow C_V$
+in der Form $f: \frac{\Theta_\text{D}}{T} \longrightarrow c_V$
 angegebenen Debye-Funktion
 kann die Debye-Temperatur bestimmt werden.
 Lineare Interpolation ermöglicht es, näherungsweise eine Umkehrfunktion
-$f^{-1}: C_V \longrightarrow \frac{\Theta_\text{D}}{T}$
+$f^{-1}: c_V \longrightarrow \frac{\Theta_\text{D}}{T}$
 anzugeben.
 Somit ist
 \[
-    \Theta_\text{D} = f^{-1}(C_V) · T
+    \Theta_\text{D} = f^{-1}(c_V) · T
 \]
-die Bestimmungsgleichung, um mit $T$ und $C_V$ aus \autoref{tab:warmekapazitaeten} die Debye-Temperatur zu bestimmen.
+die Bestimmungsgleichung, um mit $T$ und $c_V$ aus \autoref{tab:warmekapazitaeten} die Debye-Temperatur zu bestimmen.
 
 
 \subsection{TODO Integral Forderung Dings}
