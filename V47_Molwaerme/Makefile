@@ -1,6 +1,12 @@
 all: build/main.pdf
 
-build/main.pdf: main.tex lit.bib | build
+PLOTS = build/plt/c_v.pdf
+TABLES = build/tab/mess.tex
+
+build/plt/c_v.pdf build/tab/mess.tex: dat/messung.txt | build/plt build/tab
+	MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: python3 auswertung.py
+
+build/main.pdf: main.tex lit.bib $(wildcard content/*.tex) $(PLOTS) $(TABLES) | build
 	  TEXINPUTS=build: \
 	  BIBINPUTS=build: \
 	  max_print_line=1048576 \
