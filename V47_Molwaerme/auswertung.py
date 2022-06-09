@@ -173,5 +173,5 @@ print(tools.fmt_compare_to_ref(θ_D, θ_D_lit, name='θ_D'))
 
 # --
 
-ω_D = np.cbrt(18 * np.pi**2 * ureg.N_A / V0 / ((1/v_long**3) + (2/v_trans)**3))
+ω_D = np.cbrt(18 * np.pi**2 * ureg.N_A / V0 / (2/v_trans**3 + 1/v_long**3))
 print(f"{ω_D.to('Hz'):.2e}")
