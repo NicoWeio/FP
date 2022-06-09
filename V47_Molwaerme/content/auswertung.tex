@@ -1,9 +1,57 @@
 \section{Auswertung}
 \label{sec:auswertung}
 
+\subsection{Temperaturabhängige Wärmekapazität}
+Um für jedes Messintervall die Wärmekapazität $c_p$ zu bestimmen,
+wird die über die Heizspule an die Probe übertragene Wärmeenergie
+ gemäß TODO-REF
+ins Verhältnis zu der gemessenen Erhöhung der Temperatur gesetzt.
+Die Wärmeenergie ergibt sich dabei aus $\symup{\Delta}E = U I \symup{\Delta}t$.
+Die Temperatur wird über die Messung des Pt100-Widerstand gemäß \autoref{eqn:durchfuehrung:pt100} ermittelt.
+% , sodass die Temperaturdifferenz…
+Aus der Probenmasse $m = \SI{342}{\gram}$ \cite{versuchsanleitung} und der molaren Masse $M = TODO$ von Kupfer
+folgt für die Stoffmenge $n = \sfrac{m}{M} TODO$.
+
+Mittels \autoref{eqn:theorie:c_differenz} kann schließlich von $c_p$ auf $c_V$ geschlossen werden.
+Dazu werden
+der Ausdehnungskoeffizent aus \cite[Tabelle 2]{versuchsanleitung},
+der Kompressionsmodul $\kappa = TODO$ und
+das Molvolumen $V_0 = TODO$ eingesetzt.
+
+In \autoref{fig:auswertung:c_v} sind beide Wärmekapazitäten gegen $T$ aufgetragen.
+Die zugrundeliegenden Messwerte sind in \autoref{tab:mess},
+die daraus berechneten Wärmekapazitäten in \autoref{tab:warmekapazitaeten} aufgeführt.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{build/plt/c_v.pdf}
+    \caption{Gemessene Wärmekapazitäten $C_p$ und daraus berechnete $C_V$ in Abhängigkeit der Temperatur.}
+    \label{fig:auswertung:c_v}
+\end{figure}
+
 \begin{table}
     \centering
     \caption{Messwerte.}
     \label{tab:mess}
     \expandableinput{build/tab/mess.tex}
 \end{table}
+
+\begin{table}
+    \centering
+    \caption{Zeitdifferenzen und Wärmekapazitäten.}
+    \label{tab:warmekapazitaeten}
+    \expandableinput{build/tab/warmekapazitaeten.tex}
+\end{table}
+
+
+% Bestimmung der Debye-Temperatur durch…
+\subsection{Anpassung an die universelle Debye-Kurve}
+
+
+\subsection{TODO Integral Forderung Dings}
+\begin{equation*}
+    \omega_\text{D}
+    = \sqrt{
+        \frac{18 \pi^2 N_\text{A}}{V_0} · \frac{1}{\frac{1}{v_\text{long}} + \frac{2}{v_\text{trans}}}
+    }
+\end{equation*}
