@@ -25,7 +25,9 @@ def calc_T(R):
 # █ Konstanten
 # Masse der Probe
 m = ureg('342 g')  # Quelle: Versuchsanleitung
-# Kompressionsmodul Kupfer (=1/Kompressibilität!)
+# Kompressionsmodul Kupfer
+# > Achtung: In der Versuchsanleitung steht für den Kompressionsmodul ein κ,
+# > welches eigentlich für die Kompressibilität (=1/Kompressionsmodul) steht!
 K = ureg('140 GPa')  # Quelle: https://periodictable.com/Elements/029/data.html → „Bulk Modulus“
 # Molvolumen Kupfer
 V0 = 7.0922e-6 * ureg('m^3/mol')  # Quelle: https://periodictable.com/Elements/029/data.html → „Molar Volume“
