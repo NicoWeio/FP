@@ -108,8 +108,8 @@ console.rule('c)')
 # Plotten von c_V
 plt.figure()
 with tools.plot_context(plt, 'K', 'J/(mol·K)', 'T', 'c_i') as plt2:  # c_{(\cdot)}
-    plt2.plot(T_avg, c_p, 'x', zorder=5, label='gemessene Werte $c_p$')
-    plt2.plot(T_avg, c_V, 'x', zorder=5, label='berechnete Werte $c_V$')
+    plt2.plot(T_avg, c_p, 'x', zorder=5, label='$c_p$')
+    plt2.plot(T_avg, c_V, 'x', zorder=5, label='$c_V$')
 
     plt.axvline(x=T_max, linestyle='--', color='grey', label=f'$T = {T_max.to("K"):Lx}$')
 plt.grid()

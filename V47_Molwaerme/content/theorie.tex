@@ -120,9 +120,10 @@
         D(\omega) = \frac{V}{2 \pi^2}{\omega^3}{v^3_i}
     \end{equation*}
     ergibt sich die Debye-Frequenz
-    \begin{equation*}
+    \begin{equation}
         \omega_\text{D} = v_i \Bigl(6 \pi^2 \frac{N}{V}\Bigr)^{\frac{1}{3}} \ ,
-    \end{equation*}
+        \label{eqn:theorie:omega_D}
+    \end{equation}
     über das Intergral
     \begin{equation}
         \int_0^{\omega_\text{D}} D(\omega) \symup{d}\omega = 3N \ .
@@ -130,13 +131,19 @@
     \end{equation}
     Die Schallgeschwindigkeit der jeweiligen Mode ist über $v_i$ gegeben.
     Die gesamte Schallgeschwindigkeit kann zu
-    \begin{equation}
-        \frac{1}{v^3_\text{s}} = \frac{1}{3} \sum_{i=1}^3 \frac{1}{v^3_i}
+    \begin{align}
+        \frac{1}{v^3_\text{s}} &= \frac{1}{3} \sum_{i=1}^3 \frac{1}{v^3_i} \\
+        \Leftrightarrow
+        v_\text{s} &= \left( \frac{3}{\sum_{i=1}^3 \frac{1}{v^3_i}} \right)^\frac{1}{3}
         \label{eqn:theorie:schallgeschwindigkeit}
-    \end{equation}
+    \end{align}
     berechnet werden.
 
-    Die zugehörige Debye-Temperatur gilt $\Theta_\text{D} = \sfrac{\hbar\omega_\text{D}}{k_\text{B}}$.
+    Die zugehörige Debye-Temperatur ist definiert als
+    \begin{equation}
+        \Theta_\text{D} = \frac{\hbar\omega_\text{D}}{k_\text{B}} \ .
+        \label{eqn:theorie:Theta_D}
+    \end{equation}
     Für die Wärmekapazität folgt
     \begin{equation*}
         C^\text{D}_V = 9Nk_\text{B} \Bigl(\frac{T}{\Theta_\text{D}}\Bigr) ^3
@@ -156,16 +163,17 @@
     Die \autoref{fig:theorie:modelle} zeigt den Verlauf der Wärmekapazität im Einstein- und im Debye-Modell.
     \begin{figure}
         \centering
+        % TODO: Die PDFs sind unterschiedlich hoch. Die Angabe von `height` ist eher ein Workaround.
         \begin{subfigure}{0.48\textwidth}
             \centering
-            \includegraphics[width=1\textwidth]{content/img/Gross_Marx/6_5.pdf}
+            \includegraphics[height=0.75\textwidth]{content/img/Gross_Marx/6_5.pdf}
             \caption{Wärmekapazität im Einstein-Modell.}
             \label{fig:theorie:einsteinmodell}
         \end{subfigure}
         \hfill
         \begin{subfigure}{0.48\textwidth}
             \centering
-            \includegraphics[width=1\textwidth]{content/img/Gross_Marx/6_7.pdf}
+            \includegraphics[height=0.75\textwidth]{content/img/Gross_Marx/6_7.pdf}
             \caption{Wärmekapazität im Debye-Modell.}
             \label{fig:theorie:debyemodell}
         \end{subfigure}

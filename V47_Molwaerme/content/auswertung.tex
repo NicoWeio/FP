@@ -18,7 +18,7 @@ Mittels \autoref{eqn:theorie:c_differenz} kann schließlich von $c_p$ auf $c_V$ 
 Dazu werden
 der (linear interpolierte) Ausdehnungskoeffizent aus \cite[Tabelle 2]{versuchsanleitung},
 der Kompressionsmodul $K = \SI{140}{\giga\pascal}$ \cite{periodictable} und
-das Molvolumen $V_0 = \SI{7.0922e-6}{\cubic\meter\per\mol}$ eingesetzt.
+das Molvolumen $V_0 = \SI{7.0922e-6}{\cubic\meter\per\mol}$ \cite{periodictable} eingesetzt.
 
 In \autoref{fig:auswertung:waermekapazitaeten} sind beide Wärmekapazitäten gegen $T$ aufgetragen.
 Die zugrundeliegenden Messwerte sind in \autoref{tab:mess},
@@ -71,26 +71,28 @@ ergibt sich
 \subsection{Bestimmung der Debye-Temperatur aus der Schallgeschwindigkeit}
 \label{sec:auswertung:debye_vs}
 Aus der Forderung in \autoref{eqn:theorie:debye_int}
-kann bei bekannter Schallgeschwindigkeit $v$ die Debye-Temperatur $T_\text{D}$ bestimmt werden.
+kann bei bekannter Schallgeschwindigkeit $v_\text{s}$ die Debye-Temperatur $T_\text{D}$ bestimmt werden.
 
-Die gegebenen Schallgeschwindigkeiten je Richtung sind gegeben als \cite{versuchsanleitung}
+Zunächst wird die Debye-Frequenz berechnet,
+indem die Schallgeschwindigkeit aus \autoref{eqn:theorie:schallgeschwindigkeit}
+in \autoref{eqn:theorie:omega_D} eingesetzt wird:
 \begin{align*}
-    v_\text{long} &= \SI{4.7}{\kilo\meter\per\second} \\
+    \omega_\text{D} &= \underbrace{\left( \frac{3}{\sum_{i=1}^3 \frac{1}{v^3_i}} \right)^\frac{1}{3}}_{v_\text{s}}
+    \cdot \left(6 \pi^2 \frac{N_\text{A}}{V_0}\right)^{\frac{1}{3}}
+    \\
+    &= \left( \frac{18 \pi^2 \frac{N_\text{A}}{V_0}}{\frac{2}{v_\text{trans}} + \frac{1}{v_\text{long}}} \right)^\frac{1}{3} \ .
+\end{align*}
+Dabei ist $N_\text{A}$ die Avogadro-Konstante und $V_0 = \SI{7.0922e-6}{\cubic\meter\per\mol}$ \cite{periodictable} wie zuvor das Molvolumen.
+
+Die Schallgeschwindigkeiten je Richtung sind gegeben \cite{versuchsanleitung} als
+\begin{align*}
+    v_\text{long} &= \SI{4.7}{\kilo\meter\per\second}
+    % \intertext{und}
+    &
     v_\text{trans} &= \SI{2.26}{\kilo\meter\per\second} \ .
 \end{align*}
-Gemäß \autoref{eqn:theorie:schallgeschwindigkeit} ist die gesamte Schallgeschwindigkeit somit TODO.
 
-
-
-\begin{equation*}
-    \omega_\text{D}
-    = \left(
-        \frac{18 \pi^2 N_\text{A}}{V_0} · \frac{1}{\frac{2}{v_\text{trans}} + \frac{1}{v_\text{long}}}
-    \right)^{\frac{1}{3}}
-\end{equation*}
-Dabei ist $N_\text{A}$ die Avogadro-Konstante…
-
-% ↓ siehe Theorie…
+Schließlich folgt mit \autoref{eqn:theorie:Theta_D}
 \[
-    \Theta_\text{D} = \frac{\hbar\omega_\text{D}}{k_\text{B}}
+    \Theta_\text{D} = \SI{332.49}{\kelvin} \ .
 \]
