@@ -181,4 +181,12 @@ console.rule('d)')
 print(f"{ω_D.to('Hz'):.2e}")
 θ_D_2 = ureg.hbar * ω_D / ureg.k_B
 # print(f"{θ_D_2.to('K'):.2f}")
-print(tools.fmt_compare_to_ref(θ_D_2, θ_D_lit))
+print(tools.fmt_compare_to_ref(θ_D_2, θ_D, unit='K', name="Abweichung vom gemessenen θ_D"))
+print(tools.fmt_compare_to_ref(θ_D_2, θ_D_lit, unit='K', name="Abweichung vom Literaturwert"))
+
+
+# █ custom Kram
+console.rule('weitere')
+print("Temperaturdifferenz zwischen Probe und Zylinder:")
+print(f"→ Durchschnitt: {abs(T_probe - T_zylinder).mean():.2f}")
+print(f"→ maximal: {max(abs(T_probe - T_zylinder)):.2f}")

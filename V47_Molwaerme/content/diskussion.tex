@@ -5,23 +5,41 @@
 
     Der Literaturwert für die Debye-Temperatur lautet $\theta_\text{D} = \SI{343}{\kelvin}$ \cite[Abbildung 6.9]{grossmarx}.
 
+    Der hier \hyperref[sec:auswertung:debye_exp]{experimentell bestimmte} Wert beträgt \SI{317.81}{\kelvin}.
+    Das entspricht einer relativen Abweichung von \SI{7.35}{\percent}.
+
+    Wird die Debye-Temperatur stattdessen \hyperref[sec:auswertung:debye_vs]{aus der Schallgeschwindigkeit bestimmt},
+    ergibt sich \SI{332.49}{\kelvin}.
+    Sie ist damit um \SI{14.68}{\kelvin} (oder \SI{4.62}{\percent}) größer als die experimentell bestimmte.
+
 
 \subsection{Mögliche Fehlerquellen}
 
-    Zu Beginn der Messreihe musste schnell die Zeit gestoppt werden und gleichzeitig die Messwerte abgelesen werden.
-    Hier ergab sich deshalb eine Verzögerung der Zeit,
-    sodass die erste Messung wahrscheinlich nicht zwei Minuten lang war.
+    % ↓ Die Kurve sieht aber gut aus. Ich lasse das mal weg…
+    % Zu Beginn der Messreihe musste schnell die Zeit gestoppt werden und gleichzeitig die Messwerte abgelesen werden.
+    % Hier ergab sich deshalb eine Verzögerung der Zeit,
+    % sodass die erste Messung wahrscheinlich nicht zwei Minuten lang war.
+
+    Die wesentliche Voraussetzung für den Erfolg des Experiments,
+    dass die Probe einzig durch die Spule erhitzt und nicht abgekühlt wird,
+    ist in der Realität nur näherungsweise erreichbar.
+    Gründe hierfür sind unter anderem
+    das nicht perfekte Vakuum,
+    % Faden?
+    % …
 
     Mithilfe einer zweiten Spannungsquelle wurde der Strom der Heizspule um das Gefäß geregelt.
-    Diese war jedoch sehr träge,
+    Der zugehörige Pt-100-Widerstand reagierte jedoch sehr träge,
     sodass eine Änderung erst nach einigen Minuten eintrat.
     Auf diese Weise war es schwierig,
     den Widerstand von Gefäß und Probe auf dem gleichen Wert zu halten.
-    Ein weiterer Faktor liegt darin,
-    dass sich der Wert des Konstantstroms mit der Zeit auch leicht veränderte,
-    sodass tatsächlich der Heizstrom der Probe nicht vollständig konstant war.
+    Im Durchschnitt betrug die Temperaturdifferenz zwischen Probe und Zylinder \SI{2.34}{\kelvin},
+    maximal lag sie bei \SI{12.51}{\kelvin}.
 
-    Bezüglich des Aufbaus ist es gut möglich,
-    dass nicht alle weiteren Effekte des Wärmetransportes vollständig ausgeschlossen werden konnten,
-    und so Wärmeverluste auftreten.
-    Dies kann auch durch eine nicht vollständige Isolierung passieren.
+    Das Ablesen von vier Werten je Messintervall erfolgte naturgemäß nicht genau gleichzeitig.
+    Zusätzlich führten kleine Fluktuationen in den digitalen Anzeigen
+    zu ebenso kleinen zusätzlichen Unsicherheiten in den Messwerten.
+
+    Eine weitere Unsicherheit liegt darin,
+    dass sich der Wert des Konstantstroms mit der Zeit auch leicht veränderte,
+    sodass tatsächliche Heizstrom der Probe nicht vollständig konstant war.
