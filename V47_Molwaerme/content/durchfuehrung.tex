@@ -24,15 +24,17 @@
     die Probe schneller abzukühlen.
     Zusätzlich wird flüssiger Stickstoff in das Dewar-Gefäß gefüllt.
     Die Probe wird nun solange gekühlt,
-    bis der Pt100-Widerstand der Probe einen Wert von etwa \SI{22}{\ohm} hat,
+    bis der Pt-100-Widerstand der Probe einen Wert von etwa \SI{22}{\ohm} hat,
     was einer Temperatur von ungefähr \SI{80}{\kelvin} entspricht.
     Der Zusammenhang von Temperatur $T$ und Widerstand $R$ ist über
     \begin{equation}
-        T = \num{0.00134} R^2 + \num{2.296} R - \num{243.02}
+        \def\T{\left(\frac{T}{\si{\celsius}}\right)}
+        \def\R{\left(\frac{R}{\si{\ohm}}\right)}
+        \T = \num{0.00134} \R^2 + \num{2.296} \R - \num{243.02}
         \label{eqn:durchfuehrung:pt100}
     \end{equation}
     gegeben,
-    wobei die Temperatur in \si{\celsius} berechnet wird.
+    wobei der Widerstand in \si{\ohm} eingegeben und die Temperatur in \si{\celsius} berechnet wird.
 
     Wenn dieser Wert erreicht ist,
     wird das Helium wieder aus dem Rezipienten gepumpt,
@@ -44,7 +46,8 @@
     und damit die Temperatur der Probe und des Gefäßes,
     erhöht sich nun.
     Mithilfe der zweiten Heizspule um das Gefäß wird dafür gesorgt,
-    dass Temperatur von Probe und Gefäß ungefähr gleich bleiben.
+    dass Temperatur von Probe und Gefäß ungefähr gleich bleiben,
+    um den Effekt der Wärmestrahlung zu kompensieren.
 
     Es wird nun zu Beginn in Schritten von \SI{120}{\second} der Strom beider Spulen,
     sowie der Wert beider Widerstände gemessen.

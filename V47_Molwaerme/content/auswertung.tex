@@ -2,12 +2,13 @@
 \label{sec:auswertung}
 
 \subsection{Temperaturabhängige Wärmekapazität}
-Um für jedes Messintervall die Wärmekapazität $c_p$ zu bestimmen,
+Um für jedes Messintervall die molare Wärmekapazität $c_p$ zu bestimmen,
 wird die über die Heizspule auf die Probe übertragene Wärmeenergie
-gemäß \autoref{eqn:theorie:c_p} % TODO: Die Formel dort ist nicht pro mol! Auch die Versuchsanleitung schreibt aber ein großes C_V in diesem Kontext!
-ins Verhältnis zu der gemessenen Erhöhung der Temperatur gesetzt.
+gemäß \autoref{eqn:theorie:c_p}
+ins Verhältnis zu der gemessenen Erhöhung der Temperatur gesetzt
+und auf die Stoffmenge normiert.
 Die Wärmeenergie ergibt sich dabei aus $\symup{\Delta}E = U I \symup{\Delta}t$.
-Die Temperatur wird über die Messung des Pt100-Widerstandes gemäß \autoref{eqn:durchfuehrung:pt100} ermittelt.
+Die Temperatur wird über die Messung des Pt-100-Widerstandes gemäß \autoref{eqn:durchfuehrung:pt100} ermittelt.
 % , sodass die Temperaturdifferenz…
 Aus der Probenmasse $m = \SI{342}{\gram}$ \cite{versuchsanleitung}
 und der molaren Masse von Kupfer $M = \SI{63.546e-3}{\kilogram\per\mol}$ \cite{periodictable}
@@ -46,6 +47,7 @@ die daraus berechneten Wärmekapazitäten in \autoref{tab:warmekapazitaeten} auf
 
 
 \subsection{Experimentelle Bestimmung der Debye-Temperatur}
+\label{sec:auswertung:debye_exp}
 Unter Zuhilfenahme der in \cite[Tabelle 1]{versuchsanleitung}
 in der Form $f: \frac{\Theta_\text{D}}{T} \longrightarrow c_V$
 angegebenen Debye-Funktion
@@ -59,7 +61,7 @@ Somit ist
 \]
 die Bestimmungsgleichung, um mit $T$ und $c_V$ aus \autoref{tab:warmekapazitaeten} die Debye-Temperatur zu bestimmen.
 
-Bei Berücksichtigung der Messwerte bis $T_\text{max} = \SI{170}{\kelvin}$ (gestrichelte Linie in \autoref{fig:auswertung:waermekapazitaeten})
+Bei Berücksichtigung der Messwerte mit $T \leq \SI{170}{\kelvin}$ (gestrichelte Linie in \autoref{fig:auswertung:waermekapazitaeten})
 ergibt sich
 \[
     \Theta_\text{D} = \SI{317.81}{\kelvin} \ .
@@ -67,6 +69,7 @@ ergibt sich
 
 
 \subsection{Bestimmung der Debye-Temperatur aus der Schallgeschwindigkeit}
+\label{sec:auswertung:debye_vs}
 Aus der Forderung in \autoref{eqn:theorie:debye_int}
 kann bei bekannter Schallgeschwindigkeit $v$ die Debye-Temperatur $T_\text{D}$ bestimmt werden.
 
