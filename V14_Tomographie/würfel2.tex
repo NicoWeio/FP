@@ -11,10 +11,18 @@
 
 
   \foreach \x in {0,...,2}
-    \foreach \y in {0,...,2}
-    %    {\pgfmathtruncatemacro{\label}{\x - 5 *  \y +21}
-       {\pgfmathtruncatemacro{\label}{3 * \y + \x}
+  \foreach \y in {0,...,2}
+  {\pgfmathtruncatemacro{\label}{\numcells * \y + \x}
        \node [darkstyle]  (\x\y) at ({\x + \cellsize / 2},{\y + \cellsize / 2}) {$\mu_{\label}$};}
+
+
+    % horizontal ↓
+    \foreach \i in {0,...,2}
+        \draw[red, dashed, ->] (0,{(\i + 1/2) * \cellsize})--({3 * \cellsize},{(\i + 1/2) * \cellsize}) ;
+
+    % \foreach \i in {0,...,2}
+    %     \draw[red, dashed] (0,{-2 * \cellsize + \i})--({3 * \cellsize},{1 * \cellsize + \i}) ;
+
 
 %   \foreach \x in {0,...,\numcells}
 %     \foreach \y [count=\yi] in {0,...,\numcells}
