@@ -5,6 +5,8 @@
     Dabei wird zum einen die Wechselwirkung von Gamma-Strahlung mit Materie,
     sowie die Detektion der Strahlung beschrieben.
 
+    Bei dem verwendeten Verfahren der Tomographie wird die zu untersuchende Probe mithilfe von Projektionen schichtweise betrachtet.
+
 \subsection{Wechselwirkung von Gamma-Strahlung mit Materie}
 
     Gamma-Strahlung besteht aus hochenergetischen Photonen die bei Zerfallsprozessen erzeugt werden.
@@ -27,7 +29,7 @@
     welches aus dem Atom herausgelöst wird.
     Das Elektron behält dabei eine Energie $E_{e} = hf - E_\text{Bind}$.
     Der Wirkungsquerschnitt unterscheidet sich dabei,
-    ob die Energie des Photons kleiner oder größer der relativstischen Ruheenergie des Elektrons ist.
+    ob die Energie des Photons kleiner oder größer der relativistischen Ruheenergie des Elektrons ist.
     Es gilt
     \begin{equation*}
         \sigma_\text{Photo} \propto
@@ -41,6 +43,10 @@
     sondern stößt elastisch mit lose gebundenen oder freien Elektronen.
     Dabei gilt Energie- und Impulserhaltung,
     sodass das Photon einen Teil seiner Energie an das Elektron abgibt und beide eine Richtungsänderung erfahren.
+    Die Energieabgabe des Photons ist abhängig vom Streuwinkel.
+    Das Elektron kann eine maximale Energie erreichen,
+    wenn für den Streuwinkel des Photon $\vartheta = \SI{0}{\degree}$ gilt.
+    Im Energiespektrum findet sich an diesem Punkt die sogenannte Compton-Kante.
     Für den Wirkungsquerschnitt gilt
     \begin{equation*}
         \sigma_\text{Compton} \propto \sfrac{Z}{E_{\symup{\gamma}}} \ .
@@ -55,4 +61,121 @@
     \end{equation*}
 
     In jedem der Fälle wird die Gamma-Strahlung vom Material absorbiert.
+    Dabei ist die Absorption materialabhängig.
+    Dies kann über den Absorptionskoeffizienten
+    \begin{equation}
+        \mu = \sigma \cdot \rho
+        \label{eqn:theorie:absorptionskoeffizient}
+    \end{equation}
+    beschrieben werden,
+    wobei $\rho$ die Dichte des Materials und $\sigma = \sigma_\text{Photo} + \sigma_\text{Compton}$ darstellt.
+    Die Paarerzeugung kann mit der verwendeten $^{137}\ce{Cs}$-Strahlungsquelle nicht stattfinden,
+    da die entsprechende Energie zu gering ist.
+    \autoref{tab:theorie:literaturwerte} zeigt die Wirkungsquerschnitte,
+    Dichten und Absorptionskoeffizienten von verschiedenen Stoffen.
+    \begin{table}
+        \centering
+        \caption{Absorptionskoeffizient, Dichte und Wirkungsquerschnitte verschiedener Stoffe.
+        Der Absorptionskoeffizient wird über \autoref{eqn:theorie:absorptionskoeffizient} berechnet.
+        Die Dichten der Stoffe wurden \cite{dichten} und \cite{} entnommen,
+        die Wirkungsquerschnitte aus \cite{crosssections}.}
+        \label{tab:theorie:literaturwerte}
+        \begin{tabular}{c c c c c c}
+            \toprule
+            $\text{Stoff}$ & $\rho \mathbin{/} \si[per-mode=reciprocal]{\kilo\gram\per\cubic\deci\meter}$ & $\sigma$ & $\sigma_\text{Photo}$ & $\sigma_\text{Compton}$ \\
+            \midrule
+            $\text{Aluminium}$ & 02.70 &   &   &   &   \\
+            $\text{Blei}$      & 11.34 &   &   &   &   \\
+            $\text{Eisen}$     & 07.87 &   &   &   &   \\
+            $\text{Messing}$   & 08.50 &   &   &   &   \\
+            $\text{Delrin}$    &       &   &   &   &   \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+    Abhängig vom Material des Stoffes wird die Gammastrahlung bei der Absorption abgeschwächt.
+    Dabei gilt
+    \begin{align}
+        I &= I_0 \exp\Bigl(\sum_{i=1}^N \mu_i x_i \Bigr) \\
+        \iff \ln\Bigl(\frac{I}{I_0}\Bigr) &= \sum_{i=1}^N \mu_i x_i
+        \label{eqn:theorie:intensitaet2}
+    \end{align}
+    wobei $x_i$ der durchlaufene Abstand ist.
+    Mit Bezug auf den Absorptionskoeffizienten kann das lineare Gleichungssystem
+    \begin{equation}
+        \symbf{A} \cdot \vec{\mu} = \vec{I}
+    \end{equation}
+    aufgestellt werden,
+    wobei $\vec{I}$ die Projektionen durch das Material beschreiben.
+    %\begin{figure}
+    %    \centering
+    %    \includegraphics[witdth=\textwidth]{}
+    %    \caption{Projektionen $I$ durch den hier betrachteten 3x3x3 Würfel.}
+    %    \label{fig:theorie:projektionen}
+    %\end{figure}
+    Für die Projektionen,
+    die in \autoref{fig:theorie:projektionen} gezeigt sind,
+    in diesem Fall durch einen 3x3x3 Würfel,
+    ergibt sich mit \autoref{eqn:theorie:intensitaet2} die Gleichung
+    \begin{equation}
+        \begin{pmatrix}
+            I_1 \\
+            I_2 \\
+            I_3 \\
+            I_4 \\
+            I_5 \\
+            I_6 \\
+            I_7 \\
+            I_8 \\
+            I_9 \\
+            I_{10} \\
+            I_{11} \\
+            I_{12}
+        \end{pmatrix}
+        = d \cdot
+        \begin{pmatrix}
+             & & & & & & & &   \\
+             & & & & & & & &   \\
+             & & & & & & & &   \\
+             & & & & & & & &   \\
+             & & & & & & & &   \\
+             & & & & & & & &   \\
+             & & & & & & & &   \\
+             & & & & & & & &   \\
+             & & & & & & & &   \\
+             & & & & & & & &   \\
+             & & & & & & & &   \\
+             & & & & & & & &
+        \end{pmatrix}
+        \cdot
+        \begin{pmatrix}
+            \mu_1 \\
+            \mu_2 \\
+            \mu_3 \\
+            \mu_4 \\
+            \mu_5 \\
+            \mu_6 \\
+            \mu_7 \\
+            \mu_8 \\
+            \mu_9
+        \end{pmatrix}
+        \ .
+    \end{equation}
 
+\subsection{Detektion der Gammastrahlung}
+
+    Zur Detektion der Gamma-Strahlung wird ein \textit{Szintillator} genutzt.
+    In diesem werden durch die auftreffende Strahlung Atome angeregt,
+    die Licht emittieren.
+    Dieses Licht wird mithilfe eines Photomultiplyers verstärkt und in Photostrom umgewandelt,
+    sodass Lichtimpulse gemessen werden können.
+    Da das entstehende Licht proportional zur Energie der einfallenden Strahlung ist,
+    kann mithilfe des Szintillators ein Energiespektrum gemessen werden.
+    Zudem wird ein \textit{Diskriminator} verwendet.
+    Dieser dient dazu,
+    Hintergrundsignal auszusortieren,
+    welches durch den Photomultiplyer oder andere Detektoren entsteht.
+    Der Diskriminator legt dazu eine Energieschwelle fest.
+    Gemessenes Signal,
+    dessen Energie unter dieser Schwelle liegt,
+    wird nicht registriert.
+    Mithilfe eines \textit{Multichannel Analysers} werden die gemessenen Impulse ihrer Energie nach geordnet.
