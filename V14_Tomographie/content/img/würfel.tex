@@ -8,29 +8,29 @@
     \newcommand*{\numcells}{3}%
     \newcommand*{\arrowoffset}{(1/2)}%
 
-    \draw [step=\cellsize, blue, very thick] (0,0) grid ({\cellsize*\numcells},{\cellsize*\numcells});
+    \draw [step=\cellsize, blue, very thick] (0,0) grid ({\cellsize*\numcells},{-\cellsize*\numcells});
 
 
   \foreach \x in {0,...,2}
   \foreach \y in {0,...,2}
   {\pgfmathtruncatemacro{\label}{\numcells * \y + \x}
-       \node [darkstyle]  (\x\y) at ({\x + \cellsize / 2},{\y + \cellsize / 2}) {$\mu_{\label}$};}
+       \node [darkstyle]  (\x\y) at ({(\x + 1/2) * \cellsize},{-(\y + 1/2) * \cellsize}) {$\mu_{\label}$};}
 
 
     % horizontal ↓
     \foreach \i in {0,...,2}
-        \draw[red, dashed, ->] ({-\arrowoffset * \cellsize}, {(\i + \cellsize/2) * \cellsize})
-        -- ({(\numcells + \arrowoffset) * \cellsize}, {(\i + \cellsize/2) * \cellsize}) ;
+        \draw[red, dashed, ->] ({-\arrowoffset * \cellsize}, {-(\i + 1/2) * \cellsize})
+        -- ({(\numcells + \arrowoffset) * \cellsize}, {-(\i + 1/2) * \cellsize}) ;
 
     % vertikal ↓
     \foreach \i in {0,...,2}
-        \draw[red, dashed, ->] ({(\i + \cellsize/2) * \cellsize}, {-\arrowoffset * \cellsize})
-        -- ({(\i + \cellsize/2) * \cellsize}, {(\numcells + \arrowoffset) * \cellsize}) ;
+        \draw[red, dashed, ->] ({(\i + 1/2) * \cellsize}, {\arrowoffset * \cellsize})
+        -- ({(\i + 1/2) * \cellsize}, {-(\numcells + \arrowoffset) * \cellsize}) ;
 
     % % diagonal ↓
     % \foreach \i in {0,...,2}
-    %     % \draw[red, dashed, ->] ({-\arrowoffset * \cellsize}, {(\i - \cellsize/2) * \cellsize})
-    %     % -- ({(\numcells + \arrowoffset) * \cellsize}, {(\numcells + \i - \cellsize/2) * \cellsize}) ;
+    %     % \draw[red, dashed, ->] ({-\arrowoffset * \cellsize}, {(\i - 1/2) * \cellsize})
+    %     % -- ({(\numcells + \arrowoffset) * \cellsize}, {(\numcells + \i - 1/2) * \cellsize}) ;
     %     \draw[red, dashed, ->] (0, {(\i - \cellsize) * \cellsize})
     %     -- ({(\numcells) * \cellsize}, {(\numcells + \i - \cellsize) * \cellsize}) ;
 
