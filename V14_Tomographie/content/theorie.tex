@@ -103,14 +103,16 @@
         \end{tabular}
     \end{table}
     Abhängig vom Material des Stoffes wird die Gammastrahlung bei der Absorption abgeschwächt.
-    Dabei gilt
+    Dabei fällt die Intensität exponentiell mit der Weglänge ab.
+    Für eine Aneinanderreihung von Wegstücken $x_i$
+    mit unterschiedlichen Absorptionskoeffizienten $\mu_i$
+    ergibt sich für die Intensität
     \begin{align}
         I &= I_0 \exp\Bigl(\sum_{i=1}^N \mu_i x_i \Bigr) \\
-        \iff \ln\Bigl(\frac{I}{I_0}\Bigr) &= \sum_{i=1}^N \mu_i x_i
+        \iff \ln\left(\frac{I}{I_0}\right) &= \sum_{i=1}^N \mu_i x_i \ .
         \label{eqn:theorie:intensitaet2}
     \end{align}
-    wobei $x_i$ der durchlaufene Abstand ist.
-    Mit Bezug auf den Absorptionskoeffizienten kann das lineare Gleichungssystem
+    Mit Bezug auf die Absorptionskoeffizienten kann das lineare Gleichungssystem
     \begin{equation}
         \symbf{A} \cdot \vec{\mu} = \vec{I}
     \end{equation}
