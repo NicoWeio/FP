@@ -1,77 +1,46 @@
-\begin{tikzpicture}[scale=0.6, every node/.style={scale=0.6}]
-    % Kästchen
-    \node (A1) at (0,0) {};
-    \node (B1) at (0,3) {};
-    \node (C1) at (0,6) {};
-    \node (D1) at (0,9) {};
-    \node (A2) at (3,0) {};
-    \node (B2) at (3,3) {};
-    \node (C2) at (3,6) {};
-    \node (D2) at (3,9) {};
-    \node (A3) at (6,0) {};
-    \node (B3) at (6,3) {};
-    \node (C3) at (6,6) {};
-    \node (D3) at (6,9) {};
-    \node (A4) at (9,0) {};
-    \node (B4) at (9,3) {};
-    \node (C4) at (9,6) {};
-    \node (D4) at (9,9) {};
+% \documentclass{minimal}
+% \usepackage{tikz}
 
-    \node (E1) at (0,0) {};
-    \node (E2) at (0,9) {};
-    \node (E3) at (9,9) {};
-    \node (E4) at (9,0) {};
+% \begin{document}
+\begin{tikzpicture}[darkstyle/.style={circle,draw,fill=gray!40,minimum size=20}]
+
+    \newcommand*{\cellsize}{2}%
+    \newcommand*{\numcells}{3}%
+    \newcommand*{\arrowoffset}{(1/2)}%
+
+    \draw [step=\cellsize, blue, very thick] (0,0) grid ({\cellsize*\numcells},{\cellsize*\numcells});
 
 
-    % Umrandung
-    \draw[very thick] (E1) to (E2) to (E3) to (E4) to (E1);
-    \draw[thick] (B1) to (B4);
-    \draw[thick] (C1) to (C4);
-    \draw[thick] (A2) to (D2);
-    \draw[thick] (A3) to (D3);
+  \foreach \x in {0,...,2}
+  \foreach \y in {0,...,2}
+  {\pgfmathtruncatemacro{\label}{\numcells * \y + \x}
+       \node [darkstyle]  (\x\y) at ({\x + \cellsize / 2},{\y + \cellsize / 2}) {$\mu_{\label}$};}
 
-    % gerade Projektionen
-    \draw[->, red!60, thick, dashed] (-1.5, 7.5) to (10.5, 7.5);
-    \draw[->, red!60, thick, dashed] (-1.5, 4.5) to (10.5, 4.5);
-    \draw[->, red!60, thick, dashed] (-1.5, 1.5) to (10.5, 1.5);
 
-    \draw[->, red!60, thick, dashed] (1.5, 10.5) to (1.5, -1.5);
-    \draw[->, red!60, thick, dashed] (4.5, 10.5) to (4.5, -1.5);
-    \draw[->, red!60, thick, dashed] (7.5, 10.5) to (7.5, -1.5);
+    % horizontal ↓
+    \foreach \i in {0,...,2}
+        \draw[red, dashed, ->] ({-\arrowoffset * \cellsize}, {(\i + \cellsize/2) * \cellsize})
+        -- ({(\numcells + \arrowoffset) * \cellsize}, {(\i + \cellsize/2) * \cellsize}) ;
 
-    % quere Projektionen
-    \draw[->, blue!60, thick, dashed] (-1, -1) to (10, 10);
-    \draw[->, blue!60, thick, dashed] (-1, 2) to (7, 10);
-    \draw[->, blue!60, thick, dashed] (2, -1) to (10, 7);
+    % vertikal ↓
+    \foreach \i in {0,...,2}
+        \draw[red, dashed, ->] ({(\i + \cellsize/2) * \cellsize}, {-\arrowoffset * \cellsize})
+        -- ({(\i + \cellsize/2) * \cellsize}, {(\numcells + \arrowoffset) * \cellsize}) ;
 
-    \draw[->, blue!60, thick, dashed] (2, 10) to (10, 2);
-    \draw[->, blue!60, thick, dashed] (-1, 10) to (10, -1);
-    \draw[->, blue!60, thick, dashed] (-1, 7) to (7, -1);
+    % % diagonal ↓
+    % \foreach \i in {0,...,2}
+    %     % \draw[red, dashed, ->] ({-\arrowoffset * \cellsize}, {(\i - \cellsize/2) * \cellsize})
+    %     % -- ({(\numcells + \arrowoffset) * \cellsize}, {(\numcells + \i - \cellsize/2) * \cellsize}) ;
+    %     \draw[red, dashed, ->] (0, {(\i - \cellsize) * \cellsize})
+    %     -- ({(\numcells) * \cellsize}, {(\numcells + \i - \cellsize) * \cellsize}) ;
 
-    % Erklärungsnodes
-    \node [blue] at (6.75, 11) {\huge$I_{1}$};
-    \node [blue] at (11, 11) {\huge$I_{2}$};
-    \node [red] at (11, 7.75) {\huge$I_{4}$};
-    \node [blue] at (11, 6.75) {\huge$I_{3}$};
-    \node [red] at (11, 4.5) {\huge$I_{5}$};
-    \node [blue] at (11, 2.25) {\huge$I_{7}$};
-    \node [red] at (11, 1.25) {\huge$I_{6}$};
-    \node [blue] at (11, -2) {\huge$I_{8}$};
-    \node [red] at (7.75, -2) {\huge$I_{10}$};
-    \node [blue] at (6.75, -2) {\huge$I_{9}$};
-    \node [red] at (1.5, -2) {\huge$I_{12}$};
-    \node [red] at (4.5, -2) {\huge$I_{11}$};
+    % \foreach \i in {0,...,2}
+    %     \draw[red, dashed] (0,{-2 * \cellsize + \i})--({3 * \cellsize},{1 * \cellsize + \i}) ;
 
-    %mu's
-    \node at (1.5, 7.5) {\Huge$\mu_{1}$};
-    \node at (4.5, 7.5) {\Huge$\mu_{2}$};
-    \node at (7.5, 7.5) {\Huge$\mu_{3}$};
 
-    \node at (1.5, 4.5) {\Huge$\mu_{4}$};
-    \node at (4.5, 4.5) {\Huge$\mu_{5}$};
-    \node at (7.5, 4.5) {\Huge$\mu_{6}$};
+%   \foreach \x in {0,...,\numcells}
+%     \foreach \y [count=\yi] in {0,...,\numcells}
+%       \draw (\x\y)--(\x\yi) (\y\x)--(\yi\x) ;
 
-    \node at (1.5, 1.5) {\Huge$\mu_{7}$};
-    \node at (4.5, 1.5) {\Huge$\mu_{8}$};
-    \node at (7.5, 1.5) {\Huge$\mu_{9}$};
-  \end{tikzpicture}
+\end{tikzpicture}
+% \end{document}
