@@ -1,3 +1,4 @@
+import generate_table
 import numpy as np
 import pint
 ureg = pint.UnitRegistry()
@@ -55,3 +56,26 @@ for stoff in STOFFE:
     print(f"{stoff['name']}:")
     μ = stoff['ρ'] * stoff['σ']
     print(f"{μ.to('1/cm'):.4f}")
+    stoff['μ'] = μ
+
+
+# tabledata = [
+#     s[attr] for s in STOFFE for attr in ['name', 'ρ', 'σ', 'σ_Photo', 'σ_Compton', 'μ']
+# ]
+
+name_list = [s['name'] for s in STOFFE]
+ρ_list = [s['ρ'] for s in STOFFE]
+σ_list = [s['σ'] for s in STOFFE]
+σ_Photo_list = [s['σ_Photo'] for s in STOFFE]
+σ_Compton_list = [s['σ_Compton'] for s in STOFFE]
+μ_list = [s['μ'] for s in STOFFE]
+
+generate_table.generate_table_pint(
+    'build/tab/mu.tex',
+    ('Stoff', None, name_list),
+    ('ρ', ureg.g / ureg.cm**3, ρ_list, 2),
+    ('σ', ureg.mm**2 / ureg.g, σ_list, 3),
+    (r'σ_\text{Photo}', ureg.mm**2 / ureg.g, σ_Photo_list, 3),
+    (r'σ_\text{Compton}', ureg.mm**2 / ureg.g, σ_Compton_list, 3),
+    ('μ', ureg.cm**(-1), μ_list, 3),
+)

@@ -90,22 +90,7 @@
         Die Dichten der Stoffe wurden \cite{dichten} und \cite{TODO} entnommen,
         die Wirkungsquerschnitte aus \cite{crosssections}.}
         \label{tab:theorie:literaturwerte}
-        \begin{tabular}{c c c c c c}
-            \toprule
-            $\text{Stoff}$ &
-            $\rho \mathbin{/} \si[per-mode=reciprocal]{\gram\per\cubic\centi\meter}$ &
-            $\sigma \mathbin{/} \si[per-mode=reciprocal]{\centi\meter\squared\per\gram}$ &
-            $\sigma_\text{Photo} \mathbin{/} \si[per-mode=reciprocal]{\centi\meter\squared\per\gram}$ &
-            $\sigma_\text{Compton} \mathbin{/} \si[per-mode=reciprocal]{\centi\meter\squared\per\gram}$ &
-            $\mu \mathbin{/} \si[per-mode=reciprocal]{\per\centi\meter}$ \\
-            \midrule
-            $\text{Aluminium}$ & 02.70 & 0.07433 & 0.0000655 & 0.07427 &   \\
-            $\text{Blei}$      & 11.34 & 0.10350 & 0.0433300 & 0.06103 &   \\
-            $\text{Eisen}$     & 07.87 & 0.07246 & 0.0008713 & 0.07159 &   \\
-            $\text{Messing}$   & 08.50 & 0.07161 & 0.0013390 & 0.07027 &   \\
-            $\text{Delrin}$    & 01.43 & 0.08220 & 0.0000067 & 0.08219 & 0.1175  \\
-            \bottomrule
-        \end{tabular}
+        \expandableinput{build/tab/mu.tex}
     \end{table}
     Abhängig vom Material des Stoffes wird die Gammastrahlung bei der Absorption abgeschwächt.
     Dabei fällt die Intensität exponentiell mit der Weglänge ab.
