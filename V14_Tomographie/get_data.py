@@ -16,5 +16,13 @@ data = {
 }
 
 response = requests.post('https://physics.nist.gov/cgi-bin/Xcom/data.pl', data=data)
+lines = [l.split('\t') for l in response.text.strip().split('\n')]
 
-print(response.text)
+assert len(lines) == 4
+
+names = [l1.strip() + ' ' + l2.strip() for l1, l2 in zip(lines[0], lines[1]) if l1.strip() != '']
+values = lines[3]
+
+data = dict(zip(names, values))
+
+print(data)
