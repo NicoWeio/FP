@@ -36,8 +36,10 @@ def A_from_indices(all_indices):
 def d_from_indices(all_indices):
     return tools.pintify(list(map(d_row_from_indices, all_indices)))
 
+
 def I_0_from_indices(all_indices):
     return tools.pintify(list(map(I_0_row_from_indices, all_indices)))
+
 
 def d_row_from_indices(indices):
     if '/' in indices:
@@ -61,14 +63,12 @@ def I_0_row_from_indices(indices):
         return I_0_parallel
 
 
+@ureg.wraps(ureg.s**(-1), [ureg.dimensionless, ureg.s])
 def calc_I(N, T):
     """
     Zählrate aus Anzahl N und Zeit T.
-    Input: ohne Einheiten, Output: Liste mit Einheiten.
     """
     I = unp.uarray(N / T, np.sqrt(N)/T) / ureg.s
-    # N *= ureg.dimensionless  # TODO
-    # T *= ureg.s
     return I
 
 # TODO: Nullmessung
@@ -79,9 +79,6 @@ d_Einzelwürfel = ureg('1 cm')
 
 
 def analyze_homogen(dat, I_0_getter):
-    A = A_from_indices(dat['indices'])
-    # print(A.round(1))
-
     I_0 = I_0_getter(dat['indices'])
     d = d_from_indices(dat['indices'])
     μ_vec = (
@@ -89,9 +86,9 @@ def analyze_homogen(dat, I_0_getter):
         d
     )
 
-    print(f'{μ_vec=}')
-    µ = abs(µ_vec).mean() # TODO: SEM
-    print(f'{μ=}')
+    # print(f'{μ_vec=}')
+    µ = µ_vec.mean()  # TODO: SEM
+    # print(f'{μ=}')
     return µ
 
 
@@ -102,10 +99,7 @@ def analyze(dat, I_0_getter):
     I_0 = I_0_getter(dat['indices'])
     y = unp.log((I_0 / dat['I']).to('dimensionless').m)
     d = d_from_indices(dat['indices'])
-    μ_vec = (
-        np.linalg.inv(A.T @ A) @ A.T @ y /
-        d
-    )
+    μ_vec = (np.linalg.inv(A.T @ A) @ A.T @ y)
 
     print(f'{μ_vec=}')
     µ = abs(µ_vec).mean()
@@ -116,10 +110,8 @@ def analyze(dat, I_0_getter):
 def get_data(filename):
     dat = pd.read_csv(filename, comment='#')
 
-    A = A_from_indices(dat['indices'])
-
-    N = dat['N']
-    T = dat['T']
+    N = dat['N'].to_numpy() * ureg.dimensionless
+    T = dat['T'].to_numpy() * ureg.s
 
     I = calc_I(N, T)
     # NOTE: Ohne pint-pandas wird implizit zu einheitenlosen Arrays konvertiert!
@@ -133,11 +125,12 @@ def get_data(filename):
 
 
 μ_LIT = {
-    'Al': ureg('0.211 / cm'),
-    'Pb': ureg('1.419 / cm'),
-    'Fe': ureg('0.606 / cm'),
-    'Messing': ureg('0.638 / cm'),
-    'Delrin': ureg('0.121 / cm'),
+    # TODO: kopiert aus calc_mu.py
+    'Al': ureg('0.2007 / cm'),
+    'Pb': ureg('1.1737 / cm'),
+    'Fe': ureg('0.5704 / cm'),
+    'Messing': ureg('0.6088 / cm'),
+    'Delrin': ureg('0.1176 / cm'),
 }
 
 
@@ -147,21 +140,28 @@ def get_closest_material(µ):
     return diff_tuples[0]
 
 
+console.rule("Nullmessung")
 dat_Nullmessung = get_data('dat2/Nullmessung.csv')
 assert dat_Nullmessung['I'].check('1/[time]')
 I_0_parallel, I_0_hauptdiag, I_0_nebendiag = dat_Nullmessung['I']
-print(f"Nullmessung: {dat_Nullmessung['I']:.2f}")
+print(f"I_0 = {tools.nominal_values(dat_Nullmessung['I']):.2f}")
 
 WÜRFEL = [
     {
         'num': 2,
         'material': 'Fe',  # Mampfzwerg, SanjoR
     },
+    {
+        'num': 3,
+        'material': 'Delrin',
+    },
 ]
 
 for würfel in WÜRFEL:
+    console.rule(f"Würfel {würfel['num']}")
     dat = get_data(f'dat2/Würfel{würfel["num"]}.csv')
     µ = analyze_homogen(dat, I_0_from_indices)
+    # µ /= 10  # TODO TEST!!!
     print(f"μ = {μ:.3f}")
     mat_abw, mat = get_closest_material(µ)
     print(f"Best fit: {mat} mit Abweichung {mat_abw:.2f}")
@@ -170,6 +170,6 @@ for würfel in WÜRFEL:
     else:
         print(f"→ sollte {würfel['material']} sein :(")
     print(
-        "Abweichung best-fit vs. µ_lit des tatsächlichen Materials:\n",
+        "Abweichung best-fit vs. µ_lit des tatsächlichen Materials:\n" +
         tools.fmt_compare_to_ref(µ, µ_LIT[würfel['material']])
     )
