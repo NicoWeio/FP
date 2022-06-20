@@ -46,7 +46,7 @@ def calc_I(N, T):
 # TODO: Nullmessung
 
 
-def analyze(filename, I_0):
+def analyze(filename, I_0_getter):
     dat = pd.read_csv(filename)
     # dat.rename(str.strip)
     # dat.rename_axis()
@@ -61,7 +61,7 @@ def analyze(filename, I_0):
     N *= ureg.dimensionless  # TODO
     T *= ureg.s
 
-    # I_0 = ureg('104/s')  # TODO: Nullmessung
+    I_0 = I_0_getter(dat['indices'])
     y = unp.log((I_0 / I).to('dimensionless').m)
     μ_mat = np.linalg.inv(A.T @ A) @ A.T @ y
     μ = μ_mat.mean()
@@ -71,23 +71,22 @@ def analyze(filename, I_0):
     return µ
 
 
-def get_I_0(filename):
-    dat = pd.read_csv(filename)
-    # dat.rename(str.strip)
-    # dat.rename_axis()
+def get_data(filename):
+    dat = pd.read_csv(filename, comment='#')
 
     A = A_from_indices(dat['indices'])
-    # print(A.round(1))
 
     N = dat['N']
     T = dat['T']
 
     I = calc_I(N, T)
-    N *= ureg.dimensionless  # TODO
-    T *= ureg.s
+    # NOTE: Ohne pint-pandas wird implizit zu einheitenlosen Arrays konvertiert!
 
-    I = calc_I(N, T).mean()
-    return I
+    return {
+        'N': N * ureg.dimensionless,
+        'T': T * ureg.s,
+        'I': I,
+    }
 
 
 def get_closest_material(µ):
@@ -104,9 +103,24 @@ def get_closest_material(µ):
     return diff_tuples[0]
 
 
-I_0 = get_I_0('dat2/Nullmessung.csv')
+dat_Nullmessung = get_data('dat2/Nullmessung.csv')
+assert dat_Nullmessung['I'].check('1/[time]')
+I_0_parallel, I_0_hauptdiag, I_0_nebendiag = dat_Nullmessung['I']
+
+
+def get_I_0_for_indices(indices):
+    if '/' in indices:
+        if len(indices.split('/')) == 3:
+            return I_0_hauptdiag
+        else:
+            assert len(indices.split('/')) == 2
+            return I_0_nebendiag
+    else:
+        return I_0_parallel
+
 
 # analyze('dat2/Nullmessung.csv')
-µ = analyze('dat2/Unb.csv', I_0=I_0)
+µ = analyze('dat2/Würfel2.csv', get_I_0_for_indices)
+# Würfel 2 SOLL: Eisen
 mat_abw, mat = get_closest_material(µ)
 print(f"Best fit: {mat} mit Abweichung {mat_abw:.1%}")
