@@ -100,7 +100,7 @@ def analyze(dat, I_0_getter):
     y = unp.log((I_0 / dat['I']).to('dimensionless').m)
     d = d_from_indices(dat['indices'])
     μ_vec = (np.linalg.inv(A.T @ A) @ A.T @ y)
-
+    μ_vec /= ureg.cm  # TODO: hübscher
     print(f'{μ_vec=}')
     µ = abs(µ_vec).mean()
     print(f'{μ=}')
@@ -150,18 +150,27 @@ WÜRFEL = [
     {
         'num': 2,
         'material': 'Fe',  # Mampfzwerg, SanjoR
+        'homogen': True,
     },
     {
         'num': 3,
+        'material': 'Delrin',  # Insider-Tipp: eigentlich Holz
+        'homogen': True,
+    },
+    {
+        'num': 4,
         'material': 'Delrin',
+        'homogen': False,
     },
 ]
 
 for würfel in WÜRFEL:
     console.rule(f"Würfel {würfel['num']}")
     dat = get_data(f'dat2/Würfel{würfel["num"]}.csv')
-    µ = analyze_homogen(dat, I_0_from_indices)
-    # µ /= 10  # TODO TEST!!!
+    if würfel['homogen']:
+        µ = analyze_homogen(dat, I_0_from_indices)
+    else:
+        µ = analyze(dat, I_0_from_indices)
     print(f"μ = {μ:.3f}")
     mat_abw, mat = get_closest_material(µ)
     print(f"Best fit: {mat} mit Abweichung {mat_abw:.2f}")
