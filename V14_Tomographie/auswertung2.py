@@ -141,7 +141,7 @@ def get_closest_material(µ):
 
 
 console.rule("Nullmessung")
-dat_Nullmessung = get_data('dat2/Nullmessung.csv')
+dat_Nullmessung = get_data('dat/Nullmessung.csv')
 assert dat_Nullmessung['I'].check('1/[time]')
 I_0_parallel, I_0_hauptdiag, I_0_nebendiag = dat_Nullmessung['I']
 print(f"I_0 = {tools.nominal_values(dat_Nullmessung['I']):.2f}")
@@ -166,7 +166,7 @@ WÜRFEL = [
 
 for würfel in WÜRFEL:
     console.rule(f"Würfel {würfel['num']}")
-    dat = get_data(f'dat2/Würfel{würfel["num"]}.csv')
+    dat = get_data(f'dat/Würfel{würfel["num"]}.csv')
     if würfel['homogen']:
         µ = analyze_homogen(dat, I_0_from_indices)
     else:
