@@ -27,12 +27,15 @@
         \draw[red, dashed, ->] ({(\i + 1/2) * \cellsize}, {\arrowoffset * \cellsize})
         -- ({(\i + 1/2) * \cellsize}, {-(\numcells + \arrowoffset) * \cellsize}) ;
 
-    % % diagonal ↓
+    % diagonal [WIP] ↓
     % \foreach \i in {0,...,2}
-    %     % \draw[red, dashed, ->] ({-\arrowoffset * \cellsize}, {(\i - 1/2) * \cellsize})
-    %     % -- ({(\numcells + \arrowoffset) * \cellsize}, {(\numcells + \i - 1/2) * \cellsize}) ;
-    %     \draw[red, dashed, ->] (0, {(\i - \cellsize) * \cellsize})
-    %     -- ({(\numcells) * \cellsize}, {(\numcells + \i - \cellsize) * \cellsize}) ;
+    %     \draw[red, dashed, ->] (0, {-(\i - 1) * \cellsize})
+    %     -- ({(\numcells) * \cellsize}, {-(\numcells + \i - 1) * \cellsize}) ;
+
+    % diagonal (manual) ↓
+    \draw[red, dashed, ->] (0,0) -- ({\numcells * \cellsize},{-(\numcells * \cellsize)}) ;
+    \draw[red, dashed, ->] (0,-1 * \cellsize) -- ({(\numcells-1) * \cellsize},{-(\numcells * \cellsize)}) ;
+    \draw[red, dashed, ->] (1 * \cellsize,0) -- ({\numcells * \cellsize},{-((\numcells-1) * \cellsize)}) ;
 
     % \foreach \i in {0,...,2}
     %     \draw[red, dashed] (0,{-2 * \cellsize + \i})--({3 * \cellsize},{1 * \cellsize + \i}) ;
