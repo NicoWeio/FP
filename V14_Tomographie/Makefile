@@ -5,7 +5,7 @@ TABLES = build/tab/mu.tex
 build/tab/mu.tex: calc_mu.py
 	python3 calc_mu.py
 
-build/main.pdf: main.tex lit.bib $(TABLES) | build
+build/main.pdf: main.tex lit.bib $(wildcard content/*.tex) $(TABLES) | build
 	  TEXINPUTS=build: \
 	  BIBINPUTS=build: \
 	  max_print_line=1048576 \
