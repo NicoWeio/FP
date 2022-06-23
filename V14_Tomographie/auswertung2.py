@@ -182,3 +182,23 @@ for würfel in WÜRFEL:
         "Abweichung best-fit vs. µ_lit des tatsächlichen Materials:\n" +
         tools.fmt_compare_to_ref(µ, µ_LIT[würfel['material']])
     )
+
+
+console.rule("Würfel 4")
+dat = get_data(f'dat/Würfel4.csv')
+µ = analyze_inhomogen(dat, I_0_from_indices)
+
+# visualize the 3x3 matrix using matplotlib
+x, y = np.arange(3), np.arange(3)
+# µ_test = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8])
+# µ_plt = np.random.rand(3, 3)
+µ_plt = unp.nominal_values(µ).reshape(3, 3)
+# plt.figure(figsize=(10, 10))
+plt.pcolormesh(x, y, µ_plt)
+plt.gca().set_aspect('equal')
+# plt.gca().invert_xaxis()
+plt.gca().invert_yaxis()
+plt.xticks(None)
+plt.yticks(None)
+plt.colorbar()
+plt.show()
