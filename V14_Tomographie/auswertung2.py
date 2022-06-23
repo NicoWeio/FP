@@ -12,21 +12,27 @@ console = Console()
 
 
 def A_row_from_indices(indices):
-    indices = indices.strip()  # Zwischenlösung
-    baserow = np.zeros(9)  # 9 = Anz. Würfel
+    """
+    Gibt eine Zeile der Matrix A zurück.
+    Die Einträge stehen dabei für die je Elementarwürfel (µ_i) passierte Wegstrecke.
+
+    Beispiel:
+    '2/4' → [0, √2·d, 0, √2·d, 0, 0, …]
+    """
+    d_Einzelwürfel = 1  # NOTE: Einheiten + Matrizen = 🗲
+    indices = indices.strip()  # TODO Zwischenlösung
+    row = np.zeros(9)  # 9 = Anz. Würfel
     if '/' in indices:
         assert '|' not in indices
         # → diagonal
-        # baserow[np.array(map(int,indices.split('/')))] = np.sqrt(2)
         for i in map(int, indices.split('/')):
-            baserow[i-1] = np.sqrt(2)
+            row[i-1] = np.sqrt(2) * d_Einzelwürfel
     elif '|' in indices:
         assert '/' not in indices
         # → parallel
-        # baserow[np.array(map(int,indices.split('|')))] = 1
         for i in map(int, indices.split('|')):
-            baserow[i-1] = 1
-    return baserow
+            row[i-1] = d_Einzelwürfel
+    return row
 
 
 def A_from_indices(all_indices):
@@ -42,14 +48,10 @@ def I_0_from_indices(all_indices):
 
 
 def d_row_from_indices(indices):
-    if '/' in indices:
-        if len(indices.split('/')) == 3:
-            return 3 * d_Einzelwürfel / np.sqrt(2)
-        else:
-            assert len(indices.split('/')) == 2
-            return 2 * d_Einzelwürfel / np.sqrt(2)
-    else:
-        return 3 * d_Einzelwürfel
+    """
+    Gibt die gesamte Wegstrecke im Würfel zurück.
+    """
+    return A_row_from_indices(indices).sum() * ureg.cm  # TODO: Einheiten hübscher…
 
 
 def I_0_row_from_indices(indices):
