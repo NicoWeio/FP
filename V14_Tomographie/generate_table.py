@@ -16,7 +16,14 @@ class PintFormatter:
     def __call__(self, value):
         magnitude = value.to(self.unit).m
         # return f'{magnitude:.2f}'
-        return '{0:.{decimals}f}'.format(magnitude, decimals=self.decimals)
+        if hasattr(magnitude, 'n'):
+            return (
+                '{0:.{decimals}f}'.format(magnitude.n, decimals=self.decimals) +
+                r' \pm ' +
+                '{0:.{decimals}f}'.format(magnitude.s, decimals=self.decimals)
+            )
+        else:
+            return '{0:.{decimals}f}'.format(magnitude, decimals=self.decimals)
 
 
 class Column:
