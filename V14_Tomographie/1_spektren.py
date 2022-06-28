@@ -1,28 +1,19 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from uncertainties import ufloat
-import uncertainties.unumpy as unp
-from numpy.linalg import inv
-import pandas as pd
-import pint
-import rich
-from rich.console import Console
-import tools
-ureg = pint.UnitRegistry()
-console = Console()
 
-path = '2022-06-20_Messdaten/' 'Würfel1_456.Spe'
+name = 'Würfel1_456'
+path = f'2022-06-20_Messdaten/{name}.Spe'
 
-# N = np.genfromtxt(path, dtype='int64', skip_header=1)
-
+# Die Dateien beinhalten zusätzliche Zeilen an Anfang und Ende.
+# Wir kümmern uns selbst darum…
 with open(path, 'r') as f:
     lines = f.readlines()
 
-# discard all lines that don't start with a space
-lines = [line for line in lines if line[0] == ' ']
+# discard all lines that don't start with a space; then strip it away
+lines = [line.strip() for line in lines if line.startswith(' ')]
 
-# convert the lines to a numpy array (int64)
-N = np.array(list(map(int, [line.split()[0] for line in lines])))
+# convert the lines to a NumPy array
+N = np.array(list(map(int, lines)))
 
 # cut off after the last non-zero element
 # N = N[:N.nonzero()[0][-1]]
@@ -34,10 +25,9 @@ N_cumsum_max_index = np.where(N_cumsum > N_cumsum_max)[0][0]
 N = N[:N_cumsum_max_index]
 
 
-# print the last 15 lines
-print(N[-15:])
-
 plt.bar(np.arange(len(N)), N)
 # plt.yscale('log')
-plt.ylabel('N')
-plt.show()
+plt.xlabel('Channel')
+plt.ylabel('$N$')
+plt.savefig('build/plt/spektrum.pdf')
+# plt.show()
