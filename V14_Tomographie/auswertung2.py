@@ -146,7 +146,7 @@ def get_closest_material(µ):
 
 
 console.rule("Nullmessung")
-dat_Nullmessung = get_data('dat/Nullmessung.csv')
+dat_Nullmessung = get_data('dat/Würfel1.csv')
 assert dat_Nullmessung['I'].check('1/[time]')
 I_0_parallel, I_0_hauptdiag, I_0_nebendiag = dat_Nullmessung['I']
 print(f"I_0 = {tools.nominal_values(dat_Nullmessung['I']):.2f}")
