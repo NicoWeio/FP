@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import numpy as np
 from uncertainties import ufloat
 import uncertainties.unumpy as unp
@@ -6,9 +7,21 @@ import pandas as pd
 import pint
 import rich
 from rich.console import Console
+import generate_table
 import tools
 ureg = pint.UnitRegistry()
 console = Console()
+
+d_Einzelwürfel = ureg('1 cm')
+
+μ_LIT = {
+    # TODO: kopiert aus calc_mu.py
+    'Al': ureg('0.2007 / cm'),
+    'Pb': ureg('1.1737 / cm'),
+    'Fe': ureg('0.5704 / cm'),
+    'Messing': ureg('0.6088 / cm'),
+    'Delrin': ureg('0.1176 / cm'),
+}
 
 
 def A_row_from_indices(indices):
@@ -35,6 +48,14 @@ def A_row_from_indices(indices):
     return row
 
 
+def d_row_from_indices(indices):
+    # NOTE: `row` steht hier für ein einzelnes Element…
+    """
+    Gibt die gesamte Wegstrecke im Würfel zurück.
+    """
+    return A_row_from_indices(indices).sum() * ureg.cm  # TODO: Einheiten hübscher…
+
+
 def A_from_indices(all_indices):
     return np.row_stack(list(map(A_row_from_indices, all_indices)))
 
@@ -47,14 +68,14 @@ def I_0_from_indices(all_indices):
     return tools.pintify(list(map(I_0_row_from_indices, all_indices)))
 
 
-def d_row_from_indices(indices):
-    """
-    Gibt die gesamte Wegstrecke im Würfel zurück.
-    """
-    return A_row_from_indices(indices).sum() * ureg.cm  # TODO: Einheiten hübscher…
-
-
 def I_0_row_from_indices(indices):
+    """
+    Gibt die zu den Indizes gehörige Nullmessung zurück.
+
+    Beispiele:
+    • '4|5|6' → I_0_Parallel
+    • '2/4' → I_0_Nebendiagonale
+    """
     if '/' in indices:
         if len(indices.split('/')) == 3:
             return I_0_hauptdiag
@@ -62,6 +83,7 @@ def I_0_row_from_indices(indices):
             assert len(indices.split('/')) == 2
             return I_0_nebendiag
     else:
+        assert '|' in indices
         return I_0_parallel
 
 
@@ -72,12 +94,6 @@ def calc_I(N, T):
     """
     I = unp.uarray(N / T, np.sqrt(N)/T) / ureg.s
     return I
-
-# TODO: Nullmessung
-
-
-# d_Würfel = ureg('3 cm')
-d_Einzelwürfel = ureg('1 cm')
 
 
 def analyze_homogen(dat, I_0_getter):
@@ -94,19 +110,15 @@ def analyze_homogen(dat, I_0_getter):
     return µ
 
 
-def analyze(dat, I_0_getter):
+def analyze_inhomogen(dat, I_0_getter):
     A = A_from_indices(dat['indices'])
     # print(A.round(1))
 
     I_0 = I_0_getter(dat['indices'])
     y = unp.log((I_0 / dat['I']).to('dimensionless').m)
-    d = d_from_indices(dat['indices'])
     μ_vec = (np.linalg.inv(A.T @ A) @ A.T @ y)
     μ_vec /= ureg.cm  # TODO: hübscher
-    print(f'{μ_vec=}')
-    µ = abs(µ_vec).mean()
-    print(f'{μ=}')
-    return µ
+    return µ_vec
 
 
 def get_data(filename):
@@ -116,8 +128,9 @@ def get_data(filename):
     T = dat['T'].to_numpy() * ureg.s
 
     I = calc_I(N, T)
-    # NOTE: Ohne pint-pandas wird implizit zu einheitenlosen Arrays konvertiert!
 
+    # NOTE: Ohne pint-pandas wird implizit zu einheitenlosen Arrays konvertiert,
+    # daher verwenden wir hier ein normales dict.
     return {
         'N': N * ureg.dimensionless,
         'T': T * ureg.s,
@@ -126,20 +139,10 @@ def get_data(filename):
     }
 
 
-μ_LIT = {
-    # TODO: kopiert aus calc_mu.py
-    'Al': ureg('0.2007 / cm'),
-    'Pb': ureg('1.1737 / cm'),
-    'Fe': ureg('0.5704 / cm'),
-    'Messing': ureg('0.6088 / cm'),
-    'Delrin': ureg('0.1176 / cm'),
-}
-
-
 def get_closest_material(µ):
     diff_tuples = [(abs(µ - µ_lit_single), name) for name, µ_lit_single in µ_LIT.items()]
     diff_tuples.sort()
-    return diff_tuples[0]
+    return diff_tuples[0][1]
 
 
 console.rule("Nullmessung")
@@ -159,11 +162,11 @@ WÜRFEL = [
         'material': 'Delrin',  # Insider-Tipp: eigentlich Holz
         'homogen': True,
     },
-    {
-        'num': 4,
-        'material': 'Delrin',
-        'homogen': False,
-    },
+    # {
+    #     'num': 4,
+    #     # 'material': [1, 2, 3, 4, 5, 6, 7, 8, 9],  # TODO
+    #     'homogen': False,
+    # },
 ]
 
 for würfel in WÜRFEL:
@@ -172,23 +175,39 @@ for würfel in WÜRFEL:
     if würfel['homogen']:
         µ = analyze_homogen(dat, I_0_from_indices)
     else:
-        µ = analyze(dat, I_0_from_indices)
+        µ = analyze_inhomogen(dat, I_0_from_indices)
     print(f"μ = {μ:.3f}")
-    mat_abw, mat = get_closest_material(µ)
-    print(f"Best fit: {mat} mit Abweichung {mat_abw:.2f}")
+    print(f"rel. Unsicherheit: {µ.s/µ.n:.1%}")
+
+    mat = get_closest_material(µ)
+    print(f"Best fit: {mat}")
     if mat == würfel['material']:
         print("→ wie erwartet :)")
     else:
         print(f"→ sollte {würfel['material']} sein :(")
     print(
-        "Abweichung best-fit vs. µ_lit des tatsächlichen Materials:\n" +
+        "Abweichung µ vs. µ_lit (best fit):\n" +
+        tools.fmt_compare_to_ref(µ, µ_LIT[mat])
+    )
+    print(
+        f"Abweichung best-fit vs. µ_lit des tatsächlichen Materials ({würfel['material']}):\n" +
         tools.fmt_compare_to_ref(µ, µ_LIT[würfel['material']])
+    )
+
+    generate_table.generate_table_pint(
+        f'build/tab/wuerfel{würfel["num"]}.tex',
+        ('Projektion', None, dat['indices']),
+        ('I', ureg.second**(-1), dat['I']),
+        # ('µ', ureg.centimeter**(-1), µ_vec), # TODO
     )
 
 
 console.rule("Würfel 4")
 dat = get_data(f'dat/Würfel4.csv')
 µ = analyze_inhomogen(dat, I_0_from_indices)
+for y in range(3):
+    print('\t'.join([f"{x.n:.2f}" for x in µ[3*y:3*y+3]]))
+
 
 x, y = np.arange(3), np.arange(3)
 µ_plt = unp.nominal_values(µ).reshape(3, 3)
@@ -198,6 +217,7 @@ plt.gca().set_aspect('equal')
 plt.xticks([])
 plt.yticks([])
 plt.colorbar()
-for i, (x, y) in enumerate(np.ndindex(3, 3), 1):
+for i, (y, x) in enumerate(np.ndindex(3, 3), 1):
     plt.text(x, y, r'$\mu_' f'{i}$', ha='center', va='center')
-plt.show()
+plt.savefig('build/plt/wuerfel4.pdf')
+# plt.show()
