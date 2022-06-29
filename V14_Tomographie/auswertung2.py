@@ -104,10 +104,7 @@ def analyze_homogen(dat, I_0_getter):
         d
     )
 
-    # print(f'{μ_vec=}')
-    µ = µ_vec.mean()  # TODO: SEM
-    # print(f'{μ=}')
-    return µ
+    return µ_vec
 
 
 def analyze_inhomogen(dat, I_0_getter):
@@ -151,6 +148,14 @@ assert dat_Nullmessung['I'].check('1/[time]')
 I_0_parallel, I_0_hauptdiag, I_0_nebendiag = dat_Nullmessung['I']
 print(f"I_0 = {tools.nominal_values(dat_Nullmessung['I']):.2f}")
 
+generate_table.generate_table_pint(
+    f'build/tab/wuerfel1.tex',
+    ('Projektion', None, dat_Nullmessung['indices']),
+    ('I_0', ureg.second**(-1), dat_Nullmessung['I']),
+    # kein µ hier; dafür brauchen wir ja gerade die Nullmessung
+)
+
+
 WÜRFEL = [
     {
         'num': 2,
@@ -172,10 +177,8 @@ WÜRFEL = [
 for würfel in WÜRFEL:
     console.rule(f"Würfel {würfel['num']}")
     dat = get_data(f'dat/Würfel{würfel["num"]}.csv')
-    if würfel['homogen']:
-        µ = analyze_homogen(dat, I_0_from_indices)
-    else:
-        µ = analyze_inhomogen(dat, I_0_from_indices)
+    µ_vec = analyze_homogen(dat, I_0_from_indices)
+    µ = µ_vec.mean() # TODO: SEM
     print(f"μ = {μ:.3f}")
     print(f"rel. Unsicherheit: {µ.s/µ.n:.1%}")
 
@@ -204,13 +207,20 @@ for würfel in WÜRFEL:
 
 console.rule("Würfel 4")
 dat = get_data(f'dat/Würfel4.csv')
-µ = analyze_inhomogen(dat, I_0_from_indices)
+µ_vec = analyze_inhomogen(dat, I_0_from_indices)
 for y in range(3):
-    print('\t'.join([f"{x.n:.2f}" for x in µ[3*y:3*y+3]]))
+    print('\t'.join([f"{x.n:.2f}" for x in µ_vec[3*y:3*y+3]]))
+
+generate_table.generate_table_pint(
+    f'build/tab/wuerfel4.tex',
+    ('Projektion', None, dat['indices']),
+    ('I', ureg.second**(-1), dat['I']),
+    # ('µ', ureg.centimeter**(-1), µ_vec), # TODO
+)
 
 
 x, y = np.arange(3), np.arange(3)
-µ_plt = unp.nominal_values(µ).reshape(3, 3)
+µ_plt = unp.nominal_values(µ_vec).reshape(3, 3)
 plt.pcolormesh(x, y, µ_plt)
 plt.gca().invert_yaxis()
 plt.gca().set_aspect('equal')
