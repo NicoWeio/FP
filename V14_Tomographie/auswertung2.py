@@ -136,8 +136,12 @@ def get_data(filename):
     }
 
 
-def get_closest_material(µ):
-    diff_tuples = [(abs(µ - µ_lit_single), name) for name, µ_lit_single in µ_LIT.items()]
+def get_closest_material(µ, µ_map):
+    """
+    µ sind die Messwerte, denen die Materialien zugeordnet werden sollen.
+    µ_map ist ein dict mit Materialnamen als Keys und µ-Werten als Values.
+    """
+    diff_tuples = [(abs(µ - µ_map_single), name) for name, µ_map_single in µ_map.items()]
     diff_tuples.sort()
     return diff_tuples[0][1]
 
@@ -188,6 +192,7 @@ print(f"I_0 = {tools.nominal_values(dat_Nullmessung['I']):.2f}")
 generate_table.generate_table_pint(
     f'build/tab/wuerfel1.tex',
     ('Projektion', None, dat_Nullmessung['indices']),
+    ('', None, [visualize_indices(i) for i in dat_Nullmessung['indices']]),
     ('I_0', ureg.second**(-1), dat_Nullmessung['I']),
     # kein µ hier; dafür brauchen wir ja gerade die Nullmessung
 )
@@ -211,6 +216,8 @@ WÜRFEL = [
     # },
 ]
 
+µ_mess_dict = {}
+
 for würfel in WÜRFEL:
     console.rule(f"Würfel {würfel['num']}")
     dat = get_data(f'dat/Würfel{würfel["num"]}.csv')
@@ -219,7 +226,9 @@ for würfel in WÜRFEL:
     print(f"μ = {μ:.3f}")
     print(f"rel. Unsicherheit: {µ.s/µ.n:.1%}")
 
-    mat = get_closest_material(µ)
+    µ_mess_dict[f"Würfel {würfel['num']}"] = µ
+
+    mat = get_closest_material(µ, µ_LIT)
     print(f"Best fit: {mat}")
     if mat == würfel['material']:
         print("→ wie erwartet :)")
@@ -237,6 +246,7 @@ for würfel in WÜRFEL:
     generate_table.generate_table_pint(
         f'build/tab/wuerfel{würfel["num"]}.tex',
         ('Projektion', None, dat['indices']),
+        ('', None, [visualize_indices(i) for i in dat['indices']]),
         ('I', ureg.second**(-1), dat['I']),
         (r'\mu', ureg.centimeter**(-1), µ_vec, 3),
     )
@@ -248,18 +258,38 @@ dat = get_data(f'dat/Würfel4.csv')
 for y in range(3):
     print('\t'.join([f"{x.n:.2f}" for x in µ_vec[3*y:3*y+3]]))
 
+mat_closest_lit_vec = [get_closest_material(µ, µ_LIT) for µ in µ_vec]
+µ_closest_lit_vec = tools.pintify([µ_LIT[mat] for mat in mat_closest_lit_vec])
+
+mat_closest_mess_vec = [get_closest_material(µ, µ_mess_dict) for µ in µ_vec]
+µ_closest_mess_vec = tools.pintify([µ_mess_dict[mat] for mat in mat_closest_mess_vec])
+
 generate_table.generate_table_pint(
     f'build/tab/wuerfel4.tex',
     ('Projektion', None, dat['indices']),
+    ('', None, [visualize_indices(i) for i in dat['indices']]),
     ('I', ureg.second**(-1), dat['I']),
     # kein µ hier; für einzelne Projektionen ist µ_vec unterbestimmt
 )
 
 generate_table.generate_table_pint(
     f'build/tab/wuerfel4_mu.tex',
-    ('Index', None, np.arange(len(µ_vec))),
+    ('Index', None, np.arange(len(µ_vec))+1),
     (r'\mu', ureg.centimeter**(-1), µ_vec, 3),
+    ('Mat (lit)', None, mat_closest_lit_vec),
+    ('Abw. (lit) / percent', ureg.dimensionless, tools.nominal_values(abs((µ_vec-µ_closest_lit_vec)/µ_closest_lit_vec)*100)),
+    ('Mat (mess)', None, mat_closest_mess_vec),
+    ('Abw. (mess) / percent', ureg.dimensionless, tools.nominal_values(abs((µ_vec-µ_closest_mess_vec)/µ_closest_mess_vec)*100)),
 )
+
+# Annahme: Der Würfel besteht aus nur zwei Materialien
+# → Bestimmte den jeweiligen durchschnittlichen Absorptionskoefizienten
+# TODO: negative µ ignorieren
+# material_mask = µ_vec < np.median(µ_vec)
+# µ_vec_material_1 = µ_vec[material_mask].mean()
+# µ_vec_material_2 = µ_vec[~material_mask].mean()
+# print(f"µ_1 = {µ_vec_material_1:.3f}")
+# print(f"µ_2 = {µ_vec_material_2:.3f}")
 
 
 x, y = np.arange(3), np.arange(3)
