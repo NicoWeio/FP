@@ -142,6 +142,43 @@ def get_closest_material(µ):
     return diff_tuples[0][1]
 
 
+def visualize_indices(indices):
+    NUMCELLS = 3
+
+    def i_to_coords(i):
+        """Inputs and outputs 0-indexed values."""
+        return (i % NUMCELLS, i // NUMCELLS)
+
+    assert i_to_coords(1-1) == (0, 0)
+    assert i_to_coords(9-1) == (2, 2)
+
+    TEMPLATE_OUTER = r'''
+    \begin{tikzpicture}
+    [
+        box/.style={rectangle, draw=gray!40, inner sep=0pt },
+    ]
+    \newcommand*{\numcells}{3}%
+    \newcommand*{\cellsize}{(2ex/\numcells)}%
+
+\foreach \x in {1,...,\numcells}{
+    \foreach \y in {1,...,\numcells}
+        \node[box, minimum size=\cellsize] at ({\x*\cellsize},{\y*\cellsize}){};
+}
+
+{FILL}
+
+\end{tikzpicture}'''
+
+    TEMPLATE_FILL = r'\node[box,minimum size=\cellsize,fill=red] at ({#1*\cellsize},{#2*\cellsize}){};'
+
+    i_list = indices.split('/') if '/' in indices else indices.split('|')
+    fill_positions = [i_to_coords(int(i)-1) for i in i_list]
+
+    fill = '\n'.join(TEMPLATE_FILL.replace('#1', str(x+1)).replace('#2', str(y+1)) for x, y in fill_positions)
+
+    return TEMPLATE_OUTER.replace('{FILL}', fill)
+
+
 console.rule("Nullmessung")
 dat_Nullmessung = get_data('dat/Würfel1.csv')
 assert dat_Nullmessung['I'].check('1/[time]')
