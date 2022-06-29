@@ -23,14 +23,16 @@
     der mit einem Photomultiplier verbunden ist.
     Am Photomultiplier ist eine Spannung von \SI{500}{\volt} angelegt.
     Dieser ist wiederum an den Computer angeschlossen.
-    Für die Messung wird das Progamm MAESTRO verwendet.
+    Für die Messung wird das Programm \enquote{MAESTRO} verwendet.
     Bei der Messung muss darauf geachtet werden,
     dass genügend Impulse gemessen werden,
-    um eine relative Unsicherheit von \SI{3}{\percent} nicht zu übertreffen.
+    um eine relative Unsicherheit von \SI{3}{\percent} nicht zu überschreiten.
     Es gilt
     \begin{equation*}
-        \frac{\sqrt{N}}{N} < \SI{3}{\percent} \iff N > 1111.\bar{1} \approx 1112 \ .
+        \frac{\sqrt{N}}{N} \stackrel{!}{<} \SI{3}{\percent}
+        \iff N \stackrel{!}{>} 1111.\bar{1} \approx 1112
     \end{equation*}
+    mit der absoluten Unsicherheit $\sqrt{N}$ einer Poisson-verteilten Zählrate.
 
     Für die Messung wird nun zuerst \textbf{Würfel 1} in den Strahlengang eingebaut.
     Dieser besteht im Inneren nur aus Luft.
