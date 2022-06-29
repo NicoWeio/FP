@@ -12,7 +12,7 @@ Damit soll der Effekt der homogenen Aluminiumwand aller Würfel ausreichend ber�
 \autoref{tab:auswertung:wuerfel1} listet die Nullraten für die drei relevanten Kategorien von Projektionen
 (Hauptdiagonale, Nebendiagonale und Parallele)
 auf.
-Beispielhaft ist ein nach einer Messzeit von $T = \SI{240}{\second}$ resultierende Energiespektrum in \autoref{plt:auswertung:spektrum} dargestellt.
+Beispielhaft ist in \autoref{plt:auswertung:spektrum} ein nach einer Messzeit von $T = \SI{240}{\second}$ resultierende Energiespektrum dargestellt.
 Im Sinne einer aussagekräftigen Abbildung sind die energiereichsten \SI{1}{\percent} aller Zählungen ausgelassen.
 
 \begin{table}[H]
@@ -25,21 +25,31 @@ Im Sinne einer aussagekräftigen Abbildung sind die energiereichsten \SI{1}{\per
 \begin{figure}
     \centering
     \includegraphics[width=0.8\textwidth]{build/plt/spektrum.pdf}
-    \caption{Energiespektrum der Projektion \enquote{4|5|6}.}
+    \caption{Energiespektrum der Projektion \enquote{4|5|6} mit Markierungen der darin erkennbaren Prozesse.}
     \label{plt:auswertung:spektrum}
 \end{figure}
 
 
 \subsection{Untersuchung homogener Würfel}
 Aus \autoref{eqn:theorie:intensitaet2} ist ersichtlich,
-dass für den Absorptionskoeffizienten homogener Materialien bei Weglänge $x$ folgende Bestimmungsgleichung gilt:
+dass für den Absorptionskoeffizienten homogener Materialien folgende Bestimmungsgleichung gilt:
 \begin{equation*}
     \mu = \frac{1}{x} \ln \left( \frac{I_0}{I} \right) \ .
 \end{equation*}
-Über die so je Projektion ermittelten Absorptionskoeffizienten kann dann ein Mittelwert gebildet werden.
+Die Weglänge $x$ ist dabei abhängig von der Projektion entweder
+\begin{align*}
+    3·\sqrt{2}&·d \text{ (Hauptdiagonale),} \\
+    2·\sqrt{2}&·d \text{ (Nebendiagonale) oder} \\
+    3&·d \text{ (Parallele),}
+\end{align*}
+wobei $d = \SI{1}{\centi\meter}$ die Kantenlänge eines Elementarwürfels ist.
+% NOTE: Natürlich wäre auch 1·\sqrt{2}·d denkbar.
+Auch die Nullrate $I_0$ wird je nach Art der Projektion aus \autoref{tab:auswertung:wuerfel1} übernommen.
+Über die je Projektion ermittelten Absorptionskoeffizienten kann schließlich ein Mittelwert gebildet werden.
 
 
 \subsubsection{\textbf{Würfel 2}}
+In \autoref{tab:auswertung:wuerfel2} sind die zu \textbf{Würfel 2} gemessenen Zählraten und Absorptionskoeffizienten aufgeführt.
 \begin{table}[H]
     \centering
     \caption{Zählraten und Absorptionskoeffizienten für verschiedene Projektionen durch \textbf{Würfel 2}.}
@@ -53,6 +63,7 @@ sie beträgt \SI{58.07}{\percent}.
 
 
 \subsubsection{\textbf{Würfel 3}}
+In \autoref{tab:auswertung:wuerfel3} sind die zu \textbf{Würfel 3} gemessenen Zählraten und Absorptionskoeffizienten aufgeführt.
 \begin{table}[H]
     \centering
     \caption{Zählraten und Absorptionskoeffizienten für verschiedene Projektionen durch \textbf{Würfel 3}.}
