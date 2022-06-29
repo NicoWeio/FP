@@ -2,10 +2,17 @@ all: build/main.pdf
 
 PLOTS = build/plt/spektrum.pdf
 
-TABLES = build/tab/mu.tex
+TABLES = build/tab/mu.tex \
+	build/tab/wuerfel1.tex \
+	build/tab/wuerfel2.tex \
+	build/tab/wuerfel3.tex \
+	build/tab/wuerfel4.tex \
 
 build/plt/spektrum.pdf: 1_spektrum.py | build/plt/
 	python3 1_spektrum.py
+
+build/tab/wuerfel%.tex &: auswertung2.py | build/tab/
+	python3 auswertung2.py
 
 build/tab/mu.tex: calc_mu.py
 	python3 calc_mu.py

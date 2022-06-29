@@ -1,7 +1,10 @@
 \section{Auswertung}
 \label{sec:auswertung}
+% TODO: Poisson-Fehler nochmal erwähnen?
 
-\subsection{Nullmessung}
+\subsection{Nullmessung und Spektrum}
+% Eigentlich sollte das Spektrum wohl ohne Würfel im Strahlengang aufgenommen werden, der Unterschied dürfte aber marginal sein.
+
 Um in den folgenden Untersuchungen auf eine Nullrate $I_0$ zurückgreifen zu können,
 wird diese anfangs anhand vom leeren \textbf{Würfel 1} vermessen.
 Damit soll der Effekt der homogenen Aluminiumwand aller Würfel ausreichend berücksichtigt sein.
@@ -9,11 +12,12 @@ Damit soll der Effekt der homogenen Aluminiumwand aller Würfel ausreichend ber�
 \autoref{tab:auswertung:wuerfel1} listet die Nullraten für die drei relevanten Kategorien von Projektionen
 (Hauptdiagonale, Nebendiagonale und Parallele)
 auf.
-Zusätzlich ist das nach einer Messzeit von $T = \SI{240}{\second}$ resultierende Energiespektrum in \autoref{plt:auswertung:spektrum} dargestellt.
+Beispielhaft ist ein nach einer Messzeit von $T = \SI{240}{\second}$ resultierende Energiespektrum in \autoref{plt:auswertung:spektrum} dargestellt.
+Im Sinne einer aussagekräftigen Abbildung sind die energiereichsten \SI{1}{\percent} aller Zählungen ausgelassen.
 
 \begin{table}[H]
     \centering
-    \caption{TODO.}
+    \caption{Zählraten für verschiedene Projektionen durch \textbf{Würfel 1}.}
     \label{tab:auswertung:wuerfel1}
     \expandableinput{build/tab/wuerfel1.tex}
 \end{table}
@@ -21,48 +25,65 @@ Zusätzlich ist das nach einer Messzeit von $T = \SI{240}{\second}$ resultierend
 \begin{figure}
     \centering
     \includegraphics[width=0.8\textwidth]{build/plt/spektrum.pdf}
-    \caption{Spektrum TODO.}
+    \caption{Energiespektrum der Projektion \enquote{4|5|6}.}
     \label{plt:auswertung:spektrum}
 \end{figure}
 
 
 \subsection{Untersuchung homogener Würfel}
-Anhand von \autoref{eqn:auswertung:foo}…
-\begin{equation}
-    \mu = \frac{1}{d} \ln \left( \frac{I_0}{I} \right)
-    \label{eqn:auswertung:foo}
-\end{equation}
+Aus \autoref{eqn:theorie:intensitaet2} ist ersichtlich,
+dass für den Absorptionskoeffizienten homogener Materialien bei Weglänge $x$ folgende Bestimmungsgleichung gilt:
+\begin{equation*}
+    \mu = \frac{1}{x} \ln \left( \frac{I_0}{I} \right) \ .
+\end{equation*}
+Über die so je Projektion ermittelten Absorptionskoeffizienten kann dann ein Mittelwert gebildet werden.
 
 
 \subsubsection{\textbf{Würfel 2}}
 \begin{table}[H]
     \centering
-    \caption{TODO.}
+    \caption{Zählraten und Absorptionskoeffizienten für verschiedene Projektionen durch \textbf{Würfel 2}.}
     \label{tab:auswertung:wuerfel2}
     \expandableinput{build/tab/wuerfel2.tex}
 \end{table}
+Im Mittel ergibt sich $\mu = \SI{0.049 \pm 0.001}{\per\centi\meter}$
+bei einer relativen Unsicherheit von \SI{2.4}{\percent}.
+Die geringste Abweichung besteht damit zum Literaturwert von Delrin (siehe \autoref{tab:theorie:literaturwerte});
+sie beträgt \SI{58.07}{\percent}.
+
 
 \subsubsection{\textbf{Würfel 3}}
 \begin{table}[H]
     \centering
-    \caption{TODO.}
+    \caption{Zählraten und Absorptionskoeffizienten für verschiedene Projektionen durch \textbf{Würfel 3}.}
     \label{tab:auswertung:wuerfel3}
     \expandableinput{build/tab/wuerfel3.tex}
 \end{table}
+Im Mittel ergibt sich $\mu = \SI{1.033 \pm 0.003}{\per\centi\meter}$
+bei einer relativen Unsicherheit von \SI{1.17}{\percent}.
+Die geringste Abweichung besteht damit zum Literaturwert von Blei (siehe \autoref{tab:theorie:literaturwerte});
+sie beträgt \SI{12.02}{\percent}.
 
 
 \subsection{Untersuchung eines inhomogenen Würfels}
 
 \begin{table}[H]
     \centering
-    \caption{TODO.}
+    \caption{Zählraten für verschiedene Projektionen durch die mittlere Ebene von \textbf{Würfel 4}.}
     \label{tab:auswertung:wuerfel4}
     \expandableinput{build/tab/wuerfel4.tex}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \caption{Durch Lösen von XY bestimmte Werte für $\mu_i$ zu \textbf{Würfel 4}.}
+    \label{tab:auswertung:wuerfel4_mu}
+    \expandableinput{build/tab/wuerfel4_mu.tex}
 \end{table}
 
 \begin{figure}
     \centering
     \includegraphics[width=0.7\textwidth]{build/plt/wuerfel4.pdf}
-    \caption{Visualisierung Würfel4 TODO.}
+    \caption{Visualisierung der Absorptionskoeffizienten in der mittleren Ebene von \textbf{Würfel 4}.}
     \label{plt:auswertung:wuerfel4}
 \end{figure}

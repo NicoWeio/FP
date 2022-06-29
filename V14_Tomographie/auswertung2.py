@@ -178,7 +178,7 @@ for würfel in WÜRFEL:
     console.rule(f"Würfel {würfel['num']}")
     dat = get_data(f'dat/Würfel{würfel["num"]}.csv')
     µ_vec = analyze_homogen(dat, I_0_from_indices)
-    µ = µ_vec.mean() # TODO: SEM
+    µ = µ_vec.mean()  # TODO: SEM
     print(f"μ = {μ:.3f}")
     print(f"rel. Unsicherheit: {µ.s/µ.n:.1%}")
 
@@ -201,7 +201,7 @@ for würfel in WÜRFEL:
         f'build/tab/wuerfel{würfel["num"]}.tex',
         ('Projektion', None, dat['indices']),
         ('I', ureg.second**(-1), dat['I']),
-        # ('µ', ureg.centimeter**(-1), µ_vec), # TODO
+        (r'\mu', ureg.centimeter**(-1), µ_vec, 3),
     )
 
 
@@ -215,7 +215,13 @@ generate_table.generate_table_pint(
     f'build/tab/wuerfel4.tex',
     ('Projektion', None, dat['indices']),
     ('I', ureg.second**(-1), dat['I']),
-    # ('µ', ureg.centimeter**(-1), µ_vec), # TODO
+    # kein µ hier; für einzelne Projektionen ist µ_vec unterbestimmt
+)
+
+generate_table.generate_table_pint(
+    f'build/tab/wuerfel4_mu.tex',
+    ('Index', None, np.arange(len(µ_vec))),
+    (r'\mu', ureg.centimeter**(-1), µ_vec, 3),
 )
 
 

@@ -25,9 +25,13 @@ N_cumsum_max_index = np.where(N_cumsum > N_cumsum_max)[0][0]
 N = N[:N_cumsum_max_index]
 
 
-plt.bar(np.arange(len(N)), N)
+plt.bar(np.arange(len(N)), N, zorder=5)
+plt.axvline(21, color='C1', label='Rückstrahlpeak')
+plt.axvline(44, color='C2', label='Compton-Kante')
+plt.axvline(np.argmax(N), color='C3', label='Photopeak')
 # plt.yscale('log')
 plt.xlabel('Channel')
 plt.ylabel('$N$')
+plt.legend()
 plt.savefig('build/plt/spektrum.pdf')
 # plt.show()
