@@ -48,7 +48,7 @@ Auch die Nullrate $I_0$ wird je nach Art der Projektion aus \autoref{tab:auswert
 Über die je Projektion ermittelten Absorptionskoeffizienten kann schließlich ein Mittelwert gebildet werden.
 
 
-\subsubsection{\textbf{Würfel 2}}
+\subsubsection{Würfel 2} \label{sec:auswertung:wuerfel2}
 In \autoref{tab:auswertung:wuerfel2} sind die zu \textbf{Würfel 2} gemessenen Zählraten und Absorptionskoeffizienten aufgeführt.
 \begin{table}[H]
     \centering
@@ -62,7 +62,7 @@ Die geringste Abweichung besteht damit zum Literaturwert von Holz (siehe \autore
 sie beträgt \SI{19.43}{\percent}.
 
 
-\subsubsection{\textbf{Würfel 3}}
+\subsubsection{Würfel 3} \label{sec:auswertung:wuerfel3}
 In \autoref{tab:auswertung:wuerfel3} sind die zu \textbf{Würfel 3} gemessenen Zählraten und Absorptionskoeffizienten aufgeführt.
 \begin{table}[H]
     \centering
@@ -76,8 +76,8 @@ Die geringste Abweichung besteht damit zum Literaturwert von Blei (siehe \autore
 sie beträgt \SI{12.04}{\percent}.
 
 
-\subsection{Untersuchung eines inhomogenen Würfels}
-Im Fall des inhomogenen Würfels
+\subsection{Untersuchung eines inhomogenen Würfels} \label{sec:auswertung:wuerfel4}
+Im Fall des inhomogenen \textbf{Würfels 4}
 % ($\not \exists \mu : \mu_i = \mu \forall i$)
 (d.h. die $\mu_i$ sind ex ante voneinander verschieden)
 ist das Gleichungssystem aus \ref{eqn:theorie:intensitaet3} nicht mehr trivial zu lösen.
@@ -92,6 +92,7 @@ was die Unsicherheiten verkleinert.
 Da die Unsicherheiten von $\vec{J}$ bekannt sind,
 kann eine Gewichtungsmatrix
 \[ \symbf{W} = \operatorname{diag}_i (1 / \operatorname{Var}[J_i]) \]
+% \[ \symbf{W} = \operatorname{Var}[\vec{J}]^{-1} \]
 eingeführt werden,
 um die Resultate zu verbessern.
 $\vec{\mu}$ wird schließlich anhand der Methode der gewichteten kleinsten Quadrate aus
