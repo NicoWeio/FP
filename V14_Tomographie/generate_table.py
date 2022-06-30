@@ -80,7 +80,7 @@ class Column:
 
     @property
     def coltype(self):
-        return 'S' if self.unit else 'c'
+        return 'S' if self.unit else 'l'
 
     # @property
     # def units(self):
