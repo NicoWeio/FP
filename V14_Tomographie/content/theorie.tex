@@ -111,40 +111,37 @@
     ergibt sich für die Intensität
     \begin{align}
         I &= I_0 \exp\Bigl(\sum_{i=1}^N \mu_i x_i \Bigr) \\
-        \iff \ln\left(\frac{I}{I_0}\right) &= \sum_{i=1}^N \mu_i x_i \ .
+        \iff \underbrace{ \ln\left(\frac{I}{I_0}\right) }_{J_k} &= \sum_{i=1}^N \mu_i x_i \ .
         \label{eqn:theorie:intensitaet2}
     \end{align}
-    Mit Bezug auf die Absorptionskoeffizienten kann das lineare Gleichungssystem
+    Wird die Vermessung derselben $\mu_i$ mit anderen Schnittgeraden und somit anderen $x_i$ wiederholt,
+    kann aus den Gleichungen der Form \eqref{eqn:theorie:intensitaet2} ein lineares Gleichungssystem
     \begin{equation}
-        \symbf{A} \cdot \vec{\mu} = \vec{I}
+        \vec{J} = \symbf{A} \cdot \vec{\mu}
     \end{equation}
     aufgestellt werden,
-    wobei $\vec{I}$ die Projektionen durch das Material beschreiben.
-    \begin{figure}
-        \centering
-        % \includegraphics[witdth=\textwidth]{}
-        \expandableinput{content/img/würfel.tex}
-        \caption{Projektionen $I$ durch den hier betrachteten $3\times3\times3$-Würfel.}
-        \label{fig:theorie:projektionen}
-    \end{figure}
-    Für die Projektionen,
+    wobei $\vec{J}$ aus den Inhomogenitäten
+    und $\symbf{A}$ aus den $x_{i,k}$
+    zusammengesetzt ist.
+
+    Für die gewählten Projektionen durch die mittlere $3\times3$-Schnittebene des Würfels,
     die in \autoref{fig:theorie:projektionen} gezeigt sind,
-    in diesem Fall durch einen $3\times3\times3$-Würfel,
     ergibt sich mit \autoref{eqn:theorie:intensitaet2} das Gleichungssystem
     \begin{equation}
+        \label{eqn:theorie:intensitaet3}
         \begin{pmatrix}
-            I_{147} \\
-            I_{258} \\
-            I_{369} \\
-            I_{789} \\
-            I_{456} \\
-            I_{123} \\
-            I_{24}  \\
-            I_{357} \\
-            I_{68}  \\
-            I_{48}  \\
-            I_{159} \\
-            I_{26}
+            J_{1|4|7} \\
+            J_{2|5|8} \\
+            J_{3|6|9} \\
+            J_{7|8|9} \\
+            J_{4|5|6} \\
+            J_{1|2|3} \\
+            J_{2/4}  \\
+            J_{3/5/7} \\
+            J_{6/8}  \\
+            J_{4/8}  \\
+            J_{1/5/9} \\
+            J_{2/6}
         \end{pmatrix}
         = d \cdot
         \begin{pmatrix}
@@ -173,8 +170,17 @@
             \mu_8 \\
             \mu_9
         \end{pmatrix}
-        \ .
+        \ ,
     \end{equation}
+    wobei $d = \SI{1}{\centi\meter}$ die Kantenlänge eines Elementarwürfels ist.
+
+    \begin{figure}
+        \centering
+        \expandableinput{content/img/würfel.tex}
+        \caption{Projektionen durch die mittlere $3\times3$-Schnittebene.}
+        \label{fig:theorie:projektionen}
+    \end{figure}
+
 
 \subsection{Detektion der Gammastrahlung}
 
