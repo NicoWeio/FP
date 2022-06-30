@@ -14,6 +14,9 @@ class PintFormatter:
         self.decimals = decimals
 
     def __call__(self, value):
+        if value is None:
+            return '{–}'
+
         magnitude = value.to(self.unit).m
         # return f'{magnitude:.2f}'
         if hasattr(magnitude, 'n'):
