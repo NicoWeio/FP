@@ -40,7 +40,7 @@ Die Weglänge $x$ ist dabei abhängig von der Projektion entweder
 \begin{align*}
     3·\sqrt{2}&·d \text{ (Hauptdiagonale),} \\
     2·\sqrt{2}&·d \text{ (Nebendiagonale) oder} \\
-    3&·d \text{ (Parallele),}
+    3·1       &·d \text{ (Parallele),}
 \end{align*}
 wobei $d = \SI{1}{\centi\meter}$ die Kantenlänge eines Elementarwürfels ist.
 % NOTE: Natürlich wäre auch 1·\sqrt{2}·d denkbar.
@@ -77,6 +77,35 @@ sie beträgt \SI{12.02}{\percent}.
 
 
 \subsection{Untersuchung eines inhomogenen Würfels}
+Im Fall des inhomogenen Würfels
+% ($\not \exists \mu : \mu_i = \mu \forall i$)
+(d.h. die $\mu_i$ sind ex ante voneinander verschieden)
+ist das Gleichungssystem aus \ref{eqn:theorie:intensitaet3} nicht mehr trivial zu lösen.
+Vielmehr werden nun mehr Projektionen vermessen als es $\mu_i$ gibt;
+das Gleichungssystem ist überbestimmt,
+was die Unsicherheiten verkleinert.
+
+\def\A{\symbf{A}}
+\def\W{\symbf{W}}
+\def\T{\mathrm{T}}
+
+Da die Unsicherheiten von $\vec{J}$ bekannt sind,
+kann eine Gewichtungsmatrix
+\[ \symbf{W} = \operatorname{diag}_i (1 / \operatorname{Var}[J_i]) \]
+eingeführt werden,
+um die Resultate zu verbessern.
+$\vec{\mu}$ wird schließlich anhand der Methode der gewichteten kleinsten Quadrate aus
+\begin{equation*}
+    \vec{\mu} = (\A^\T \W \A)^{-1} \A^\T \W \vec{J}
+\end{equation*}
+bestimmt.
+Die resultierende Varianz der Absorptionskoeffizienten lautet dabei
+\begin{equation*}
+    \operatorname{Var}[\vec{\mu}] = (\A^\T \W \A)^{-1} \ .
+\end{equation*}
+% NOTE: ↑ Ist eine Matrix. 🙈
+
+
 
 \begin{table}[H]
     \centering
@@ -87,7 +116,7 @@ sie beträgt \SI{12.02}{\percent}.
 
 \begin{table}[H]
     \centering
-    \caption{Durch Lösen von XY bestimmte Werte für $\mu_i$ zu \textbf{Würfel 4}.}
+    \caption{Berechnete Werte Absorptionskoeffizienten $\mu_i$ zu \textbf{Würfel 4}.}
     \label{tab:auswertung:wuerfel4_mu}
     \expandableinput{build/tab/wuerfel4_mu.tex}
 \end{table}
