@@ -167,14 +167,14 @@ def visualize_indices(indices):
 
 \foreach \x in {1,...,\numcells}{
     \foreach \y in {1,...,\numcells}
-        \node[box, minimum size=\cellsize] at ({\x*\cellsize},{\y*\cellsize}){};
+        \node[box, minimum size=\cellsize] at ({\x*\cellsize},{-\y*\cellsize}){};
 }
 
 {FILL}
 
 \end{tikzpicture}'''
 
-    TEMPLATE_FILL = r'\node[box,minimum size=\cellsize,fill=red] at ({#1*\cellsize},{#2*\cellsize}){};'
+    TEMPLATE_FILL = r'\node[box,minimum size=\cellsize,fill=red] at ({#1*\cellsize},{-#2*\cellsize}){};'
 
     i_list = indices.split('/') if '/' in indices else indices.split('|')
     fill_positions = [i_to_coords(int(i)-1) for i in i_list]
