@@ -1,6 +1,7 @@
 import generate_table
 import numpy as np
 import pint
+import tools
 ureg = pint.UnitRegistry()
 
 # https://physics.nist.gov/PhysRefData/Xcom/html/xcom1.html
@@ -48,7 +49,14 @@ STOFFE = [
         'σ': ureg('8.221E-02 cm²/g'),
         'σ_Photo': ureg('6.784E-06 cm²/g'),
         'σ_Compton': ureg('8.221E-02 cm²/g'),
-    }
+    },
+    {
+        # „Insider-Informationen“ legen nahe, dass in den Würfeln Holz, nicht Delrin, enthalten ist.
+        # abw. Quelle: https://iopscience.iop.org/article/10.1088/1742-6596/662/1/012030/pdf
+        'name': 'Holz',
+        'ρ': tools.ufloat_from_list(np.array([0.340, 0.721, 0.975, 0.695, 0.859, 0.747, 1.186, 0.929, 0.818, 0.306])) * ureg('g/cm³'),
+        'σ': np.array([0.080, 0.081, 0.079, 0.081, 0.080, 0.080, 0.081, 0.081, 0.083, 0.082]).mean() * ureg('cm²/g'),
+    },
 ]
 
 
@@ -66,8 +74,8 @@ for stoff in STOFFE:
 name_list = [s['name'] for s in STOFFE]
 ρ_list = [s['ρ'] for s in STOFFE]
 σ_list = [s['σ'] for s in STOFFE]
-σ_Photo_list = [s['σ_Photo'] for s in STOFFE]
-σ_Compton_list = [s['σ_Compton'] for s in STOFFE]
+σ_Photo_list = [s.get('σ_Photo') for s in STOFFE]
+σ_Compton_list = [s.get('σ_Compton') for s in STOFFE]
 μ_list = [s['μ'] for s in STOFFE]
 
 generate_table.generate_table_pint(

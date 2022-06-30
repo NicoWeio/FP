@@ -21,6 +21,7 @@ d_Einzelwürfel = ureg('1 cm')
     'Fe': ureg('0.5704 / cm'),
     'Messing': ureg('0.6088 / cm'),
     'Delrin': ureg('0.1176 / cm'),
+    'Holz': ureg('0.0612 / cm'),
 }
 
 
