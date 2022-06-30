@@ -170,7 +170,16 @@ def get_closest_material(µ, µ_map):
     return diff_tuples[0][1]
 
 
-def visualize_indices(indices):
+def indices_string_to_list(indices_string):
+    """
+    Beispiel: '4|5|6' → [4, 5, 6]
+    """
+    str_list = indices_string.split('/') if '/' in indices_string else indices_string.split('|')
+    int_list = [int(s) for s in str_list]
+    return int_list
+
+
+def visualize_indices(indices_list):
     NUMCELLS = 3
 
     def i_to_coords(i):
@@ -199,8 +208,7 @@ def visualize_indices(indices):
 
     TEMPLATE_FILL = r'\node[box,minimum size=\cellsize,fill=red] at ({#1*\cellsize},{-#2*\cellsize}){};'
 
-    i_list = indices.split('/') if '/' in indices else indices.split('|')
-    fill_positions = [i_to_coords(int(i)-1) for i in i_list]
+    fill_positions = [i_to_coords(int(i)-1) for i in indices_list]
 
     fill = '\n'.join(TEMPLATE_FILL.replace('#1', str(x+1)).replace('#2', str(y+1)) for x, y in fill_positions)
 
@@ -216,7 +224,7 @@ print(f"I_0 = {tools.nominal_values(dat_Nullmessung['I']):.2f}")
 generate_table.generate_table_pint(
     f'build/tab/wuerfel1.tex',
     ('Projektion', None, dat_Nullmessung['indices']),
-    ('', None, [visualize_indices(i) for i in dat_Nullmessung['indices']]),
+    ('', None, [visualize_indices(indices_string_to_list(i)) for i in dat_Nullmessung['indices']]),
     ('I_0', ureg.second**(-1), dat_Nullmessung['I']),
     # kein µ hier; dafür brauchen wir ja gerade die Nullmessung
 )
@@ -229,7 +237,8 @@ WÜRFEL = [
     },
     {
         'num': 3,
-        'material': 'Delrin',  # Insider-Tipp: eigentlich Holz
+        # 'material': 'Delrin',  # Insider-Tipp: eigentlich Holz
+        'material': 'Holz',
     },
 ]
 
@@ -263,7 +272,7 @@ for würfel in WÜRFEL:
     generate_table.generate_table_pint(
         f'build/tab/wuerfel{würfel["num"]}.tex',
         ('Projektion', None, dat['indices']),
-        ('', None, [visualize_indices(i) for i in dat['indices']]),
+        ('', None, [visualize_indices(indices_string_to_list(i)) for i in dat['indices']]),
         ('I', ureg.second**(-1), dat['I']),
         (r'\mu', ureg.centimeter**(-1), µ_vec, 3),
     )
@@ -284,20 +293,35 @@ mat_closest_mess_vec = [get_closest_material(µ, µ_mess_dict) for µ in µ_vec]
 generate_table.generate_table_pint(
     f'build/tab/wuerfel4.tex',
     ('Projektion', None, dat['indices']),
-    ('', None, [visualize_indices(i) for i in dat['indices']]),
+    ('', None, [visualize_indices(indices_string_to_list(i)) for i in dat['indices']]),
     ('I', ureg.second**(-1), dat['I']),
     # kein µ hier; für einzelne Projektionen ist µ_vec unterbestimmt
 )
 
+ureg.define('percent = 1 / 100')
+
 generate_table.generate_table_pint(
     f'build/tab/wuerfel4_mu.tex',
-    ('Index', None, np.arange(len(µ_vec))+1),
+    ('Index $i$', None, np.arange(len(µ_vec))+1),
+    ('', None, [visualize_indices([i]) for i in np.arange(len(µ_vec))+1]),
     (r'\mu', ureg.centimeter**(-1), µ_vec, 3),
-    ('Mat (lit)', None, mat_closest_lit_vec),
-    ('Abw. (lit) / percent', ureg.dimensionless, tools.nominal_values(abs((µ_vec-µ_closest_lit_vec)/µ_closest_lit_vec)*100)),
-    ('Mat (mess)', None, mat_closest_mess_vec),
-    ('Abw. (mess) / percent', ureg.dimensionless, tools.nominal_values(abs((µ_vec-µ_closest_mess_vec)/µ_closest_mess_vec)*100)),
+    (r'\text{Material}', None, mat_closest_lit_vec),
+    (r'\text{Abweichung}', ureg.percent, tools.nominal_values(abs((µ_vec-µ_closest_lit_vec)/µ_closest_lit_vec))),
+    (r'\text{Material}', None, mat_closest_mess_vec),
+    (r'\text{Abweichung}', ureg.percent, tools.nominal_values(abs((µ_vec-µ_closest_mess_vec)/µ_closest_mess_vec))),
 )
+
+# FIXME: Während generate_table keine multicolumns unterstützt, mogeln wir das mal rein…
+MULTICOLUMN = r'''
+&&& \multicolumn{2}{c}{nächster Literaturwert} & \multicolumn{2}{c}{nächster Messwert} \\
+\cmidrule(lr){4-5} \cmidrule(lr){6-7}
+'''.strip()
+with open(f'build/tab/wuerfel4_mu.tex', 'r') as f:
+    lines = f.readlines()
+lines = lines[:2] + [MULTICOLUMN] + lines[2:]
+with open(f'build/tab/wuerfel4_mu.tex', 'w') as f:
+    f.writelines(lines)
+
 
 # Annahme: Der Würfel besteht aus nur zwei Materialien
 # → Bestimmte den jeweiligen durchschnittlichen Absorptionskoefizienten
@@ -309,6 +333,7 @@ generate_table.generate_table_pint(
 # print(f"µ_2 = {µ_vec_material_2:.3f}")
 
 
+# █ Visualisierung der µ in Würfel 4
 x, y = np.arange(3), np.arange(3)
 µ_plt = unp.nominal_values(µ_vec).reshape(3, 3)
 plt.pcolormesh(x, y, µ_plt)
