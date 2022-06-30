@@ -109,13 +109,36 @@ def analyze_homogen(dat, I_0_getter):
 
 
 def analyze_inhomogen(dat, I_0_getter):
+    """
+    Berechne die µ-Werte eines inhomogenen Würfels mittels der Methode der gewichteten kleinsten Quadrate.
+
+    Mehr Infos zum Verfahren: https://en.wikipedia.org/wiki/Weighted_least_squares
+    """
     A = A_from_indices(dat['indices'])
     # print(A.round(1))
 
     I_0 = I_0_getter(dat['indices'])
+
+    # alt ↓
+    # y = unp.log((I_0 / dat['I']).to('dimensionless').m)
+    # μ_vec = (np.linalg.inv(A.T @ A) @ A.T @ y)
+
+    # neu ↓
     y = unp.log((I_0 / dat['I']).to('dimensionless').m)
-    μ_vec = (np.linalg.inv(A.T @ A) @ A.T @ y)
-    μ_vec /= ureg.cm  # TODO: hübscher
+    y_var = unp.std_devs(y)**2
+    W = np.diag(1 / y_var)
+    μ_vec = (np.linalg.inv(A.T @ W @ A) @ A.T @ W @ y)
+    µ_vec /= ureg.cm
+
+    # ↓ Das ist erstmal noch kein Vektor, sondern eine Kovarianzmatrix! Wir betrachten die Diagonale.
+    µ_vec_var = np.diag(np.linalg.inv(A.T @ W @ A))
+    µ_vec_std = np.sqrt(µ_vec_var)
+
+    # ↓ smoke test
+    assert np.isclose(unp.std_devs(µ_vec), µ_vec_std, rtol=0.2).all()
+
+    # NOTE: Für den Augenblick sollen die Unsicherheiten, die UNumPy mitgeschleppt hat, genügen.
+
     return µ_vec
 
 
