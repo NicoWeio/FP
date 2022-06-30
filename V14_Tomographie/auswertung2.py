@@ -226,18 +226,11 @@ WÜRFEL = [
     {
         'num': 2,
         'material': 'Fe',  # Mampfzwerg, SanjoR
-        'homogen': True,
     },
     {
         'num': 3,
         'material': 'Delrin',  # Insider-Tipp: eigentlich Holz
-        'homogen': True,
     },
-    # {
-    #     'num': 4,
-    #     # 'material': [1, 2, 3, 4, 5, 6, 7, 8, 9],  # TODO
-    #     'homogen': False,
-    # },
 ]
 
 µ_mess_dict = {}
@@ -262,10 +255,10 @@ for würfel in WÜRFEL:
         "Abweichung µ vs. µ_lit (best fit):\n" +
         tools.fmt_compare_to_ref(µ, µ_LIT[mat])
     )
-    print(
-        f"Abweichung best-fit vs. µ_lit des tatsächlichen Materials ({würfel['material']}):\n" +
-        tools.fmt_compare_to_ref(µ, µ_LIT[würfel['material']])
-    )
+    # print(
+    #     f"Abweichung best-fit vs. µ_lit des tatsächlichen Materials ({würfel['material']}):\n" +
+    #     tools.fmt_compare_to_ref(µ, µ_LIT[würfel['material']])
+    # )
 
     generate_table.generate_table_pint(
         f'build/tab/wuerfel{würfel["num"]}.tex',
