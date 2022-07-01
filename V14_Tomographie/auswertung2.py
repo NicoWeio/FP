@@ -20,7 +20,9 @@ d_Einzelwürfel = ureg('1 cm')
     'Pb': ureg('1.1737 / cm'),
     'Fe': ureg('0.5704 / cm'),
     'Messing': ureg('0.6088 / cm'),
-    'Delrin': ureg('0.1176 / cm'),
+    # NOTE: „Insider-Informationen“ legen nahe, dass in den Würfeln Holz, nicht Delrin, enthalten ist.
+    # Wir interpretieren das so, dass wir Holz *statt* Delrin betrachten sollen.
+    # 'Delrin': ureg('0.1176 / cm'),
     'Holz': ureg('0.0612 / cm'),
 }
 
@@ -167,6 +169,14 @@ def get_closest_material(µ, µ_map):
     """
     diff_tuples = [(abs(µ - µ_map_single), name) for name, µ_map_single in µ_map.items()]
     diff_tuples.sort()
+    print("alle Abweichungen (abs):",
+          [f"{m}: {u.m.n:.1f}" for u, m in diff_tuples]
+          )
+    reldiff_tuples = [(abs(µ - µ_map_single)/µ_map_single, name) for name, µ_map_single in µ_map.items()]
+    reldiff_tuples.sort()
+    print("alle Abweichungen (rel):",
+          [f"{m}: {u.m.n:.1%}" for u, m in reldiff_tuples]
+          )
     return diff_tuples[0][1]
 
 
@@ -264,6 +274,10 @@ for würfel in WÜRFEL:
         "Abweichung µ vs. µ_lit (best fit):\n" +
         tools.fmt_compare_to_ref(µ, µ_LIT[mat])
     )
+    # print(
+    #     "Alle Abweichungen:",
+    #     [tuple(mat, (µ - µ_lit)/_lit) for mat, µ_lit in µ_LIT.values())]
+    # )
     # print(
     #     f"Abweichung best-fit vs. µ_lit des tatsächlichen Materials ({würfel['material']}):\n" +
     #     tools.fmt_compare_to_ref(µ, µ_LIT[würfel['material']])

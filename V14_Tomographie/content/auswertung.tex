@@ -58,7 +58,7 @@ In \autoref{tab:auswertung:wuerfel2} sind die zu \textbf{Würfel 2} gemessenen Z
 \end{table}
 Im Mittel ergibt sich $\mu = \SI{0.049 \pm 0.001}{\per\centi\meter}$
 bei einer relativen Unsicherheit von \SI{2.4}{\percent}.
-Die geringste Abweichung besteht damit zum Literaturwert von Holz (siehe \autoref{tab:theorie:literaturwerte});
+Die geringste Abweichung besteht damit zum Literaturwert von \textbf{Holz} (siehe \autoref{tab:theorie:literaturwerte});
 sie beträgt \SI{19.43}{\percent}.
 
 
@@ -72,7 +72,7 @@ In \autoref{tab:auswertung:wuerfel3} sind die zu \textbf{Würfel 3} gemessenen Z
 \end{table}
 Im Mittel ergibt sich $\mu = \SI{1.032 \pm 0.003}{\per\centi\meter}$
 bei einer relativen Unsicherheit von \SI{0.2}{\percent}.
-Die geringste Abweichung besteht damit zum Literaturwert von Blei (siehe \autoref{tab:theorie:literaturwerte});
+Die geringste Abweichung besteht damit zum Literaturwert von \textbf{Blei} (siehe \autoref{tab:theorie:literaturwerte});
 sie beträgt \SI{12.04}{\percent}.
 
 
@@ -100,12 +100,19 @@ $\vec{\mu}$ wird schließlich anhand der Methode der gewichteten kleinsten Quadr
     \vec{\mu} = (\A^\T \W \A)^{-1} \A^\T \W \vec{J}
 \end{equation*}
 bestimmt.
-Die resultierende Varianz der Absorptionskoeffizienten lautet dabei
+Die resultierende Kovarianz-Matrix der Absorptionskoeffizienten lautet dabei
 \begin{equation*}
-    \operatorname{Var}[\vec{\mu}] = (\A^\T \W \A)^{-1} \ .
+    \operatorname{Var}[\vec{\mu}] = (\A^\T \W \A)^{-1} \ ,
 \end{equation*}
-% NOTE: ↑ Ist eine Matrix. 🙈
+wobei nur die Diagonalelemente Beachtung finden.
 
+Mithilfe der Daten aus \autoref{tab:auswertung:wuerfel4}
+ergeben sich für die Absorptionskoeffizienten von \textbf{Würfel 4}
+die Werte in \autoref{tab:auswertung:wuerfel4_mu}.
+Dort sind auch die Literaturwerte und homogenen Würfel mit der geringsten absoluten Abweichung angegeben.
+% NOTE: Würden wir die nächsten µ_lit nach der geringsten RELATIVEN Abweichung wählen,
+% ergäbe sich ein anderes, chaotischeres Bild.
+Zusätzlich sind die gemessenen Absorptionskoeffizienten in \autoref{plt:auswertung:wuerfel4} visualisiert.
 
 
 \begin{table}[H]
@@ -117,7 +124,7 @@ Die resultierende Varianz der Absorptionskoeffizienten lautet dabei
 
 \begin{table}[H]
     \centering
-    \caption{Berechnete Werte Absorptionskoeffizienten $\mu_i$ zu \textbf{Würfel 4}.}
+    \caption{Berechnete Absorptionskoeffizienten $\mu_i$ und nächste Theorie-/Messwerte zu \textbf{Würfel 4}.}
     \label{tab:auswertung:wuerfel4_mu}
     \expandableinput{build/tab/wuerfel4_mu.tex}
 \end{table}
@@ -125,6 +132,6 @@ Die resultierende Varianz der Absorptionskoeffizienten lautet dabei
 \begin{figure}
     \centering
     \includegraphics[width=0.7\textwidth]{build/plt/wuerfel4.pdf}
-    \caption{Visualisierung der Absorptionskoeffizienten in der mittleren Ebene von \textbf{Würfel 4}.}
+    \caption{Visualisierung der Absorptionskoeffizienten von \textbf{Würfel 4}.}
     \label{plt:auswertung:wuerfel4}
 \end{figure}
