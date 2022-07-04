@@ -47,14 +47,18 @@ v_trans = ureg('2.26 km/s')  # Quelle: Versuchsanleitung
 
 # █ Messwerte einlesen
 dt, U, I, R_probe, R_zylinder = np.genfromtxt('dat/messung.txt', unpack=True)
-
-
+# ██ Unsicherheiten
+# Mit einem Workout-Timer ging das Signal immer pünktlich. Das Ablesen dauert aber einige Sekunden.
 dt = unp.uarray(dt, 5)
+# Anzeige in der Form "□□.□□ V" (Multimeter)
 U = unp.uarray(U, 0.005)
-I = unp.uarray(I, 0.000_05*1000)
-R_probe = unp.uarray(R_probe, 0.5/1000)
-R_zylinder = unp.uarray(R_zylinder, 0.5/1000)
-
+# Anzeige in der Form "□□□.□ mA"
+I = unp.uarray(I, 0.05)
+# Anzeige in der Form ".□□□□ kΩ"
+R_probe = unp.uarray(R_probe, 0.000_05)
+# Anzeige in der Form ".□□□□ kΩ"
+R_zylinder = unp.uarray(R_zylinder, 0.000_05)
+# ██ Einheiten
 dt *= ureg.s
 U *= ureg.V
 I *= ureg.mA
