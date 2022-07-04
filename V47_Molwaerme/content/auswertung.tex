@@ -1,6 +1,27 @@
 \section{Auswertung}
 \label{sec:auswertung}
 
+Zunächst wird eine Abschätzung der statistischen Unsicherheiten der Messwerte vorgenommen. \\
+Die Unsicherheit in den Zeitdifferenzen $\symup{\Delta}t$ wird aufgrund der für das Ablesen benötigten Zeit
+als $\sigma_{\symup{\Delta}t} = \SI{5}{\second}$ angenommen.
+Die übrigen Werte werden an Segment-Displays abgelesen,
+bei welchen die Hälfte des kleinsten darstellbaren Werts eine obere Grenze für den Rundungsfehler ist.
+Angaben zur Eichung liegen nicht vor.
+Für die verwendeten Messgeräte ergeben sich daher folgende Unsicherheiten:
+\begin{align*}
+    \sigma_{U} &= \SI{0.005}{\volt} \\
+    \sigma_{I} &= \SI{0.05}{\milli\ampere} \\
+    \sigma_{R_\text{Probe}} &= \SI{0.00005}{\kilo\ohm} = \SI{0.05}{\ohm} \\
+    \sigma_{R_\text{Zylinder}} &= \SI{0.00005}{\kilo\ohm} = \SI{0.05}{\ohm}
+\end{align*}
+
+Die Propagation der Unsicherheiten übernimmt in den folgenden Berechnungen die Python-Bibliothek \texttt{uncertainties}.
+Dieser liegt die \emph{Gauß'sche Fehlerfortpflanzung} zugrunde:
+\begin{equation*}
+    \symup{\Delta} y = \sum_{i=1}^n \left| \frac{\delta f(x_1, \ldots, x_n)}{\delta x_i} \right| \symup{\Delta} x_i \ .
+\end{equation*}
+
+
 \subsection{Temperaturabhängige Wärmekapazität}
 Um für jedes Messintervall die molare Wärmekapazität $c_p$ zu bestimmen,
 wird die über die Heizspule auf die Probe übertragene Wärmeenergie
