@@ -193,7 +193,7 @@ print(tools.fmt_compare_to_ref(θ_D, θ_D_lit, name='θ_D'))
 console.rule('d)')
 
 ω_D = np.cbrt(18 * np.pi**2 * ureg.N_A / V0 / (2/v_trans**3 + 1/v_long**3))
-print(f"{ω_D.to('Hz'):.2e}")
+print(f"ω_D = {ω_D.to('Hz'):.2e}")
 θ_D_2 = ureg.hbar * ω_D / ureg.k_B
 # print(f"{θ_D_2.to('K'):.2f}")
 print(tools.fmt_compare_to_ref(θ_D_2, θ_D, unit='K', name="Abweichung vom gemessenen θ_D"))
