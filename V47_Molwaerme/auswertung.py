@@ -6,6 +6,7 @@ import pint
 from rich.console import Console
 import scipy as sp
 import tools
+from uncertainties import unumpy as unp
 console = Console()
 ureg = pint.UnitRegistry()
 ureg.setup_matplotlib()
@@ -46,6 +47,14 @@ v_trans = ureg('2.26 km/s')  # Quelle: Versuchsanleitung
 
 # █ Messwerte einlesen
 dt, U, I, R_probe, R_zylinder = np.genfromtxt('dat/messung.txt', unpack=True)
+
+
+dt = unp.uarray(dt, 5)
+U = unp.uarray(U, 0.005)
+I = unp.uarray(I, 0.000_05*1000)
+R_probe = unp.uarray(R_probe, 0.5/1000)
+R_zylinder = unp.uarray(R_zylinder, 0.5/1000)
+
 dt *= ureg.s
 U *= ureg.V
 I *= ureg.mA
@@ -88,7 +97,8 @@ def calc_ɑ(T):
     Berechne den linearen Ausdehnungskoeffizienten `ɑ` aus der Temperatur `T`
     durch lineare Interpolation zwischen den in Tabelle 2 der Versuchsanleitung gegebenen Werten.
     """
-    return np.interp(T.to('K').m, tab_T_ɑ, tab_ɑ) * 1e-6 / ureg.delta_degC
+    T_ = tools.nominal_values(T.to('K')).m
+    return np.interp(T_, tab_T_ɑ, tab_ɑ) * 1e-6 / ureg.delta_degC
 
 
 # Berechne c_V mittels Korrekturformel
@@ -108,10 +118,11 @@ console.rule('c)')
 # Plotten von c_V
 plt.figure()
 with tools.plot_context(plt, 'K', 'J/(mol·K)', 'T', 'c_i') as plt2:  # c_{(\cdot)}
-    plt2.plot(T_avg, c_p, 'x', zorder=5, label='$c_p$')
-    plt2.plot(T_avg, c_V, 'x', zorder=5, label='$c_V$')
+    plt2.plot(T_avg, c_p, fmt='x', zorder=5, label='$c_p$')
+    plt2.plot(T_avg, c_V, fmt='x', zorder=5, label='$c_V$')
 
     plt.axvline(x=T_max, linestyle='--', color='grey', label=f'$T = {T_max.to("K"):Lx}$')
+    plt.axhline(y=(3*ureg.R).to('J/(mol·K)'), linestyle='-.', color='grey', label=f'$c = 3·R$')
 plt.grid()
 plt.legend(loc='lower right')
 plt.tight_layout()
@@ -165,7 +176,7 @@ tab_θ_D_div_T, tab_c_V = np.genfromtxt('dat/Tab_1.csv', delimiter=',', skip_hea
 tab_θ_D_div_T = np.flip(tab_θ_D_div_T)
 tab_c_V = np.flip(tab_c_V)
 
-θ_D_div_T = np.interp(c_V_avg.to('J/(mol·K)').m, tab_c_V, tab_θ_D_div_T)
+θ_D_div_T = np.interp(c_V_avg.to('J/(mol·K)').m.n, tab_c_V, tab_θ_D_div_T)
 θ_D_div_T *= ureg.dimensionless
 print(f"{θ_D_div_T=}")
 θ_D = θ_D_div_T * T_avg.to('K')

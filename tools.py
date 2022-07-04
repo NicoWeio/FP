@@ -235,7 +235,9 @@ def plot_context(plt, xunits, yunits, xname=None, yname=None):
 
             # Plotte die Daten mit `errorbar`, falls Unsicherheiten angegeben wurden, sonst mit `plot`.
             if (x_s is not None) or (y_s is not None):
-                return plt.errorbar(x_n, y_n, *more_args, xerr=x_s, yerr=y_s, **kwargs)
+                # return plt.errorbar(x_n, y_n, *more_args, xerr=x_s, yerr=y_s, **kwargs)
+                assert not more_args, 'more_args → Fehler, versuche stattdessen kwargs 🤷🏼‍♂️'
+                return plt.errorbar(x_n, y_n, xerr=x_s, yerr=y_s, **kwargs)
             else:
                 return plt.plot(x_n, y_n, *more_args, **kwargs)
 
