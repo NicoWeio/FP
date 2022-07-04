@@ -137,13 +137,13 @@ plt.savefig('build/plt/waermekapazitaeten.pdf')
 # → Tabelle
 generate_table.generate_table_pint(
     'build/tab/mess.tex',
-    (r'\symup{\Delta} t', ureg.s, dt, 0),
-    ('U', ureg.V, U),
-    ('I', ureg.mA, I),
-    (r'R_\text{Probe}', ureg.ohm, R_probe),
-    (r'T_\text{Probe}', ureg.kelvin, T_probe),
-    (r'R_\text{Zylinder}', ureg.ohm, R_zylinder),
-    (r'T_\text{Zylinder}', ureg.kelvin, T_zylinder),
+    (r'\symup{\Delta} t', ureg.s, tools.nominal_values(dt), 0),
+    ('U', ureg.V, tools.nominal_values(U)),
+    ('I', ureg.mA, tools.nominal_values(I)),
+    (r'R_\text{Probe}', ureg.ohm, tools.nominal_values(R_probe)),
+    (r'T_\text{Probe}', ureg.kelvin, tools.nominal_values(T_probe)),
+    (r'R_\text{Zylinder}', ureg.ohm, tools.nominal_values(R_zylinder)),
+    (r'T_\text{Zylinder}', ureg.kelvin, tools.nominal_values(T_zylinder)),
 )
 
 # print(
