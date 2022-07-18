@@ -126,10 +126,10 @@ def analyze_inhomogen(dat, I_0_getter):
     # μ_vec = (np.linalg.inv(A.T @ A) @ A.T @ y)
 
     # neu ↓
-    y = unp.log((I_0 / dat['I']).to('dimensionless').m)
-    y_var = unp.std_devs(y)**2
-    W = np.diag(1 / y_var)
-    μ_vec = (np.linalg.inv(A.T @ W @ A) @ A.T @ W @ y)
+    J = unp.log((I_0 / dat['I']).to('dimensionless').m)
+    J_var = unp.std_devs(J)**2
+    W = np.diag(1 / J_var)
+    μ_vec = (np.linalg.inv(A.T @ W @ A) @ A.T @ W @ J)
     µ_vec /= ureg.cm
 
     # ↓ Das ist erstmal noch kein Vektor, sondern eine Kovarianzmatrix! Wir betrachten die Diagonale.
