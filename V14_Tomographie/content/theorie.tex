@@ -115,8 +115,8 @@
     mit unterschiedlichen Absorptionskoeffizienten $\mu_i$
     ergibt sich für die Intensität
     \begin{align}
-        I &= I_0 \exp\Bigl(\sum_{i=1}^N \mu_i x_i \Bigr) \\
-        \iff \underbrace{ \ln\left(\frac{I}{I_0}\right) }_{J_k} &= \sum_{i=1}^N \mu_i x_i \ .
+        I &= I_0 \exp\left(-\sum_{i=1}^N \mu_i x_i \right) \\
+        \iff \underbrace{ \ln\left(\frac{I_0}{I}\right) }_{J_k} &= \sum_{i=1}^N \mu_i x_i \ .
         \label{eqn:theorie:intensitaet2}
     \end{align}
     Wird die Vermessung derselben $\mu_i$ mit anderen Schnittgeraden und somit anderen $x_i$ wiederholt,
