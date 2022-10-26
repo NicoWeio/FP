@@ -33,23 +33,27 @@ I = N / T
 # m, b = tools.linregress(Δt, I)
 # print(f"{(m,b)=}")
 
-Δt_peak = Δt[np.argmax(I)]
+widths, width_heights, left_ips, right_ips = sp.signal.peak_widths(tools.nominal_values(I), [np.argmax(I)])
 
-m_l, b_l = tools.linregress(Δt[Δt < Δt_peak], tools.nominal_values(I[Δt < Δt_peak]))
-m_r, b_r = tools.linregress(Δt[Δt > Δt_peak], tools.nominal_values(I[Δt > Δt_peak]))
+# Δt_peak = Δt[np.argmax(I)]
+
+# m_l, b_l = tools.linregress(Δt[Δt < Δt_peak], tools.nominal_values(I[Δt < Δt_peak]))
+# m_r, b_r = tools.linregress(Δt[Δt > Δt_peak], tools.nominal_values(I[Δt > Δt_peak]))
 
 # █ Plot
-# Δt_linspace = tools.linspace(*tools.bounds(Δt))
-Δt_linspace_l = tools.linspace(*tools.bounds(Δt[Δt < Δt_peak]))
-Δt_linspace_r = tools.linspace(*tools.bounds(Δt[Δt > Δt_peak]))
+Δt_linspace = tools.linspace(*tools.bounds(Δt))
+# Δt_linspace_l = tools.linspace(*tools.bounds(Δt[Δt < Δt_peak]))
+# Δt_linspace_r = tools.linspace(*tools.bounds(Δt[Δt > Δt_peak]))
 
 plt.figure()
 with tools.plot_context(plt, 'ns', '1/s', "Δt", "I") as plt2:  # TODO
     plt2.plot(Δt, I, fmt='x', zorder=5, label="Messwerte")
-    plt2.plot(Δt_linspace_l, tools.nominal_values(
-        m_l * Δt_linspace_l + b_l), label="Ausgleichsgerade links")
-    plt2.plot(Δt_linspace_r, tools.nominal_values(
-        m_r * Δt_linspace_r + b_r), label="Ausgleichsgerade rechts")
+    # plt2.plot(Δt_linspace_l, tools.nominal_values(
+    #     m_l * Δt_linspace_l + b_l), label="Ausgleichsgerade links")
+    # plt2.plot(Δt_linspace_r, tools.nominal_values(
+    #     m_r * Δt_linspace_r + b_r), label="Ausgleichsgerade rechts")
+
+    plt2.plot([Δt[int(left_ips[0])], Δt[int(right_ips[0])]], [width_heights[0]]*2, 'r--', lw=2)
 
 plt.grid()
 plt.legend()
