@@ -1,9 +1,9 @@
 all: build/main.pdf
 
 PLOTS = \
+	build/plt/1_koinzidenz.pdf \
 	build/plt/2_mca.pdf \
 	build/plt/3_lebensdauer.pdf \
-	# build/plt/1_koinzidenz.pdf \
 
 TABLES = \
 	build/tab/2_mca.tex \

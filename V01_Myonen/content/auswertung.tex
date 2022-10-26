@@ -2,7 +2,36 @@
 \label{sec:auswertung}
 
 \subsection{Justage}
+Um sicherzustellen,
+dass fertigungsbedingte Unterschiede in der Reaktionszeit der \acp{PMT}
+nicht zum ungewünschten Ausschluss von Ereignissen durch die Koinzidenz-Schaltung führen,
+% dass die leicht verschieden auslösenden \acp{PMT}
+% dass die Koinzidenz-Schaltung tatsächlich auslöst,
+% wenn beide \ac{PMT} ein Signal liefern,
+werden die Verzögerungsleitungen zwischen \acp{PMT} und Koinzidenz derart justiert,
+dass die Ereignisrate am Ausgang maximal ist.
+% Eine der Verzögerungsleitungen wird dabei auf Null belassen…
+Für jede Einstellung wird über eine Zeit von $\SI{0}{\second}$ gemessen.
 
+Die mit den Verzögerungsleitungen eingestellte Zeitverschiebung zwischen den \acp{PMT}
+wird durch die vorzeichenbehaftete Variable $t_\text{diff}$ beschrieben.
+
+In \autoref{fig:plt:1_koinzidenz} lässt sich ein deutliches Maximum der Ereignisrate
+bei einer Zeitdifferenz von $t_\text{diff} = \SI{0}{\nano\second}$ erkennen.
+
+\begin{table}
+    \centering
+    \caption{TODO.}
+    \label{tab:1_koinzidenz}
+    \expandableinput{build/tab/1_koinzidenz.tex}
+\end{table}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{build/plt/1_koinzidenz.pdf}
+    \caption{Messwerte und Fit zur Lebensdauer…}
+    \label{fig:plt:1_koinzidenz}
+\end{figure}
 
 \subsection{Kalibration}
 \begin{table}

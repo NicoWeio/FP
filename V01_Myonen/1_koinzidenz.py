@@ -6,6 +6,7 @@ import scipy as sp
 import uncertainties.unumpy as unp
 from rich.console import Console
 
+import generate_table
 import tools
 
 ureg = pint.UnitRegistry()
@@ -16,6 +17,9 @@ T = ureg('20 s')
 
 # █ Daten einlesen
 Δt, N = np.genfromtxt("1_koinzidenz.csv", unpack=True, delimiter=",", skip_header=1)
+sorting_i = Δt.argsort()
+Δt = Δt[sorting_i]
+N = N[sorting_i]
 
 # Poisson-Fehler
 N = unp.uarray(N, np.sqrt(N))
@@ -27,7 +31,11 @@ I = N / T
 
 
 # █ Tabelle generieren
-# TODO
+generate_table.generate_table_pint(
+    'build/tab/1_koinzidenz.tex',
+    (r't_\text{diff}', ureg.nanosecond, Δt),
+    ('I', ureg.second**-1, tools.nominal_values(I)), # TODO: make ufloats work with tables (again)
+)
 
 # █ lineare Regression
 # m, b = tools.linregress(Δt, I)
@@ -53,7 +61,7 @@ with tools.plot_context(plt, 'ns', '1/s', "Δt", "I") as plt2:  # TODO
     # plt2.plot(Δt_linspace_r, tools.nominal_values(
     #     m_r * Δt_linspace_r + b_r), label="Ausgleichsgerade rechts")
 
-    plt2.plot([Δt[int(left_ips[0])], Δt[int(right_ips[0])]], [width_heights[0]]*2, 'r--', lw=2)
+    # plt2.plot([Δt[int(left_ips[0])], Δt[int(right_ips[0])]], [width_heights[0]]*2, 'r--', lw=2)
 
 plt.grid()
 plt.legend()
