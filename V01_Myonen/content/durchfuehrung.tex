@@ -2,37 +2,38 @@
 \label{sec:durchfuehrung}
 
 In diesem Kapitel wird der verwendete Aufbau beschrieben,
-sowie die Einjustierung der jeweiligen Bauteile und die eigentliche Messung.
+sowie die Einjustierung der jeweiligen Bauteile und die eigentliche Messung. % TODO
+
 
 \subsection{Versuchsaufbau}
 
 Der hier verwendete Aufbau ist in \autoref{fig:versuchsaufbau} gezeigt.
 Der Detektor besteht aus einem zylinderförmigen Szintillatortank aus organischem Material \cite{kolanoskiwermes},
 welcher ein Volumen von etwa \SI{50}{\liter} hat.
-An beiden Enden des Detektors sind Photomultiplier (PMT) \cite{wrleo} angebracht,
-welche an eine Hochspannungsleitung angeschlossen sind.
-Mit Hilfe dieser wird das elektrische Signal,
-welches im PMT durch den Photoeffekt erzeugt wird,
+An beiden Enden des Detektors sind \acp{PMT} \cite{wrleo} angebracht,
+welche an Hochspannung angeschlossen sind.
+Mithilfe dieser wird das elektrische Signal,
+welches im \ac{PMT} durch den Photoeffekt erzeugt wird,
 verstärkt.
-Das jeweilige Signal der PMT wird über eine Verzögerungsleitung geleitet,
-welche eventuelle Zeitverzögerungen zwischen den PMTs ausgleichen soll,
-da die folgende Konzidenzschaltung nur für gleichzeitige Signale beider PMTs durchlässig ist.
+Das jeweilige Signal der \ac{PMT} wird über eine Verzögerungsleitung geleitet,
+welche eventuelle Zeitverzögerungen zwischen den \acp{PMT} ausgleichen soll,
+da die folgende Konzidenzschaltung nur für gleichzeitige Signale beider \acp{PMT} durchlässig ist.
 Um weitere Untergrundquellen zu unterdrücken,
 werden Diskriminatoren genutzt,
 die eine Energieschwelle festlegen und so Signale,
 die unterhalb dieser Schwelle liegen,
-herausfiltern. 
+herausfiltern.
 Passiert ein Signal die Koinzidenzschaltung,
-wird über ein AND-Gatter ein Impulszähler und die Zeitmessung gestartet.
-Über ein Verzögerungsleitung mit \SI{30}{\nano\second} wird außerdem ein Univibrator erreicht. 
+werden über ein \textit{AND}-Gatter ein Impulszähler ausgelöst und die Zeitmessung gestartet.
+Über eine Verzögerungsleitung mit \SI{30}{\nano\second} wird außerdem ein Univibrator erreicht.
 An diesem wird eine Suchzeit $T_\text{S}$ eingestellt,
 in der das Signal des Zerfalls erwartet wird.
 Wenn während dieser Suchzeit ein Signal gemessen wird,
-wird ein zweites AND-Gatter aktiviert,
-welches einen weiteren Impulszähler startet und gleichzeitig die Zeitmessung stoppt.
-Diese Messung wird über einen Time-Amplitude-Converter (TAC) \cite{wrleo} in eine Amplitude umgewandelt und mit Hilfe eines Multichannel-Analysers (MCA) \cite{wrleo} gespeichert,
-wobei die Signale anhand dieser Amplitude,
-beziehungsweise Messzeit in verschiedenen Kanälen gespeichert werden.
+wird ein zweites \textit{AND}-Gatter aktiviert,
+welches einen weiteren Impulszähler auslöst und gleichzeitig die Zeitmessung stoppt.
+Ein solches Paar von Signalen wird über einen \ac{TAC} \cite{wrleo} in eine Amplitude umgewandelt und mithilfe eines \ac{MCA} \cite{wrleo} gespeichert, % TODO: Genitiv-Form – wie?
+wobei die Signale anhand dieser Amplitude (beziehungsweise Messzeit)
+in verschiedenen Kanälen gespeichert werden.
 Für den Fall,
 dass während $T_\text{S}$ kein weiteres Signal gemessen wird,
 wird die Messung zurückgesetzt.
@@ -40,43 +41,47 @@ wird die Messung zurückgesetzt.
 \begin{figure}
     \centering
     \includegraphics[width=0.8\textwidth]{content/img/Abb_1.pdf}
-    \caption{Schematische Abbildung des verwendeten Versuchaufbaus.
-    Die im Szintillationsdetektor gemessenenen Signale werden in elektrische Impulse umgewandelt,
+    \caption{Schematische Abbildung des verwendeten Versuchsaufbaus.
+    Die im Szintillationsdetektor gemessenen Signale werden in elektrische Impulse umgewandelt,
     welche über logische Bauelemente eine Zeitmessung aktivieren \cite{versuchsanleitung}.}
     \label{fig:versuchsaufbau}
 \end{figure}
+
 
 \subsection{Kalibrierung der Schaltung}
 
 Vor Beginn der eigentlichen Messung müssen die Bauteile kalibriert werden.
 Dies umschließt die Verzögerungsleitungen hinter den Photomultipliern,
 sowie die Energieschwelle der Diskriminatoren und den Multichannel-Analyser.
-Um sicher zu stellen,
+Um sicherzustellen,
 dass beide Photomultiplier Signale senden,
 werden sie an ein Oszilloskop angeschlossen,
-wobei jeweils ein Peak erkennbar sein sollte. 
+wobei jeweils Peaks unterschiedlicher Höhe erkennbar sein sollten.
+
 
 \subsubsection{Schwellspannung der Diskriminatoren}
 
 Für die Einjustierung der Schwellspannung der Diskriminatoren werden die Photomultiplier an jeweils einen Diskriminator angeschlossen,
-welcher wiederum mit zwei Impulszählern verbunden sind.
+welche wiederum mit je einem Impulszähler verbunden sind.
 Es wird unter Variation der Schwellspannung die Anzahl der registrierten Impulse gemessen,
 wobei diese im Bereich von \SI[per-mode=reciprocal]{30}{\per\second} liegen sollte.
 Außerdem sollte das gemessene Signal eine Dauer von etwa $\symup{\Delta}t = \SI{10}{\nano\second}$ haben,
 was über das Oszilloskop kontrolliert wird.
 
+
 \subsubsection{Justierung der Verzögerungsleitungen}
 
-Um eventuelle Zeitverzögerungen der PMTs auszugleichen und sicher zu stellen,
+Um eventuelle Zeitverzögerungen der \acp{PMT} auszugleichen und sicherzustellen,
 dass die Signale die Koinzidenzschaltung gleichzeitig erreichen,
 wird die Impulsrate in Variation der Verzögerungszeit der beiden Verzögerungsleitungen gemessen.
 Für eine bestmögliche Einstellung sollte diese einen Wert von etwa \SI[per-mode=reciprocal]{20}{\per\second} aufweisen.
 Für die Justierung wird das über die Verzögerungsleitungen und Diskriminatoren geleitete Signal an die Koinzidenzschaltung gegeben,
 welche mit einem Impulszähler verbunden ist.
 Über einen Zeitraum von $\symup{\Delta}t = \SI{20}{\second}$ wird nun die Impulsrate unter Variation der Verzögerungszeit gemessen.
-Anschließend wird die Verzögerungszeit, 
+Anschließend wird die Verzögerungszeit,
 für die die gemessene Impulsrate der bestmöglichen am nächsten ist,
 fest eingestellt.
+
 
 \subsubsection{Kalibrierung der Multichannel-Analysers}
 
@@ -85,10 +90,10 @@ wobei am Univibrator eine Suchzeit von $T_\text{S} = \SI{10}{\micro\second}$ ein
 Anschließend wird ein Doppelimpulsgenerator angeschlossen.
 Dieser erzeugt mit einer Frequenz von \SI{1}{\kilo\hertz} zwei Impulse,
 welche das Start- und Stopp-Signal simulieren.
+% NOTE: Wir beginnen bei 0.3 µs, weil die Verzögerungsleitung vor dem Univibrator sonst ein Auslösen verhindert.
 In einem Zeitintervall von \SI{0.3}{\micro\second} bis \SI{9.9}{\micro\second} wird nun schrittweise die Zeit zwischen den Impulsen variiert.
-Der Multichannel-Analyser speichert die jeweilige Zeit zwischen den gemessenen Impulse in verschiedenen Kanälen,
-sodass für jede Zeitdauer der entsprechende Kanal notiert wird.
+Der Multichannel-Analyser speichert die Doppelimpulse abhängig von dieser Zeit in verschiedenen Kanälen.
 
-Abschließend wird der Doppelimpulsgenerator aus der Schaltung entfernt und die Photomultiplier wieder an die Impulszähler angeschlossen,
+Abschließend werden der Doppelimpulsgenerator aus der Schaltung entfernt und die Photomultiplier wieder an die Impulszähler angeschlossen,
 um die eigentliche Messung der Lebensdauer der Myonen zu starten.
 Diese sollte eine Dauer von mindestens \SI{20}{\hour} umfassen.

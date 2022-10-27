@@ -2,8 +2,9 @@
 \label{sec:theorie}
 
 Im Folgenden werden die theoretischen Grundlagen für diesen Versuch erläutert.
-Diese beinhalten die Eigenschaften des Myons, 
+Diese beinhalten die Eigenschaften des Myons
 sowie die Methoden zur Messung der Lebensdauer.
+
 
 \subsection{Eigenschaften des Myons}
 
@@ -12,38 +13,43 @@ Es hat eine Masse von $m = \SI{105.658}{\mega\eV}$ und eine mittlere Lebensdauer
 
 Die hier untersuchten Myonen stammen aus kosmischer Strahlung,
 wobei zwischen primärer und sekundärer komischer Strahlung unterschieden wird \cite{grupen}.
-Primäre kosmische Strahlung beinhaltet unter anderem Protonen, 
+Primäre kosmische Strahlung beinhaltet unter anderem Protonen,
 Photonen und Neutrinos,
 welche mit den Atomen in der Atmosphäre wechselwirken.
-Dadurch entstehen weitere Teilchen, 
+Dadurch entstehen weitere Teilchen,
 welche als sekundäre kosmische Strahlung bezeichnet werden.
 Myonen sind ein Teil der sekundären kosmischen Strahlung und werden hauptsächlich in den Prozessen
 \begin{align*}
-    \pi^{+} &\to \mu^{+} \nu_{\mu} & \pi^{-} &\to \mu^{-} \bar{\nu}_{\mu}
+    \pi^{+} &\to \mu^{+}     \nu_{\mu} &
+    \pi^{-} &\to \mu^{-} \bar\nu_{\mu}
 \end{align*}
 erzeugt,
-in einer Höhe von etwa \SI{10}{\kilo\meter} - \SI{15}{\kilo\meter}.
-Da das Myon eine endliche Lebensdauer besitzt und dementsprechend instabil ist, 
-zerfällt es in den Prozessen 
+in einer Höhe von etwa \SIrange{10}{15}{\kilo\meter}.
+% ↓ TODO: Klingt nach einer Tautologie. Vllt. „Da es leichtere Teilchen und erlaubte Zerfälle in diese gibt…“?
+Da das Myon eine endliche Lebensdauer besitzt und dementsprechend instabil ist,
+zerfällt es in den Prozessen
 \begin{align*}
-    \mu^{+} &\to e^{+} \nu_{e} \bar{\nu}_{\mu} & \mu^{-} &\to e^{-} \bar{\nu}_{e} \nu_{\mu}
+    \mu^{+} &\to e^{+}     \nu_{e} \bar\nu_{\mu} &
+    \mu^{-} &\to e^{-} \bar\nu_{e}     \nu_{\mu}
 \end{align*}
 in das leichtere Elektron.
 Die Lebensdauer der Myonen ist dabei über ihre Wahrscheinlichkeit zu zerfallen definiert.
-Es gilt
+% NOTE: Wie kann W hier eine Wahrscheinlichkeit sein? Für beliebig große (endliche) dt wäre dW doch >1?
+Dabei gilt
 \begin{equation*}
     \symup{d}W = \lambda \symup{d}t \ ,
 \end{equation*}
-wobei sich die gesamte Teilchenzahl um 
+wobei sich die gesamte Teilchenzahl um
 \begin{equation*}
     \symup{d}N = -N \symup{d}W
 \end{equation*}
 ändert.
 Daraus lässt sich das Zerfallsgesetz
-\begin{equation}
+\begin{equation*}
     N(t) = N_0 \text{exp}(- \lambda t)
-\end{equation}
+\end{equation*}
 mit der teilchenspezifischen mittleren Lebensdauer $\tau = \sfrac{1}{\lambda}$ ableiten.
+
 
 \subsection{Messung der Lebensdauer}
 
@@ -55,22 +61,21 @@ wird es absorbiert,
 wobei ein Lichtblitz mit einem charakteristischen Spektrum entsteht.
 Dieser Lichtblitz wird in ein elektrisches Signal umgewandelt,
 welches einen Zähler startet.
-Um die Lebensdauer der Myonen zu bestimmen, 
+Um die Lebensdauer der Myonen zu bestimmen,
 wird die Zeit zwischen zwei Signalen gemessen,
 wobei das erste Signal durch das Eindringen des Myons in den Detektor entsteht,
 während das zweite Signal auf das Elektron zurückzuführen ist,
 welches beim Zerfall des Myons entsteht.
-Die Signatur der Signale ist dabei für Elektronen und Myonen identisch.
+Die Signatur der Signale ist dabei für Elektronen und Myonen ununterscheidbar.
 Aus diesem Grund kann es passieren,
 dass die Messung zu früh gestoppt wird,
-wenn ein weiteres Myon während der Suchzeit $T_\text{S}$ in den Detektor eindringt und ein Signal auslöst. 
+wenn ein weiteres Myon während der Suchzeit $T_\text{S}$ in den Detektor eindringt und ein Signal auslöst.
 Die so entstehende Untergrundrate wird über die Gleichung
-\begin{equation}
-    U = f \cdot T_\text{s} \cdot \symup{e}^{f \cdot T_\text{s}} \cdot N_\text{Start} 
-\end{equation}
-mit $f = \frac{N_\text{Start}}{t_\text{Messung}}$ beschrieben, 
-wobei die Wahrscheinlichkeit, 
+\begin{equation*}
+    U = f \cdot T_\text{s} \cdot \symup{e}^{f \cdot T_\text{s}} \cdot N_\text{Start}
+\end{equation*}
+mit $f = {N_\text{Start}} / {t_\text{Messung}}$ beschrieben,
+wobei die Wahrscheinlichkeit,
 dass ein Myon während der Suchzeit in den Detektor tritt,
 poissonverteilt ist.
 Die Größen $N_\text{Start}$ und $t_\text{Messung}$ beschreiben die Anzahl der Start-Signale und den gesamten Zeitraum der Messung.
-
