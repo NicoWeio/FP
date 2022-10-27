@@ -19,7 +19,9 @@ print(f"Messzeit: {T.to('hours'):.2f} bzw. {T.to('days'):.2f}")
 
 T_search = ureg('10 µs')
 
-t_per_channel = ureg('0.0217 µs')  # TODO: Übernommen aus 2_mca.py
+# TODO: Übernommen aus 2_mca.py
+t_per_channel = ureg('0.0217 µs')
+t_offset = ureg('0.13913043478260878 µs')
 
 # █ Daten einlesen
 N = np.genfromtxt("3_lebensdauer.csv", unpack=True, skip_header=1)
@@ -45,7 +47,7 @@ N *= ureg.dimensionless
 # I = N / T
 
 # Kanal → Zeit
-t = channel * t_per_channel
+t = channel * t_per_channel + t_offset
 
 # █ Tabelle generieren
 print("Tabelle generieren…")
