@@ -32,27 +32,40 @@ N *= ureg.dimensionless
 t = channel * t_per_channel
 
 # █ Tabelle generieren
+print("Tabelle generieren…")
 generate_table.generate_table_pint(
     'build/tab/3_lebensdauer.tex',
     ('channel', ureg.dimensionless, channel, 0),
-    ('N', ureg.dimensionless, N, 0),
+    ('N', ureg.dimensionless, tools.nominal_values(N), 0),  # TODO: make ufloats work with tables (again)
 )
 
 
 # █ Fit
 
 
-def fit_fn(t, N_0, λ, U_2):
-    return N_0 * np.exp(-λ * t) + U_2
+def fit_fn(t, N_0, τ, U_2):
+    return N_0 * np.exp(-t / τ) + U_2
 
 
-# N_0, λ, U_2 = tools.pint_curve_fit(
-#     fit_fn, t, tools.nominal_values(N), (ureg.dimensionless, ureg('1/s'), ureg.dimensionless),
-#     p0=(tools.nominal_value(max(N)), 0.5E6 / ureg.s, ureg('0 dimensionless')),
-# )  # TODO: respect Poisson error
-# print(f"{(N_0, λ, U_2)=}")
+# Fake data
+# t = np.linspace(0, 10, 100) * ureg('µs')
+# N = fit_fn(t, 1E3, ureg('2 µs'), ureg('0 dimensionless')) + np.random.normal(0, 1, len(t))
+# N = unp.uarray(N, np.sqrt(N)) * ureg.dimensionless
 
-N_0, λ, U_2 = (tools.nominal_value(max(N)), 0.9E6 / ureg.s, ureg('0 dimensionless'))
+# fit_mask = t < ureg('4 µs')
+# fit_mask = (t < ureg('4 µs')) & (N > 10)
+fit_mask = N > 0
+
+N_0, τ, U_2 = tools.pint_curve_fit(
+    fit_fn,
+    # t, tools.nominal_values(N),
+    t[fit_mask], tools.nominal_values(N[fit_mask]),
+    (ureg.dimensionless, ureg.microsecond, ureg.dimensionless),
+    p0=(tools.nominal_value(max(N)), ureg('2 µs'), ureg('3 dimensionless')),
+)  # TODO: respect Poisson error
+print(f"{(N_0, τ, U_2)=}")
+
+# N_0, τ, U_2 = (tools.nominal_value(max(N)), ureg('2 µs'), ureg('3 dimensionless'))
 
 
 # █ Plot
@@ -61,10 +74,20 @@ t_linspace = tools.linspace(*tools.bounds(t))
 
 plt.figure()
 with tools.plot_context(plt, 'µs', 'dimensionless', "t", "N") as plt2:  # TODO
-    plt2.plot(t, N, fmt='x', zorder=5, label="Messwerte")
-    # plt2.plot(t_linspace, fit_fn(t_linspace, tools.nominal_value(N_0), tools.nominal_value(λ), tools.nominal_value(U_2)), label="Fit")
-    plt2.plot(t_linspace, fit_fn(t_linspace, N_0, λ, U_2), label="Fit")
-plt.yscale('symlog')
+    plt2.plot(t[fit_mask], N[fit_mask], fmt='x', zorder=5, label="Messwerte")
+    plt2.plot(t[~fit_mask], N[~fit_mask], 'xr', zorder=5, label="Messwerte (nicht berücksichtigt)")
+    plt2.plot(
+        t_linspace,
+        fit_fn(
+            t_linspace,
+            tools.nominal_value(N_0),
+            tools.nominal_value(τ),
+            tools.nominal_value(U_2)
+        ),
+        zorder=10,
+        label="Fit",
+    )
+# plt.yscale('log')
 plt.grid()
 plt.legend()
 plt.tight_layout()
