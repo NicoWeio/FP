@@ -3,7 +3,8 @@ all: build/main.pdf
 PLOTS = \
 	build/plt/1_koinzidenz.pdf \
 	build/plt/2_mca.pdf \
-	build/plt/3_lebensdauer.pdf \
+	build/plt/3_lebensdauer_linear.pdf \
+	build/plt/3_lebensdauer_log.pdf \
 
 TABLES = \
 	build/tab/1_koinzidenz.tex \
@@ -18,7 +19,7 @@ build/plt/1_koinzidenz.pdf build/tab/1_koinzidenz.tex &: 1_koinzidenz.py 1_koinz
 build/plt/2_mca.pdf build/tab/2_mca.tex &: 2_mca.py 2_mca.csv | build/plt build/tab
 	$(PYTHONENV) BUILD=true python 2_mca.py
 
-build/plt/3_lebensdauer.pdf build/tab/3_lebensdauer.tex &: 3_lebensdauer.py 3_lebensdauer.csv | build/plt build/tab
+build/plt/3_lebensdauer_linear.pdf build/plt/3_lebensdauer_log.pdf build/tab/3_lebensdauer.tex &: 3_lebensdauer.py 3_lebensdauer.csv | build/plt build/tab
 	$(PYTHONENV) BUILD=true python 3_lebensdauer.py
 
 build/main.pdf: ../header_common.tex main.tex $(wildcard content/*.tex) lit.bib $(PLOTS) $(TABLES) | build

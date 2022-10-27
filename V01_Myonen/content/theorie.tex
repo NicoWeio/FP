@@ -70,12 +70,13 @@ Die Signatur der Signale ist dabei für Elektronen und Myonen ununterscheidbar.
 Aus diesem Grund kann es passieren,
 dass die Messung zu früh gestoppt wird,
 wenn ein weiteres Myon während der Suchzeit $T_\text{S}$ in den Detektor eindringt und ein Signal auslöst.
-Die so entstehende Untergrundrate wird über die Gleichung
-\begin{equation*}
-    U = f \cdot T_\text{s} \cdot \symup{e}^{f \cdot T_\text{s}} \cdot N_\text{Start}
-\end{equation*}
-mit $f = {N_\text{Start}} / {t_\text{Messung}}$ beschrieben,
+Die so entstehende Zahl von Untergrundereignissen wird über die Gleichung
+\begin{equation}
+    U = I_\text{Start} \cdot T_\text{S} \cdot \exp(I_\text{Start} \cdot T_\text{S}) \cdot N_\text{Start}
+    \label{eqn:untergrund}
+\end{equation}
+mit $I_\text{Start} = N_\text{Start} / t_\text{Messung}$ beschrieben,
 wobei die Wahrscheinlichkeit,
-dass ein Myon während der Suchzeit in den Detektor tritt,
+dass eine gewisse Anzahl von Myonen während der Suchzeit in den Detektor tritt,
 poissonverteilt ist.
 Die Größen $N_\text{Start}$ und $t_\text{Messung}$ beschreiben die Anzahl der Start-Signale und den gesamten Zeitraum der Messung.

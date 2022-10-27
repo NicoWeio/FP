@@ -64,12 +64,7 @@ def fit_fn(t, N_0, τ, U_2):
 # fit_mask = (t < ureg('4 µs')) & (N > 10)
 fit_mask = N > 0
 
-# U_1 = I_start * T_search * unp.exp(I_start * T_search) * N_start
-# exp_term = ufloat(
-#     np.exp((I_start * T_search).to('dimensionless').n),
-#     np.exp((I_start * T_search).to('dimensionless').s)
-# )
-
+underground_mask = fit_mask.copy()
 U_1 = I_start * T_search * np.exp((I_start * T_search).to('dimensionless').n) * N_start
 U_1_per_channel = U_1 / sum(fit_mask)
 print(f"Untergrund 1: {U_1.to('dimensionless'):.2f}")
@@ -83,18 +78,21 @@ N_0, τ, U_2 = tools.pint_curve_fit(
     t[fit_mask], N[fit_mask],
     (ureg.dimensionless, ureg.microsecond, ureg.dimensionless),
     p0=(tools.nominal_value(max(N)), ureg('2 µs'), ureg('3 dimensionless')),
-)  # TODO: respect Poisson error
+)
 print(f"{(N_0, τ, U_2)=}")
 
 # N_0, τ, U_2 = (tools.nominal_value(max(N)), ureg('2 µs'), ureg('3 dimensionless'))
 
+τ_lit = ureg('2.1969811 µs')
+print(tools.fmt_compare_to_ref(τ, τ_lit))
+
 
 # █ Plot
-t_linspace = tools.linspace(*tools.bounds(t))
+t_linspace = tools.linspace(*tools.bounds(t), 1_000)
 
 for yscale in ['linear', 'log']:
     plt.figure()
-    with tools.plot_context(plt, 'µs', 'dimensionless', "t", "N") as plt2:  # TODO
+    with tools.plot_context(plt, 'µs', 'dimensionless', "t", "N") as plt2:
         plt2.plot(
             t[fit_mask], N[fit_mask], fmt='x', zorder=5,
             elinewidth=0.5, markeredgewidth=0.5,

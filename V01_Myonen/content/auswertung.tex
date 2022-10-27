@@ -2,7 +2,7 @@
 \label{sec:auswertung}
 
 \FloatBarrier
-\subsection{Justage der Koinzidenzapparatur}
+\subsection{Justage der Koinzidenzapparatur} \label{sec:auswertung:koinzidenz}
 Um sicherzustellen,
 dass fertigungsbedingte Unterschiede in der Reaktionszeit der \acp{PMT}
 nicht zum ungewünschten Ausschluss von Ereignissen durch die Koinzidenz-Schaltung führen,
@@ -39,7 +39,7 @@ Die zugehörige Halbwertsbreite beträgt \SI{10.1}{\nano\second}.
 
 
 \FloatBarrier
-\subsection{Kalibration des \acs{MCA}}
+\subsection{Kalibrierung des \acs{MCA}} \label{sec:auswertung:mca}
 Die vom \ac{TAC} ausgegebenen Amplituden werden im \ac{MCA} in \num{512} Kanälen histogrammiert.
 In Vorbereitung auf die eigentliche Messung muss daher
 der Zusammenhang zwischen Zeitdifferenz und Kanalnummer bestimmt werden.
@@ -58,7 +58,7 @@ die folgenden Parameter:
 
 \begin{table}
     \centering
-    \caption{TODO.}
+    \caption{Messwerte zur Kalibrierung des \ac{MCA}.}
     \label{tab:2_mca}
     \expandableinput{build/tab/2_mca.tex}
 \end{table}
@@ -66,33 +66,51 @@ die folgenden Parameter:
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{build/plt/2_mca.pdf}
-    \caption{Messwerte und Fit zur Lebensdauer…}
+    \caption{Messwerte und Fit zur Kalibrierung des \ac{MCA}.}
     \label{fig:plt:2_mca}
 \end{figure}
 
 
 \FloatBarrier
-\subsection{Theoretische Untergrundrate}
-TODO: Ohne die Zahl der Start- und Stop-Impulse sehe ich keine Chance, das zu berechnen.
-
-
-\FloatBarrier
-\subsection{Bestimmung der mittleren Lebensdauer}
-Im letzten Versuchsteil nimmt der \ac{MCA} über einen Zeitraum von \SI{159914}{\second} (\SI{44.4}{\hour}) Daten auf.
+\subsection{Bestimmung der mittleren Lebensdauer} \label{sec:auswertung:lebensdauer}
+Im letzten Versuchsteil nimmt der \ac{MCA} über einen Zeitraum von $t_\text{Messung} = \SI{159914}{\second}$ (\SI{44.4}{\hour}) Daten auf.
 Diese sind in \autoref{tab:3_lebensdauer} vollständig angegeben.
+
+
+Die Stopp-Ereigniszahl entspricht der Summe aller Kanäle des \ac{MCA},
+wohingegen die Start-Ereigniszahl aufgrund eines Fehlers Dritter aus den vorherigen Messungen abgeschätzt werden muss.
+Dazu wird auf das Maximum aus \autoref{sec:auswertung:koinzidenz} zurückgegriffen.
+\begin{align*}
+    % ↓ wegen der Umrechnung nicht ganzzahlig
+    N_\text{Start} &= \num{3166297.20 \pm 159914.00} \\
+    \text{beziehungsweise} \\
+    N_\text{Stopp} &= \num{7630.00 \pm 87.35} \; .
+\end{align*}
+% Suchzeit: 10 µs (siehe Durchführung)
+
+Daraus wird der durch mehrere Myonen im gleichen Suchfenster hervorgerufene Untergrund über die gesamte Messzeit
+gemäß \autoref{eqn:untergrund} zu
+\[
+    U_1 = \num{627.05 \pm 63.34}
+\]
+berechnet.
+Dieser wird gleichmäßig von allen Kanälen abgezogen.
+
 Um schließlich die mittlere Lebensdauer zu bestimmen,
-wird eine Exponentialfunktion mit einer zusätzlichen Variable für den Untergrund $U_2$ an die Daten angepasst:
+wird eine Exponentialfunktion mit einer zusätzlichen Variable für den übrigen Untergrund $U_2$ an die Daten angepasst:
 \begin{equation*}
     N(t) = N_0 \cdot \exp (-t / \tau) + U_2 \; .
 \end{equation*}
 Die leeren Kanäle an den Rändern des Spektrums (begründet durch die Einstellung des \ac{TAC}) werden dabei nicht berücksichtigt.
 Auch die leeren Kanäle innerhalb des Spektrums werden nicht berücksichtigt,
 damit der Fit nach der Unsicherheit je Kanal gewichtet werden kann.
+\autoref{fig:plt:3_lebensdauer_linear} und \autoref{fig:plt:3_lebensdauer_log} zeigen die Messwerte und die Fit-Funktion
+in linearer beziehungsweise logarithmischer Darstellung.
 Die gefundenen Parameter lauten:
 \begin{align*}
     N_0 &= \num{81.2 \pm 1.6} \\
     \tau &= \SI{1.91 \pm 0.04}{\micro\second} \\
-    U_2 &= \num{0.85 \pm 0.19} \; .
+    U_2 &= \num{-0.61 \pm 0.19} \; .
 \end{align*}
 % Die mittlere Lebensdauer $\tau$ ergibt sich daraus zu
 % \begin{equation*}
@@ -101,7 +119,14 @@ Die gefundenen Parameter lauten:
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{build/plt/3_lebensdauer.pdf}
+    \includegraphics[width=\textwidth]{build/plt/3_lebensdauer_linear.pdf}
     \caption{Messwerte und Fit zur Impulszahl je Kanal.}
-    \label{fig:plt:3_lebensdauer}
+    \label{fig:plt:3_lebensdauer_linear}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{build/plt/3_lebensdauer_log.pdf}
+    \caption{Messwerte und Fit zur Impulszahl je Kanal im logarithmischen Maßstab.}
+    \label{fig:plt:3_lebensdauer_log}
 \end{figure}

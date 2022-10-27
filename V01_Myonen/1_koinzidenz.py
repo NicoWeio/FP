@@ -41,15 +41,15 @@ generate_table.generate_table_pint(
 widths, width_heights, left_ips, right_ips = sp.signal.peak_widths(tools.nominal_values(I), [np.argmax(I)])
 
 print(f"Peak: {max(I)} bei {Δt[np.argmax(I)]}")
-print(f"Halbwertsbreite: {(width_heights[0] * I.units):.2f}")  # TODO…
+print(f"Halbwertsbreite: {(width_heights[0] * I.units):.2f}")  # TODO: könnte falsch sein…
 
 
 # █ Plot
 Δt_linspace = tools.linspace(*tools.bounds(Δt))
 
 plt.figure()
-with tools.plot_context(plt, 'ns', '1/s', r"\mathrm{\delta}t", "I") as plt2:  # TODO
-    plt2.plot(Δt, I, fmt='x--', zorder=5, label="Messwerte")
+with tools.plot_context(plt, 'ns', '1/s', r"t_\text{diff}", "I") as plt2:
+    plt2.plot(Δt, I, fmt='x', zorder=5, label="Messwerte")  # oder 'x--'?
 
     left_interp = left_ips[0]
     left_index = int(left_interp)

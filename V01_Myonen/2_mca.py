@@ -41,12 +41,12 @@ print(f"Abweichungen: {deviations}")
 # █ Plot
 channel_linspace = tools.linspace(*tools.bounds(channel))
 plt.figure()
-# with tools.plot_context(plt, 'dimensionless', 'µs', r'\text{Kanal}', r'\mathrm{\Delta} t') as plt2:
-# with tools.plot_context(plt, 'dimensionless', 'µs', r'Kanal', r't') as plt2: # TODO
-with tools.plot_context(plt, 'dimensionless', 'µs', r"\text{Kanal}", r"\mathrm{\Delta} t") as plt2:  # TODO
+with tools.plot_context(plt, 'dimensionless', 'µs', r"\text{Kanal}", r"\mathrm{\Delta} t") as plt2:
     plt2.plot(channel, t, 'x', zorder=5, label=r"Messwerte")
-    plt2.plot(channel_linspace, tools.nominal_values(
-        m*channel_linspace + b), label=r"Ausgleichsgerade")
+    plt2.plot(
+        channel_linspace, tools.nominal_values(m * channel_linspace + b),
+        label=r"Ausgleichsgerade",
+    )
 
 plt.grid()
 plt.legend()
