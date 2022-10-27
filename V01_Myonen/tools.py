@@ -87,7 +87,7 @@ def pint_curve_fit(fit_fn, x, y, param_units, bounds=None, p0=None):
         sigma = std_devs(y)
         y = nominal_values(y)
 
-    u_params = curve_fit(fit_fn, x.m, y.m, p0=p0, bounds=bounds)
+    u_params = curve_fit(fit_fn, x.m, y.m, p0=p0, bounds=bounds, sigma=sigma)
     pint_params = tuple(p * u for p, u in zip(u_params, param_units))
 
     try:

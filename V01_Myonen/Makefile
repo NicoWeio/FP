@@ -6,8 +6,9 @@ PLOTS = \
 	build/plt/3_lebensdauer.pdf \
 
 TABLES = \
+	build/tab/1_koinzidenz.tex \
 	build/tab/2_mca.tex \
-	build/tab/3_lebensdauer.tex \
+	# build/tab/3_lebensdauer.tex \
 
 PYTHONENV = MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: BUILD=true
 

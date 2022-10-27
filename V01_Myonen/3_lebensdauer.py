@@ -13,11 +13,13 @@ ureg = pint.UnitRegistry()
 ureg.setup_matplotlib()
 console = Console()
 
-T = ureg('100000 s')  # TODO
-t_per_channel = ureg('0.0217 µs')
+T = ureg('159914 s')
+print(f"Messzeit: {T.to('hours'):.2f} bzw. {T.to('days'):.2f}")
+
+t_per_channel = ureg('0.0217 µs')  # TODO: Übernommen aus 2_mca.py
 
 # █ Daten einlesen
-N = np.genfromtxt("3_lebensdauer.csv", unpack=True, skip_header=1)  # delimiter=",",
+N = np.genfromtxt("3_lebensdauer.csv", unpack=True, skip_header=1)
 channel = np.arange(len(N))
 
 # Poisson-Fehler
@@ -33,11 +35,11 @@ t = channel * t_per_channel
 
 # █ Tabelle generieren
 print("Tabelle generieren…")
-# generate_table.generate_table_pint(
-#     'build/tab/3_lebensdauer.tex',
-#     ('channel', ureg.dimensionless, channel, 0),
-#     ('N', ureg.dimensionless, tools.nominal_values(N), 0),  # TODO: make ufloats work with tables (again)
-# )
+generate_table.generate_table_pint(
+    'build/tab/3_lebensdauer.tex',
+    (r'\text{Kanal}', ureg.dimensionless, channel, 0),
+    ('N', ureg.dimensionless, tools.nominal_values(N), 0),  # TODO: make ufloats work with tables (again)
+)
 
 
 # █ Fit
@@ -68,8 +70,16 @@ t_linspace = tools.linspace(*tools.bounds(t))
 
 plt.figure()
 with tools.plot_context(plt, 'µs', 'dimensionless', "t", "N") as plt2:  # TODO
-    plt2.plot(t[fit_mask], N[fit_mask], fmt='x', zorder=5, label="Messwerte")
-    plt2.plot(t[~fit_mask], N[~fit_mask], 'xr', zorder=5, label="Messwerte (nicht berücksichtigt)")
+    plt2.plot(
+        t[fit_mask], N[fit_mask], fmt='x', zorder=5,
+        elinewidth=0.5, markeredgewidth=0.5,
+        label="Messwerte",
+    )
+    plt2.plot(
+        t[~fit_mask], N[~fit_mask], 'xr', zorder=5,
+        markeredgewidth=0.5,
+        label="Messwerte (nicht berücksichtigt)",
+    )
     plt2.plot(
         t_linspace,
         fit_fn(

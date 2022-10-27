@@ -26,25 +26,29 @@ channel *= ureg.dimensionless
 generate_table.generate_table_pint(
     'build/tab/2_mca.tex',
     ('t', ureg.microsecond, t),
-    ('channel', ureg.dimensionless, channel, 0),
+    (r"\text{Kanal}", ureg.dimensionless, channel, 0),
 )
 
 # █ lineare Regression
 m, b = tools.linregress(channel, t)
 print(f"{(m,b)=}")
 
-t_per_channel = m
+deviations = t - (m * channel + b)
+print(f"Abweichungen: {deviations}")
+
+# t_per_channel = m
 
 # █ Plot
 channel_linspace = tools.linspace(*tools.bounds(channel))
 plt.figure()
-# with tools.plot_context(plt, 'dimensionless', 'µs', r'\text{channel}', r'\mathrm{\Delta} t') as plt2:
-# with tools.plot_context(plt, 'dimensionless', 'µs', r'channel', r't') as plt2: # TODO
-with tools.plot_context(plt, 'dimensionless', 'µs', "channel", "t") as plt2:  # TODO
-    plt2.plot(channel, t, 'x', zorder=5, label=r"Messwerte zu $^{85}$Rb")
+# with tools.plot_context(plt, 'dimensionless', 'µs', r'\text{Kanal}', r'\mathrm{\Delta} t') as plt2:
+# with tools.plot_context(plt, 'dimensionless', 'µs', r'Kanal', r't') as plt2: # TODO
+with tools.plot_context(plt, 'dimensionless', 'µs', r"\text{Kanal}", r"\mathrm{\Delta} t") as plt2:  # TODO
+    plt2.plot(channel, t, 'x', zorder=5, label=r"Messwerte")
     plt2.plot(channel_linspace, tools.nominal_values(
-        m*channel_linspace + b), label=r"Ausgleichsgerade zu $^{85}$Rb")
+        m*channel_linspace + b), label=r"Ausgleichsgerade")
 
+plt.grid()
 plt.legend()
 plt.tight_layout()
 plt.savefig("build/plt/2_mca.pdf")
