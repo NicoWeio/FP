@@ -1,7 +1,8 @@
 \section{Auswertung}
 \label{sec:auswertung}
 
-\subsection{Justage}
+\FloatBarrier
+\subsection{Justage der Koinzidenzapparatur}
 Um sicherzustellen,
 dass fertigungsbedingte Unterschiede in der Reaktionszeit der \acp{PMT}
 nicht zum ungewünschten Ausschluss von Ereignissen durch die Koinzidenz-Schaltung führen,
@@ -11,17 +12,20 @@ nicht zum ungewünschten Ausschluss von Ereignissen durch die Koinzidenz-Schaltu
 werden die Verzögerungsleitungen zwischen \acp{PMT} und Koinzidenz derart justiert,
 dass die Ereignisrate am Ausgang maximal ist.
 % Eine der Verzögerungsleitungen wird dabei auf Null belassen…
-Für jede Einstellung wird über eine Zeit von $\SI{0}{\second}$ gemessen.
-
+Für jede Einstellung wird über eine Zeit von $\SI{60}{\second}$ gemessen.
+%
 Die mit den Verzögerungsleitungen eingestellte Zeitverschiebung zwischen den \acp{PMT}
 wird durch die vorzeichenbehaftete Variable $t_\text{diff}$ beschrieben.
 
-In \autoref{fig:plt:1_koinzidenz} lässt sich ein deutliches Maximum der Ereignisrate
-bei einer Zeitdifferenz von $t_\text{diff} = \SI{0}{\nano\second}$ erkennen.
+Die in Impulsraten umgerechneten Messwerte sind in \autoref{tab:1_koinzidenz} aufgelistet.
+In \autoref{fig:plt:1_koinzidenz} lässt sich das Maximum der Ereignisrate
+bei einer Zeitdifferenz von $t_\text{diff} = \SI{-1}{\nano\second}$ erkennen.
+Es beträgt \SI{19.8 \pm 1.0}{\per\second}.
+Die zugehörige Halbwertsbreite beträgt \SI{10.1}{\nano\second}.
 
 \begin{table}
     \centering
-    \caption{TODO.}
+    \caption{Messwerte zur Abhängigkeit der Ereignisrate von der Zeitverschiebung zwischen \acp{PMT}.}
     \label{tab:1_koinzidenz}
     \expandableinput{build/tab/1_koinzidenz.tex}
 \end{table}
@@ -29,11 +33,29 @@ bei einer Zeitdifferenz von $t_\text{diff} = \SI{0}{\nano\second}$ erkennen.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{build/plt/1_koinzidenz.pdf}
-    \caption{Messwerte und Fit zur Lebensdauer…}
+    \caption{Messwerte und Fit zur Abhängigkeit der Ereignisrate von der Zeitverschiebung zwischen \acp{PMT}.}
     \label{fig:plt:1_koinzidenz}
 \end{figure}
 
-\subsection{Kalibration}
+
+\FloatBarrier
+\subsection{Kalibration des \acs{MCA}}
+Die vom \ac{TAC} ausgegebenen Amplituden werden im \ac{MCA} in \num{512} Kanälen histogrammiert.
+In Vorbereitung auf die eigentliche Messung muss daher
+der Zusammenhang zwischen Zeitdifferenz und Kanalnummer bestimmt werden.
+Dafür wird für verschiedene am Doppelimpulsgenerator eingestellten Zeitdifferenzen
+die entsprechende Kanalnummer notiert.
+Hierbei zeigt sich ein perfekt linearer Zusammenhang.
+Die Messwerte sind in \autoref{tab:2_mca} aufgeführt und in \autoref{fig:plt:2_mca} dargestellt.
+
+Eine lineare Regressionsrechnung ergibt
+für eine Ausgleichsgerade $t(c) = a \cdot c + b$
+die folgenden Parameter:
+\begin{align*}
+    a &=\SI{0.0217 \pm 0}{\micro\second} \\
+    b &=\SI{0.1391 \pm 0}{\micro\second} \; .
+\end{align*}
+
 \begin{table}
     \centering
     \caption{TODO.}
@@ -49,23 +71,36 @@ bei einer Zeitdifferenz von $t_\text{diff} = \SI{0}{\nano\second}$ erkennen.
 \end{figure}
 
 
+\FloatBarrier
 \subsection{Theoretische Untergrundrate}
 
 
+\FloatBarrier
 \subsection{Bestimmung der mittleren Lebensdauer}
+Um schließlich aus den Daten des \ac{MCA}
+– aufgelistet in \autoref{tab:3_lebensdauer} –
+die mittlere Lebensdauer zu bestimmen,
+wird eine Exponentialfunktion mit einer zusätzlichen Variable für den Untergrund $U_2$ an die Daten angepasst:
+\begin{equation*}
+    N(t) = N_0 \cdot \exp (-t / \tau) + U_2 \; .
+\end{equation*}
+Die leeren Kanäle an den Rändern des Spektrums (begründet durch die Einstellung des \ac{TAC}) werden dabei nicht berücksichtigt.
+Auch die leeren Kanäle innerhalb des Spektrums werden nicht berücksichtigt,
+damit der Fit nach der Unsicherheit je Kanal gewichtet werden kann.
+Die gefundenen Parameter lauten:
+\begin{align*}
+    N_0 &= \num{81.2 \pm 1.6} \\
+    \tau &= \SI{1.91 \pm 0.04}{\micro\second} \\
+    U_2 &= \num{0.85 \pm 0.19} \; .
+\end{align*}
+% Die mittlere Lebensdauer $\tau$ ergibt sich daraus zu
+% \begin{equation*}
+%     \tau = \frac{1}{\lambda} = \SI{7.2 \pm 0.5}{\micro\second} \; .
+% \end{equation*}
+
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{build/plt/3_lebensdauer.pdf}
-    \caption{Messwerte und Fit zur Lebensdauer…}
+    \caption{Messwerte und Fit zur Impulszahl je Kanal.}
     \label{fig:plt:3_lebensdauer}
 \end{figure}
-
-
-\begin{longtable}{S S}
-\caption{My data}
-\label{tab:table3}\\
-1 & 2 \\
-\hline
-1 & 2 \\
-\expandableinput{build/tab/3_lebensdauer.tex}
-\end{longtable}
