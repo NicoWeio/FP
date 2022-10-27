@@ -33,11 +33,11 @@ t = channel * t_per_channel
 
 # █ Tabelle generieren
 print("Tabelle generieren…")
-generate_table.generate_table_pint(
-    'build/tab/3_lebensdauer.tex',
-    ('channel', ureg.dimensionless, channel, 0),
-    ('N', ureg.dimensionless, tools.nominal_values(N), 0),  # TODO: make ufloats work with tables (again)
-)
+# generate_table.generate_table_pint(
+#     'build/tab/3_lebensdauer.tex',
+#     ('channel', ureg.dimensionless, channel, 0),
+#     ('N', ureg.dimensionless, tools.nominal_values(N), 0),  # TODO: make ufloats work with tables (again)
+# )
 
 
 # █ Fit
@@ -47,19 +47,13 @@ def fit_fn(t, N_0, τ, U_2):
     return N_0 * np.exp(-t / τ) + U_2
 
 
-# Fake data
-# t = np.linspace(0, 10, 100) * ureg('µs')
-# N = fit_fn(t, 1E3, ureg('2 µs'), ureg('0 dimensionless')) + np.random.normal(0, 1, len(t))
-# N = unp.uarray(N, np.sqrt(N)) * ureg.dimensionless
-
-# fit_mask = t < ureg('4 µs')
 # fit_mask = (t < ureg('4 µs')) & (N > 10)
 fit_mask = N > 0
 
 N_0, τ, U_2 = tools.pint_curve_fit(
     fit_fn,
     # t, tools.nominal_values(N),
-    t[fit_mask], tools.nominal_values(N[fit_mask]),
+    t[fit_mask], N[fit_mask],
     (ureg.dimensionless, ureg.microsecond, ureg.dimensionless),
     p0=(tools.nominal_value(max(N)), ureg('2 µs'), ureg('3 dimensionless')),
 )  # TODO: respect Poisson error

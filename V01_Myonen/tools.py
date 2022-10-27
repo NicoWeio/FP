@@ -41,10 +41,12 @@ def curve_fit(fit_fn, x, y, **kwargs):
 
 def pint_curve_fit(fit_fn, x, y, param_units, bounds=None, p0=None):
     """Wrapper for `sp.optimize.curve_fit` that accepts pint units."""
-    # TODO: Abweichung mittels sigma-Parameter berücksichtigen
 
     assert all(isinstance(u, (pint.Unit, pint.Quantity))
                for u in param_units), "param_units must be a list of pint Units or Quantities"
+
+    assert isinstance(x, pint.Quantity), "x must be a pint Quantity (Hint: use tools.pintify)"
+    assert isinstance(y, pint.Quantity), "y must be a pint Quantity (Hint: use tools.pintify)"
 
     def convert(value, unit):
         # if value is None:
@@ -72,6 +74,18 @@ def pint_curve_fit(fit_fn, x, y, param_units, bounds=None, p0=None):
             convert(p, unit) if p is not None else None
             for p, unit in zip(p0, param_units, strict=True)
         ]
+
+    assert not isinstance(x.m[0], UFloat), "x must not have uncertainties"
+
+    sigma = None
+    if isinstance(y.m[0], UFloat):
+        print("🛈 y has uncertainties, using them as sigma")
+        # assert len(sigma) == len(y)
+        # assert isinstance(sigma, pint.Quantity), "sigma must be a pint.Quantity (Hint: use tools.pintify)"
+        # assert sigma.units == y.units, f"sigma must have the same units as y (got '{sigma.units}' instead of '{y.units}')"
+
+        sigma = std_devs(y)
+        y = nominal_values(y)
 
     u_params = curve_fit(fit_fn, x.m, y.m, p0=p0, bounds=bounds)
     pint_params = tuple(p * u for p, u in zip(u_params, param_units))
@@ -108,6 +122,7 @@ def uarray(nominal_values, std_devs):
 
 def nominal_values(list):
     assert isinstance(list, pint.Quantity)
+    assert not len(list) or isinstance(list[0].m, UFloat), "list entries must contain uncertainties"
     units = list.units
     return [e.m.n for e in list] * units
 
@@ -119,6 +134,8 @@ def std_devs(list):
 
 
 def nominal_value(v):
+    assert isinstance(v, pint.Quantity)
+    assert isinstance(v.m, UFloat), "value must contain uncertainty"
     units = v.units
     return v.m.n * units
 
