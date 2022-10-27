@@ -2,7 +2,7 @@
 \label{sec:durchfuehrung}
 
 In diesem Kapitel wird der verwendete Aufbau beschrieben,
-sowie die Einjustierung der jeweiligen Bauteile und die eigentliche Messung. % TODO
+sowie die Einjustierung der jeweiligen Bauteile und das Einrichten der eigentlichen Messung. 
 
 
 \subsection{Versuchsaufbau}
@@ -83,7 +83,7 @@ für die die gemessene Impulsrate der bestmöglichen am nächsten ist,
 fest eingestellt.
 
 
-\subsubsection{Kalibrierung der Multichannel-Analysers}
+\subsubsection{Kalibrierung des Multichannel-Analysers}
 
 Für den letzten Teil der Justage wird der restliche Teil der Schaltung aufgebaut,
 wobei am Univibrator eine Suchzeit von $T_\text{S} = \SI{10}{\micro\second}$ eingestellt wird.
@@ -92,6 +92,8 @@ Dieser erzeugt mit einer Frequenz von \SI{1}{\kilo\hertz} zwei Impulse,
 welche das Start- und Stopp-Signal simulieren.
 % NOTE: Wir beginnen bei 0.3 µs, weil die Verzögerungsleitung vor dem Univibrator sonst ein Auslösen verhindert.
 In einem Zeitintervall von \SI{0.3}{\micro\second} bis \SI{9.9}{\micro\second} wird nun schrittweise die Zeit zwischen den Impulsen variiert.
+Dieses Zeitintervall wird so gewählt, 
+dass die eingestellte Suchzeit $T_\text{S}$ nicht überschritten wird und die Verzögerungszeit vor dem Univibrator mit einbezogen wird.
 Der Multichannel-Analyser speichert die Doppelimpulse abhängig von dieser Zeit in verschiedenen Kanälen.
 
 Abschließend werden der Doppelimpulsgenerator aus der Schaltung entfernt und die Photomultiplier wieder an die Impulszähler angeschlossen,
