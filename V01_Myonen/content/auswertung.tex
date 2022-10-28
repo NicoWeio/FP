@@ -1,8 +1,8 @@
 \section{Auswertung}
 \label{sec:auswertung}
 
-\FloatBarrier
-\subsection{Justage der Koinzidenzapparatur} \label{sec:auswertung:koinzidenz}
+% NOTE: Titel übernommen aus der Durchführung
+\subsection{Justierung der Koinzidenzapparatur} \label{sec:auswertung:koinzidenz}
 Um sicherzustellen,
 dass fertigungsbedingte Unterschiede in der Reaktionszeit der \acp{PMT}
 nicht zum ungewünschten Ausschluss von Ereignissen durch die Koinzidenz-Schaltung führen,
@@ -25,7 +25,7 @@ Die zugehörige Halbwertsbreite beträgt \SI{10.1}{\nano\second}.
 
 \begin{table}
     \centering
-    \caption{Messwerte zur Abhängigkeit der Ereignisrate von der Zeitverschiebung zwischen \acp{PMT}.}
+    \caption{Messwerte zur Abhängigkeit der Ereignisrate von der Zeitverschiebung zwischen den \acp{PMT}.}
     \label{tab:1_koinzidenz}
     \expandableinput{build/tab/1_koinzidenz.tex}
 \end{table}
@@ -33,7 +33,7 @@ Die zugehörige Halbwertsbreite beträgt \SI{10.1}{\nano\second}.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{build/plt/1_koinzidenz.pdf}
-    \caption{Messwerte und Fit zur Abhängigkeit der Ereignisrate von der Zeitverschiebung zwischen \acp{PMT}.}
+    \caption{Messwerte und Fit zur Abhängigkeit der Ereignisrate von der Zeitverschiebung zwischen den \acp{PMT}.}
     \label{fig:plt:1_koinzidenz}
 \end{figure}
 
@@ -43,7 +43,7 @@ Die zugehörige Halbwertsbreite beträgt \SI{10.1}{\nano\second}.
 Die vom \ac{TAC} ausgegebenen Amplituden werden im \ac{MCA} in \num{512} Kanälen histogrammiert.
 In Vorbereitung auf die eigentliche Messung muss daher
 der Zusammenhang zwischen Zeitdifferenz und Kanalnummer bestimmt werden.
-Dafür wird für verschiedene am Doppelimpulsgenerator eingestellten Zeitdifferenzen
+Dafür wird für verschiedene (am Doppelimpulsgenerator eingestellte) Zeitdifferenzen
 die entsprechende Kanalnummer notiert.
 Hierbei zeigt sich ein perfekt linearer Zusammenhang.
 Die Messwerte sind in \autoref{tab:2_mca} aufgeführt und in \autoref{fig:plt:2_mca} dargestellt.
@@ -73,7 +73,7 @@ die folgenden Parameter:
 
 \FloatBarrier
 \subsection{Bestimmung der mittleren Lebensdauer} \label{sec:auswertung:lebensdauer}
-Im letzten Versuchsteil nimmt der \ac{MCA} über einen Zeitraum von $t_\text{Messung} = \SI{159914}{\second}$ (\SI{44.4}{\hour}) Daten auf.
+Im letzten Versuchsteil nimmt der \ac{MCA} über einen Zeitraum von $t_\text{Messung} = \SI{159914}{\second}$ ($= \SI{44.4}{\hour}$) Daten auf.
 Diese sind in \autoref{tab:3_lebensdauer} vollständig angegeben.
 
 
@@ -112,10 +112,7 @@ Die gefundenen Parameter lauten:
     \tau &= \SI{1.91 \pm 0.04}{\micro\second} \\
     U_2 &= \num{-0.61 \pm 0.19} \; .
 \end{align*}
-% Die mittlere Lebensdauer $\tau$ ergibt sich daraus zu
-% \begin{equation*}
-%     \tau = \frac{1}{\lambda} = \SI{7.2 \pm 0.5}{\micro\second} \; .
-% \end{equation*}
+Die mittlere Lebensdauer der Myonen wurde damit zu $\tau = \SI{1.91 \pm 0.04}{\micro\second}$ bestimmt.
 
 \begin{figure}
     \centering

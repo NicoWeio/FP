@@ -2,7 +2,7 @@
 \label{sec:durchfuehrung}
 
 In diesem Kapitel wird der verwendete Aufbau beschrieben,
-sowie die Einjustierung der jeweiligen Bauteile und das Einrichten der eigentlichen Messung. 
+sowie die Einjustierung der jeweiligen Bauteile und das Einrichten der eigentlichen Messung.
 
 
 \subsection{Versuchsaufbau}
@@ -11,7 +11,7 @@ Der hier verwendete Aufbau ist in \autoref{fig:versuchsaufbau} gezeigt.
 Der Detektor besteht aus einem zylinderförmigen Szintillatortank aus organischem Material \cite{kolanoskiwermes},
 welcher ein Volumen von etwa \SI{50}{\liter} hat.
 An beiden Enden des Detektors sind \acp{PMT} \cite{wrleo} angebracht,
-welche an Hochspannung angeschlossen sind.
+welche an eine Hochspannung angeschlossen sind.
 Mithilfe dieser wird das elektrische Signal,
 welches im \ac{PMT} durch den Photoeffekt erzeugt wird,
 verstärkt.
@@ -69,7 +69,7 @@ Außerdem sollte das gemessene Signal eine Dauer von etwa $\symup{\Delta}t = \SI
 was über das Oszilloskop kontrolliert wird.
 
 
-\subsubsection{Justierung der Verzögerungsleitungen}
+\subsubsection{Justierung der Koinzidenzapparatur}
 
 Um eventuelle Zeitverzögerungen der \acp{PMT} auszugleichen und sicherzustellen,
 dass die Signale die Koinzidenzschaltung gleichzeitig erreichen,
@@ -85,14 +85,14 @@ fest eingestellt.
 
 \subsubsection{Kalibrierung des Multichannel-Analysers}
 
-Für den letzten Teil der Justage wird der restliche Teil der Schaltung aufgebaut,
+Für den letzten Teil der Vorbereitungen wird der restliche Teil der Schaltung aufgebaut,
 wobei am Univibrator eine Suchzeit von $T_\text{S} = \SI{10}{\micro\second}$ eingestellt wird.
 Anschließend wird ein Doppelimpulsgenerator angeschlossen.
 Dieser erzeugt mit einer Frequenz von \SI{1}{\kilo\hertz} zwei Impulse,
 welche das Start- und Stopp-Signal simulieren.
 % NOTE: Wir beginnen bei 0.3 µs, weil die Verzögerungsleitung vor dem Univibrator sonst ein Auslösen verhindert.
 In einem Zeitintervall von \SI{0.3}{\micro\second} bis \SI{9.9}{\micro\second} wird nun schrittweise die Zeit zwischen den Impulsen variiert.
-Dieses Zeitintervall wird so gewählt, 
+Dieses Zeitintervall wird so gewählt,
 dass die eingestellte Suchzeit $T_\text{S}$ nicht überschritten wird und die Verzögerungszeit vor dem Univibrator mit einbezogen wird.
 Der Multichannel-Analyser speichert die Doppelimpulse abhängig von dieser Zeit in verschiedenen Kanälen.
 
