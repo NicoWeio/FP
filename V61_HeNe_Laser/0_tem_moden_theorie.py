@@ -37,7 +37,7 @@ TEMs = [
 
 
 for l, m in TEMs:
-    # Bilder ohne Rand zu exportieren, ist nicht gerade trivial: https://stackoverflow.com/a/8218887
+    # Bilder ohne Rand zu exportieren ist nicht gerade trivial: https://stackoverflow.com/a/8218887
     fig = plt.figure(frameon=False)
     fig.set_size_inches(1, 1)
     ax = plt.Axes(fig, [0., 0., 1., 1.])
