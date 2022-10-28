@@ -63,16 +63,22 @@ def fit_fn(t, N_0, τ, U_2):
     return N_0 * np.exp(-t / τ) + U_2
 
 
+first_nonzero = np.argmax(N)
+last_nonzero = 448  # TODO: automatisieren
+num_channels_support = last_nonzero - first_nonzero + 1
+print(f"Angesprochener Kanal-Bereich: {first_nonzero} bis {last_nonzero} ({last_nonzero - first_nonzero} Kanäle)")
+
 # fit_mask = (t < ureg('4 µs')) & (N > 10)
 fit_mask = N > 0
 
 underground_mask = fit_mask.copy()
-U_1 = I_start * T_search * np.exp((I_start * T_search).to('dimensionless').n) * N_start
-U_1_per_channel = U_1 / sum(fit_mask)
+U_1_all_channels = I_start * T_search * np.exp((I_start * T_search).to('dimensionless').n) * N_start
+U_1 = U_1_all_channels / num_channels_support
 print(f"Untergrund 1: {U_1.to('dimensionless'):.2f}")
-print(f"→ pro Kanal: {U_1_per_channel.to('dimensionless'):.2f}")
-# Den Untergrund gleichmäßig von allen Nicht-Null-Kanälen abziehen (!)
-N[fit_mask] -= U_1_per_channel
+print(f"→ für alle Kanäle: {U_1_all_channels.to('dimensionless'):.2f}")
+
+# VARIANT: Den Untergrund gleichmäßig von allen Nicht-Null-Kanälen abziehen (!)
+# N[fit_mask] -= U_1_per_channel
 
 N_0, τ, U_2 = tools.pint_curve_fit(
     fit_fn,
@@ -82,6 +88,8 @@ N_0, τ, U_2 = tools.pint_curve_fit(
     p0=(tools.nominal_value(max(N)), ureg('2 µs'), ureg('3 dimensionless')),
 )
 print(f"{(N_0, τ, U_2)=}")
+print(f"Untergrund 2: {U_2:.2f}")
+print(f"→ für alle Kanäle: {(U_2 * num_channels_support).to('dimensionless'):.2f}")
 
 # N_0, τ, U_2 = (tools.nominal_value(max(N)), ureg('2 µs'), ureg('3 dimensionless'))
 

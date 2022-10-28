@@ -90,14 +90,13 @@ Dazu wird auf das Maximum aus \autoref{sec:auswertung:koinzidenz} zurückgegriff
 
 Daraus wird der durch mehrere Myonen im gleichen Suchfenster hervorgerufene Untergrund über die gesamte Messzeit
 gemäß \autoref{eqn:untergrund} zu
-\[
-    U_1 = \num{627.05 \pm 63.34}
-\]
+$U_\text{ges} = \num{627.05 \pm 63.34}$ insgesamt
+beziehungsweise
+$U_1 = \num{1.41 \pm 0.14}$ pro Kanal
 bestimmt.
-Dieser wird gleichmäßig von allen Kanälen abgezogen.
 
-Um schließlich die mittlere Lebensdauer zu bestimmen,
-wird eine Exponentialfunktion mit einer zusätzlichen Variable für den übrigen Untergrund $U_2$ an die Daten angepasst:
+Um schließlich die mittlere Lebensdauer zu erhalten,
+wird eine Exponentialfunktion mit einer zusätzlichen Variable für den übrigen (von $t$ unabhängigen) Untergrund $U_2$ an die Daten angepasst:
 \begin{equation*}
     N(t) = N_0 \cdot \exp (-t / \tau) + U_2 \; .
 \end{equation*}
@@ -110,9 +109,11 @@ Die gefundenen Parameter lauten:
 \begin{align*}
     N_0 &= \num{87.3 \pm 1.9} \\
     \tau &= \SI{1.91 \pm 0.04}{\micro\second} \\
-    U_2 &= \num{-0.61 \pm 0.19} \; .
+    U_2 &= \num{0.85 \pm 0.19} \; .
 \end{align*}
 Die mittlere Lebensdauer der Myonen wurde damit zu $\tau = \SI{1.91 \pm 0.04}{\micro\second}$ bestimmt.
+$U_2$ liefert eine alternative Schätzung für den gesamten Untergrund, bezogen auf einen einzelnen Kanal;
+$U_1$ findet im Fit keine Verwendung.
 
 \begin{figure}
     \centering
