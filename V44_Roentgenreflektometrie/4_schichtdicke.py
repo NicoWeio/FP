@@ -13,15 +13,15 @@ ureg = pint.UnitRegistry()
 ureg.setup_matplotlib()
 console = Console()
 
-T = ureg('1 s')
+T = ureg('5 s')
 
 # █ Daten einlesen
-z, N = np.genfromtxt("data/2_zscan1.txt", unpack=True)  # skip_header=1
+α, N = np.genfromtxt("data/4_reflektivitätsscan.txt", unpack=True)  # skip_header=1
 
 # Poisson-Fehler
 N = unp.uarray(N, np.sqrt(N))
 
-z *= ureg.mm
+α *= ureg.degree
 N *= ureg.dimensionless
 
 I = N / T
@@ -34,23 +34,21 @@ I = N / T
 #     ('I', ureg.second**-1, tools.nominal_values(I)),  # TODO: make ufloats work with tables (again)
 # )
 
-
-# TODO: Auto-detect?
-flank_bound_indices = (17, 23)
-flank_bounds = tuple(z[list(flank_bound_indices)])
+λ = ureg('1,54 Å')  # ? (@Mampfzwerg)
+q = 4 * np.pi / λ * np.sin(np.pi / 180 * α)  # TODO: Blind übernommen aus @Mampfzwerg
 
 
 # █ Plot
-# z_linspace = tools.linspace(*tools.bounds(z), 1000)
+# α_linspace = tools.linspace(*tools.bounds(α), 1000)
 
 plt.figure()
-with tools.plot_context(plt, 'mm', '1/s', "z", "I") as plt2:
-    plt2.plot(z, I, fmt='x', zorder=5, label="Messwerte")  # oder 'x--'?
+# TODO: Doppelachse mit Intensität und Reflektivität?
+with tools.plot_context(plt, '1/m', '1/s', "q", "I") as plt2:
+    plt2.plot(q, I, fmt='x', zorder=5, label="Messwerte")  # oder 'x--'?
 
-    plt.axvspan(*flank_bounds, color='C1', alpha=0.5, zorder=0, label="Strahlbreite")
-
+plt.yscale('log')
 plt.grid()
 plt.legend()
 plt.tight_layout()
-# plt.savefig("build/plt/2_zscan1.pdf")
+# plt.savefig("build/plt/4_reflektivitätsscan.pdf")
 plt.show()
