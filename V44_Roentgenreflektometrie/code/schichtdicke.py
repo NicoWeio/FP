@@ -35,10 +35,8 @@ I = N / T
 # █ Schichtdicke bestimmen (Peaks finden)
 
 # Versuchsgrößen
-l = 1.54e-10  # Wellenlänge
-ai = np.pi/180 * np.arange(6e-2, 1.505, 5e-4)  # Winkel -> x−Werte der Theoriekurve
-k = 2*np.pi / l  # Wellenvektor
-qz = 2*k * np.sin(ai)  # Wellenvektorübertrag -> y-Werte der Theoriekurve
+k = 2*np.pi / λ  # Wellenvektor
+qz = 2*k * np.sin(α)  # Wellenvektorübertrag -> y-Werte der Theoriekurve
 
 # Parameter des Parratt-Algorithmus
 
@@ -51,11 +49,11 @@ n2 = 1 - d1  # Polysterol
 n3 = 1 - d2  # Silizium
 
 # Rauigkeit
-s1 = 7.9e-10  # Polysterol -> Amplitude verkleinert bei hinteren Oszillationen
-s2 = 5.7e-10  # Silizium -> Senkung des Kurvenendes und  Amplitudenverkleinerung der Oszillationen
+s1 = 7.9e-10 * ureg.m  # Polysterol -> Amplitude verkleinert bei hinteren Oszillationen
+s2 = 5.7e-10 * ureg.m  # Silizium -> Senkung des Kurvenendes und  Amplitudenverkleinerung der Oszillationen
 
 # Schichtdicke
-z = 855e-10  # verkleinert Oszillationswellenlänge
+z = 855e-10 * ureg.m  # verkleinert Oszillationswellenlänge
 
 # ----------------------------
 
@@ -65,7 +63,7 @@ peaks, peak_props = sp.signal.find_peaks(tools.nominal_values(I).to('1/s').m, he
 Δα_mean = np.mean(np.diff(α[peaks].to('rad').m)) * ureg.rad
 Δq_mean = np.mean(np.diff(q[peaks].to('1/m').m)) * ureg['1/m']
 # d_estim_a = 2*np.pi / Δq_mean # anderes Resultat als bei @Mampfzwerg
-d_estim_b = λ / (2 * Δα_mean) # korrekte Daten bei @Mampfzwerg
+d_estim_b = λ / (2 * Δα_mean)  # korrekte Daten bei @Mampfzwerg
 print(f"Δα_mean = {Δα_mean}")
 print(f"Δq_mean = {Δq_mean}")
 # print(f"d_estim_a = {d_estim_a.to('m')}")
@@ -87,17 +85,15 @@ def parratt2(z, ai):
     x1 = (r12 + x2) / (1 + r12 * x2)
     par = np.abs(x1)**2
     # Strecke vor Beginn der Oszillationen auf 1 setzen
-    for i in np.arange(np.size(par)):
-        if (i <= 296):  # 296 manuell angepasst
-            par[i] = 1
-            r13[i] = 1
-        else:
-            pass
+
+    cutoff_i = 100  # TODO: anpassen (@Mampfzwerg: 296)
+    par[:cutoff_i] = 1
+    r13[:cutoff_i] = 1
     return par, r13
 
 
 # z = 855e-10  # Parameter: Schichtdicke | verkleinert Oszillationswellenlänge
-z = d_estim_b.to('m').m
+z = d_estim_b
 par, r13 = parratt2(z, α.to('rad').m)
 
 # █ Plot
