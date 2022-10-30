@@ -6,65 +6,43 @@ import scipy as sp
 # import generate_table
 import tools
 
-# ----------------------------
+ureg = pint.UnitRegistry()
+ureg.setup_matplotlib()
+console = Console()
 
-# Versuchsgrößen
-l = 1.54e-10  # Wellenlänge
-ai = np.pi/180 * np.arange(6e-2, 1.505, 5e-4)  # Winkel -> x−Werte der Theoriekurve
-k = 2*np.pi / l  # Wellenvektor
-qz = 2*k * np.sin(ai)  # Wellenvektorübertrag -> y-Werte der Theoriekurve
+λ = ureg('1.54 Å')  # ? (@Mampfzwerg)
+T = ureg('5 s')
 
-# Parameter des Parratt-Algorithmus
+# █ Daten einlesen
+α, N = np.genfromtxt("data/4_reflektivitätsscan.txt", unpack=True)  # skip_header=1
 
-# Brechungsindizes
-d1 = 0.7e-6  # Polysterol -> Amplitude vergrößert + negativer Offset
-d2 = 6.7e-6  # Silizium -> Amplitude vergkleinert + positiver Offset
-#
-n1 = 1  # Luft
-n2 = 1 - d1  # Polysterol
-n3 = 1 - d2  # Silizium
+# Poisson-Fehler
+N = unp.uarray(N, np.sqrt(N))
 
-# Rauigkeit
-s1 = 7.9e-10  # Polysterol -> Amplitude verkleinert bei hinteren Oszillationen
-s2 = 5.7e-10  # Silizium -> Senkung des Kurvenendes und  Amplitudenverkleinerung der Oszillationen
+α *= ureg.degree
+N *= ureg.dimensionless
 
-# Schichtdicke
-z = 855e-10  # verkleinert Oszillationswellenlänge
+I = N / T
 
 
-def parratt(z):
-    # TODO: Warum keine Rekursion? Weil wir nur zwei Schichten haben?
+# █ Tabelle generieren
+# generate_table.generate_table_pint(
+#     'build/tab/1_koinzidenz.tex',
+#     (r't_\text{diff}', ureg.degree, Δt),
+#     ('I', ureg.second**-1, tools.nominal_values(I)),  # TODO: make ufloats work with tables (again)
+# )
 
-    kz1 = k * np.sqrt(np.abs(n1**2 - np.cos(ai)**2))
-    kz2 = k * np.sqrt(np.abs(n2**2 - np.cos(ai)**2))
-    kz3 = k * np.sqrt(np.abs(n3**2 - np.cos(ai)**2))
-    #
-    r12 = (kz1 - kz2) / (kz1 + kz2) * np.exp(-2 * kz1 * kz2 * s1**2)
-    r23 = (kz2 - kz3) / (kz2 + kz3) * np.exp(-2 * kz2 * kz3 * s2**2)
-    #
-    x2 = np.exp(0 - (kz2 * z) * 2j) * r23
-    x1 = (r12 + x2) / (1 + r12 * x2)
-    par = np.abs(x1)**2
-    # Strecke vor Beginn der Oszillationen auf 1 setzen
-    for i in np.arange(np.size(par)):
-        if (i <= 296):  # 296 manuell angepasst
-            par[i] = 1
-        else:
-            pass
-    return par
+q = 4 * np.pi / λ * np.sin(np.pi / 180 * α)  # TODO: Blind übernommen aus @Mampfzwerg
 
-# ----------------------------
-
-
-def main(name, mess_refl, mess_diff, ureg):
-    assert np.all(mess_refl[0] == mess_diff[0]), "x-Werte stimmen nicht überein"
-    α, I_refl = mess_refl
-    α, I_diff = mess_diff
-
-    I = I_refl - I_diff
-
-    λ = ureg('1.54 Å')  # ? (@Mampfzwerg)
-    q = 4 * np.pi / λ * np.sin(np.pi / 180 * α)  # TODO: Blind übernommen aus @Mampfzwerg
+peaks, peak_props = sp.signal.find_peaks(tools.nominal_values(I).to('1/s').m, height=(1E2, 1E4), prominence=5)
+Δα_mean = np.mean(np.diff(α[peaks].to('rad').m)) * ureg.rad
+Δq_mean = np.mean(np.diff(q[peaks].to('1/m').m)) * ureg['1/m']
+# d_estim_a = 2*np.pi / Δq_mean # anderes Resultat als bei @Mampfzwerg
+d_estim_b = λ / (2 * Δα_mean) # korrekte Daten bei @Mampfzwerg
+print(f"Δα_mean = {Δα_mean}")
+print(f"Δq_mean = {Δq_mean}")
+# print(f"d_estim_a = {d_estim_a.to('m')}")
+print(f"d_estim_b = {d_estim_b.to('m')}")
 
     # █ Plot
     # α_linspace = tools.linspace(*tools.bounds(α), 1000)
