@@ -1,6 +1,7 @@
 # import generate_table
 import code.detektorscan as detektorscan
 import code.rockingscan as rockingscan
+import code.schichtdicke as schichtdicke
 import code.zscan as zscan
 
 import matplotlib.pyplot as plt
@@ -77,5 +78,9 @@ def load_scan(name, x_units, T):
 # scan_name = '2_z1'
 # zscan.main(scan_name, *load_scan(scan_name, **SCANS[scan_name]), ureg=ureg)
 
-scan_name = '4_rocking1'
-rockingscan.main(scan_name, *load_scan(scan_name, **SCANS[scan_name]), ureg=ureg)
+schichtdicke.main(
+    "schichtdicke",
+    load_scan('8_reflektivitaet', **SCANS['8_reflektivitaet']),
+    load_scan('9_diffus', **SCANS['9_diffus']),
+    ureg=ureg,
+)
