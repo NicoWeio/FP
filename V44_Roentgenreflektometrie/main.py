@@ -75,12 +75,17 @@ def load_scan(name, x_units, T):
 # scan_name = '1_detektor'
 # detektorscan.main(scan_name, *load_scan(scan_name, **SCANS[scan_name]), ureg=ureg)
 
-# scan_name = '2_z1'
-# zscan.main(scan_name, *load_scan(scan_name, **SCANS[scan_name]), ureg=ureg)
+scan_name = '2_z1'
+d_Strahl = zscan.main(scan_name, *load_scan(scan_name, **SCANS[scan_name]), ureg=ureg)
+
+scan_name = '4_rocking1'
+α_g = rockingscan.main(scan_name, *load_scan(scan_name, **SCANS[scan_name]), ureg=ureg)
 
 schichtdicke.main(
     "schichtdicke",
     load_scan('8_reflektivitaet', **SCANS['8_reflektivitaet']),
     load_scan('9_diffus', **SCANS['9_diffus']),
     ureg=ureg,
+    d_Strahl=d_Strahl,
+    α_g=α_g,
 )

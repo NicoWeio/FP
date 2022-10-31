@@ -19,6 +19,9 @@ def main(name, z, I, ureg):
     flank_bound_indices = (17, 23)
     flank_bounds = tuple(z[list(flank_bound_indices)])
 
+    d_Strahl = flank_bounds[1] - flank_bounds[0]
+    return d_Strahl
+
     # █ Plot
     # z_linspace = tools.linspace(*tools.bounds(z), 1000)
 
@@ -31,5 +34,6 @@ def main(name, z, I, ureg):
     plt.grid()
     plt.legend()
     plt.tight_layout()
-    plt.savefig(f"build/plt/{name}.pdf")
+    if tools.BUILD:
+        plt.savefig(f"build/plt/{name}.pdf")
     plt.show()

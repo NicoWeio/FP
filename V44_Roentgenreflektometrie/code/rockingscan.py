@@ -10,14 +10,18 @@ def main(name, α, I, ureg):
     i_min = next(i for i, x in enumerate(I) if x > I_thresh)
     i_max = next(i for i, x in reversed(list(enumerate(I))) if x > I_thresh)
 
-    α_mean = np.mean(np.abs(α[[i_min, i_max]]))
-    print(f'α_mean = {α_mean}')
+    α_g_mean = np.mean(np.abs(α[[i_min, i_max]]))
+    print(f'α_g_mean = {α_g_mean}')
 
     # █ alternative Berechnung
     d_0 = ureg('0.28 mm')  # Strahlbreite (@Mampfzwerg)
     D = ureg('20 mm')  # Probendicke (@Mampfzwerg)
-    α_alt = np.arcsin(d_0 / D)
-    print(f'α_alt = {α_alt.to("°")}')
+    α_g_alt = np.arcsin(d_0 / D)
+    print(f'α_g_alt = {α_g_alt.to("°")}')
+
+    print(tools.fmt_compare_to_ref(α_g_mean, α_g_alt, unit='°'))
+
+    return α_g_mean
 
     # █ Plot
     # α_linspace = tools.linspace(*tools.bounds(α), 1000)
@@ -34,5 +38,6 @@ def main(name, α, I, ureg):
     plt.grid()
     plt.legend()
     plt.tight_layout()
-    plt.savefig(f"build/plt/{name}.pdf")
+    if tools.BUILD:
+        plt.savefig(f"build/plt/{name}.pdf")
     plt.show()
