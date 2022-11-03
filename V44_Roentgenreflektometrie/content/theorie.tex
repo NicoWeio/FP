@@ -36,7 +36,7 @@ Der Anteil der reflektierten,
 beziehungsweise transmittierten Amplitude zur einfallenden Amplitude wird mithilfe der Fresnel'schen Formeln beschrieben.
 Im Fall von Röntgenstrahlung ist der Brechungsindex durch
 \begin{equation}
-    n = 1 - \delta + i \beta 
+    n = 1 - \delta + i \beta
     \label{eqn:brechungsindex}
 \end{equation}
 gegeben,
@@ -53,7 +53,7 @@ Des Weiteren kann Totalreflexion auftreten,
 was bedeutet,
 dass der gesamte Anteil der einfallenden Strahlung reflektiert wird.
 Diese ergibt sich unterhalb eines kritischen Winkels $\alpha_\text{c}$,
-welcher sich näherungsweise durch 
+welcher sich näherungsweise durch
 \begin{equation}
     \alpha_\text{c} \approx \sqrt{2 \delta} = \lambda \cdot \sqrt{\frac{r_\text{e} \rho}{\pi}}
 \end{equation}
@@ -76,7 +76,7 @@ wie in \autoref{fig:geometriefaktor} dargestellt.
 \end{figure}
 Für den Geometriefaktor gilt
 \begin{equation}
-    G = 
+    G =
     \begin{cases}
         \frac{D \sin{\alpha_i}}{d_0}, &\text{für} \ \alpha_i < \alpha_\text{g} \\
         1                           , &\text{für} \ \alpha_i > \alpha_\text{g} \ ,
@@ -107,21 +107,21 @@ Dies ist in \autoref{fig:mehrschichtsystem} dargestellt.
 \end{figure}
 Aufgrund von Interferenzen zwischen den einzelnen transmittierten und reflektierten Strahlen kommt es zu sogenannten Kiessig-Oszillationen \cite{kiessig} in der beobachteten Intensität.
 Dies ist in \autoref{fig:kiessig_oszillationen} gezeigt.
-Aus den Abständen der einzelnen Minima oder Maxima lässt sich über die Gleichung 
-\begin{equation} %TODO: Ist die Gleichung richtig? 
+Aus den Abständen der einzelnen Minima oder Maxima lässt sich über die Gleichung
+\begin{equation} %TODO: Ist die Gleichung richtig?
     d = \frac{\lambda}{2 \symup{\Delta} \alpha_i}
 \end{equation}
 die Dicke der einzelnen Schichte berechnen.
 
 Zur Abschätzung der einzelnen Schichten wird der Parratt-Algorithmus \cite{parratt} verwendet.
 Dieser durchläuft rekursiv die einzelnen Schichten des Systems,
-unter der Annahme, 
+unter der Annahme,
 dass die unterste Schicht unendlich dick ist.
 Die Rekursionsgleichung ist durch
 \begin{equation}
     X_{j} = \exp{(-2\symup{i} k_{z, j} z_{j})} \cdot
     \frac{r_{j, j+1} + X_{j+1} \exp{(2\symup{i} k_{z, j+1} z_{j})}}
-    {1 + r_{j, j+1} \cdot X_{j+1} \exp{(2\symup{i} k_{z, j+1} z_{j})}} 
+    {1 + r_{j, j+1} \cdot X_{j+1} \exp{(2\symup{i} k_{z, j+1} z_{j})}}
 \end{equation}
 gegeben,
 wobei
@@ -129,7 +129,7 @@ wobei
     r_{j, j+1} = \frac{k_{z, j} - k_{z, j+1}}{k_{z, j} + k_{z, j+1}}
 \end{equation}
 der Fresnel'sche Reflexionskoeffizient,
-und 
+und
 \begin{equation}
     k_{z, j} = k \cdot \sqrt{n^2_j - \cos^2{\alpha_i}}
 \end{equation}
@@ -145,11 +145,8 @@ beschrieben,
 wobei $P_j(z)$ die Wahrscheinlichkeit bezeichnet,
 dass die Grenzfläche mit dem Index $j$ in einem Interval $(z_j + z, z_j + z + \symup{d}z)$ liegt.
 Unter Berücksichtigung der Rauigkeit der Oberflächen ergeben sich Korrekturen in den Reflexions- und Transmissionskoeffizienten.
-Es gilt 
+Es gilt
 \begin{gather}
     \bar{r}_{j, j+1} = r_{j, j+1} \exp{(-2 k_{z, j} k_{z, j+1} \sigma^2_{j})} \\
     \bar{t}_{j, j+1} = t_{j, j+1} \exp{\biggl((k_{z, j} - k_{z, j+1}) \frac{\sigma^2_{j}}{2}\biggr)} \ .
 \end{gather}
-
-
-
