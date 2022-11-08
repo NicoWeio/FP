@@ -16,7 +16,7 @@ ureg = pint.UnitRegistry()
 
 def series(dots, colr):
     # z = ureg('855 Å')  # Parameter: Schichtdicke | verkleinert Oszillationswellenlänge
-    z = ureg('855 Å')  # Parameter: Schichtdicke | verkleinert Oszillationswellenlänge
+    z = dots * ureg['Å']
     α_c_Si = ureg('0.210 °')
 
     α = np.linspace(0, 2.5, 500) * ureg.deg
@@ -26,7 +26,9 @@ def series(dots, colr):
     # q = np.linspace(0.0E9, 2.0E9) * ureg['1/m']
 
 
-    par, r13 = schichtdicke.calc_parratt(z, α.to('rad').m, k=k, α_c_Si=α_c_Si, ureg=ureg, rauigkeit=True)
+    par, r13 = schichtdicke.calc_parratt(z, α.to('rad').m, k=k, α_c_Si=α_c_Si, ureg=ureg, rauigkeit=False)
     plt.plot(q, par)
+    plt.plot(q, r13)
+    plt.yscale('log')
     return();
-interact(series, dots=(1,100,1), colr=["red","orange","brown"]);
+interact(series, dots=(500,1000,1), colr=["red","orange","brown"]);
