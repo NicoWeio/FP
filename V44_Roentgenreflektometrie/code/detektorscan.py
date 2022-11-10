@@ -26,14 +26,14 @@ def main(name, α, I, ureg):
         p0=(tools.nominal_value(max(I)), tools.nominal_value(min(I)), ureg('0.05°'), ureg('0°')),
         # return_p0=True,  # TODO
     )
-    print(f'I_max = {I_max}')
-    print(f'I_0 = {I_0}')
-    print(f'σ = {σ}')
-    print(f'α_0 = {α_0}')
+    print(f"I_max = {I_max}")
+    print(f"I_0 = {I_0}")
+    print(f"σ = {σ}")
+    print(f"α_0 = {α_0}")
 
-    # TODO: Halbwertsbreite
-    # Die Standardabweichung σ {\displaystyle \sigma } \sigma beschreibt die Breite der Normalverteilung.
-    # Die Halbwertsbreite einer Normalverteilung ist ungefähr das 2,4-Fache $2{\sqrt {2\ln 2}}$ der Standardabweichung.
+    # Halbwertsbreite
+    fwhm_width = 2 * np.sqrt(2 * np.log(2)) * σ
+    print(f"fwhm_width = {fwhm_width}")
 
     # █ Plot
     α_linspace = tools.linspace(*tools.bounds(α), 1000)
@@ -45,13 +45,19 @@ def main(name, α, I, ureg):
         # plt2.plot(α_linspace, fit_fn(α_linspace, *[I_max, I_0, σ, α_0]), label="Fit")
         plt2.plot(α_linspace, fit_fn(α_linspace, *map(tools.nominal_value, [I_max, I_0, σ, α_0])), label="Fit")
 
-        # plt2.plot(
-        #     tools.pintify([left, right]), [width_heights[0]]*2,
-        #     '-', lw=2, label="Halbwertsbreite",
-        # )
+        plt2.plot(
+            tools.nominal_values(
+                tools.pintify([α_0 - fwhm_width / 2, α_0 + fwhm_width / 2])
+            ),
+            tools.nominal_values(
+                tools.pintify([(I_max + I_0) / 2]*2)
+            ),
+            '-', lw=2, label="Halbwertsbreite",
+        )
 
     plt.grid()
     plt.legend()
     plt.tight_layout()
-    plt.savefig(f"build/plt/{name}.pdf")
+    if tools.BUILD:
+        plt.savefig(f"build/plt/{name}.pdf")
     plt.show()
