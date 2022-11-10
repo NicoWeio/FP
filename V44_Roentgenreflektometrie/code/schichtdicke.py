@@ -7,17 +7,12 @@ import scipy as sp
 import tools
 
 
-# # Versuchsgrößen
-# k = 2*np.pi / λ  # Wellenvektor
-# qz = 2*k * np.sin(α)  # Wellenvektorübertrag -> y-Werte der Theoriekurve
-
-# # Parameter des Parratt-Algorithmus
-
-# ----------------------------
-
-
 def α_to_q(α, λ):
+    """
+    q ist der Wellenvektorübertrag.
+    """
     # TODO: Blind übernommen aus @Mampfzwerg
+    # Die Faktoren sehen so aus, als wären sie nur für deg→rad 🤔
     q = 4 * np.pi / λ * np.sin(np.pi / 180 * α)
     return q
 
@@ -98,7 +93,7 @@ def main(name, mess_refl, mess_diff, ureg, d_Strahl, α_g, litdata):
     G = calc_G(α, D=ureg('20 mm'), d_Strahl=d_Strahl, α_g=α_g)  # TODO: /= oder *=?
     G[0] = G[1]  # TODO: Workaround for division by zero
     # print(f"G = {G}")
-    I /= G
+    # I /= G # TODO
     I_corr_G = I_refl / G
 
     λ = ureg('1.54 Å')  # ? (@Mampfzwerg)
@@ -122,63 +117,58 @@ def main(name, mess_refl, mess_diff, ureg, d_Strahl, α_g, litdata):
     α_c_PS = ureg('0.068 °')
     α_c_Si = ureg('0.210 °')
 
-    plt.figure()
+    # plt.figure()
 
     # z = d_estim_b
 
     # █ Parameter
-    # Brechungsindizes
-    δ1 = 0.7e-6  # Polysterol -> Amplitude vergrößert + negativer Offset
-    δ2 = 6.7e-6  # Silizium -> Amplitude vergkleinert + positiver Offset
-    #
-    # Rauigkeit
-    σ1 = 7.9e-10 * ureg.m  # Polysterol -> Amplitude verkleinert bei hinteren Oszillationen
-    σ2 = 5.7e-10 * ureg.m  # Silizium -> Senkung des Kurvenendes und  Amplitudenverkleinerung der Oszillationen
-    #
-    # Schichtdicke
-    z = ureg('855 Å')  # Parameter: Schichtdicke | verkleinert Oszillationswellenlänge
+    parrat_params = {
+        'α_c_Si': α_c_Si,
+        # Brechungsindizes
+        # δ1 = litdata['PS']['δ']  # Polysterol → Amplitude vergrößert + negativer Offset
+        # δ2 = litdata['Si']['δ']  # Silizium → Amplitude verkleinert + positiver Offset
+        'δ1': 0.7e-6,  # Polysterol → Amplitude vergrößert + negativer Offset
+        'δ2': 6.8e-6,  # Silizium → Amplitude verkleinert + positiver Offset
+        #
+        # Rauigkeit
+        'σ1': 10e-10 * ureg.m,  # Polysterol → Amplitude verkleinert bei hinteren Oszillationen
+        'σ2': 7e-10 * ureg.m,  # Silizium → Senkung des Kurvenendes und Amplitudenverkleinerung der Oszillationen
+        #
+        # Schichtdicke
+        'z': ureg('855 Å'),  # Parameter: Schichtdicke | verkleinert Oszillationswellenlänge
+    }
 
     par, r13 = calc_parratt(
         α.to('rad').m,
-        z=z,
-        k=k, α_c_Si=α_c_Si,
-        δ1=δ1, δ2=δ2,
-        σ1=σ1, σ2=σ2,
+        k=k,
+        **parrat_params,
         ureg=ureg,
         rauigkeit=True,
     )
 
-    def parratt_fit_wrapper(z, *args):
-        assert len(args) == 1
-        return calc_parratt(
-            z, α,
-            k=k.m, α_c_Si=α_c_Si.m,
-            δ1=δ1, δ2=δ2,
-            σ1=σ1.m, σ2=σ2.m,
-            ureg=ureg,
-            rauigkeit=True,
-        )[0] + args[0]
-
-    params = tools.pint_curve_fit(
-        parratt_fit_wrapper,
-        α.to('rad'), I,
-        # (ureg.dimensionless,),
-        (ureg.dimensionless,),
-        p0=(litdata['PS']['δ'],)
+    par_glatt, r13_glatt = calc_parratt(
+        α.to('rad').m,
+        k=k,
+        **parrat_params,
+        ureg=ureg,
+        rauigkeit=False,
     )
 
     # passe Höhe der Theoriekurve an Messwerte an
     # TODO: poor man's fit
     # theory_correction_factor = np.mean(I / par)
+    theory_correction_factor = I[peaks[0]] / par[peaks[0]]
     # theory_correction_factor = I[peaks[-3]] / par[peaks[-3]]
     # theory_correction_factor = np.mean(I[peaks[-3:]] / par[peaks[-3:]])
     # print(f"theory_correction_factor = {theory_correction_factor}")
-    # par = par * theory_correction_factor
-    # r13 = r13 * theory_correction_factor
-    # assert par.check('1/s'), "par hat falsche Dimension"
+    # NOTE: Bewusst nicht *=, um …?
+    par = par * theory_correction_factor
+    par_glatt = par_glatt * theory_correction_factor
+    r13 = r13 * theory_correction_factor
+    r13_glatt = r13_glatt * theory_correction_factor
+    assert par.check('1/s'), "par hat falsche Dimension"
 
-    # if tools.PLOTS:
-    if True:  # TODO
+    if tools.PLOTS:
         # █ Plot 1: Messwerte und Korrekturen
         # α_linspace = tools.linspace(*tools.bounds(α), 1000)
 
@@ -198,22 +188,38 @@ def main(name, mess_refl, mess_diff, ureg, d_Strahl, α_g, litdata):
             plt.savefig(f"build/plt/{name}_a.pdf")
         plt.show()
 
+    # if True:
+    if False:
+        plt.plot(α, G, '-', zorder=5, label="G-Faktor")
+        # with tools.plot_context(plt, '1/m', '1/s', "q", "I") as plt2:
+        #     plt2.plot(q[1:], tools.nominal_values(np.diff(I)), '-', zorder=5, label="Differenzen")
+        # plt.yscale('symlog')
+        # plt.xlim(right=2E7)
+        # plt.savefig('foo.pdf')
+        plt.show()
+
+    # if tools.PLOTS:
+    if True:  # TODO
         # █ Plot 2: Fit
         # TODO: Doppelachse mit Intensität und Reflektivität?
+        plt.clf()
         with tools.plot_context(plt, '1/m', '1/s', "q", "I") as plt2:
             plt2.plot(q, I, fmt='.', zorder=5, label="Messwerte (korrigiert)")  # oder 'x--'?
             plt2.plot(q[peaks], I[peaks], fmt='x', zorder=5, label="Peaks")
 
-            plt2.plot(q, par, fmt='-', label="Theoriekurve (Parratt)")
-            plt2.plot(q, r13, fmt='--', label="Theoriekurve (Fresnel)")
+            plt2.plot(q, par, fmt='-', zorder=5, label="Theoriekurve (rau)")
+            # plt2.plot(q, r13, fmt='--', label="Theoriekurve (Fresnel)")
+            plt2.plot(q, r13_glatt, fmt='--', label="Fresnelreflektivität Si")
+            plt2.plot(q, par_glatt, fmt='-', label="Theoriekurve (glatt)")
 
             plt.axvline(α_to_q(α_g, λ).to('1/m'), color='C0', linestyle='--', label="$α_g$")
             plt.axvline(α_to_q(α_c_PS, λ).to('1/m'), color='C1', linestyle='--', label="$α_c$ (PS)")
             plt.axvline(α_to_q(α_c_Si, λ).to('1/m'), color='C2', linestyle='--', label="$α_c$ (Si)")
 
-        plt.xlim(0, 2E7)
-        # plt.ylim(tools.nominal_value(min(I)), 1E2)
-        plt.ylim(bottom=1E2)
+        # plt.xlim(0, 2E7)
+        # plt.ylim(bottom=1E2)
+        plt.xlim(right=4E7)
+        plt.ylim(bottom=1E0)
 
         plt.yscale('log')
         plt.grid()

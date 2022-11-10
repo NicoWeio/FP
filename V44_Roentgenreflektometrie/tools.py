@@ -12,6 +12,8 @@ print("build:", BUILD)
 # TODO: BUILD steuert gerade verschiedene Dinge:
 # 1. sollen Plots gespeichert werden?
 # 2. sollen Plots mit LaTeX generiert werden?
+# TODO ↓
+PLOTS = bool(os.getenv('PLOTS'))
 
 if not BUILD:
     # nutze Standard-Backend, nicht LaTeX
@@ -72,7 +74,7 @@ def pint_curve_fit(fit_fn, x, y, param_units, bounds=None, p0=None, return_p0=Fa
         bounds = tuple(zip(*bounds))
 
     if p0 is not None:
-        assert all(isinstance(p, pint.Quantity) for p in p0), "p0 requires all elements to be pint Quantities"
+        assert all(isinstance(p, pint.Quantity) for p in p0), f"p0 requires all elements to be pint Quantities. Got {[type(p0_i) for p0_i in p0]}"
         assert not any(isinstance(p.m, UFloat) for p in p0), "p0 must not contain uncertainties"
         p0 = [
             convert(p, unit) if p is not None else None
@@ -265,7 +267,8 @@ def plot_context(plt, xunits, yunits, xname=None, yname=None):
 
             # Plotte die Daten mit `errorbar`, falls Unsicherheiten angegeben wurden, sonst mit `plot`.
             if (x_s is not None) or (y_s is not None):
-                return plt.errorbar(x_n, y_n, *more_args, xerr=x_s, yerr=y_s, **kwargs)
+                assert not more_args  # Sonst versucht errorbar, daraus ein zweites yerr zu lesen.
+                return plt.errorbar(x_n, y_n, xerr=x_s, yerr=y_s, **kwargs)
             else:
                 return plt.plot(x_n, y_n, *more_args, **kwargs)
 
