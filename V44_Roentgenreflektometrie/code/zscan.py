@@ -22,9 +22,9 @@ def main(name, z, I, ureg):
 
     d_Strahl = flank_bounds[1] - flank_bounds[0]
 
-    print(f"Flank bounds: {flank_bounds[0]}, {flank_bounds[1]}")
-    print(f"Strahlbreite: {d_Strahl}")
-    print(f"max. Intensität: {I.max()}")
+    print(f"Flank bounds: {flank_bounds[0]:.2f}, {flank_bounds[1]:.2f}")
+    print(f"Strahlbreite: {d_Strahl:.2f}")
+    print(f"max. Intensität: {I.max():.2f}")
 
     # █ Plot
     # z_linspace = tools.linspace(*tools.bounds(z), 1000)
