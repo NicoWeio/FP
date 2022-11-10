@@ -16,24 +16,31 @@ console = Console()
 
 def main(name, z, I, ureg):
     # TODO: Auto-detect?
-    flank_bound_indices = (17, 23)
+    # flank_bound_indices = (17, 23) # @Mampfzwerg
+    flank_bound_indices = (26, 32)
     flank_bounds = tuple(z[list(flank_bound_indices)])
 
     d_Strahl = flank_bounds[1] - flank_bounds[0]
-    return d_Strahl
+
+    print(f"Flank bounds: {flank_bounds[0]}, {flank_bounds[1]}")
+    print(f"Strahlbreite: {d_Strahl}")
+    print(f"max. Intensität: {I.max()}")
 
     # █ Plot
     # z_linspace = tools.linspace(*tools.bounds(z), 1000)
 
-    plt.figure()
-    with tools.plot_context(plt, 'mm', '1/s', "z", "I") as plt2:
-        plt2.plot(z, I, fmt='x', zorder=5, label="Messwerte")  # oder 'x--'?
+    if tools.PLOTS:
+        plt.figure()
+        with tools.plot_context(plt, 'mm', '1/s', "z", "I") as plt2:
+            plt2.plot(z, I, fmt='x', zorder=5, label="Messwerte")  # oder 'x--'?
 
-        plt.axvspan(*flank_bounds, color='C1', alpha=0.5, zorder=0, label="Strahlbreite")
+            plt.axvspan(*flank_bounds, color='C1', alpha=0.5, zorder=0, label="Strahlbreite")
 
-    plt.grid()
-    plt.legend()
-    plt.tight_layout()
-    if tools.BUILD:
-        plt.savefig(f"build/plt/{name}.pdf")
-    plt.show()
+        plt.grid()
+        plt.legend()
+        plt.tight_layout()
+        if tools.BUILD:
+            plt.savefig(f"build/plt/{name}.pdf")
+        plt.show()
+
+    return d_Strahl

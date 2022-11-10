@@ -27,6 +27,7 @@ def main(name, α, I, ureg):
         # return_p0=True,  # TODO
     )
     print(f"I_max = {I_max}")
+    print(f"→ vs. größter Messwert = {max(I)}")
     print(f"I_0 = {I_0}")
     print(f"σ = {σ}")
     print(f"α_0 = {α_0}")
@@ -36,28 +37,29 @@ def main(name, α, I, ureg):
     print(f"fwhm_width = {fwhm_width}")
 
     # █ Plot
-    α_linspace = tools.linspace(*tools.bounds(α), 1000)
+    if tools.PLOTS:
+        α_linspace = tools.linspace(*tools.bounds(α), 1000)
 
-    plt.figure()
-    with tools.plot_context(plt, '°', '1/s', r"\alpha", "I") as plt2:
-        plt2.plot(α, I, fmt='x', zorder=5, label="Messwerte")  # oder 'x--'?
+        plt.figure()
+        with tools.plot_context(plt, '°', '1/s', r"\alpha", "I") as plt2:
+            plt2.plot(α, I, fmt='x', zorder=5, label="Messwerte")  # oder 'x--'?
 
-        # plt2.plot(α_linspace, fit_fn(α_linspace, *[I_max, I_0, σ, α_0]), label="Fit")
-        plt2.plot(α_linspace, fit_fn(α_linspace, *map(tools.nominal_value, [I_max, I_0, σ, α_0])), label="Fit")
+            # plt2.plot(α_linspace, fit_fn(α_linspace, *[I_max, I_0, σ, α_0]), label="Fit")
+            plt2.plot(α_linspace, fit_fn(α_linspace, *map(tools.nominal_value, [I_max, I_0, σ, α_0])), label="Fit")
 
-        plt2.plot(
-            tools.nominal_values(
-                tools.pintify([α_0 - fwhm_width / 2, α_0 + fwhm_width / 2])
-            ),
-            tools.nominal_values(
-                tools.pintify([(I_max + I_0) / 2]*2)
-            ),
-            '-', lw=2, label="Halbwertsbreite",
-        )
+            plt2.plot(
+                tools.nominal_values(
+                    tools.pintify([α_0 - fwhm_width / 2, α_0 + fwhm_width / 2])
+                ),
+                tools.nominal_values(
+                    tools.pintify([(I_max + I_0) / 2]*2)
+                ),
+                '-', lw=2, label="Halbwertsbreite",
+            )
 
-    plt.grid()
-    plt.legend()
-    plt.tight_layout()
-    if tools.BUILD:
-        plt.savefig(f"build/plt/{name}.pdf")
-    plt.show()
+        plt.grid()
+        plt.legend()
+        plt.tight_layout()
+        if tools.BUILD:
+            plt.savefig(f"build/plt/{name}.pdf")
+        plt.show()
