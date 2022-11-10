@@ -1,2 +1,120 @@
 \section{Auswertung}
 \label{sec:auswertung}
+
+% TODO: Fehlerrechnung
+
+\subsection{Detektorscan}
+Um die Strahlbreite zu quantifizieren,
+wird der Detektorscan durch eine Gauß-Funktion approximiert,
+welche zusätzliche Parameter für Untergrund ($I_0$) und Verschiebung ($\alpha_0$) enthält:
+
+\begin{equation*}
+    % I_max * np.exp(-((α - α_0)**2) / (2 * σ**2)) + I_0
+    I(\alpha) = I_{\max} \exp\left(-\frac{( \alpha - \alpha_0)^2}{2 \sigma^2}\right) + I_0 \; .
+\end{equation*}
+
+Die Parameter werden mithilfe der Funktion \texttt{curve\_fit} aus dem Paket \texttt{scipy.optimize} bestimmt.
+Sie ergeben sich zu:
+\begin{align*}
+    I_{\max} &= \SI{7.49(9)e5}{\per\second} \\
+    I_0 &= \SI{7.5(22)e3}{\per\second} \\
+    σ &= \SI{0.0431 \pm 0.0006}{\degree} \\
+    α_0 &= \SI{-0.0017 \pm 0.0006}{\degree} \; .
+\end{align*}
+
+Die Halbwertsbreite beträgt somit:
+\[
+    \alpha_\text{FWHM}
+    = 2 \sqrt{2 \ln 2} \cdot \sigma
+    = \SI{0.1014 \pm 0.0014}{\degree} \; .
+\]
+
+In \autoref{fig:plt:1_detektor} sind die Messwerte sowie Fit und Halbwertsbreite dargestellt.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\textwidth]{build/plt/1_detektor.pdf}
+    \caption{Messwerte und Fit des Detektorscans.}
+    \label{fig:plt:1_detektor}
+\end{figure}
+
+
+\FloatBarrier
+\subsection{Z-Scan}
+\autoref{fig:plt:2_z1} zeigt die Messwerte des Z-Scans.
+Die hervorgehobene Flanke von hoher zu geringer Intensität kann verwendet werden,
+um die Breite des Röntgenstrahls zu abzuschätzen.
+Sie beträgt etwa \SI{0.24}{\milli\meter}.
+Die maximale Intensität liegt hier bei \SI{7.964(9)e5}{\per\second}
+und somit oberhalb des gemessenen sowie gefitteten Maximums des Detektorscans.
+% NOTE: größter Messwert dort: (7.659+/-0.009)e+05 / second
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\textwidth]{build/plt/2_z1.pdf}
+    \caption{Messwerte des Z-Scans mit hervorgehobener Strahlbreite.}
+    \label{fig:plt:2_z1}
+\end{figure}
+
+
+\FloatBarrier
+\subsection{Rockingscan}
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+
+\begin{align*}
+    % α_g_1 = -1.00 degree
+    % α_g_2 = 0.92 degree
+    % α_g_mean = 0.96 degree
+    % α_g_alt = 0.8021671187643814 degree
+    \alpha_{g, 1} &= \SI{-0.48}{\degree} \\
+    \alpha_{g, 2} &= \phantom{-} \SI{0.48}{\degree} \\
+    \alpha_g &= \frac{|\alpha_{g, 1}| + |\alpha_{g, 2}|}{2}
+        = \SI{0.48}{\degree}
+\end{align*}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\textwidth]{build/plt/4_rocking1_linear.pdf}
+    \caption{Messwerte des Rockingscans.}
+    \label{fig:plt:4_rocking1_linear}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\textwidth]{build/plt/4_rocking1_log.pdf}
+    \caption{Messwerte des Rockingscans.}
+    \label{fig:plt:4_rocking1_log}
+\end{figure}
+
+
+\FloatBarrier
+\subsection{Reflektivitätsscan}
+
+% Plot-Aufteilung:
+% 1.
+% → Messdaten
+% → Messdaten korrigiert um diffuse Strahlung
+% → Messdaten korrigiert um Geometriefaktor
+% → Messdaten korrigiert um diffuse Strahlung und Geometriefaktor
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{build/plt/schichtdicke_a.pdf}
+    \caption{
+        TODO.
+        Zur besseren Lesbarkeit wird auf Fehlerbalken verzichtet.
+    }
+    \label{fig:plt:schichtdicke_a}
+\end{figure}
+% 2.
+% → Messdaten (nur korrigiert)
+% → Theorie-Kurve / Fit
+%   → Fresnel-Reflektivität
+%   → glatt
+%   → rau
+% → kritische Winkel
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{build/plt/schichtdicke_b.pdf}
+    \caption{TODO.}
+    \label{fig:plt:schichtdicke_b}
+\end{figure}
