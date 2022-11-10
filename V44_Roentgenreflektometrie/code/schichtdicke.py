@@ -38,17 +38,22 @@ def calc_G(α, D, d_Strahl, α_g):
 
 
 def calc_parratt(
-    z, α,
+    α,
+    z,
     k, α_c_Si,
-    d1, d2,
-    s1, s2,
+    δ1, δ2,
+    σ1, σ2,
     ureg,
     rauigkeit=False,
 ):
+    """
+    δ_i: Brechungsindex-Korrektur (n = 1 - δ_i)
+    σ_i: Rauigkeit der Grenzfläche
+    """
 
     n1 = 1  # Luft
-    n2 = 1 - d1  # Polysterol
-    n3 = 1 - d2  # Silizium
+    n2 = 1 - δ1  # Polysterol
+    n3 = 1 - δ2  # Silizium
 
     # ----------------------------
 
@@ -61,8 +66,8 @@ def calc_parratt(
     r13 = ((kz1 - kz3) / (kz1 + kz3))**2
 
     if rauigkeit:
-        r12 *= np.exp(-2 * kz1 * kz2 * s1**2)
-        r23 *= np.exp(-2 * kz2 * kz3 * s2**2)
+        r12 *= np.exp(-2 * kz1 * kz2 * σ1**2)
+        r23 *= np.exp(-2 * kz2 * kz3 * σ2**2)
         r13 *= 0  # NOTE: Hierzu hat @Mampfzwerg keine Formel
     #
     x2 = np.exp(0 - (kz2 * z) * 2j) * r23
@@ -75,7 +80,7 @@ def calc_parratt(
     return par, r13
 
 
-def main(name, mess_refl, mess_diff, ureg, d_Strahl, α_g):
+def main(name, mess_refl, mess_diff, ureg, d_Strahl, α_g, litdata):
     """
     d_Strahl: Strahlbreite (siehe Z-Scan)
     α_g: Geometriewinkel (siehe Rockingscan)
@@ -123,34 +128,54 @@ def main(name, mess_refl, mess_diff, ureg, d_Strahl, α_g):
 
     # █ Parameter
     # Brechungsindizes
-    d1 = 0.7e-6  # Polysterol -> Amplitude vergrößert + negativer Offset
-    d2 = 6.7e-6  # Silizium -> Amplitude vergkleinert + positiver Offset
+    δ1 = 0.7e-6  # Polysterol -> Amplitude vergrößert + negativer Offset
+    δ2 = 6.7e-6  # Silizium -> Amplitude vergkleinert + positiver Offset
     #
     # Rauigkeit
-    s1 = 7.9e-10 * ureg.m  # Polysterol -> Amplitude verkleinert bei hinteren Oszillationen
-    s2 = 5.7e-10 * ureg.m  # Silizium -> Senkung des Kurvenendes und  Amplitudenverkleinerung der Oszillationen
+    σ1 = 7.9e-10 * ureg.m  # Polysterol -> Amplitude verkleinert bei hinteren Oszillationen
+    σ2 = 5.7e-10 * ureg.m  # Silizium -> Senkung des Kurvenendes und  Amplitudenverkleinerung der Oszillationen
     #
     # Schichtdicke
     z = ureg('855 Å')  # Parameter: Schichtdicke | verkleinert Oszillationswellenlänge
 
     par, r13 = calc_parratt(
-        z, α.to('rad').m,
+        α.to('rad').m,
+        z=z,
         k=k, α_c_Si=α_c_Si,
-        d1=d1, d2=d2,
-        s1=s1, s2=s2,
+        δ1=δ1, δ2=δ2,
+        σ1=σ1, σ2=σ2,
         ureg=ureg,
         rauigkeit=True,
+    )
+
+    def parratt_fit_wrapper(z, *args):
+        assert len(args) == 1
+        return calc_parratt(
+            z, α,
+            k=k.m, α_c_Si=α_c_Si.m,
+            δ1=δ1, δ2=δ2,
+            σ1=σ1.m, σ2=σ2.m,
+            ureg=ureg,
+            rauigkeit=True,
+        )[0] + args[0]
+
+    params = tools.pint_curve_fit(
+        parratt_fit_wrapper,
+        α.to('rad'), I,
+        # (ureg.dimensionless,),
+        (ureg.dimensionless,),
+        p0=(litdata['PS']['δ'],)
     )
 
     # passe Höhe der Theoriekurve an Messwerte an
     # TODO: poor man's fit
     # theory_correction_factor = np.mean(I / par)
     # theory_correction_factor = I[peaks[-3]] / par[peaks[-3]]
-    theory_correction_factor = np.mean(I[peaks[-3:]] / par[peaks[-3:]])
-    print(f"theory_correction_factor = {theory_correction_factor}")
-    par = par * theory_correction_factor
-    r13 = r13 * theory_correction_factor
-    assert par.check('1/s'), "par hat falsche Dimension"
+    # theory_correction_factor = np.mean(I[peaks[-3:]] / par[peaks[-3:]])
+    # print(f"theory_correction_factor = {theory_correction_factor}")
+    # par = par * theory_correction_factor
+    # r13 = r13 * theory_correction_factor
+    # assert par.check('1/s'), "par hat falsche Dimension"
 
     # if tools.PLOTS:
     if True:  # TODO
@@ -158,7 +183,6 @@ def main(name, mess_refl, mess_diff, ureg, d_Strahl, α_g):
         # α_linspace = tools.linspace(*tools.bounds(α), 1000)
 
         # TODO: Doppelachse mit Intensität und Reflektivität?
-        plt.figure()
         with tools.plot_context(plt, '1/m', '1/s', "q", "I") as plt2:
             plt2.plot(q, tools.nominal_values(I_refl), 'x', label="Messwerte (reflektiert)")
             plt2.plot(q, tools.nominal_values(I_diff), '.', label="Messwerte (diffuse)")
@@ -176,7 +200,6 @@ def main(name, mess_refl, mess_diff, ureg, d_Strahl, α_g):
 
         # █ Plot 2: Fit
         # TODO: Doppelachse mit Intensität und Reflektivität?
-        plt.figure()
         with tools.plot_context(plt, '1/m', '1/s', "q", "I") as plt2:
             plt2.plot(q, I, fmt='.', zorder=5, label="Messwerte (korrigiert)")  # oder 'x--'?
             plt2.plot(q[peaks], I[peaks], fmt='x', zorder=5, label="Peaks")
