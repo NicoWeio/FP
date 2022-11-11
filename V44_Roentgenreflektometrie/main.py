@@ -97,17 +97,17 @@ print(f"█ {scan_name}")
 LITDATA = {
     # Polysterol:
     'PS': {
-        'reρ': ureg('9.5E10 / cm²'),
+        'r_e·ρ': ureg('9.5E10 / cm²'),
         'δ': 3.5E-6 * ureg.dimensionless,
         'μ': ureg('4 / cm'),
-        'αc': ureg('0.153 °'),
+        'α_c': ureg('0.153 °'),
     },
     # Silizium:
     'Si': {
-        'reρ': ureg('20E10 / cm²'),
+        'r_e·ρ': ureg('20E10 / cm²'),
         'δ': 7.6E-6 * ureg.dimensionless,
         'μ': ureg('86 / cm'),
-        'αc': ureg('0.174 °'),
+        'α_c': ureg('0.174 °'),
     },
 }
 

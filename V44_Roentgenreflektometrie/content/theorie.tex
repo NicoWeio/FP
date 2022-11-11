@@ -20,6 +20,7 @@ Des Weiteren übertragen sie ihre Energie an Anodenatome,
 welche angeregt werden und schließlich Photonen mit einer charakteristischen Wellenlänge emittieren.
 Diese bilden das charakteristische Spektrum der Röntgenstrahlung.
 
+
 \subsection{Reflexion von Röntgenstrahlung an Oberflächen}
 \label{sec:reflexion_oberflaeche}
 
@@ -81,8 +82,10 @@ Für den Geometriefaktor gilt
         \frac{D \sin{\alpha_i}}{d_0}, &\text{für} \ \alpha_i < \alpha_\text{g} \\
         1                           , &\text{für} \ \alpha_i > \alpha_\text{g} \ ,
     \end{cases}
+    \label{eqn:geometriefaktor}
 \end{equation}
 wobei $D$ und $d_0$ die Durchmesser der Probe und des Röntgenstrahles beschreiben.
+
 
 \subsection{Reflexion an Mehrschichtsystemen}
 
@@ -108,10 +111,11 @@ Dies ist in \autoref{fig:mehrschichtsystem} dargestellt.
 Aufgrund von Interferenzen zwischen den einzelnen transmittierten und reflektierten Strahlen kommt es zu sogenannten Kiessig-Oszillationen \cite{kiessig} in der beobachteten Intensität.
 Dies ist in \autoref{fig:kiessig_oszillationen} gezeigt.
 Aus den Abständen der einzelnen Minima oder Maxima lässt sich über die Gleichung
-\begin{equation} %TODO: Ist die Gleichung richtig?
+\begin{equation}
     d = \frac{\lambda}{2 \symup{\Delta} \alpha_i}
+    \label{eqn:schichtdicke_kiessig}
 \end{equation}
-die Dicke der einzelnen Schichte berechnen.
+die Dicke der einzelnen Schichten berechnen.
 
 Zur Abschätzung der einzelnen Schichten wird der Parratt-Algorithmus \cite{parratt} verwendet.
 Dieser durchläuft rekursiv die einzelnen Schichten des Systems,

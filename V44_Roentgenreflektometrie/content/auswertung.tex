@@ -40,7 +40,7 @@ In \autoref{fig:plt:1_detektor} sind die Messwerte sowie Fit und Halbwertsbreite
 
 
 \FloatBarrier
-\subsection{Z-Scan}
+\subsection{Z-Scan} \label{sec:auswertung:zscan}
 \autoref{fig:plt:2_z1} zeigt die Messwerte des Z-Scans.
 Die hervorgehobene Flanke von hoher zu geringer Intensität kann verwendet werden,
 um die Breite des Röntgenstrahls zu abzuschätzen.
@@ -59,36 +59,77 @@ und somit oberhalb des gemessenen sowie gefitteten Maximums des Detektorscans.
 
 \FloatBarrier
 \subsection{Rockingscan}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-
+Mithilfe des in \autoref{fig:plt:4_rocking1_linear} dargestellten Rockingscans
+können die Geometriewinkel $\alpha_{g, 1}$ und $\alpha_{g, 2}$
+als Übergangspunkte zum Untergrund bestimmt werden.
+Sie und ihr Mittelwert $\alpha_g$ betragen:
 \begin{align*}
-    % α_g_1 = -1.00 degree
-    % α_g_2 = 0.92 degree
-    % α_g_mean = 0.96 degree
-    % α_g_alt = 0.8021671187643814 degree
     \alpha_{g, 1} &= \SI{-0.48}{\degree} \\
     \alpha_{g, 2} &= \phantom{-} \SI{0.48}{\degree} \\
     \alpha_g &= \frac{|\alpha_{g, 1}| + |\alpha_{g, 2}|}{2}
         = \SI{0.48}{\degree}
 \end{align*}
 
+Eine alternative Abschätzung der Geometriewinkel
+geht aus der in \autoref{sec:auswertung:zscan} bestimmten Strahlbreite $d_0$ und der Probendicke $D = \SI{20}{\milli\meter}$ hervor.
+Es ergibt sich:
+\[
+    \alpha_g' = \arcsin{\sfrac{d_0}{D}}
+    = \SI{0.80}{\degree} \; .
+\]
+
 \begin{figure}
     \centering
     \includegraphics[width=0.75\textwidth]{build/plt/4_rocking1_linear.pdf}
-    \caption{Messwerte des Rockingscans.}
+    \caption{Messwerte des Rockingscans mit hervorgehobenen Geometriewinkeln.}
     \label{fig:plt:4_rocking1_linear}
 \end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=0.75\textwidth]{build/plt/4_rocking1_log.pdf}
-    \caption{Messwerte des Rockingscans.}
+    \caption{Messwerte des Rockingscans in logarithmischer Darstellung.}
     \label{fig:plt:4_rocking1_log}
 \end{figure}
 
 
 \FloatBarrier
 \subsection{Reflektivitätsscan}
+Die betrachteten Reflektivitäten setzen sich aus zwei Messungen zusammen:
+Dem Reflektivitätsscan und dem diffusen Scan.
+Der Reflektivitätsscan wird durch
+    Subtraktion des diffusen Scans sowie
+    Division durch den Geometriefaktor $G$ (\autoref{eqn:geometriefaktor})
+korrigiert.
+\autoref{fig:plt:schichtdicke_a} zeigt die Messwerte beider Messungen sowie die korrigierten Reflektivitäten
+in Abhängigkeit des Wellenvektorübertrags $q = \frac{4\pi}{\lambda} · \sin{\frac{\pi}{180} \alpha_i}$.
+
+Mittels der Funktion \texttt{find\_peaks} aus \texttt{scipy.signal} werden die Maxima der Kiessig-Oszillationen bestimmt.
+Die Abstände $\symup{\Delta} \alpha_i$ zwischen den Maxima
+mit der Wellenlänge $\lambda = \SI{1.54}{\angstrom}$
+erlauben den Rückschluss auf die Schichtdicke des Polystyrol gemäß \autoref{eqn:schichtdicke_kiessig}:
+\[
+    d_\text{PS} = \SI{83.05}{\nano\meter} \; .
+\]
+
+Für die theoretische Beschreibung der Kiessig-Oszillationen werden weitere Parameter manuell an die Messwerte angepasst.
+Diese beinhalten Brechungsindizes $n = 1 - \delta$ und Rauigkeiten $\sigma$
+für die unterschiedlichen Schichten beziehungsweise Grenzflächen:
+\begin{align*}
+    n_\text{Luft} &= 1 \\
+    n_\text{PS} = 1 - \delta &= 1 - \num{0.7e-6} \\
+    n_\text{Si} = 1 - \delta &= 1 - \num{6.8e-6} \\
+    \sigma_\text{Luft – PS} &= \SI{10e-10}{\meter} \\
+    \sigma_\text{PS – Si} &= \SI{7e-10}{\meter} \\
+\end{align*}
+Außerdem wird eine alternative Schichtdicke des Polystyrols von
+$d_\text{PS}' = \SI{86.00}{\nano\meter}$ verwendet.
+
+Aus den Korrekturen $\delta$ ergeben sich zudem die kritischen Winkel der Totalreflexion:
+\begin{align*}
+    \alpha_\text{c, PS} = \SI{0.19}{\degree}
+    \alpha_\text{c, Si} = \SI{0.28}{\degree} \\
+\end{align*}
 
 % Plot-Aufteilung:
 % 1.
@@ -100,7 +141,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit.
     \centering
     \includegraphics[width=\textwidth]{build/plt/schichtdicke_a.pdf}
     \caption{
-        TODO.
+        Unveränderte und korrigierte Messwerte zur Bestimmung der Reflektivität.
         Zur besseren Lesbarkeit wird auf Fehlerbalken verzichtet.
     }
     \label{fig:plt:schichtdicke_a}
@@ -115,6 +156,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{build/plt/schichtdicke_b.pdf}
-    \caption{TODO.}
+    \caption{Korrigierte Messwerte und Theoriekurven zur Reflektivität.}
     \label{fig:plt:schichtdicke_b}
 \end{figure}
