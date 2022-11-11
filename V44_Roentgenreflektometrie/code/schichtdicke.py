@@ -101,8 +101,11 @@ def main(name, mess_refl, mess_diff, ureg, d_Strahl, α_g, litdata):
     q = α_to_q(α, λ=λ)
 
     # █ Schichtdicke bestimmen (Peaks finden)
-    peaks, peak_props = sp.signal.find_peaks(tools.nominal_values(I).to('1/s').m, height=(1E2, 1E4), prominence=5)
+    # peaks, peak_props = sp.signal.find_peaks(tools.nominal_values(I).to('1/s').m, height=(1E2, 1E4), prominence=5, distance=8)
+    # TODO: Fast funktioniert es automatisch. Fast…
+    peaks = [70, 81, 91, 100, 111, 119, (131), 144, 155]
     assert len(peaks) > 0, "Keine Peaks gefunden"
+    print(f"Peak-Indizes: {peaks}")
     # TODO: add sem/ufloat
     Δα_mean = np.mean(np.diff(α[peaks].to('rad').m)) * ureg.rad
     Δq_mean = np.mean(np.diff(q[peaks].to('1/m').m)) * ureg['1/m']
@@ -111,15 +114,23 @@ def main(name, mess_refl, mess_diff, ureg, d_Strahl, α_g, litdata):
     print(f"Δα_mean = {Δα_mean}")
     print(f"Δq_mean = {Δq_mean}")
     # print(f"d_estim_a = {d_estim_a.to('m')}")
-    print(f"d_estim_b = {d_estim_b.to('m')}")
+    print(f"d_estim_b = {d_estim_b.to('nm')}")
 
     # berechenbar aus δ !? (@Mampfzwerg)
-    α_c_PS = ureg('0.068 °')
-    α_c_Si = ureg('0.210 °')
+    # α_c_PS = ureg('0.068 °')
+    # α_c_Si = ureg('0.210 °')
 
-    # plt.figure()
+    plt.figure()
 
     # z = d_estim_b
+
+    # α_c_Si = np.sqrt(2 * δ)
+    α_c_PS = λ * np.sqrt(litdata['PS']['r_e·ρ'] / 2)
+    α_c_Si = λ * np.sqrt(litdata['Si']['r_e·ρ'] / 2)
+    # print(f"α_c_PS = {α_c_PS.to('°'):.2f}")
+    # print(f"α_c_Si = {α_c_Si.to('°'):.2f}")
+    print(tools.fmt_compare_to_ref(α_c_PS, litdata['PS']['α_c'], 'α_c_PS'))
+    print(tools.fmt_compare_to_ref(α_c_Si, litdata['Si']['α_c'], 'α_c_Si'))
 
     # █ Parameter
     parrat_params = {
@@ -135,8 +146,12 @@ def main(name, mess_refl, mess_diff, ureg, d_Strahl, α_g, litdata):
         'σ2': 7e-10 * ureg.m,  # Silizium → Senkung des Kurvenendes und Amplitudenverkleinerung der Oszillationen
         #
         # Schichtdicke
-        'z': ureg('855 Å'),  # Parameter: Schichtdicke | verkleinert Oszillationswellenlänge
+        'z': ureg('860 Å'),  # Schichtdicke | verkleinert Oszillationswellenlänge
     }
+
+    print(tools.fmt_compare_to_ref(parrat_params['δ1'], litdata['PS']['δ'], "δ1"))
+    print(tools.fmt_compare_to_ref(parrat_params['δ2'], litdata['Si']['δ'], "δ2"))
+    print(tools.fmt_compare_to_ref(parrat_params['z'], d_estim_b, "Schichtdicke (Fit vs. Peak-Dist.)", unit='nm'))
 
     par, r13 = calc_parratt(
         α.to('rad').m,
@@ -209,7 +224,7 @@ def main(name, mess_refl, mess_diff, ureg, d_Strahl, α_g, litdata):
 
             plt2.plot(q, par, fmt='-', zorder=5, label="Theoriekurve (rau)")
             # plt2.plot(q, r13, fmt='--', label="Theoriekurve (Fresnel)")
-            plt2.plot(q, r13_glatt, fmt='--', label="Fresnelreflektivität Si")
+            plt2.plot(q, r13_glatt, fmt='--', label="Fresnelreflektivität")
             plt2.plot(q, par_glatt, fmt='-', label="Theoriekurve (glatt)")
 
             plt.axvline(α_to_q(α_g, λ).to('1/m'), color='C0', linestyle='--', label="$α_g$")
