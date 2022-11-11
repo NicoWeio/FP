@@ -228,8 +228,8 @@ def main(name, mess_refl, mess_diff, ureg, d_Strahl, α_g, litdata):
             plt2.plot(q, par_glatt, fmt='-', label="Theoriekurve (glatt)")
 
             plt.axvline(α_to_q(α_g, λ).to('1/m'), color='C0', linestyle='--', label="$α_g$")
-            plt.axvline(α_to_q(α_c_PS, λ).to('1/m'), color='C1', linestyle='--', label="$α_c$ (PS)")
-            plt.axvline(α_to_q(α_c_Si, λ).to('1/m'), color='C2', linestyle='--', label="$α_c$ (Si)")
+            plt.axvline(α_to_q(α_c_PS, λ).to('1/m'), color='C1', linestyle='--', label=r"$α_\text{c, PS}$")
+            plt.axvline(α_to_q(α_c_Si, λ).to('1/m'), color='C2', linestyle='--', label=r"$α_\text{c, Si}$")
 
         # plt.xlim(0, 2E7)
         # plt.ylim(bottom=1E2)

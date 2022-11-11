@@ -59,7 +59,11 @@ und somit oberhalb des gemessenen sowie gefitteten Maximums des Detektorscans.
 
 \FloatBarrier
 \subsection{Rockingscan}
-Mithilfe des in \autoref{fig:plt:4_rocking1_linear} dargestellten Rockingscans
+Mithilfe des in \autoref{fig:plt:4_rocking1_linear}
+% NOTE: Verzichte auf explizite Nennung von fig:plt:4_rocking1_log zugunsten besserer Seitenumbrüche
+    % in \autoref{fig:plt:4_rocking1_linear} linear
+    % und in \autoref{fig:plt:4_rocking1_log} logarithmisch
+dargestellten Rockingscans
 können die Geometriewinkel $\alpha_{g, 1}$ und $\alpha_{g, 2}$
 als Übergangspunkte zum Untergrund bestimmt werden.
 Sie und ihr Mittelwert $\alpha_g$ betragen:
@@ -122,7 +126,7 @@ für die unterschiedlichen Schichten beziehungsweise Grenzflächen:
     \sigma_\text{Luft – PS} &= \SI{10e-10}{\meter} \\
     \sigma_\text{PS – Si} &= \SI{7e-10}{\meter} \\
 \end{align*}
-Außerdem wird eine alternative Schichtdicke des Polystyrols von
+Außerdem wird eine (vom aus den Abständen der Maxima berechneten Wert unabhängige) Schichtdicke des Polystyrols von
 $d_\text{PS}' = \SI{86.00}{\nano\meter}$ verwendet.
 
 Aus den Korrekturen $\delta$ ergeben sich zudem die kritischen Winkel der Totalreflexion:
@@ -130,6 +134,12 @@ Aus den Korrekturen $\delta$ ergeben sich zudem die kritischen Winkel der Totalr
     \alpha_\text{c, PS} = \SI{0.19}{\degree}
     \alpha_\text{c, Si} = \SI{0.28}{\degree} \\
 \end{align*}
+
+Die (wie zuvor beschrieben) korrigierten Messwerte,
+die kritischen Winkel
+sowie die Theoriekurven mit und ohne Berücksichtigung der Rauigkeit
+sind in \autoref{fig:plt:schichtdicke_b} dargestellt.
+
 
 % Plot-Aufteilung:
 % 1.

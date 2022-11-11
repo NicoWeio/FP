@@ -4,6 +4,7 @@
 In diesem Abschnitt sollen der Versuchsaufbau,
 sowie das Vorgehen der Justierung und der eigentlichen Messung beschrieben werden.
 
+
 \subsection{Versuchsaufbau}
 
 Für diese Messung wird ein Labordiffraktometer verwendet,
@@ -16,6 +17,7 @@ Anschließend treffen die Strahlen auf die Probe,
 welche sich auf einer Aluminium-Halterung befindet.
 Die Intensität der reflektierten Strahlung wird mithilfe eines Detektors gemessen,
 welcher sich gegenüber der Röntgenröhre befindet.
+
 
 \subsection{Justierung der Diffraktorelemente}
 
@@ -49,10 +51,10 @@ Diese sollte,
 wie in \autoref{fig:scan} eine Gauß-Verteilung ergeben,
 deren Maximum händisch als Null-Position des Detektors eingestellt werden muss.
 Dies geschieht über den ZI-Schalter.
-Der Messbereich liegt hier zwischen \numrange{-0.5}{0.5} mit einer Schrittweite von \num{0.02}.
+Der Messbereich liegt hier zwischen \SIrange{-0.5}{0.5}{\degree} mit einer Schrittweite von \SI{0.02}{\degree}.
 
 Anschließend wird ein \emph{Z-Scan} gestartet,
-bei dem die Z-Position der Probe in einem Bereich von \numrange{-1}{1} mit einer Schrittweite von \num{0.04} verschoben wird.
+bei dem die Z-Position der Probe in einem Bereich von \SIrange{-1}{1}{\milli\meter} mit einer Schrittweite von \SI{0.04}{\milli\meter} verschoben wird.
 Damit die Probe mittig im Strahl liegt,
 muss für die Z-Position ein Wert gewählt werden,
 für die die Intensität gerade $I = \sfrac{1}{2} I_\text{max}$ beträgt.
@@ -78,7 +80,7 @@ Der Verlauf der Intensität sollte in etwa wie in dem unteren Diagramm in \autor
 \end{figure}
 
 Ist der gesuchte Z-Wert eingestellt,
-wird ein \emph{X-Scan} in einem Intervall von \numrange{-20}{20} in Schritten von \num{1} durchgeführt,
+wird ein \emph{X-Scan} in einem Intervall von \SIrange{-20}{20}{\milli\meter} in Schritten von \SI{1}{\milli\meter} durchgeführt,
 um die X-Position der Probe einzustellen.
 Die Intensitätsverteilung bleibt dabei zunächst konstant,
 sinkt auf einen Wert ab,
@@ -96,7 +98,7 @@ Die Intensitätsverteilung sollte einem um Null symmetrischen Dreieck entspreche
 wie es in \autoref{fig:scan} dargestellt ist.
 Weicht die Verteilung davon ab,
 muss die Y-Koordinate angepasst werden.
-Der Scanbereich läuft hier von \numrange{-1}{1} mit einer Schrittweite von \num{0.04}.
+Der Scanbereich läuft hier von \SIrange{-1}{1}{\degree} mit einer Schrittweite von \SI{0.04}{\degree}.
 
 Nun wird ein weiterer \emph{Z-Scan} gestartet,
 um die Probe wieder mittig in den Strahlengang zu bringen.
@@ -105,16 +107,16 @@ Das Vorgehen bleibt wie zuvor beschrieben.
 Um die Justierung weiter zu verbessern,
 wird erneut ein \emph{Rocking-Scan} durchgeführt,
 wobei die Winkelsumme in diesem Fall $2 \Theta = \SI{0.3}{\degree}$ beträgt.
-Es wird ein Messintervall von \numrange{0}{0.3} mit einer Schrittweite von \num{0.005} ausgewählt.
+Es wird ein Messintervall von \SIrange{0}{0.3}{\degree} mit einer Schrittweite von \SI{0.005}{\degree} ausgewählt.
 Die Intensitätsverteilung sollte einem um etwa $\Theta = \SI{0.15}{\degree}$ symmetrischen Peak entsprechen,
 dessen Maximum mithilfe des ZI-Knopfes manuell auf exakt \SI{0.15}{degree} verschoben wird.
 
 Abschließend wird mit eingestelltem Winkel der Röntgenröhre und des Detektors ein weiterer \emph{Z-Scan} ausgeführt,
 wie in \autoref{fig:zposition03} gezeigt,
 wobei die Intensitätsverteilung nun ebenfalls die Form einer Gauß-Verteilung besitzt.
-%TODO: Messintervall aus Daten einfügen; Variierte von der Versuchsanleitung
-Das Messintervall beträgt hier x mit einer Schrittweite von y.
+Das Messintervall beträgt hier \SIrange{-0.1}{0.5}{\degree} mit einer Schrittweite von \SI{0.02}{\degree}.
 Für den Z-Wert wird das Maximum der Verteilung ausgewählt.
+
 
 \subsection{Messung der Reflektivität}
 
