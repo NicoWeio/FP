@@ -1,2 +1,50 @@
 \section{Theorie}
 \label{sec:theorie}
+
+Im folgenden Abschnitt sollen die theoretischen Grundlagen der Wechselwirkung von hochenergetischer Strahlung mit Materie,
+sowie die Funktionsweise des Germaniumdetektors erläutert werden.
+
+\subsection{Wechselwirkung von Strahlung mit Materie}
+
+Wenn hochenergetische $\gamma$-Strahlung auf Materie trifft,
+treten,
+abhängig von der Energie der Strahlung,
+unterschiedliche Effekte auf.
+
+Für Photon-Energien von $E_{\gamma} \approx \SI{100}{\kilo\eV}$ dominiert der \textbf{Photoeffekt}.
+Dabei wird das Photon von einem Atom vollständig absorbiert und kann ein Elektron herauslösen,
+wenn die Energie des Photons größer als die Bindungsenergie $E_\text{Bind}$ des Elektrons ist.
+Das herausgelöste Elektron behält die Energie $E_\text{e} = E_{\gamma} - E_\text{Bind}$ zurück.
+Im Atom entsteht eine Lücke in der entsprechenden Schale,
+welche durch ein Elektron von einer anderen Schale gefüllt werden kann.
+Dabei entsteht ein weiteres Photon mit der entsprechenden Energiedifferenz.
+Für den Wirkungsquerschnitt des Photoeffekts gilt
+\begin{equation*}
+    \sigma_\text{Photo} \propto \frac{Z^n}{E^{\sfrac{7}{2}}_{\gamma}}
+\end{equation*}
+mit der Ordnungszahl $Z$ des Atoms und $4 \leq n \leq \num{5}$.
+
+Für höhere Photon-Energien dominiert der \textbf{Compton-Effekt}.
+Dabei stößt das Elektron mit einem Elektron und überträgt einen Teil der Energie auf das Elektron,
+welcher abhängig vom Streuwinkel $\theta$ ist.
+Die Energie des Photons nach dem Stoß kann mit
+\begin{equation*}
+    E^{'}_{\gamma} = \frac{E_{\gamma}}{1 + \epsilon(1 - \cos{\theta})}
+\end{equation*}
+berechnet werden,
+wobei $\epsilon = \sfrac{E_{\gamma}}{m_\text{e} c^2}$ ist,
+mit der Ruhemasse $m_\text{e}$ des Elektrons.
+Da $\theta$ kontinuierliche Werte annehmen kann,
+ist auch der Energieübertrag zwischen Photon und Elektron kontinuierlich.
+Bei einem Streuwinkel von $\theta = \pi$ findet ein maximaler Energieübertrag statt,
+das Elektron hat nach dem Stoß eine Energie von
+\begin{equation*}
+    E_\text{e} = \frac{2 \epsilon}{1 + 2 \epsilon} \ .
+\end{equation*}
+Der Wirkungsquerschnitt des Compton-Effekts ergibt sich über eine Winkelintegration der \emph{Klein-Nishina-Gleichung} \cite{TODO}.
+Es ergibt sich
+\begin{equation}
+    \sigma_\text{Compton} =
+    2 \pi r^2_\text{e} \biggl(\frac{1+\epsilon}{\epsilon} \biggl(\frac{1+2\epsilon}{2\epsilon} - \frac{1}{\epsilon}\ln(1+2\epsilon)\biggr)\biggr)
+    + \frac{1}{2\epsilon} \ln(1+2\epsilon) - \frac{1+3\epsilon}{(1+2\epsilon)^2} \ .
+\end{equation}
