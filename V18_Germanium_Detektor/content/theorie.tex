@@ -5,6 +5,7 @@ Im folgenden Abschnitt sollen die theoretischen Grundlagen der Wechselwirkung vo
 sowie die Funktionsweise des Germaniumdetektors erläutert werden.
 
 \subsection{Wechselwirkung von Strahlung mit Materie}
+\label{sec:wechselwirkungen}
 
 Wenn hochenergetische $\gamma$-Strahlung auf Materie trifft,
 treten,
@@ -61,7 +62,50 @@ Diese tritt erst für Photonenergien $E_{\gamma} \geq 2 m_\text{e} c^2 \approx \
 Im Coulombfeld eines Atomkerns wandelt sich das Photon in ein Elektron-Positron-Paar um,
 wobei diese die übrige Energie des Photons als kinetische Energie zurückbehalten.
 Der Wirkungsquerschnitt für diesen Prozess verhält sich wie folgt
-%TODO: Wirkungsquerschnitt Paarerzeugung von V14 übernehmen:
 \begin{equation*}
     \sigma_\text{Paar} \propto Z^2 f(Z, E_{\gamma}) \ .
 \end{equation*}
+
+Das charakteristische Spektrum eines $\gamma$-Strahlers ist in \autoref{fig:spektrum} dargestellt,
+wobei je nach Auflösungsvermögen des Detektors der Rückstreupeak,
+die Compton-Kante,
+sowie das Compton-Kontinuum und der Photopeak sichtbar sind.
+%\begin{figure}
+%    \centering
+%    \includegraphics[width=\textwidth]{}
+%    \caption{Charakteristisches Spektrum von X \cite{TODO}.
+%    Erkennbar sind der Rückstreupeak,
+%    die Compton-Kante und der Photopeak.}
+%    \label{fig:spektrum}
+%\end{figure}
+
+\subsection{Funktionsweise des Germaniumdetektors}
+\label{sec:funktionsweise}
+
+Germanium ist ein indirekter Halbleiter,
+welcher in der $\gamma$-Spektroskopie verwendet wird,
+da er eine besonders gute Energieauflösung besitzt.
+
+Der Germaniumdetektor besteht aus einem Germanium-Kristall,
+dessen eine Seite mithilfe von n-dotiert ist,
+während die andere Seite des Detektors p-dotiert ist.
+Aufgrund der unterschiedlichen Dotierung entsteht eine Verarmungszone,
+da die überschüssigen Löcher und Elektronen im Material rekombinieren.
+Trifft nun $\gamma$-Strahlung auf den Detektor,
+finden abhängig von der Energie der Strahlung die in \autoref{sec:wechselwirkungen} beschriebenen Prozesse statt.
+Bei diesen entstehen freie Elektronen,
+welche mit den gebundenen Elektronen des Kristalls stoßen.
+Wenn der Energieübertrag beim Stoß groß genug ist,
+können die gebundenen Elektronen aus dem Valenzband in das Leitungsband gehoben werden.
+Im Valenzband entstehen so weitere Löcher,
+sodass sich die Löcher und Elektronen im Valenz- und Leitungsband umverteilen.
+Dies kann als Strom gemessen werden.
+
+Damit möglichst viele $\gamma$-Quanten nachgewiesen werden können,
+sollte die Verarmungszone möglichst breit sein.
+Dies ist über Anlegen einer externen Spannung,
+oder durch eine asymmetrische Dotierung möglich.
+Aufgrund von weiteren Elektronübergängen in einem Halbleiter bei einer Temperatur größer Null entstehen zusätzliche Ströme,
+welche die Messung der von $\gamma$-Strahlung erzeugten Ströme stören.
+Um diese ungewollten Ströme zu verringern,
+wird der Detektor gekühlt.
