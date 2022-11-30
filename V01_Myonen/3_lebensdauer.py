@@ -59,8 +59,8 @@ print("Tabelle generieren…")
 
 
 # █ Untergrund & Fit
-def fit_fn(t, N_0, τ, U_2):
-    return N_0 * np.exp(-t / τ) + U_2
+def fit_fn(t, N_0, τ, U):
+    return N_0 * np.exp(-t / τ) + U
 
 
 first_nonzero = np.argmax(N)
@@ -70,31 +70,32 @@ print(f"Angesprochener Kanal-Bereich: {first_nonzero} bis {last_nonzero} ({last_
 
 # fit_mask = (t < ureg('4 µs')) & (N > 10)
 fit_mask = N > 0
+print(f"Kanäle mit Ereignissen: {np.sum(fit_mask)} (von {len(fit_mask)})")
 
 underground_mask = fit_mask.copy()
 U_1_all_channels = I_start * T_search * np.exp((I_start * T_search).to('dimensionless').n) * N_start
-U_1 = U_1_all_channels / num_channels_support
-print(f"Untergrund 1: {U_1.to('dimensionless'):.2f}")
+U_1 = U_1_all_channels / np.sum(fit_mask)
+print(f"Untergrund 1 (berechnet): {U_1.to('dimensionless'):.2f}")
 print(f"→ für alle Kanäle: {U_1_all_channels.to('dimensionless'):.2f}")
 
 # VARIANT: Den Untergrund gleichmäßig von allen Nicht-Null-Kanälen abziehen (!)
-# N[fit_mask] -= U_1_per_channel
+N[fit_mask] -= U_1
 
 N_0, τ, U_2 = tools.pint_curve_fit(
     fit_fn,
     # t, tools.nominal_values(N),
     t[fit_mask], N[fit_mask],
     (ureg.dimensionless, ureg.microsecond, ureg.dimensionless),
-    p0=(tools.nominal_value(max(N)), ureg('2 µs'), ureg('3 dimensionless')),
+    p0=(tools.nominal_value(max(N)), ureg('2 µs'), ureg('0 dimensionless')),
 )
 print(f"{(N_0, τ, U_2)=}")
-print(f"Untergrund 2: {U_2:.2f}")
+print(f"Untergrund 2 (Fit): {U_2:.2f}")
 print(f"→ für alle Kanäle: {(U_2 * num_channels_support).to('dimensionless'):.2f}")
 
 # N_0, τ, U_2 = (tools.nominal_value(max(N)), ureg('2 µs'), ureg('3 dimensionless'))
 
 τ_lit = ureg('2.1969811 µs')
-print(tools.fmt_compare_to_ref(τ, τ_lit))
+print(tools.fmt_compare_to_ref(τ, τ_lit, name='τ'))
 
 
 # █ Plot
@@ -104,12 +105,12 @@ for yscale in ['linear', 'log']:
     plt.figure()
     with tools.plot_context(plt, 'µs', 'dimensionless', "t", "N") as plt2:
         plt2.plot(
-            t[fit_mask], N[fit_mask], fmt='x', zorder=5,
+            t[fit_mask], N[fit_mask], fmt='.', zorder=5,
             elinewidth=0.5, markeredgewidth=0.5,
             label="Messwerte",
         )
         plt2.plot(
-            t[~fit_mask], N[~fit_mask], 'xr', zorder=5,
+            t[~fit_mask], N[~fit_mask], '.r', zorder=5,
             markeredgewidth=0.5,
             label="Messwerte (nicht berücksichtigt)",
         )
@@ -125,6 +126,8 @@ for yscale in ['linear', 'log']:
             label="Fit",
         )
     plt.yscale(yscale)
+    # if yscale == 'log':
+    #     plt.ylim(bottom=np.min(N[N>0])/2)
     plt.grid()
     plt.legend()
     plt.tight_layout()

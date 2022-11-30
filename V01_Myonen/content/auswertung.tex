@@ -21,7 +21,32 @@ Die in Impulsraten umgerechneten Messwerte sind in \autoref{tab:1_koinzidenz} au
 In \autoref{fig:plt:1_koinzidenz} lässt sich das Maximum der Ereignisrate
 bei einer Zeitdifferenz von $t_\text{diff} = \SI{-1}{\nano\second}$ erkennen.
 Es beträgt \SI{19.8 \pm 1.0}{\per\second}.
-Die zugehörige Halbwertsbreite beträgt \SI{10.1}{\nano\second}.
+%
+Zu beiden Seiten des Maximums fällt die Ereignisrate näherungsweise linear ab.
+Dies ist konsistent mit der Überlegung,
+dass eine Gleichverteilung der Ereignisse (die Gleichverteilung der Orte impliziert eine Gleichverteilung der Zeitdifferenzen zwischen beiden \acp{PMT})
+mit einem Koinzidenzfenster gefaltet wird.
+Ein Plateau,
+welches nach diesem Modell möglich wäre,
+wird jedoch nicht eindeutig beobachtet.
+
+Mittels linearer Regression werden die Parameter der Geraden bestimmt,
+die die Ereignisrate links und rechts des Maximums beschreiben.
+Es ergeben sich
+\begin{align*}
+m_l &= \SI{1.80 \pm 0.09}{\per\nano\second\per\second} &
+b_l &= \SI{20.23 \pm 0.55}{\per\second}
+\\
+m_r &= \SI{-1.68 \pm 0.08}{\per\nano\second\per\second} &
+b_r &= \SI{17.95 \pm 0.43}{\per\second}
+\end{align*}
+und somit die Halbwertsbreite
+\[
+    \frac{\frac{I_{\max}}{2} - b_r}{m_r}
+    -
+    \frac{\frac{I_{\max}}{2} - b_l}{m_l}
+    = \SI{10.5(8)}{\nano\second} \; .
+\]
 
 \begin{table}
     \centering
@@ -80,23 +105,29 @@ Diese sind in \autoref{tab:3_lebensdauer} vollständig angegeben.
 Die Stopp-Ereigniszahl entspricht der Summe aller Kanäle des \ac{MCA}, % NOTE: Abgesehen von Overflow-Events…
 wohingegen die Start-Ereigniszahl aufgrund eines Fehlers Dritter aus den vorherigen Messungen abgeschätzt werden muss.
 Dazu wird auf das Maximum aus \autoref{sec:auswertung:koinzidenz} zurückgegriffen.
+Es sind
 \begin{align*}
     % ↓ wegen der Umrechnung nicht ganzzahlig
     N_\text{Start} &= \num{3166297.20 \pm 159914.00} \\
     \text{beziehungsweise} \\
-    N_\text{Stopp} &= \num{7630.00 \pm 87.35} \; .
+    % NOTE: „Die Stopp Anzahl ist ja ein fester gemessener Wert.
+    %   Wenn ihr den Wert der Startsignale vom Counter wüsstet, dann hätte der auch keinen Fehler.
+    %   Die Gespeicherten Werte entsprechen ja euren Einträgen im Histogramm, da nochmal einen statistischen Fehler drauf zu packen ist nicht sinnvoll.“
+    N_\text{Stopp} &= \num{7630} \; .
 \end{align*}
 % Suchzeit: 10 µs (siehe Durchführung)
 
 Daraus wird der durch mehrere Myonen im gleichen Suchfenster hervorgerufene Untergrund über die gesamte Messzeit
 gemäß \autoref{eqn:untergrund} zu
-$U_\text{ges} = \num{627.05 \pm 63.34}$ insgesamt
+$U_{1, \text{ges}} = \num{627.05 \pm 63.34}$ insgesamt
 beziehungsweise
-$U_1 = \num{1.41 \pm 0.14}$ pro Kanal
+$U_1 = \num{1.47 \pm 0.15}$ pro (nicht-leerem) Kanal
 bestimmt.
+Er wird von allen Kanälen mit Ereignissen (\num{428} von \num{512}) gleichmäßig abgezogen.
 
 Um schließlich die mittlere Lebensdauer zu erhalten,
-wird eine Exponentialfunktion mit einer zusätzlichen Variable für den übrigen (von $t$ unabhängigen) Untergrund $U_2$ an die Daten angepasst:
+wird eine Exponentialfunktion mit einer zusätzlichen Variable für den übrigen (von $t$ unabhängigen) Untergrund $U_2$
+an die bereits um $U_1$ bereinigten Daten angepasst:
 \begin{equation*}
     N(t) = N_0 \cdot \exp (-t / \tau) + U_2 \; .
 \end{equation*}
@@ -109,11 +140,12 @@ Die gefundenen Parameter lauten:
 \begin{align*}
     N_0 &= \num{87.3 \pm 1.9} \\
     \tau &= \SI{1.91 \pm 0.04}{\micro\second} \\
-    U_2 &= \num{0.85 \pm 0.19} \; .
+    U_2 &= \num{-0.61 \pm 0.19} \; .
 \end{align*}
 Die mittlere Lebensdauer der Myonen wurde damit zu $\tau = \SI{1.91 \pm 0.04}{\micro\second}$ bestimmt.
-$U_2$ liefert eine alternative Schätzung für den gesamten Untergrund, bezogen auf einen einzelnen Kanal;
-$U_1$ findet im Fit keine Verwendung.
+% % ↓ leichte Dopplung
+% $U_2$ liefert eine Schätzung für den Untergrund (bezogen auf einen einzelnen Kanal),
+% der nach Entfernung des theoretischen Untergrunds durch mehrere Myonen im gleichen Suchfenster verbleibt.
 
 \begin{figure}
     \centering

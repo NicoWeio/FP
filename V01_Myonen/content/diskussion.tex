@@ -5,21 +5,31 @@
 Bei der \hyperref[sec:auswertung:koinzidenz]{Justage der Koinzidenzapparatur} zeigte sich
 ein Maximum der Zählrate bei einer kleinen Zeitverschiebung
 und davon ausgehend ein symmetrischer, weitestgehend linearer Abfall zu beiden Seiten.
-Beide Beobachtungen decken sich mit den Erwartungen. % COULDDO: Warum erwarten wir eigentlich linearen Abfall?
+Da die Randwerte relativ nah an Null sind,
+kann geschlossen werden,
+dass der Untergrund effektiv herausgefiltert wurde.
+% KORR: Und Anhand der Breite könnt ihr auch sehen,dass das Koinzidenz Zeitfenster klein gegenüber den 10ns ist,
+% da macht es kein Einfluss ob es 10 9,9 oder 10,1 ns sind.
 
-Die \hyperref[sec:auswertung:mca]{Kalibrierung des \acs{MCA}} ergab einen perfekt linearen Zusammenhang zwischen Kanalnummer und Zeitdifferenz.
+% COULDDO: Halbwertsbreite einbauen
+% Beide Beobachtungen decken sich mit den Erwartungen.
+
+Die \hyperref[sec:auswertung:mca]{Kalibrierung des \acs{MCA}} ergab einen linearen Zusammenhang zwischen Kanalnummer und Zeitdifferenz.
+% NOTE: Der Zusammenhang war sogar *perfekt*, aber das darf man ja nicht schreiben…
 Die Abweichungen von der Regressionsgeraden liegen im Bereich der Rechengenauigkeit.
 
 Die \hyperref[sec:auswertung:lebensdauer]{Bestimmung der mittleren Lebensdauer} durch einen Fit war in Anbetracht der Unsicherheiten zufriedenstellend.
 Der anhand von \autoref{eqn:untergrund} vorhergesagte Untergrund von
-$U_1 = \num{1.41 \pm 0.14}$ pro Kanal
-ist dabei deutlich größer als der beim Fit bestimmte Untergrund von
-$U_2 = \num{0.85 \pm 0.19}$.
-Mögliche Ursachen sind die hohe Messungenauigkeit sowie das ersatzweise Vorgehen zur Bestimmung von $U_1$.
-
-Aufgrund der begrenzten Einstellmöglichkeiten des \ac{TAC} wurden keine Ereignisse für besonders kleine und große Lebensdauern registriert.
+$U_1 = \num{1.47 \pm 0.15}$ pro Kanal
+trägt dazu bei, dass der beim Fit bestimmte übrige Untergrund von
+$U_2 = \num{-0.61 \pm 0.19}$
+sogar negativ ist.
+Mögliche Ursachen sind die hohe Messungenauigkeit sowie das ersatzweise Vorgehen zur Bestimmung von $N_\text{Start}$,
+wovon $U_1$ direkt abhängt.
+%
+Aufgrund der begrenzten Einstellmöglichkeiten des Binnings des \ac{TAC} wurden keine Ereignisse für besonders kleine und große Kanäle registriert.
 Die hier bestimmte mittlere Lebensdauer $\tau = \SI{1.91 \pm 0.04}{\micro\second}$
-weicht um \SI{-0.28}{\micro\second} beziehungsweise \SI{-12.9}{\percent} vom Literaturwert $\tau_\text{th} = \SI{2.20}{\micro\second}$ \cite{pdg} ab,
+weicht um \SI{-0.28}{\micro\second} beziehungsweise \SI{-12.9}{\percent} vom Literaturwert $\tau_\text{lit} = \SI{2.20}{\micro\second}$ \cite{pdg} ab,
 wobei die Abweichung über die angegebene Unsicherheit hinausgeht.
 
 
@@ -27,8 +37,7 @@ wobei die Abweichung über die angegebene Unsicherheit hinausgeht.
 
 Die Abweichungen bei der Messung der Lebensdauer der Myonen können auf verschiedene Unsicherheiten bei der Messung zurückgeführt werden.
 
-Zum einen wurde bei der Einstellung der Schwellspannung der Diskriminatoren diese nur über das Drehen einer Schraube variiert,
-wobei keine Skala gegeben war und die Änderung nur über Handmaß geschah.
+Einerseits wurde bei der Einstellung der Schwellspannung der Diskriminatoren diese nur über das händische Drehen einer Schraube ohne Skala variiert.
 %
 Wären zudem mehr Messungen der Impulse über einen längeren Zeitraum vorgenommen worden,
 hätte die Schwellspannung weiter optimiert werden können,
@@ -36,6 +45,8 @@ sodass der Diskriminator effektiver Untergrundsignale hätte herausfiltern könn
 %
 Auch die Dauer der Impulse von \SI{10}{\nano\second} konnte auf dem Oszilloskop nur bedingt eingestellt werden.
 %
+% KORR: Die Bestmögliche Verzögerung ist nicht nötig, die Rate beinflusst nur die Gesamtzahl an Ereignissen.
+% Also indirekt über die Statistik das Ergebnis, aber da hilft auch einfach länger Messen.
 Des Weiteren wurde bei der Messung der Impulsraten zur Bestimmung der bestmöglichen Verzögerungszeit an den Photomultipliern
 manuell die Zeit sowie die Impulszähler gestoppt,
 sodass es auch hier zu Unsicherheiten kommen kann.
@@ -47,3 +58,11 @@ Eine weitere Unsicherheit ergab sich bei der Bestimmung der Untergrundrate,
 da die Gesamtzahl der Start-Ereignisse $N_\text{Start}$ nicht vollständig gemessen werden konnte.
 Aus diesem Grund wurde dieser Wert über die bei der Kalibrierung gemessenen Impulsraten und die Gesamtdauer der Messung abgeschätzt.
 Die tatsächliche Untergrundrate kann dementsprechend von der hier angenommenen abweichen.
+
+% TODO: Gewichtung nach Unsicherheit präferiert kleinere Messwerte?
+
+% KORR: Größten Einfluss hat der Untergrund, euer Wert sollte noch besser werden wenn ihr den berechneten Untergrund benutzt.
+% Hier ist wohl der berechnete False-Stop-Untergrund gemeint…
+% Also: Rausch-Untergrund wurde gut gefiltert, aber der False-Stop-Untergrund ist noch zu groß.
+
+% NOTE: Festsetzen von U=U_1 im Fit gibt eine größere Abweichung von 17.76%.
