@@ -37,32 +37,29 @@ wobei die Abweichung über die angegebene Unsicherheit hinausgeht.
 
 Die Abweichungen bei der Messung der Lebensdauer der Myonen können auf verschiedene Unsicherheiten bei der Messung zurückgeführt werden.
 
-Einerseits wurde bei der Einstellung der Schwellspannung der Diskriminatoren diese nur über das händische Drehen einer Schraube ohne Skala variiert.
-%
+Einerseits wurden die Schwellspannungen der Diskriminatoren nur über das händische Drehen einer Schraube ohne Skala variiert.
 Wären zudem mehr Messungen der Impulse über einen längeren Zeitraum vorgenommen worden,
 hätte die Schwellspannung weiter optimiert werden können,
 sodass der Diskriminator effektiver Untergrundsignale hätte herausfiltern können.
 %
 Auch die Dauer der Impulse von \SI{10}{\nano\second} konnte auf dem Oszilloskop nur bedingt eingestellt werden.
-%
-% KORR: Die Bestmögliche Verzögerung ist nicht nötig, die Rate beinflusst nur die Gesamtzahl an Ereignissen.
-% Also indirekt über die Statistik das Ergebnis, aber da hilft auch einfach länger Messen.
-Des Weiteren wurde bei der Messung der Impulsraten zur Bestimmung der bestmöglichen Verzögerungszeit an den Photomultipliern
+
+Des Weiteren wurden bei der Messung der Impulsraten zur Bestimmung der bestmöglichen Verzögerungszeit an den Photomultipliern
 manuell die Zeit sowie die Impulszähler gestoppt,
-sodass es auch hier zu Unsicherheiten kommen kann.
+was zusätzliche Unsicherheiten zur Folge hat.
 %
 Es konnten außerdem nur diskrete Werte eingestellt werden,
 sodass die bestmögliche Verzögerungszeit tatsächlich bei einem leicht anderen Wert liegen könnte.
-%
-Eine weitere Unsicherheit ergab sich bei der Bestimmung der Untergrundrate,
-da die Gesamtzahl der Start-Ereignisse $N_\text{Start}$ nicht vollständig gemessen werden konnte.
+Dies verursacht leicht geringere Zählraten und somit etwas größere relative Unsicherheiten,
+die aber durch längeres Messen kompensiert werden könnten.
+
+Eine weitere Unsicherheit ergab sich bei der Berechnung der Untergrundrate $U_1$,
+da die Gesamtzahl der Start-Ereignisse $N_\text{Start}$ nicht erfasst wurde.
 Aus diesem Grund wurde dieser Wert über die bei der Kalibrierung gemessenen Impulsraten und die Gesamtdauer der Messung abgeschätzt.
-Die tatsächliche Untergrundrate kann dementsprechend von der hier angenommenen abweichen.
+Es ist anzunehmen,
+dass eine direkte Messung der Start-Ereignisse genauere Ergebnisse liefern würde.
 
 % TODO: Gewichtung nach Unsicherheit präferiert kleinere Messwerte?
 
-% KORR: Größten Einfluss hat der Untergrund, euer Wert sollte noch besser werden wenn ihr den berechneten Untergrund benutzt.
-% Hier ist wohl der berechnete False-Stop-Untergrund gemeint…
-% Also: Rausch-Untergrund wurde gut gefiltert, aber der False-Stop-Untergrund ist noch zu groß.
-
+% KORR: Größten Einfluss hat der Untergrund, euer Wert sollte noch besser werden wenn ihr den berechneten Untergrund [→ U_1] benutzt.
 % NOTE: Festsetzen von U=U_1 im Fit gibt eine größere Abweichung von 17.76%.
