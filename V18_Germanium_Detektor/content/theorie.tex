@@ -18,6 +18,14 @@ Die Zahl der Photonen $N(d)$ ist durch den Zusammenhang
 gegeben.
 Der Faktor $\mu = n \cdot \sigma$ beschreibt den Extinktionskoeffizienten,
 mit dem Wirkungsquerschnitt $\sigma$ des jeweiligen Prozess und $n$ der Anzahl Elektronen pro Probenvolumen.
+Aufgrund der unterschiedlichen Dominanz der Effekte abhängig von der Energie der $\gamma$-Strahlung ergibt sich auch eine Energieabhängigkeit des Extinktionskoeffizienten.
+Diese ist in \autoref{fig:extinktionskoeffizient} dargestellt.
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{content/img/Gilmore_Abb_2.3.pdf}
+    \caption{Verlauf des Extinktionskoeffizienten in Abhängigkeit der Energie der $\gamma$-Strahlung \cite{gilmore}.}
+    \label{fig:extinktionskoeffizient}
+\end{figure}
 
 Für Photon-Energien von $E_{\gamma} \approx \SI{100}{\kilo\eV}$ dominiert der \textbf{Photoeffekt}.
 Dabei wird das Photon von einem Atom vollständig absorbiert und kann ein Elektron herauslösen,
@@ -49,7 +57,7 @@ das Elektron hat nach dem Stoß eine Energie von
 \begin{equation*}
     E_\text{e} = \frac{2 \epsilon}{1 + 2 \epsilon} \ .
 \end{equation*}
-Der Wirkungsquerschnitt des Compton-Effekts ergibt sich über eine Winkelintegration der \emph{Klein-Nishina-Gleichung} \cite{TODO}.
+Der Wirkungsquerschnitt des Compton-Effekts ergibt sich über eine Winkelintegration der \emph{Klein-Nishina-Gleichung} \cite{knoll}.
 Es ergibt sich
 \begin{equation}
     \sigma_\text{Compton} =
@@ -70,6 +78,7 @@ Das charakteristische Spektrum eines $\gamma$-Strahlers ist in \autoref{fig:spek
 wobei je nach Auflösungsvermögen des Detektors der Rückstreupeak,
 die Compton-Kante,
 sowie das Compton-Kontinuum und der Photopeak sichtbar sind.
+%TODO: Geeignete Abbildung finden (Vllt die von V14 zu der Cs-Quelle?)
 %\begin{figure}
 %    \centering
 %    \includegraphics[width=\textwidth]{}
@@ -84,7 +93,7 @@ sowie das Compton-Kontinuum und der Photopeak sichtbar sind.
 
 Germanium ist ein indirekter Halbleiter,
 welcher in der $\gamma$-Spektroskopie verwendet wird,
-da er eine besonders gute Energieauflösung besitzt.
+da er eine besonders gute Energieauflösung besitzt \cite{kolanoskiwermes}.
 
 Der Germaniumdetektor besteht aus einem Germanium-Kristall,
 dessen eine Seite mithilfe von n-dotiert ist,
