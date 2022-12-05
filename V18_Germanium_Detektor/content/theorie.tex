@@ -27,7 +27,7 @@ Diese ist in \autoref{fig:extinktionskoeffizient} dargestellt.
     \label{fig:extinktionskoeffizient}
 \end{figure}
 
-Für Photon-Energien von $E_{\gamma} \approx \SI{100}{\kilo\eV}$ dominiert der \textbf{Photoeffekt}.
+Für Photonenergien von $E_{\gamma} \approx \SI{100}{\kilo\eV}$ dominiert der \textbf{Photoeffekt}.
 Dabei wird das Photon von einem Atom vollständig absorbiert und kann ein Elektron herauslösen,
 wenn die Energie des Photons größer als die Bindungsenergie $E_\text{Bind}$ des Elektrons ist.
 Das herausgelöste Elektron behält die Energie $E_\text{e} = E_{\gamma} - E_\text{Bind}$ zurück.
@@ -40,7 +40,7 @@ Für den Wirkungsquerschnitt des Photoeffekts gilt
 \end{equation*}
 mit der Ordnungszahl $Z$ des Atoms und $4 \leq n \leq \num{5}$.
 
-Für höhere Photon-Energien dominiert der \textbf{Compton-Effekt}.
+Für höhere Photonenergien dominiert der \textbf{Compton-Effekt}.
 Dabei stößt das Elektron mit einem Elektron und überträgt einen Teil der Energie auf das Elektron,
 welcher abhängig vom Streuwinkel $\theta$ ist.
 Die Energie des Photons nach dem Stoß kann mit
@@ -57,8 +57,10 @@ das Elektron hat nach dem Stoß eine Energie von
 \begin{equation*}
     E_\text{e} = \frac{2 \epsilon}{1 + 2 \epsilon} \ .
 \end{equation*}
+Im Spektrum des $\gamma$-Strahlers findet sich an dieser Stelle die Compton-Kante,
+während die übrigen Energien in Form eines Compton-Kontinuums sichtbar sind.
 Der Wirkungsquerschnitt des Compton-Effekts ergibt sich über eine Winkelintegration der \emph{Klein-Nishina-Gleichung} \cite{knoll}.
-Es ergibt sich
+Es gilt
 \begin{equation}
     \sigma_\text{Compton} =
     2 \pi r^2_\text{e} \biggl(\frac{1+\epsilon}{\epsilon} \biggl(\frac{1+2\epsilon}{2\epsilon} - \frac{1}{\epsilon}\ln(1+2\epsilon)\biggr)\biggr)
@@ -74,19 +76,21 @@ Der Wirkungsquerschnitt für diesen Prozess verhält sich wie folgt
     \sigma_\text{Paar} \propto Z^2 f(Z, E_{\gamma}) \ .
 \end{equation*}
 
-Das charakteristische Spektrum eines $\gamma$-Strahlers ist in \autoref{fig:spektrum} dargestellt,
+Das charakteristische Spektrum eines $\gamma$-Strahlers ist beispielhaft in \autoref{fig:spektrum} dargestellt,
 wobei je nach Auflösungsvermögen des Detektors der Rückstreupeak,
 die Compton-Kante,
 sowie das Compton-Kontinuum und der Photopeak sichtbar sind.
+Der Rückstreupeak entsteht dabei durch Compton-Effekt in der Detektorumgebung,
+dessen Signal trotzdem detektiert wird.
 %TODO: Geeignete Abbildung finden (Vllt die von V14 zu der Cs-Quelle?)
-%\begin{figure}
-%    \centering
-%    \includegraphics[width=\textwidth]{}
-%    \caption{Charakteristisches Spektrum von X \cite{TODO}.
-%    Erkennbar sind der Rückstreupeak,
-%    die Compton-Kante und der Photopeak.}
-%    \label{fig:spektrum}
-%\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{content/img/cs137-spektrum_Leifi.pdf}
+    \caption{Charakteristisches Spektrum eines $\ce{^{137}Cs}$-Strahlers \cite{caesium}.
+    Erkennbar sind der Rückstreupeak,
+    die Compton-Kante und der Photopeak.}
+    \label{fig:spektrum}
+\end{figure}
 
 \subsection{Funktionsweise des Germaniumdetektors}
 \label{sec:funktionsweise}
@@ -118,3 +122,11 @@ Aufgrund von weiteren Elektronübergängen in einem Halbleiter bei einer Tempera
 welche die Messung der von $\gamma$-Strahlung erzeugten Ströme stören.
 Um diese ungewollten Ströme zu verringern,
 wird der Detektor gekühlt.
+Die Detektoreffizienz $Q$ wird durch
+\begin{equation}
+    Q = \frac{4 \symup{\pi} N}{\Omega A W t_\text{m}}
+\end{equation}
+beschrieben,
+mit dem Raumwinkel $\Omega$,
+der Zählrate $N$,
+der Aktivität $A$ und der Messdauer $t_\text{m}$.
