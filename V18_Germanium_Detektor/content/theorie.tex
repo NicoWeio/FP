@@ -1,8 +1,9 @@
 \section{Theorie}
 \label{sec:theorie}
 
-Im folgenden Abschnitt sollen die theoretischen Grundlagen der Wechselwirkung von hochenergetischer Strahlung mit Materie,
+Im folgenden Abschnitt sollen die theoretischen Grundlagen der Wechselwirkung von hochenergetischer Strahlung mit Materie
 sowie die Funktionsweise des Germaniumdetektors erläutert werden.
+
 
 \subsection{Wechselwirkung von Strahlung mit Materie}
 \label{sec:wechselwirkungen}
@@ -11,13 +12,13 @@ Wenn hochenergetische $\gamma$-Strahlung auf Materie trifft,
 treten,
 abhängig von der Energie der Strahlung,
 unterschiedliche Effekte auf.
-Die Zahl der Photonen $N(d)$ ist durch den Zusammenhang
+Die Zahl der Photonen $N(d)$ in Abhängigkeit der Eindringtiefe $d$ ist durch den Zusammenhang
 \begin{equation}
     N(d) = N_0 \cdot \symup{e}^{-\mu \cdot d}
 \end{equation}
 gegeben.
 Der Faktor $\mu = n \cdot \sigma$ beschreibt den Extinktionskoeffizienten,
-mit dem Wirkungsquerschnitt $\sigma$ des jeweiligen Prozess und $n$ der Anzahl Elektronen pro Probenvolumen.
+mit dem Wirkungsquerschnitt $\sigma$ des jeweiligen Prozesses und $n$ der Anzahl Elektronen pro Probenvolumen.
 Aufgrund der unterschiedlichen Dominanz der Effekte abhängig von der Energie der $\gamma$-Strahlung ergibt sich auch eine Energieabhängigkeit des Extinktionskoeffizienten.
 Diese ist in \autoref{fig:extinktionskoeffizient} dargestellt.
 \begin{figure}
@@ -52,7 +53,7 @@ wobei $\epsilon = \sfrac{E_{\gamma}}{m_\text{e} c^2}$ ist,
 mit der Ruhemasse $m_\text{e}$ des Elektrons.
 Da $\theta$ kontinuierliche Werte annehmen kann,
 ist auch der Energieübertrag zwischen Photon und Elektron kontinuierlich.
-Bei einem Streuwinkel von $\theta = \pi$ findet ein maximaler Energieübertrag statt,
+Bei einem Streuwinkel von $\theta = \pi$ findet ein maximaler Energieübertrag statt;
 das Elektron hat nach dem Stoß eine Energie von
 \begin{equation*}
     E_\text{e} = \frac{2 \epsilon}{1 + 2 \epsilon} \ .
@@ -63,15 +64,15 @@ Der Wirkungsquerschnitt des Compton-Effekts ergibt sich über eine Winkelintegra
 Es gilt
 \begin{equation}
     \sigma_\text{Compton} =
-    2 \pi r^2_\text{e} \biggl(\frac{1+\epsilon}{\epsilon} \biggl(\frac{1+2\epsilon}{2\epsilon} - \frac{1}{\epsilon}\ln(1+2\epsilon)\biggr)\biggr)
+    2 \pi r^2_\text{e} \left(\frac{1+\epsilon}{\epsilon} \left(\frac{1+2\epsilon}{2\epsilon} - \frac{1}{\epsilon}\ln(1+2\epsilon)\right)\right)
     + \frac{1}{2\epsilon} \ln(1+2\epsilon) - \frac{1+3\epsilon}{(1+2\epsilon)^2} \ .
 \end{equation}
 
 Ein weiterer möglicher Prozess ist durch \textbf{Paarbildung} gegeben.
 Diese tritt erst für Photonenergien $E_{\gamma} \geq 2 m_\text{e} c^2 \approx \SI{1.022}{\mega\eV}$ auf.
 Im Coulombfeld eines Atomkerns wandelt sich das Photon in ein Elektron-Positron-Paar um,
-wobei diese die übrige Energie des Photons als kinetische Energie zurückbehalten.
-Der Wirkungsquerschnitt für diesen Prozess verhält sich wie folgt
+wobei Elektron und Positron die übrige Energie des Photons als kinetische Energie zurückbehalten.
+Der Wirkungsquerschnitt für diesen Prozess verhält sich wie
 \begin{equation*}
     \sigma_\text{Paar} \propto Z^2 f(Z, E_{\gamma}) \ .
 \end{equation*}
@@ -86,11 +87,14 @@ dessen Signal trotzdem detektiert wird.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{content/img/cs137-spektrum_Leifi.pdf}
-    \caption{Charakteristisches Spektrum eines $\ce{^{137}Cs}$-Strahlers \cite{caesium}.
-    Erkennbar sind der Rückstreupeak,
-    die Compton-Kante und der Photopeak.}
+    \caption{
+        Charakteristisches Spektrum eines $\ce{^137Cs}$-Strahlers \cite{caesium}.
+        Erkennbar sind der Rückstreupeak,
+        die Compton-Kante und der Photopeak.
+    }
     \label{fig:spektrum}
 \end{figure}
+
 
 \subsection{Funktionsweise des Germaniumdetektors}
 \label{sec:funktionsweise}
@@ -116,7 +120,7 @@ Dies kann als Strom gemessen werden.
 
 Damit möglichst viele $\gamma$-Quanten nachgewiesen werden können,
 sollte die Verarmungszone möglichst breit sein.
-Dies ist über Anlegen einer externen Spannung,
+Dies ist über Anlegen einer externen Spannung
 oder durch eine asymmetrische Dotierung möglich.
 Aufgrund von weiteren Elektronübergängen in einem Halbleiter bei einer Temperatur größer Null entstehen zusätzliche Ströme,
 welche die Messung der von $\gamma$-Strahlung erzeugten Ströme stören.
