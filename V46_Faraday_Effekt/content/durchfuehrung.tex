@@ -1,2 +1,83 @@
 \section{Durchführung}
 \label{sec:durchfuehrung}
+
+Zur Messung der Faraday-Rotation wird ein Zwei-Strahl-Verfahren verwendet,
+um Störfaktoren wie das Rauschen der Photodetektoren zu minimieren.
+Zunächst wird auf den Versuchsaufbau eingegangen,
+um anschließend den Messprozess zu beschreiben.
+
+
+\subsection{Aufbau}
+\label{sec:durchfuehrung:aufbau}
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{content/img/Abb_1.pdf}
+    \caption{Schematische Darstellung des Versuchsaufbaus.}
+    \label{fig:aufbau}
+\end{figure}
+
+% - Lichtquelle
+% - Kondensor
+% - Lichtzerhacker
+% - Polarisator mit Goniometer
+% - Elektromagnet
+%     - Konstantstromquelle (Polwender…)
+%     - Probe
+% - Interferenzfilter
+% - Analysator
+% - 2x Photodetektor
+%     - Zeitkonstante …?
+% - Differenzverstärker
+% - Selektivverstärker (@Lichtzerhacker)
+% - Oszilloskop
+
+Der Versuchsaufbau ist in \autoref{fig:aufbau} gezeigt.
+Als \textbf{Lichtquelle} dient eine Halogen-Lampe,
+    welche genügend Strahlung im Infrarotbereich emittiert.
+Eine \textbf{Kondensorlinse} kollimiert den Lichtstrahl,
+    welcher durch den anschließenden \textbf{Lichtzerhacker} zeitlich moduliert wird.
+Ein \textbf{Polarisator},
+    dessen Winkeleinstellung $\theta$ an einem Goniometer abgelesen werden kann,
+gibt die Polarisationsrichtung vor,
+    mit der das Licht auf die \textbf{Probe} trifft.
+Diese ist im Magnetfeld eines \textbf{Elektromagneten} mit zwei Spulen platziert,
+    welcher durch eine \textbf{Konstantstromquelle} mit Strom versorgt wird.
+Das Umpolen der Spulen erfolgt (entgegen der Abbildung) durch Umstecken der Kabel.
+Mit einem \textbf{Interferenzfilter} wird eine bestimmte Wellenlänge im Infrarotbereich selektiert.
+Ein Glan-Thompson-Prisma dient als \textbf{Analysator},
+    der das monochromatische Infrarotlicht in zwei orthogonale Polarisationsrichtungen aufteilt.
+Die beiden Strahlen werden durch zwei \textbf{Photowiderstände} aufgenommen, % mit Sammellinse; mit regelbarer Zeitkonstante
+    welche durch einem \textbf{Differenzverstärker} miteinander verknüpft sind.
+Der \textbf{Selektivverstärker} ist mit dem Lichtzerhacker verbunden,
+    um das modulierte Signal mit hoher Güte zu verstärken und somit zu filtern.
+Das verstärkte Signal wird schließlich auf einem \textbf{Oszilloskop} abgebildet.
+
+
+
+\subsection{Messung}
+\label{sec:durchfuehrung:messung}
+% █ Justierung
+Vor den eigentlichen Messungen wird der Versuchsaufbau justiert.
+Dabei wird zunächst die Funktion des Analysators überprüft,
+    dessen durchgehender Lichtstrahl bei geeigneter Stellung des Polarisators verschwinden sollte.
+Anschließend werden die Photodetektoren ausgerichtet und die Verstärker eingestellt.
+% NOTE: Den Elektromagneten haben wir erst im Anschluss ausgemessen.
+
+% █ eigentliche Messung
+Für jede Probe (siehe \autoref{tab:probenwerte}) und jeden Interferenzfilter werden zwei Messungen entsprechend der beiden Polungen des Elektromagneten durchgeführt.
+Dabei wird die Probe im Luftspalt des Elektromagneten platziert und dahinter einer der Interferenzfilter eingesetzt.
+Nun kann die Polarisationsrichtung des auf die Probe fallenden Lichts mit dem Goniometer so eingestellt werden,
+dass das auf dem Oszilloskop abgebildete Signal eine minimale Amplitude (im Idealfall Null) aufweist.
+Dies ist der Fall, wenn die am Goniometer eingestellte Polarisation die Faraday-Rotation gerade ausgleicht.
+Es werden die Wellenlänge $\lambda$ des verwendeten Interferenzfilters und die Einstellung $\theta$ des Goniometers notiert.
+Dieser Vorgang wird für alle Interferenzfilter und beide Polungen des Elektromagneten sowie schließlich für alle Proben wiederholt.
+
+% NOTE: Doppelung mit der Auswertung
+% Indem auch eine hochreine Probe ohne Dotierung vermessen wird,
+% kann die durch im Valenzband gebundene Elektronen verursachte Faraday-Rotation bestimmt und von den anderen Messungen abgezogen werden.
+
+% █ Ausmessen des Elektromagneten
+Um die magnetische Flussdichte $B$ im Elektromagneten zu bestimmen,
+    der die Probe ausgesetzt ist,
+wird zuletzt der Luftspalt im Zentrum mit einer Hall-Sonde entlang der Strahlachse abgefahren.
+Das Maximum der so erhaltenen Kurve $B(z)$ dient als Referenzwert bei der Berechnung der effektiven Masse $m^*$.
