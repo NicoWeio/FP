@@ -12,7 +12,7 @@ deren Länge $L$ und Dotierung $N$ in \autoref{tab:probenwerte} aufgeführt sind
     \label{tab:probenwerte}
     \begin{tabular}{S S S}
         \toprule
-         & $L/\si{\milli\meter}$ & $N/\si{\per\cubic\centi\meter}$ \\
+         & $L\mathbin{/}\si{\milli\meter}$ & $N\mathbin{/}\si{\per\cubic\centi\meter}$ \\
         \midrule
         \text{Probe 1} & 1.296 & 2.8e18 \\
         \text{Probe 2} & 1.360 & 1.2e18 \\
@@ -25,10 +25,10 @@ deren Länge $L$ und Dotierung $N$ in \autoref{tab:probenwerte} aufgeführt sind
 
 Zur Bestimmung der Magnetfeldstärke,
 welche am Ort der Probe vorliegt,
-wird das Magnetfeld wie in \autoref{} beschrieben,
+wird das Magnetfeld wie in \autoref{sec:durchfuehrung:messung} beschrieben,
 vermessen.
 Die Probe befindet sich dabei am Ort der maximalen Magnetfeldstärke,
-welche in diesem Fall durch $B = \SI{405}{\milli\tesla}$ gegeben ist.
+welche in diesem Fall durch $B_\text{max} = \SI{405}{\milli\tesla}$ gegeben ist.
 Die entsprechenden Messdaten sind in \autoref{fig:magnetfeldstaerke} dargestellt und in \autoref{tab:messwerte_magnet} aufgelistet.
 \begin{figure}
     \centering
@@ -44,7 +44,7 @@ Die entsprechenden Messdaten sind in \autoref{fig:magnetfeldstaerke} dargestellt
     \label{tab:messwerte_magnet}
     \begin{tabular}{S S}
         \toprule
-        $z/\si{\milli\meter}$ & $B/\si{\milli\tesla}$ \\
+        $z\mathbin{/}\si{\milli\meter}$ & $B\mathbin{/}\si{\milli\tesla}$ \\
         \midrule
          0 & 281 \\
          2 & 335 \\
@@ -63,12 +63,12 @@ Die entsprechenden Messdaten sind in \autoref{fig:magnetfeldstaerke} dargestellt
 
 \subsection{Berechnung der effektiven Masse aus der Faraday-Rotation}
 
-Die Faraday-Rotation wird für zwei verschieden n-dotierte und eine reine GaAs-Probe wie in \autoref{} beschrieben,
+Die Faraday-Rotation wird für zwei verschieden n-dotierte und eine reine GaAs-Probe wie in \autoref{sec:durchfuehrung:messung} beschrieben,
 gemessen.
 Der Rotationswinkel lässt sich dabei mithilfe der Gleichung
-\begin{equation}
+\begin{equation*}
     \theta = \frac{1}{2} \cdot \lvert \theta_1 - \theta_2 \rvert
-\end{equation}
+\end{equation*}
 bestimmen,
 wobei $\theta_1$ und $\theta_2$ den Winkel bei der jeweiligen Polung des Magnetfelds beschreiben.
 Die jeweiligen Messwerte sind in Abhängigkeit der Wellenlänge $\lambda$ in \autoref{tab:messwerte_probe1},
@@ -76,13 +76,13 @@ Die jeweiligen Messwerte sind in Abhängigkeit der Wellenlänge $\lambda$ in \au
 wobei der Rotationswinkel schließlich auf die Länge der jeweiligen Probe normiert wurde.
 \autoref{fig:messwerte_rotation} zeigt den graphischen Verlauf des Rotationwinkels $\theta$ in Abhängigkeit von $\lambda^2$.
 
-\begin{table}
+\begin{table}[H]
     \centering
     \caption{Messwerte der Faraday-Rotation für die n-dotierte GaAs-Probe mit $N=\SI[per-mode=reciprocal]{2.8e18}{\per\cubic\centi\meter}$.}
     \label{tab:messwerte_probe1}
     \begin{tabular}{S S S S S}
         \toprule
-        $\lambda/\si{\micro\meter}$ & $\theta_{1}/\si{\degree}$ & $\theta_{2}/\si{\degree}$ & $\theta/\si{\radian}$ & $\frac{\theta}{L_1}/\si{\radian\per\meter}$ \\
+        $\lambda \mathbin{/} \si{\micro\meter}$ & $\theta_{1}\mathbin{/}\si{\degree}$ & $\theta_{2}\mathbin{/}\si{\degree}$ & $\theta\mathbin{/}\si{\radian}$ & $\frac{\theta}{L_1}\mathbin{/}\si{\radian\per\meter}$ \\
         \midrule
         1.060 &  75.25 &  86.00 & 0.09 &  72.39 \\
         1.290 &  77.00 &  85.08 & 0.07 &  54.43 \\
@@ -97,13 +97,13 @@ wobei der Rotationswinkel schließlich auf die Länge der jeweiligen Probe normi
     \end{tabular}
 \end{table}
 
-\begin{table}
+\begin{table}[H]
     \centering
     \caption{Messwerte der Faraday-Rotation für die n-dotierte GaAs-Probe mit $N=\SI[per-mode=reciprocal]{1.2e18}{\per\cubic\centi\meter}$.}
     \label{tab:messwerte_probe2}
     \begin{tabular}{S S S S S}
         \toprule
-        $\lambda/\si{\micro\meter}$ & $\theta_{1}/\si{\degree}$ & $\theta_{2}/\si{\degree}$ & $\theta/\si{\radian}$ & $\frac{\theta}{L_1}/\si{\radian\per\meter}$ \\
+        $\lambda\mathbin{/}\si{\micro\meter}$ & $\theta_{1}\mathbin{/}\si{\degree}$ & $\theta_{2}\mathbin{/}\si{\degree}$ & $\theta\mathbin{/}\si{\radian}$ & $\frac{\theta}{L_1}\mathbin{/}\si{\radian\per\meter}$ \\
         \midrule
         1.060 &  79.00 &  86.75 & 0.07 & 49.73 \\
         1.290 &  78.75 &  85.08 & 0.06 & 40.64 \\
@@ -118,13 +118,13 @@ wobei der Rotationswinkel schließlich auf die Länge der jeweiligen Probe normi
     \end{tabular}
 \end{table}
 
-\begin{table}
+\begin{table}[H]
     \centering
     \caption{Messwerte der Faraday-Rotation für die hochreine GaAs-Probe.}
     \label{tab:messwerte_probe3}
     \begin{tabular}{S S S S S}
         \toprule
-        $\lambda/\si{\micro\meter}$ & $\theta_{1}/\si{\degree}$ & $\theta_{2}/\si{\degree}$ & $\theta/\si{\radian}$ & $\frac{\theta}{L_1}/\si{\radian\per\meter}$ \\
+        $\lambda\mathbin{/}\si{\micro\meter}$ & $\theta_{1}\mathbin{/}\si{\degree}$ & $\theta_{2}\mathbin{/}\si{\degree}$ & $\theta\mathbin{/}\si{\radian}$ & $\frac{\theta}{L_1}\mathbin{/}\si{\radian\per\meter}$ \\
         \midrule
         1.060 &  75.17 &  99.25 & 0.21 & 41.13 \\
         1.290 &  89.00 &  96.25 & 0.06 & 12.38 \\
@@ -148,14 +148,37 @@ wobei der Rotationswinkel schließlich auf die Länge der jeweiligen Probe normi
 
 Um nun die effektive Masse der Elektronen in GaAs zu bestimmen,
 werden jeweils die Messwerte der hochreinen Probe von den Messwerten der dotierten Proben subtrahiert,
-um nur die Effekte der freien Elektronen im Halbleiter zu berücksichtigen.
-Dies ist in \autoref{} dargestellt.
-Zudem wird mithilfe der Gleichung
+um in der Differenz der Rotation $\symup{\Delta}\theta$ nur die Effekte der freien Elektronen im Halbleiter zu berücksichtigen.
+Zudem wird mithilfe von \autoref{eqn:theta_frei}
+\begin{equation*}
+    \theta_\text{frei} (\lambda^2) = \underbrace{\frac{e^2}{8 \symup{\pi}^2 \epsilon_0 c^2} \frac{1}{{m^{*}}^2} \frac{N B_\text{max}}{n}}_{a} \cdot \lambda^2
+\end{equation*}
+eine lineare Regression der Verteilung beider Proben durchgeführt,
+um über die Steigung $a$ die effektive Masse $m^*$ relativ zur Elektronenmasse $m_\text{e}$ zu bestimmen.
+Es gilt
 \begin{equation}
-    \frac{\theta}{L} (\lambda^2) = \frac{e^2}{8 \symup{\pi}^2 \epsilon_0 c^2} \frac{1}{{m^{*}}^2} \frac{N B}{n} \cdot \lambda^2
+    m^* = \sqrt{\frac{e^2}{8 \symup{\pi}^2 \epsilon_0 c^3} \frac{N B_\text{max}}{n} \frac{1}{a}} \ .
+    \label{eqn:m_eff}
 \end{equation}
-eine lineare Regression der Verteilung beider Proben durchgeführt.
-Dabei ist $e$ die Elementarladung,
-$\epsilon_0$ die elektrische Feldkonstante und $n$ der Brechungsindex von GaAs,
-welcher durch $n = $ \cite{} gegeben ist.
-%Quelle n: https://www.sciencedirect.com/science/article/pii/B9780125444156500182?ref=cra_js_challenge&fr=RR-1
+Dabei ist $\epsilon_0$ die elektrische Feldkonstante und $n$ der Brechungsindex von GaAs,
+welcher durch $n = 3.4724$ \cite{brechungsindex} gegeben ist.
+Die Werte der übrigen Konstanten werden der Bibliothek SciPy \cite{SciPy} entnommen.
+Die Verlauf der Differenzwerte der Rotation beider Proben,
+sowie die Fits sind in \autoref{fig:rotation_fit} dargestellt.
+Für die Steigung der beiden Geraden ergibt sich
+\begin{gather*}
+    a_{N=\SI[per-mode=reciprocal]{2.8e18}{\per\cubic\centi\meter}} = (14.6 \pm 0.866) \\
+    a_{N=\SI[per-mode=reciprocal]{1.2e18}{\per\cubic\centi\meter}} = (6.77 \pm 0.517)
+\end{gather*}
+für jeweilige Probe.
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{build/plt/fit_rotation.pdf}
+    \caption{Messwerte und lineare Regression der Faraday-Rotation der freien Elektronen in GaAs in Abhängigkeit von $\lambda^2$.}
+    \label{fig:rotation_fit}
+\end{figure}
+Für die effektive Masse der freien Elektronen in den verschieden dotieren GaAs-Proben resultieren durch Einsetzen der Werte für $a$ in \autoref{eqn:m_eff} die Werte
+\begin{gather*}
+    m^*_{N=\SI[per-mode=reciprocal]{2.8e18}{\per\cubic\centi\meter}} = (0.0767 \pm 0.0020) \cdot m_\text{e} \\
+    m^*_{N=\SI[per-mode=reciprocal]{1.2e18}{\per\cubic\centi\meter}} = (0.0738 \pm 0.0015) \cdot m_\text{e} \ .
+\end{gather*}

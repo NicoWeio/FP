@@ -5,10 +5,10 @@ PYTHONENV = MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: BUILD=true
 build/plt/magnet.pdf &: 1_magnet.py data/magnet.csv | build/plt
 	$(PYTHONENV) python 1_magnet.py
 
-build/plt/rotation.pdf &: 2_rotation.py data/probe_1.csv | build/plt
+build/plt/rotation.pdf build/plt/fit_rotation.pdf &: 2_rotation.py data/probe_1.csv data/probe_2.csv data/probe_3.csv | build/plt
 	$(PYTHONENV) python 2_rotation.py
 
-#build/plt/3_lebensdauer_linear.pdf build/plt/3_lebensdauer_log.pdf build/tab/3_lebensdauer.tex &: 3_lebensdauer.py 3_lebensdauer.csv | build/plt build/tab
+#build/plt/fit_rotation.pdf build/plt/3_lebensdauer_log.pdf build/tab/3_lebensdauer.tex &: 3_lebensdauer.py 3_lebensdauer.csv | build/plt build/tab
 #	$(PYTHONENV) python 3_lebensdauer.py
 
 build/main.pdf: main.tex lit.bib $(wildcard content/*.tex) build/plt/magnet.pdf build/plt/rotation.pdf | build
