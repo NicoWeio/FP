@@ -56,6 +56,7 @@ peaks_to_ignore = {
 peaks = [peak for peak in peaks if peak not in peaks_to_ignore]
 
 peaks.append(4200)  # TODO!
+peaks = list(sorted(peaks))
 
 assert len(peaks) == 11, f"Expected 11 peaks, found {len(peaks)}: {peaks}"  # for testing (@Mampfzwerg)
 peaks
@@ -112,19 +113,23 @@ df
 # - cut to len(peak_channels)
 
 # ↓ selected values
-# mask = df['Energy (keV)'] > 100  # ignore that first peak…
-lit_energies = df['Energy (keV)'][mask].values[:len(peak_channels)] * ureg.keV
+mask = df['Energy (keV)'] > 100  # ignore that first peak…
+lit_energies = df['Energy (keV)'][mask].values[:len(peak_channels)]
 lit_intensities = df['Intensity (%)'][mask].values[:len(peak_channels)]
 # ↓ all values
-lit_energies_all = df['Energy (keV)'].values * ureg.keV
+lit_energies_all = df['Energy (keV)'].values
 lit_intensities_all = df['Intensity (%)'].values
 
 # sort by energy
+lit_energies, lit_intensities = zip(*sorted(zip(lit_energies, lit_intensities)))
+
+lit_energies *= ureg.keV
+lit_energies_all *= ureg.keV
 
 peak_channels_n = tools.nominal_values(peak_channels * ureg.dimensionless)
-# m, b = tools.linregress(peak_channels_n, lit_energies)
+m, b = tools.linregress(peak_channels_n, lit_energies)
 # m, b = ureg('0.403 keV'), ufloat(-2.68, 0.05) * ureg.keV # @Mampfzwerg
-m, b = ureg('0.35 keV'), ufloat(-200, 0.05) * ureg.keV  # custom
+# m, b = ureg('0.35 keV'), ufloat(-200, 0.05) * ureg.keV  # custom
 
 # energy = m*channel + b
 # channel = (energy - b)/m
@@ -132,6 +137,7 @@ lit_channels = tools.nominal_values((lit_energies - b) / m)
 lit_channels_all = tools.nominal_values((lit_energies_all - b) / m)
 
 # Plot
+plt.figure()
 plt.plot(peak_channels_n, lit_energies, 'x')
 plt.plot(peak_channels_n, tools.nominal_values(m * peak_channels_n + b))
 plt.xlabel("Kanal")
