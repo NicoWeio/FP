@@ -1,4 +1,5 @@
 # %%
+import datetime
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -69,17 +70,17 @@ def fit_fn(x, a, x_0, sigma, c):
 
 
 def fit_peak(peak, plot=True):
-    print(f"Peak {peak} with {N_calib[peak]}")
-    area_halfwidth = 10
-    area_x = x_calib[(peak - area_halfwidth): (peak + area_halfwidth)]
-    area_N = N_calib[(peak - area_halfwidth): (peak + area_halfwidth)]
+    print(f"Peak bei ({peak}, {N_calib[peak].m})")
+    AREA_HALFWIDTH = 40
+    area_x = x_calib[(peak - AREA_HALFWIDTH): (peak + AREA_HALFWIDTH)]
+    area_N = N_calib[(peak - AREA_HALFWIDTH): (peak + AREA_HALFWIDTH)]
 
     # ▒ Fitte Gauß-Kurve
     a, x_0, sigma, c = tools.curve_fit(fit_fn,
                                        area_x, area_N.m,
                                        p0=[max(area_N), peak, 1, min(area_N)],
                                        )
-    print(f"a={a}, x_0={x_0}, sigma={sigma}, c={c}")
+    print(f"→ a={a}, x_0={x_0}, sigma={sigma}, c={c}")
 
     if plot:
         # ▒ Plotte Peak
@@ -90,16 +91,23 @@ def fit_peak(peak, plot=True):
         plt.show()
 
     # return a, x_0, sigma, c
-    return x_0
+    # return x_0
+    return {
+        'a': a,
+        'x_0': x_0,
+        'sigma': sigma,
+        'c': c,
+    }
 
 
-peak_channels = [fit_peak(peak, plot=False) for peak in peaks]
+peak_fits = [fit_peak(peak, plot=True) for peak in peaks]
+peak_channels = [fit['x_0'] for fit in peak_fits]
 
 
 # %%
 # Lade Emissionsspektrum aus der Literatur
 # http://www.lnhb.fr/Laraweb/index.php
-df = pd.read_csv("Eu-152.lara.txt", sep=" ; ", skiprows=13, skipfooter=1, engine='python', index_col=False)
+df = pd.read_csv("data/Eu-152.lara.txt", sep=" ; ", skiprows=13, skipfooter=1, engine='python', index_col=False)
 df
 
 # %% Lineare Regression (Zuordnung Energie ↔ Kanal)
@@ -138,24 +146,87 @@ lit_channels_all = tools.nominal_values((lit_energies_all - b) / m)
 
 # Plot
 plt.figure()
-plt.plot(peak_channels_n, lit_energies, 'x')
-plt.plot(peak_channels_n, tools.nominal_values(m * peak_channels_n + b))
-plt.xlabel("Kanal")
-plt.ylabel("Energie [keV]")
+with tools.plot_context(plt, 'dimensionless', 'keV', "Kanal", "Energie") as plt2:
+    plt2.plot(peak_channels_n, m * peak_channels_n + b, label="Regressionsgerade")
+    plt2.plot(peak_channels_n, lit_energies, 'x', label="Literaturwerte")
 # plt.show()
+plt.legend()
 # %%
 
 # ▒ Plotte Spektrum
 plt.figure()
-plt.plot(N_calib)
-plt.plot(peaks, N_calib[peaks], "x")
-for lit_channel, lit_intensity in zip(lit_channels, lit_intensities):
-    # for lit_channel, lit_intensity in zip(lit_channels_all, lit_intensities_all):
-    plt.axvline(lit_channel, color='red', alpha=min(1, lit_intensity/100*3))
-plt.xlabel("Kanal")
-plt.ylabel("Counts")
+with tools.plot_context(plt, 'dimensionless', 'dimensionless', "Kanal", "Counts") as plt2:
+    plt.plot(N_calib, label="Messwerte")
+    plt.plot(peaks, N_calib[peaks], 'x', label="Peaks")
+    # for lit_channel, lit_intensity in zip(lit_channels, lit_intensities):
+    for lit_channel, lit_intensity in zip(lit_channels_all, lit_intensities_all):
+        # TODO: Label
+        plt.axvline(lit_channel, color='C2', alpha=min(1, lit_intensity/100*3))
 # plt.xlim(right=4000)
-# plt.yscale('log')
+plt.yscale('log')
+plt.legend()
 plt.show()
 
+# %% ███ Effizienz ███
+# TODO: Aus .Spe-Datei lesen
+t_mess = ureg('3388 s')  # Messzeit
+
+# TODO: Quelle?
+r = ureg('2.25 cm')  # Radius
+l = ureg('9.5 cm')  # Abstand Probe–Detektor
+Ω = 2*np.pi*(1 - l/np.sqrt(l**2 + r**2))
+print(f"Ω={Ω.to('pi'):.4f}")
+
+probe_creationdate = datetime.datetime(2000, 10, 1, 0, 0, 0)
+durchfuehrung_date = datetime.datetime(2022, 11, 28, 0, 0, 0)
+age_probe = (durchfuehrung_date - probe_creationdate).total_seconds() * ureg.s
+print(f"Alter Probe: {age_probe.to('s'):.2e} = {age_probe.to('a'):.2f}")
+
+t_hw = ureg('4943 d')  # TODO: Unsicherheit
+A_0 = ufloat(4130, 60) * ureg.Bq
+A = A_0 * np.exp(-np.log(2) / t_hw * age_probe)
+W = 1  # Emissionswahrscheinlichkeit; TODO
+# W = df['Intensity (%)'] / 100 # Emissionswahrscheinlichkeit; TODO: untested
+print(f"A={A.to('Bq'):.2f}")
+
+
+# %% Flächeninhalt der Gaußkurven
+a_np = np.array([fit['a'].n for fit in peak_fits])  # Amplituden
+sigma_np = np.array([fit['sigma'].n for fit in peak_fits])  # Breiten (Standardabweichungen)
+Z = a_np * np.sqrt(2*np.pi * sigma_np**2)  # Flächeninhalte
+Z
+
+# %% Effizienz
+Q = 4*np.pi*Z / (Ω * A * W * t_mess)  # Effizienz
+# assert Q.check('dimensionless'), "Q is not dimensionless"
+Q.ito('dimensionless')  # NOTE: Q.check raises a KeyError for some reason, doing this instead → create an Issue?
+Q
+
+# %% Fit: Q(E) – Effizienz in Abhängigkeit von der Energie
+
+
+def fit_fn_Q(E, Q_max, exponent):
+    # NOTE: E / (1 keV)
+    if isinstance(E, ureg.Quantity):
+        E = E.to('keV').magnitude
+    return Q_max * E**exponent
+
+
+Q_max, exponent = tools.pint_curve_fit(fit_fn_Q,
+                                       lit_energies, Q,
+                                       (ureg.dimensionless, ureg.dimensionless),
+                                       p0=(15 * ureg.dimensionless, -1 * ureg.dimensionless),
+                                       return_p0=True,  # TODO
+                                       )
+print(f"Q_max={Q_max:.2f}")
+print(f"exponent={exponent:.2f}")
+
+# %% Plot: Q(E) – Effizienz in Abhängigkeit von der Energie
+energy_linspace = tools.linspace(*tools.bounds(lit_energies), 100)
+plt.figure()
+with tools.plot_context(plt, 'keV', 'dimensionless', "Energie", "Effizienz") as plt2:
+    plt2.plot(lit_energies, Q, fmt='x', label="Messwerte")
+    plt2.plot(energy_linspace, fit_fn_Q(energy_linspace, Q_max, exponent), label="Fit")
+plt.legend()
+plt.show()
 # %%
