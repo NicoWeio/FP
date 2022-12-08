@@ -27,17 +27,29 @@ def calc_I(N, T):
     return I
 
 
-def read_spe(filename):
-    # TODO: move to tools.py
+def load_spe(filename):
+    # COULDDO: move to tools.py
     N = np.genfromtxt(filename, skip_header=12, skip_footer=14)
     assert len(N) == 8192
+
+    # TODO: Irgendwo den Untergrund abziehen!
 
     N *= ureg.dimensionless
     return N
 
 
+def load_lara(filename):
+    # http://www.lnhb.fr/Laraweb/index.php
+    df = pd.read_csv(filename, sep=" ; ", skiprows=13, skipfooter=1, engine='python', index_col=False)
+    # Filtern nach Zerfallsart (TODO untested)
+    decay_mode_mask = df['Type'] == 'g'
+    print(f"Filtered {len(df)} → {len(df[decay_mode_mask])} rows by decay mode")
+    df = df[decay_mode_mask]
+    return df
+
+
 # █ Energiekalibrierung
-N_calib = read_spe("data/2022-11-28/1_Eu.Spe")
+N_calib = load_spe("data/2022-11-28/1_Eu.Spe")
 x_calib = np.arange(0, len(N_calib))  # * ureg.dimensionless
 
 # %% finde Peaks
@@ -106,8 +118,7 @@ peak_channels = [fit['x_0'] for fit in peak_fits]
 
 # %%
 # Lade Emissionsspektrum aus der Literatur
-# http://www.lnhb.fr/Laraweb/index.php
-df = pd.read_csv("data/Eu-152.lara.txt", sep=" ; ", skiprows=13, skipfooter=1, engine='python', index_col=False)
+df = load_lara("data/emissions/Eu-152.lara.txt")
 df
 
 # %% Lineare Regression (Zuordnung Energie ↔ Kanal)
@@ -121,7 +132,7 @@ df
 # - cut to len(peak_channels)
 
 # ↓ selected values
-mask = df['Energy (keV)'] > 100  # ignore that first peak…
+mask = df['Energy (keV)'] > 100  # ignore that first peak… # TODO: Might be obsolete since we're ignoring non-gamma decays now
 lit_energies = df['Energy (keV)'][mask].values[:len(peak_channels)]
 lit_intensities = df['Intensity (%)'][mask].values[:len(peak_channels)]
 # ↓ all values
@@ -144,7 +155,7 @@ m, b = tools.linregress(peak_channels_n, lit_energies)
 lit_channels = tools.nominal_values((lit_energies - b) / m)
 lit_channels_all = tools.nominal_values((lit_energies_all - b) / m)
 
-# Plot
+# Plot: Energie(Kanal)
 plt.figure()
 with tools.plot_context(plt, 'dimensionless', 'keV', "Kanal", "Energie") as plt2:
     plt2.plot(peak_channels_n, m * peak_channels_n + b, label="Regressionsgerade")
@@ -227,6 +238,37 @@ plt.figure()
 with tools.plot_context(plt, 'keV', 'dimensionless', "Energie", "Effizienz") as plt2:
     plt2.plot(lit_energies, Q, fmt='x', label="Messwerte")
     plt2.plot(energy_linspace, fit_fn_Q(energy_linspace, Q_max, exponent), label="Fit")
+plt.legend()
+plt.show()
+
+# %% ███ Spektrum von 137Cs ███
+# TODO: In mehrere .py-Dateien aufteilen
+
+N = load_spe("data/2022-11-28/2_Cs.Spe")
+x = np.arange(0, len(N))  # * ureg.dimensionless
+
+E = m * x + b
+
+# Peaks
+# peaks, _ = find_peaks(N, height=100, distance=100)
+peaks, _ = find_peaks(N, height=50, distance=1000)
+
+assert len(peaks) == 2, f"Es sollten 2 Peaks (Rückstreupeak und Photopeak) gefunden werden. Gefunden wurden {len(peaks)} Peaks."
+# rueckstreupeak, photopeak = peaks
+rueckstreupeak, photopeak = E[peaks]
+
+# TODO: Statt plump die Maxima zu nehmen, Gaußkurven fitten!
+
+print(f"Rückstreupeak: {rueckstreupeak}")
+print(f"Photopeak: {photopeak}")
+
+# %% Plot: N(E) – Spektrum von 137Cs
+plt.figure()
+with tools.plot_context(plt, 'keV', 'dimensionless', r"E_\gamma", r"N") as plt2:
+    plt2.plot(E, N, label="Messwerte")  # fmt='x'
+    plt2.plot(E[peaks], N[peaks], fmt='x', label="Peaks")
+plt.yscale('log')
+plt.xlim(right=800)
 plt.legend()
 plt.show()
 # %%
