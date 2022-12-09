@@ -11,7 +11,7 @@ from rich.console import Console
 from scipy.signal import find_peaks
 from uncertainties import ufloat
 
-# import generate_table
+import generate_table
 import tools
 
 ureg = pint.UnitRegistry()
@@ -157,16 +157,17 @@ lit_channels_all = tools.nominal_values((lit_energies_all - b) / m)
 
 # Plot: Energie(Kanal)
 plt.figure()
-with tools.plot_context(plt, 'dimensionless', 'keV', "Kanal", "Energie") as plt2:
+with tools.plot_context(plt, 'dimensionless', 'keV', r"\text{Kanal}", "E") as plt2:
     plt2.plot(peak_channels_n, m * peak_channels_n + b, label="Regressionsgerade")
     plt2.plot(peak_channels_n, lit_energies, 'x', label="Literaturwerte")
-# plt.show()
 plt.legend()
+plt.savefig("build/plt/energy_calibration.pdf")
+# plt.show()
 # %%
 
 # ▒ Plotte Spektrum
 plt.figure()
-with tools.plot_context(plt, 'dimensionless', 'dimensionless', "Kanal", "Counts") as plt2:
+with tools.plot_context(plt, 'dimensionless', 'dimensionless', r"\text{Kanal}", "N") as plt2:
     plt.plot(N_calib, label="Messwerte")
     plt.plot(peaks, N_calib[peaks], 'x', label="Peaks")
     # for lit_channel, lit_intensity in zip(lit_channels, lit_intensities):
@@ -176,7 +177,25 @@ with tools.plot_context(plt, 'dimensionless', 'dimensionless', "Kanal", "Counts"
 # plt.xlim(right=4000)
 plt.yscale('log')
 plt.legend()
+plt.savefig("build/plt/spektrum_Eu-152.pdf")
 plt.show()
+
+#%% █ Tabelle generieren
+# NOTE: wird später noch gebraucht
+a_np = np.array([fit['a'].n for fit in peak_fits]) * ureg.dimensionless # Amplituden
+x_0_np = np.array([fit['x_0'].n for fit in peak_fits]) * ureg.dimensionless # Mittelwerte
+sigma_np = np.array([fit['sigma'].n for fit in peak_fits]) * ureg.dimensionless # Breiten (Standardabweichungen)
+c_np = np.array([fit['c'].n for fit in peak_fits]) * ureg.dimensionless # Hintergründe
+
+# TODO: Unsicherheiten
+generate_table.generate_table_pint(
+    "build/tab/1_energiekalibrierung.tex",
+    (r"E_\text{lit}", ureg.kiloelectron_volt, lit_energies),
+    (r"x_0", ureg.dimensionless, x_0_np, 1),
+    (r"a", ureg.dimensionless, a_np, 1),
+    (r"\sigma", ureg.dimensionless, sigma_np, 2),
+    (r"c", ureg.dimensionless, c_np, 2),
+)
 
 # %% ███ Effizienz ███
 # TODO: Aus .Spe-Datei lesen
@@ -202,8 +221,6 @@ print(f"A={A.to('Bq'):.2f}")
 
 
 # %% Flächeninhalt der Gaußkurven
-a_np = np.array([fit['a'].n for fit in peak_fits])  # Amplituden
-sigma_np = np.array([fit['sigma'].n for fit in peak_fits])  # Breiten (Standardabweichungen)
 Z = a_np * np.sqrt(2*np.pi * sigma_np**2)  # Flächeninhalte
 Z
 
@@ -235,10 +252,11 @@ print(f"exponent={exponent:.2f}")
 # %% Plot: Q(E) – Effizienz in Abhängigkeit von der Energie
 energy_linspace = tools.linspace(*tools.bounds(lit_energies), 100)
 plt.figure()
-with tools.plot_context(plt, 'keV', 'dimensionless', "Energie", "Effizienz") as plt2:
+with tools.plot_context(plt, 'keV', 'dimensionless', "E", "Q") as plt2:
     plt2.plot(lit_energies, Q, fmt='x', label="Messwerte")
     plt2.plot(energy_linspace, fit_fn_Q(energy_linspace, Q_max, exponent), label="Fit")
 plt.legend()
+plt.savefig("build/plt/effizienz.pdf")
 plt.show()
 
 # %% ███ Spektrum von 137Cs ███
@@ -270,5 +288,6 @@ with tools.plot_context(plt, 'keV', 'dimensionless', r"E_\gamma", r"N") as plt2:
 plt.yscale('log')
 plt.xlim(right=800)
 plt.legend()
+plt.savefig("build/plt/spektrum_137-Cs.pdf")
 plt.show()
 # %%
