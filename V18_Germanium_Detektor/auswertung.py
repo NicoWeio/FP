@@ -15,6 +15,8 @@ import generate_table
 import tools
 
 ureg = pint.UnitRegistry()
+ureg.define('percent = 1 / 100 = %')
+
 console = Console()
 
 
@@ -31,11 +33,13 @@ def load_spe(filename):
     # COULDDO: move to tools.py
     N = np.genfromtxt(filename, skip_header=12, skip_footer=14)
     assert len(N) == 8192
+    x = np.arange(0, len(N))  # * ureg.dimensionless
 
     # TODO: Irgendwo den Untergrund abziehen!
 
     N *= ureg.dimensionless
-    return N
+
+    return x, N
 
 
 def load_lara(filename):
@@ -49,8 +53,7 @@ def load_lara(filename):
 
 
 # █ Energiekalibrierung
-N_calib = load_spe("data/2022-11-28/1_Eu.Spe")
-x_calib = np.arange(0, len(N_calib))  # * ureg.dimensionless
+x_calib, N_calib = load_spe("data/2022-11-28/1_Eu.Spe")
 
 # %% finde Peaks
 peaks, _ = find_peaks(
@@ -77,18 +80,21 @@ peaks
 # %%
 
 
-def fit_fn(x, a, x_0, sigma, c):
+def fit_fn_peak(x, a, x_0, sigma, c):
     return a * np.exp(-((x - x_0) ** 2) / (2 * sigma ** 2)) + c
 
 
-def fit_peak(peak, plot=True):
-    print(f"Peak bei ({peak}, {N_calib[peak].m})")
+def fit_peak(peak, x, N, plot=True):
+    # TODO: Stelle sicher, dass x Kanäle, nicht Energien sind.
+    # assert not isinstance(x, ureg.Quantity) or x.units == ureg.dimensionless
+
+    print(f"Peak bei ({peak}, {N[peak].m})")
     AREA_HALFWIDTH = 40
-    area_x = x_calib[(peak - AREA_HALFWIDTH): (peak + AREA_HALFWIDTH)]
-    area_N = N_calib[(peak - AREA_HALFWIDTH): (peak + AREA_HALFWIDTH)]
+    area_x = x[(peak - AREA_HALFWIDTH): (peak + AREA_HALFWIDTH)]
+    area_N = N[(peak - AREA_HALFWIDTH): (peak + AREA_HALFWIDTH)]
 
     # ▒ Fitte Gauß-Kurve
-    a, x_0, sigma, c = tools.curve_fit(fit_fn,
+    a, x_0, sigma, c = tools.curve_fit(fit_fn_peak,
                                        area_x, area_N.m,
                                        p0=[max(area_N), peak, 1, min(area_N)],
                                        )
@@ -97,7 +103,7 @@ def fit_peak(peak, plot=True):
     if plot:
         # ▒ Plotte Peak
         plt.plot(area_x, area_N)
-        plt.plot(area_x, fit_fn(
+        plt.plot(area_x, fit_fn_peak(
             area_x, *[param.n for param in [a, x_0, sigma, c]]
         ))
         plt.show()
@@ -112,7 +118,7 @@ def fit_peak(peak, plot=True):
     }
 
 
-peak_fits = [fit_peak(peak, plot=True) for peak in peaks]
+peak_fits = [fit_peak(peak, x_calib, N_calib, plot=False) for peak in peaks]
 peak_channels = [fit['x_0'] for fit in peak_fits]
 
 
@@ -144,6 +150,8 @@ lit_energies, lit_intensities = zip(*sorted(zip(lit_energies, lit_intensities)))
 
 lit_energies *= ureg.keV
 lit_energies_all *= ureg.keV
+lit_intensities *= ureg.percent
+lit_intensities_all *= ureg.percent
 
 peak_channels_n = tools.nominal_values(peak_channels * ureg.dimensionless)
 m, b = tools.linregress(peak_channels_n, lit_energies)
@@ -157,35 +165,41 @@ lit_channels_all = tools.nominal_values((lit_energies_all - b) / m)
 
 # Plot: Energie(Kanal)
 plt.figure()
-with tools.plot_context(plt, 'dimensionless', 'keV', r"\text{Kanal}", "E") as plt2:
+# with tools.plot_context(plt, 'dimensionless', 'keV', r"\text{Kanal}", "E") as plt2:
+# TODO: \text funzt nicht ohne BUILD…
+with tools.plot_context(plt, 'dimensionless', 'keV', "Kanal", "E") as plt2:
     plt2.plot(peak_channels_n, m * peak_channels_n + b, label="Regressionsgerade")
     plt2.plot(peak_channels_n, lit_energies, 'x', label="Literaturwerte")
 plt.legend()
-plt.savefig("build/plt/energy_calibration.pdf")
+if tools.BUILD:
+    plt.savefig("build/plt/energy_calibration.pdf")
 # plt.show()
 # %%
 
 # ▒ Plotte Spektrum
 plt.figure()
-with tools.plot_context(plt, 'dimensionless', 'dimensionless', r"\text{Kanal}", "N") as plt2:
+# with tools.plot_context(plt, 'dimensionless', 'dimensionless', r"\text{Kanal}", "N") as plt2:
+# TODO: \text funzt nicht ohne BUILD…
+with tools.plot_context(plt, 'dimensionless', 'dimensionless', "Kanal", "N") as plt2:
     plt.plot(N_calib, label="Messwerte")
     plt.plot(peaks, N_calib[peaks], 'x', label="Peaks")
     # for lit_channel, lit_intensity in zip(lit_channels, lit_intensities):
     for lit_channel, lit_intensity in zip(lit_channels_all, lit_intensities_all):
         # TODO: Label
-        plt.axvline(lit_channel, color='C2', alpha=min(1, lit_intensity/100*3))
+        plt.axvline(lit_channel, color='C2', alpha=min(1, lit_intensity.to('dimensionless').m*3))
 # plt.xlim(right=4000)
 plt.yscale('log')
 plt.legend()
-plt.savefig("build/plt/spektrum_Eu-152.pdf")
+if tools.BUILD:
+    plt.savefig("build/plt/spektrum_Eu-152.pdf")
 plt.show()
 
-#%% █ Tabelle generieren
+# %% █ Tabelle generieren
 # NOTE: wird später noch gebraucht
-a_np = np.array([fit['a'].n for fit in peak_fits]) * ureg.dimensionless # Amplituden
-x_0_np = np.array([fit['x_0'].n for fit in peak_fits]) * ureg.dimensionless # Mittelwerte
-sigma_np = np.array([fit['sigma'].n for fit in peak_fits]) * ureg.dimensionless # Breiten (Standardabweichungen)
-c_np = np.array([fit['c'].n for fit in peak_fits]) * ureg.dimensionless # Hintergründe
+a_np = np.array([fit['a'].n for fit in peak_fits]) * ureg.dimensionless  # Amplituden
+x_0_np = np.array([fit['x_0'].n for fit in peak_fits]) * ureg.dimensionless  # Mittelwerte
+sigma_np = np.array([fit['sigma'].n for fit in peak_fits]) * ureg.dimensionless  # Breiten (Standardabweichungen)
+c_np = np.array([fit['c'].n for fit in peak_fits]) * ureg.dimensionless  # Hintergründe
 
 # TODO: Unsicherheiten
 generate_table.generate_table_pint(
@@ -198,6 +212,7 @@ generate_table.generate_table_pint(
 )
 
 # %% ███ Effizienz ███
+console.rule("Effizienz")
 # TODO: Aus .Spe-Datei lesen
 t_mess = ureg('3388 s')  # Messzeit
 
@@ -256,14 +271,28 @@ with tools.plot_context(plt, 'keV', 'dimensionless', "E", "Q") as plt2:
     plt2.plot(lit_energies, Q, fmt='x', label="Messwerte")
     plt2.plot(energy_linspace, fit_fn_Q(energy_linspace, Q_max, exponent), label="Fit")
 plt.legend()
-plt.savefig("build/plt/effizienz.pdf")
+if tools.BUILD:
+    plt.savefig("build/plt/effizienz.pdf")
 plt.show()
 
+# %% Tabelle generieren
+# TODO: Unsicherheiten
+generate_table.generate_table_pint(
+    "build/tab/2_effizienz.tex",
+    (r"E_\text{lit}", ureg.kiloelectron_volt, lit_energies),
+    (r"W", ureg.percent, lit_intensities),
+    (r"x_0", ureg.dimensionless, x_0_np, 1),  # redundant s.o.
+    (r"\sigma", ureg.dimensionless, sigma_np, 2),  # redundant s.o.
+    (r"Z", ureg.dimensionless, Z, 0),
+    (r"Q", ureg.dimensionless, tools.nominal_values(Q), 4),
+)
+
+
 # %% ███ Spektrum von 137Cs ███
+console.rule("Spektrum von 137Cs")
 # TODO: In mehrere .py-Dateien aufteilen
 
-N = load_spe("data/2022-11-28/2_Cs.Spe")
-x = np.arange(0, len(N))  # * ureg.dimensionless
+x, N = load_spe("data/2022-11-28/2_Cs.Spe")
 
 E = m * x + b
 
@@ -272,22 +301,28 @@ E = m * x + b
 peaks, _ = find_peaks(N, height=50, distance=1000)
 
 assert len(peaks) == 2, f"Es sollten 2 Peaks (Rückstreupeak und Photopeak) gefunden werden. Gefunden wurden {len(peaks)} Peaks."
-# rueckstreupeak, photopeak = peaks
-rueckstreupeak, photopeak = E[peaks]
+rueckstreupeak, photopeak = peaks
+E_rueckstreupeak, E_photopeak = E[peaks]
 
 # TODO: Statt plump die Maxima zu nehmen, Gaußkurven fitten!
 
-print(f"Rückstreupeak: {rueckstreupeak}")
-print(f"Photopeak: {photopeak}")
+print(f"Rückstreupeak: {E_rueckstreupeak}")
+print(f"Photopeak: {E_photopeak}")
 
 # %% Plot: N(E) – Spektrum von 137Cs
 plt.figure()
 with tools.plot_context(plt, 'keV', 'dimensionless', r"E_\gamma", r"N") as plt2:
     plt2.plot(E, N, label="Messwerte")  # fmt='x'
     plt2.plot(E[peaks], N[peaks], fmt='x', label="Peaks")
+    plt2.plot(E, np.convolve(N.m, np.ones(20)/20, mode='same'), fmt='-', label="Smoothed")  # TODO: Gut so?
 plt.yscale('log')
 plt.xlim(right=800)
 plt.legend()
-plt.savefig("build/plt/spektrum_137-Cs.pdf")
+if tools.BUILD:
+    plt.savefig("build/plt/spektrum_137-Cs.pdf")
 plt.show()
+
+# %% Fit: Photopeak
+photopeak_fit = fit_peak(photopeak, x, N, plot=True)
+
 # %%
