@@ -81,27 +81,40 @@ def fit_fn_peak(x, a, x_0, sigma, N_0):
     return a * np.exp(-((x - x_0) ** 2) / (2 * sigma ** 2)) + N_0
 
 
-def fit_peak(peak, x, N, plot=True):
+def fit_peak(peak, x, N, plot=True, channel_to_E=None):
     # TODO: Stelle sicher, dass x Kanäle, nicht Energien sind.
     # assert not isinstance(x, ureg.Quantity) or x.units == ureg.dimensionless
 
     # print(f"Peak bei ({peak}, {N[peak].m})")
     FIT_RADIUS = 40  # Radius des Bereichs, in dem die Gauß-Kurve gefittet wird
-    area_x = x[(peak - FIT_RADIUS): (peak + FIT_RADIUS)]
-    area_N = N[(peak - FIT_RADIUS): (peak + FIT_RADIUS)]
+    range_x = x[(peak - FIT_RADIUS): (peak + FIT_RADIUS)]
+    range_N = N[(peak - FIT_RADIUS): (peak + FIT_RADIUS)]
 
     # ▒ Fitte Gauß-Kurve
-    a, x_0, σ, N_0 = tools.curve_fit(fit_fn_peak,
-                                       area_x, area_N.m,
-                                       p0=[max(area_N), peak, 1, min(area_N)],
+    a, x_0, σ, N_0 = tools.curve_fit(
+        fit_fn_peak,
+        range_x, range_N.m,
+        p0=[max(range_N), peak, 1, min(range_N)],
                                        )
 
+    fwhm = 2 * σ * np.sqrt(2 * np.log(2))
+    fwhm_height = a / 2 + N_0
+    fwtm = 2 * σ * np.sqrt(2 * np.log(10))
+    fwtm_height = a / 10 + N_0
+
     if plot:
-        # ▒ Plotte Peak
-        plt.plot(area_x, area_N)
-        plt.plot(area_x, fit_fn_peak(
-            area_x, *[param.n for param in [a, x_0, σ, N_0]]
-        ))
+        with tools.plot_context(plt, 'dimensionless', 'dimensionless', r"xTODO", r"N") as plt2:
+            plt2.plot(range_x, range_N, label="Messwerte")
+            plt2.plot(
+                range_x,
+                fit_fn_peak(range_x, *[param.n for param in [a, x_0, σ, N_0]]),
+                label="Fit",
+            )
+
+            plt2.plot([x_0 - fwhm / 2, x_0 + fwhm / 2], [fwhm_height, fwhm_height], label="FWHM")
+            plt2.plot([x_0 - fwtm / 2, x_0 + fwtm / 2], [fwtm_height, fwtm_height], label="FWTM")
+
+        plt.legend()
         plt.show()
 
     return {
@@ -109,6 +122,9 @@ def fit_peak(peak, x, N, plot=True):
         'x_0': x_0,
         'σ': σ,
         'N_0': N_0,
+        # ---
+        'fwhm': fwhm,
+        'fwtm': fwtm,
     }
 
 
@@ -294,14 +310,14 @@ console.rule("Spektrum von 137Cs")
 
 x, N = load_spe("data/2022-11-28/2_Cs.Spe")
 
-E = channel_to_E(x)
+E_photopeak = channel_to_E(x)
 
 # Peaks
 peaks, _ = find_peaks(N, height=50, distance=1000)
 
 assert len(peaks) == 2, f"Es sollten 2 Peaks (Rückstreupeak und Photopeak) gefunden werden. Gefunden wurden {len(peaks)} Peaks."
 rueckstreupeak, photopeak = peaks
-E_rueckstreupeak, E_photopeak = E[peaks]
+E_rueckstreupeak, E_photopeak = E_photopeak[peaks]
 
 # TODO: Statt plump die Maxima zu nehmen, Gaußkurven fitten!
 
@@ -311,9 +327,9 @@ print(f"Photopeak: {E_photopeak}")
 # %% Plot: N(E) – Spektrum von 137Cs
 plt.figure()
 with tools.plot_context(plt, 'keV', 'dimensionless', r"E_\gamma", r"N") as plt2:
-    plt2.plot(E, N, label="Messwerte")  # fmt='x'
-    plt2.plot(E[peaks], N[peaks], fmt='x', label="Peaks")
-    plt2.plot(E, np.convolve(N.m, np.ones(20)/20, mode='same'), fmt='-', label="Smoothed")  # TODO: Gut so?
+    plt2.plot(E_photopeak, N, label="Messwerte")  # fmt='x'
+    plt2.plot(E_photopeak[peaks], N[peaks], fmt='x', label="Peaks")
+    plt2.plot(E_photopeak, np.convolve(N.m, np.ones(20)/20, mode='same'), fmt='-', label="Smoothed")  # TODO: Gut so?
 plt.yscale('log')
 plt.xlim(right=800)
 plt.legend()
@@ -328,28 +344,22 @@ E_photopeak_fit = channel_to_E(photopeak_fit['x_0'])
 E_photopeak_lit = ureg('661.657 keV')  # TODO: Quelle, Unsicherheit
 print(tools.fmt_compare_to_ref(E_photopeak_fit, E_photopeak_lit, name="Photopeak (Fit vs. Literatur)"))
 
-# E_fwhm_fit = channel_to_E(2*photopeak_fit['σ']*np.sqrt(2*np.log(2)))
-E_fwhm_fit = m * (2*photopeak_fit['σ']*np.sqrt(2*np.log(2)))
+E_fwhm_fit = channel_to_E(photopeak_fit['fwhm'])
+E_fwtm_fit = channel_to_E(photopeak_fit['fwtm'])
 
-# %% Plot: Photopeak mit FWHM, FWTM
-plt.figure()
-with tools.plot_context(plt, 'keV', 'dimensionless', r"E_\gamma", r"N") as plt2:
-    RADIUS = ureg('5 keV')
-    mask = (E > (E_photopeak_fit - RADIUS)) & (E < (E_photopeak_fit + RADIUS))
-    plt2.plot(E[mask], N[mask], label="Messwerte")  # fmt='x'
-    # plot fwhm
-    fwhm_height = photopeak_fit['a'] / 2 + photopeak_fit['N_0']
-    x_ = tools.pintify([E_photopeak_fit - E_fwhm_fit/2, E_photopeak_fit + E_fwhm_fit/2])
-    y_ = [fwhm_height, fwhm_height] * ureg.dimensionless
-    plt2.plot(
-        x_, y_,
-        fmt='-',
-        label="FWHM",
-    )
-plt.yscale('linear')
-plt.legend()
-if tools.BUILD:
-    plt.savefig("build/plt/photopeak.pdf")
+print(f"FWHM: {E_fwhm_fit:.2f}")
+print(f"FWTM: {E_fwtm_fit:.2f}")
+print(f"FWHM/FWTM: {(E_fwhm_fit/E_fwtm_fit):.2f}")
+
+# %% Compton-Kante
 
 
+def calc_compton_edge(E_photopeak):
+    ε = E_photopeak / (ureg.m_e * ureg.c**2)
+    ε.ito('dimensionless')
+    return E_photopeak * 2*ε / (1 + 2*ε)
+
+
+E_compton_lit = calc_compton_edge(E_photopeak_lit)
+E_compton_lit
 # %%
