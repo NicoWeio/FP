@@ -1,6 +1,8 @@
 all: build/main.pdf
 
-PLOTS = build/plt/effizienz.pdf
+PLOTS = build/plt/effizienz.pdf \
+	build/plt/spektrum_152-Eu.pdf \
+	build/plt/spektrum_137-Cs.pdf
 
 # TABLES = build/tab/mu.tex \
 # 	build/tab/wuerfel1.tex \

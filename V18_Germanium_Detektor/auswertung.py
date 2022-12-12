@@ -80,31 +80,31 @@ peaks
 # %%
 
 
-def fit_fn_peak(x, a, x_0, sigma, c):
-    return a * np.exp(-((x - x_0) ** 2) / (2 * sigma ** 2)) + c
+def fit_fn_peak(x, a, x_0, sigma, N_0):
+    return a * np.exp(-((x - x_0) ** 2) / (2 * sigma ** 2)) + N_0
 
 
 def fit_peak(peak, x, N, plot=True):
     # TODO: Stelle sicher, dass x Kanäle, nicht Energien sind.
     # assert not isinstance(x, ureg.Quantity) or x.units == ureg.dimensionless
 
-    print(f"Peak bei ({peak}, {N[peak].m})")
-    AREA_HALFWIDTH = 40
+    # print(f"Peak bei ({peak}, {N[peak].m})")
+    AREA_HALFWIDTH = 40  # Radius des Bereichs, in dem die Gauß-Kurve gefittet wird
     area_x = x[(peak - AREA_HALFWIDTH): (peak + AREA_HALFWIDTH)]
     area_N = N[(peak - AREA_HALFWIDTH): (peak + AREA_HALFWIDTH)]
 
     # ▒ Fitte Gauß-Kurve
-    a, x_0, sigma, c = tools.curve_fit(fit_fn_peak,
+    a, x_0, σ, N_0 = tools.curve_fit(fit_fn_peak,
                                        area_x, area_N.m,
                                        p0=[max(area_N), peak, 1, min(area_N)],
                                        )
-    print(f"→ a={a}, x_0={x_0}, sigma={sigma}, c={c}")
+    # print(f"→ a={a}, x_0={x_0}, sigma={sigma}, N_0={N_0}")
 
     if plot:
         # ▒ Plotte Peak
         plt.plot(area_x, area_N)
         plt.plot(area_x, fit_fn_peak(
-            area_x, *[param.n for param in [a, x_0, sigma, c]]
+            area_x, *[param.n for param in [a, x_0, σ, N_0]]
         ))
         plt.show()
 
@@ -113,8 +113,8 @@ def fit_peak(peak, x, N, plot=True):
     return {
         'a': a,
         'x_0': x_0,
-        'sigma': sigma,
-        'c': c,
+        'σ': σ,
+        'N_0': N_0,
     }
 
 
@@ -154,22 +154,21 @@ lit_intensities *= ureg.percent
 lit_intensities_all *= ureg.percent
 
 peak_channels_n = tools.nominal_values(peak_channels * ureg.dimensionless)
-m, b = tools.linregress(peak_channels_n, lit_energies)
-# m, b = ureg('0.403 keV'), ufloat(-2.68, 0.05) * ureg.keV # @Mampfzwerg
-# m, b = ureg('0.35 keV'), ufloat(-200, 0.05) * ureg.keV  # custom
+m, n = tools.linregress(peak_channels_n, lit_energies)
+print(f"m={m}, n={n}")
 
 # energy = m*channel + b
 # channel = (energy - b)/m
-lit_channels = tools.nominal_values((lit_energies - b) / m)
-lit_channels_all = tools.nominal_values((lit_energies_all - b) / m)
+lit_channels = tools.nominal_values((lit_energies - n) / m)
+lit_channels_all = tools.nominal_values((lit_energies_all - n) / m)
 
 # Plot: Energie(Kanal)
 plt.figure()
 # with tools.plot_context(plt, 'dimensionless', 'keV', r"\text{Kanal}", "E") as plt2:
 # TODO: \text funzt nicht ohne BUILD…
-with tools.plot_context(plt, 'dimensionless', 'keV', "Kanal", "E") as plt2:
-    plt2.plot(peak_channels_n, m * peak_channels_n + b, label="Regressionsgerade")
-    plt2.plot(peak_channels_n, lit_energies, 'x', label="Literaturwerte")
+with tools.plot_context(plt, 'dimensionless', 'keV', "x", "E") as plt2:
+    plt2.plot(peak_channels_n, m * peak_channels_n + n, label="Regressionsgerade")
+    plt2.plot(peak_channels_n, lit_energies, 'x', zorder=5, label="Literaturwerte")
 plt.legend()
 if tools.BUILD:
     plt.savefig("build/plt/energy_calibration.pdf")
@@ -180,7 +179,7 @@ if tools.BUILD:
 plt.figure()
 # with tools.plot_context(plt, 'dimensionless', 'dimensionless', r"\text{Kanal}", "N") as plt2:
 # TODO: \text funzt nicht ohne BUILD…
-with tools.plot_context(plt, 'dimensionless', 'dimensionless', "Kanal", "N") as plt2:
+with tools.plot_context(plt, 'dimensionless', 'dimensionless', "x", "N") as plt2:
     plt.plot(N_calib, label="Messwerte")
     plt.plot(peaks, N_calib[peaks], 'x', label="Peaks")
     # for lit_channel, lit_intensity in zip(lit_channels, lit_intensities):
@@ -191,24 +190,25 @@ with tools.plot_context(plt, 'dimensionless', 'dimensionless', "Kanal", "N") as 
 plt.yscale('log')
 plt.legend()
 if tools.BUILD:
-    plt.savefig("build/plt/spektrum_Eu-152.pdf")
+    plt.savefig("build/plt/spektrum_152-Eu.pdf")
 plt.show()
 
-# %% █ Tabelle generieren
+# %%
 # NOTE: wird später noch gebraucht
 a_np = np.array([fit['a'].n for fit in peak_fits]) * ureg.dimensionless  # Amplituden
 x_0_np = np.array([fit['x_0'].n for fit in peak_fits]) * ureg.dimensionless  # Mittelwerte
-sigma_np = np.array([fit['sigma'].n for fit in peak_fits]) * ureg.dimensionless  # Breiten (Standardabweichungen)
-c_np = np.array([fit['c'].n for fit in peak_fits]) * ureg.dimensionless  # Hintergründe
+σ_np = np.array([fit['σ'].n for fit in peak_fits]) * ureg.dimensionless  # Breiten (Standardabweichungen)
+N_0_np = np.array([fit['N_0'].n for fit in peak_fits]) * ureg.dimensionless  # Hintergründe
 
+# %% █ Tabelle generieren
 # TODO: Unsicherheiten
 generate_table.generate_table_pint(
     "build/tab/1_energiekalibrierung.tex",
     (r"E_\text{lit}", ureg.kiloelectron_volt, lit_energies),
     (r"x_0", ureg.dimensionless, x_0_np, 1),
     (r"a", ureg.dimensionless, a_np, 1),
-    (r"\sigma", ureg.dimensionless, sigma_np, 2),
-    (r"c", ureg.dimensionless, c_np, 2),
+    (r"\sigma", ureg.dimensionless, σ_np, 2),
+    (r"N_0", ureg.dimensionless, N_0_np, 2),
 )
 
 # %% ███ Effizienz ███
@@ -216,31 +216,31 @@ console.rule("Effizienz")
 # TODO: Aus .Spe-Datei lesen
 t_mess = ureg('3388 s')  # Messzeit
 
-# TODO: Quelle?
-r = ureg('2.25 cm')  # Radius
-l = ureg('9.5 cm')  # Abstand Probe–Detektor
-Ω = 2*np.pi*(1 - l/np.sqrt(l**2 + r**2))
-print(f"Ω={Ω.to('pi'):.4f}")
+r = ureg('45 mm') / 2  # Radius [Versuchsanleitung]
+l = ureg('9.5 cm')  # Abstand Probe–Detektor # TODO: Quelle?
 
-probe_creationdate = datetime.datetime(2000, 10, 1, 0, 0, 0)
+Ω = 2*np.pi*(1 - l/np.sqrt(l**2 + r**2))
+# print(f"Ω={Ω.to('pi'):.4f}")
+print(f"Ω = {Ω:.4f} = 4π · {(Ω / (4*np.pi)).to('dimensionless'):.4f}")
+
+
+probe_creationdate = datetime.datetime(2000, 10, 1, 0, 0, 0)  # [Versuchsanleitung]
 durchfuehrung_date = datetime.datetime(2022, 11, 28, 0, 0, 0)
 age_probe = (durchfuehrung_date - probe_creationdate).total_seconds() * ureg.s
 print(f"Alter Probe: {age_probe.to('s'):.2e} = {age_probe.to('a'):.2f}")
 
 t_hw = ureg('4943 d')  # TODO: Unsicherheit
-A_0 = ufloat(4130, 60) * ureg.Bq
-A = A_0 * np.exp(-np.log(2) / t_hw * age_probe)
-W = 1  # Emissionswahrscheinlichkeit; TODO
-# W = df['Intensity (%)'] / 100 # Emissionswahrscheinlichkeit; TODO: untested
+A_0 = ufloat(4130, 60) * ureg.Bq  # Aktivität am Tag der Herstellung [Versuchsanleitung]
+A = A_0 * np.exp(-np.log(2) / t_hw * age_probe)  # Aktivität am Tag der Durchführung
 print(f"A={A.to('Bq'):.2f}")
 
-
-# %% Flächeninhalt der Gaußkurven
-Z = a_np * np.sqrt(2*np.pi * sigma_np**2)  # Flächeninhalte
+# %% Flächeninhalte der Gaußkurven
+# TODO: Richtige Faktoren (sigma etc.)?
+Z = a_np * np.sqrt(2*np.pi * σ_np**2)  # Flächeninhalte
 Z
 
 # %% Effizienz
-Q = 4*np.pi*Z / (Ω * A * W * t_mess)  # Effizienz
+Q = 4*np.pi*Z / (Ω * A * lit_intensities * t_mess)  # Effizienz
 # assert Q.check('dimensionless'), "Q is not dimensionless"
 Q.ito('dimensionless')  # NOTE: Q.check raises a KeyError for some reason, doing this instead → create an Issue?
 Q
@@ -255,11 +255,11 @@ def fit_fn_Q(E, Q_max, exponent):
     return Q_max * E**exponent
 
 
-Q_max, exponent = tools.pint_curve_fit(fit_fn_Q,
+Q_max, exponent = tools.pint_curve_fit(
+    fit_fn_Q,
                                        lit_energies, Q,
                                        (ureg.dimensionless, ureg.dimensionless),
-                                       p0=(15 * ureg.dimensionless, -1 * ureg.dimensionless),
-                                       return_p0=True,  # TODO
+    p0=(50 * ureg.dimensionless, -1 * ureg.dimensionless),
                                        )
 print(f"Q_max={Q_max:.2f}")
 print(f"exponent={exponent:.2f}")
@@ -282,7 +282,7 @@ generate_table.generate_table_pint(
     (r"E_\text{lit}", ureg.kiloelectron_volt, lit_energies),
     (r"W", ureg.percent, lit_intensities),
     (r"x_0", ureg.dimensionless, x_0_np, 1),  # redundant s.o.
-    (r"\sigma", ureg.dimensionless, sigma_np, 2),  # redundant s.o.
+    (r"\sigma", ureg.dimensionless, σ_np, 2),  # redundant s.o.
     (r"Z", ureg.dimensionless, Z, 0),
     (r"Q", ureg.dimensionless, tools.nominal_values(Q), 4),
 )
@@ -294,7 +294,7 @@ console.rule("Spektrum von 137Cs")
 
 x, N = load_spe("data/2022-11-28/2_Cs.Spe")
 
-E = m * x + b
+E = m * x + n
 
 # Peaks
 # peaks, _ = find_peaks(N, height=100, distance=100)
