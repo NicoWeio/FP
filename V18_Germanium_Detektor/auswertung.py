@@ -361,5 +361,35 @@ def calc_compton_edge(E_photopeak):
 
 
 E_compton_lit = calc_compton_edge(E_photopeak_lit)
-E_compton_lit
+
+# Fit links-rechts
+# TODO: subject to confirmation bias
+mask_l = (E < E_compton_lit) & (E > (E_compton_lit - 50*ureg.keV))
+mask_r = (E > E_compton_lit) & (E < (E_compton_lit + 10*ureg.keV))
+mask_lr = mask_l | mask_r
+
+m_l, n_l = tools.linregress(tools.nominal_values(E[mask_l]), N[mask_l])
+m_r, n_r = tools.linregress(tools.nominal_values(E[mask_r]), N[mask_r])
+
+# compton peak is at the intersection of the two lines
+E_compton_fit = (n_r - n_l) / (m_l - m_r)
+
+print(tools.fmt_compare_to_ref(E_compton_fit, E_compton_lit, name="Compton-Kante (Fit vs. Literatur)"))
+
+
+# %% Plot: Compton-Kante
+plt.figure()
+with tools.plot_context(plt, 'keV', 'dimensionless', r"E_\gamma", r"N") as plt2:
+    plt2.plot(E[mask_l], N[mask_l], 'x', show_xerr=False, color='C0', alpha=0.5, label="Messwerte links")
+    plt2.plot(E[mask_r], N[mask_r], 'x', show_xerr=False, color='C1', alpha=0.5, label="Messwerte rechts")
+    # plt2.plot(E[peaks], N[peaks], fmt='x', label="Peaks")
+    plt2.plot(E[mask_lr], m_l*E[mask_lr] + n_l, show_yerr=False, color='C0', label="Fit links")
+    plt2.plot(E[mask_lr], m_r*E[mask_lr] + n_r, show_yerr=False, color='C1', label="Fit rechts")
+
+    plt.axvline(tools.nominal_value(E_compton_fit).m, color='C2', label="Compton-Kante (Fit)")
+    plt.axvline(E_compton_lit.m, color='C3', label="Compton-Kante (Literatur)")
+plt.yscale('linear')
+plt.legend()
+if tools.BUILD:
+    plt.savefig("build/plt/compton-kante.pdf")
 # %%
