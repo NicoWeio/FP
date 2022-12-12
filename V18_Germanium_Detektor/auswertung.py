@@ -64,10 +64,7 @@ peaks, _ = find_peaks(
 )
 
 peaks_to_ignore = {
-    58, 62, 150, 200, 226, 415,
-    536, 576,
-    # 596, # erster Peak?
-    764,
+    58, 62, 150, 200, 226, 415, 536, 576, 764,
 }
 peaks = [peak for peak in peaks if peak not in peaks_to_ignore]
 
@@ -89,16 +86,15 @@ def fit_peak(peak, x, N, plot=True):
     # assert not isinstance(x, ureg.Quantity) or x.units == ureg.dimensionless
 
     # print(f"Peak bei ({peak}, {N[peak].m})")
-    AREA_HALFWIDTH = 40  # Radius des Bereichs, in dem die Gauß-Kurve gefittet wird
-    area_x = x[(peak - AREA_HALFWIDTH): (peak + AREA_HALFWIDTH)]
-    area_N = N[(peak - AREA_HALFWIDTH): (peak + AREA_HALFWIDTH)]
+    FIT_RADIUS = 40  # Radius des Bereichs, in dem die Gauß-Kurve gefittet wird
+    area_x = x[(peak - FIT_RADIUS): (peak + FIT_RADIUS)]
+    area_N = N[(peak - FIT_RADIUS): (peak + FIT_RADIUS)]
 
     # ▒ Fitte Gauß-Kurve
     a, x_0, σ, N_0 = tools.curve_fit(fit_fn_peak,
                                        area_x, area_N.m,
                                        p0=[max(area_N), peak, 1, min(area_N)],
                                        )
-    # print(f"→ a={a}, x_0={x_0}, sigma={sigma}, N_0={N_0}")
 
     if plot:
         # ▒ Plotte Peak
@@ -108,8 +104,6 @@ def fit_peak(peak, x, N, plot=True):
         ))
         plt.show()
 
-    # return a, x_0, sigma, c
-    # return x_0
     return {
         'a': a,
         'x_0': x_0,
@@ -157,6 +151,11 @@ peak_channels_n = tools.nominal_values(peak_channels * ureg.dimensionless)
 m, n = tools.linregress(peak_channels_n, lit_energies)
 print(f"m={m}, n={n}")
 
+
+def channel_to_E(x):
+    return m * x + n
+
+
 # energy = m*channel + b
 # channel = (energy - b)/m
 lit_channels = tools.nominal_values((lit_energies - n) / m)
@@ -167,7 +166,7 @@ plt.figure()
 # with tools.plot_context(plt, 'dimensionless', 'keV', r"\text{Kanal}", "E") as plt2:
 # TODO: \text funzt nicht ohne BUILD…
 with tools.plot_context(plt, 'dimensionless', 'keV', "x", "E") as plt2:
-    plt2.plot(peak_channels_n, m * peak_channels_n + n, label="Regressionsgerade")
+    plt2.plot(peak_channels_n, channel_to_E(peak_channels_n), label="Regressionsgerade")
     plt2.plot(peak_channels_n, lit_energies, 'x', zorder=5, label="Literaturwerte")
 plt.legend()
 if tools.BUILD:
@@ -229,9 +228,10 @@ durchfuehrung_date = datetime.datetime(2022, 11, 28, 0, 0, 0)
 age_probe = (durchfuehrung_date - probe_creationdate).total_seconds() * ureg.s
 print(f"Alter Probe: {age_probe.to('s'):.2e} = {age_probe.to('a'):.2f}")
 
-t_hw = ureg('4943 d')  # TODO: Unsicherheit
+# t_hw = ureg('4943 d')  # @Mampfzwerg
+t_hw = ufloat(13.522, 0.016) * ureg.a  # [lara]
 A_0 = ufloat(4130, 60) * ureg.Bq  # Aktivität am Tag der Herstellung [Versuchsanleitung]
-A = A_0 * np.exp(-np.log(2) / t_hw * age_probe)  # Aktivität am Tag der Durchführung
+A = A_0 * unp.exp((-np.log(2) / t_hw * age_probe).to('dimensionless').m)  # Aktivität am Tag der Durchführung
 print(f"A={A.to('Bq'):.2f}")
 
 # %% Flächeninhalte der Gaußkurven
@@ -294,10 +294,9 @@ console.rule("Spektrum von 137Cs")
 
 x, N = load_spe("data/2022-11-28/2_Cs.Spe")
 
-E = m * x + n
+E = channel_to_E(x)
 
 # Peaks
-# peaks, _ = find_peaks(N, height=100, distance=100)
 peaks, _ = find_peaks(N, height=50, distance=1000)
 
 assert len(peaks) == 2, f"Es sollten 2 Peaks (Rückstreupeak und Photopeak) gefunden werden. Gefunden wurden {len(peaks)} Peaks."
@@ -324,5 +323,33 @@ plt.show()
 
 # %% Fit: Photopeak
 photopeak_fit = fit_peak(photopeak, x, N, plot=True)
+E_photopeak_fit = channel_to_E(photopeak_fit['x_0'])
+
+E_photopeak_lit = ureg('661.657 keV')  # TODO: Quelle, Unsicherheit
+print(tools.fmt_compare_to_ref(E_photopeak_fit, E_photopeak_lit, name="Photopeak (Fit vs. Literatur)"))
+
+# E_fwhm_fit = channel_to_E(2*photopeak_fit['σ']*np.sqrt(2*np.log(2)))
+E_fwhm_fit = m * (2*photopeak_fit['σ']*np.sqrt(2*np.log(2)))
+
+# %% Plot: Photopeak mit FWHM, FWTM
+plt.figure()
+with tools.plot_context(plt, 'keV', 'dimensionless', r"E_\gamma", r"N") as plt2:
+    RADIUS = ureg('5 keV')
+    mask = (E > (E_photopeak_fit - RADIUS)) & (E < (E_photopeak_fit + RADIUS))
+    plt2.plot(E[mask], N[mask], label="Messwerte")  # fmt='x'
+    # plot fwhm
+    fwhm_height = photopeak_fit['a'] / 2 + photopeak_fit['N_0']
+    x_ = tools.pintify([E_photopeak_fit - E_fwhm_fit/2, E_photopeak_fit + E_fwhm_fit/2])
+    y_ = [fwhm_height, fwhm_height] * ureg.dimensionless
+    plt2.plot(
+        x_, y_,
+        fmt='-',
+        label="FWHM",
+    )
+plt.yscale('linear')
+plt.legend()
+if tools.BUILD:
+    plt.savefig("build/plt/photopeak.pdf")
+
 
 # %%
