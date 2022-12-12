@@ -95,7 +95,7 @@ def fit_peak(peak, x, N, plot=True, channel_to_E=None):
         fit_fn_peak,
         range_x, range_N.m,
         p0=[max(range_N), peak, 1, min(range_N)],
-                                       )
+    )
 
     fwhm = 2 * σ * np.sqrt(2 * np.log(2))
     fwhm_height = a / 2 + N_0
@@ -273,10 +273,10 @@ def fit_fn_Q(E, Q_max, exponent):
 
 Q_max, exponent = tools.pint_curve_fit(
     fit_fn_Q,
-                                       lit_energies, Q,
-                                       (ureg.dimensionless, ureg.dimensionless),
+    lit_energies, Q,
+    (ureg.dimensionless, ureg.dimensionless),
     p0=(50 * ureg.dimensionless, -1 * ureg.dimensionless),
-                                       )
+)
 print(f"Q_max={Q_max:.2f}")
 print(f"exponent={exponent:.2f}")
 
@@ -309,15 +309,16 @@ console.rule("Spektrum von 137Cs")
 # TODO: In mehrere .py-Dateien aufteilen
 
 x, N = load_spe("data/2022-11-28/2_Cs.Spe")
+x_pint = x * ureg.dimensionless
 
-E_photopeak = channel_to_E(x)
+E = channel_to_E(x)  # NOTE: This means E has uncertainties!
 
 # Peaks
 peaks, _ = find_peaks(N, height=50, distance=1000)
 
 assert len(peaks) == 2, f"Es sollten 2 Peaks (Rückstreupeak und Photopeak) gefunden werden. Gefunden wurden {len(peaks)} Peaks."
 rueckstreupeak, photopeak = peaks
-E_rueckstreupeak, E_photopeak = E_photopeak[peaks]
+E_rueckstreupeak, E_photopeak = E[peaks]
 
 # TODO: Statt plump die Maxima zu nehmen, Gaußkurven fitten!
 
@@ -327,9 +328,9 @@ print(f"Photopeak: {E_photopeak}")
 # %% Plot: N(E) – Spektrum von 137Cs
 plt.figure()
 with tools.plot_context(plt, 'keV', 'dimensionless', r"E_\gamma", r"N") as plt2:
-    plt2.plot(E_photopeak, N, label="Messwerte")  # fmt='x'
-    plt2.plot(E_photopeak[peaks], N[peaks], fmt='x', label="Peaks")
-    plt2.plot(E_photopeak, np.convolve(N.m, np.ones(20)/20, mode='same'), fmt='-', label="Smoothed")  # TODO: Gut so?
+    plt2.plot(E, N, label="Messwerte")  # fmt='x'
+    plt2.plot(E[peaks], N[peaks], fmt='x', label="Peaks")
+    plt2.plot(E, np.convolve(N.m, np.ones(20)/20, mode='same'), fmt='-', label="Smoothed")  # TODO: Gut so?
 plt.yscale('log')
 plt.xlim(right=800)
 plt.legend()
@@ -392,4 +393,75 @@ plt.yscale('linear')
 plt.legend()
 if tools.BUILD:
     plt.savefig("build/plt/compton-kante.pdf")
+# %%
+
+
+def fit_fn_klein_nishina(E, a, N_0):
+    # E: Energie des gestoßenen Elektrons
+
+    # ε = ureg.epsilon_0  # ?
+    ε = tools.nominal_value(E_photopeak) / (ureg.m_e * ureg.c**2)  # muss dimensionslos sein; siehe "2 +"
+    m_0 = ureg.m_e  # ?
+    # E_γ = h*nu
+    E_γ = tools.nominal_value(E_photopeak_fit)  # Energie des einfallenden Gammaquants (=hν)
+
+    if not isinstance(E, ureg.Quantity):
+        E *= ureg.keV
+
+    dσ_div_dE = (
+        a *
+        (
+            (np.pi * ureg.r_e**2) / (m_0 * ureg.c**2 * ε**2)
+        ) *
+        (
+            2 +
+            (
+                E / (E_γ - E)
+            )**2 *
+            (
+                ε**-2 +
+                (E_γ - E) / E_γ -
+                (2 * (E_γ - E)) / (ε * E_γ)
+            )
+        )
+        # + N_0
+    )
+    assert dσ_div_dE.check('m²/keV')
+    return dσ_div_dE.to('nm²/keV').m * ureg.dimensionless
+
+
+# def fit_fn_klein_nishina_2(E, a, N_0):
+#     return fit_fn_klein_nishina(
+#         E, a, N_0,
+#         E_γ=E_photopeak_fit,
+#     )
+
+# mask_compton = (E > E_rueckstreupeak) & (E < E_compton_fit)
+mask_compton_fit = (E > ureg('350 keV')) & (E < E_compton_fit)
+mask_compton_plot = (E > ureg('300 keV')) & (E < ureg('500 keV'))
+
+a, N_0 = tools.pint_curve_fit(
+    fit_fn_klein_nishina,
+    tools.nominal_values(E[mask_compton_fit]), N[mask_compton_fit],
+    (ureg.dimensionless, ureg.dimensionless),
+    # p0=(5E14 * ureg.dimensionless, 1 * ureg.dimensionless),
+    p0=(5E10 * ureg.dimensionless, 1 * ureg.dimensionless),
+    # return_p0=True,
+)
+
+print(f"a: {a:.2f}")
+print(f"N_0: {N_0:.2f}")
+
+# %% Plot: Klein-Nishina
+plt.figure()
+with tools.plot_context(plt, 'keV', 'dimensionless', r"E_\gamma", r"N") as plt2:
+    mask_compton_plotonly = mask_compton_plot & ~mask_compton_fit
+    plt2.plot(E[mask_compton_plot], N[mask_compton_plot], 'x', show_xerr=False, color='C0', alpha=0.5, label="Messwerte")
+    plt2.plot(E[mask_compton_plotonly], N[mask_compton_plotonly], 'x', show_xerr=False, color='C1', alpha=0.5, label="nur Plot")
+    plt2.plot(E[mask_compton_plot], fit_fn_klein_nishina(E[mask_compton_plot], a, N_0), show_xerr=False, color='C2', label="Fit")
+plt.yscale('linear')
+plt.legend()
+if tools.BUILD:
+    plt.savefig("build/plt/klein-nishina.pdf")
+
 # %%
