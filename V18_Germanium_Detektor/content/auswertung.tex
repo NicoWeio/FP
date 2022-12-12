@@ -1,26 +1,99 @@
 \section{Auswertung}
 \label{sec:auswertung}
+Fehlerrechnung mit \texttt{uncertainties}.
+Bla bla. % TODO
+
+\subsection{Energiekalibrierung}
+Der Vielkanalanalysator wird anhand des Spektrums einer \ce{^152Eu}-Quelle kalibriert.
+Dazu werden die Positionen der Peaks im
+    über eine Zeit von $\SI{56.5}{\minute}$ gemessenen
+Spektrum (siehe \autoref{fig:spektrum_Eu_152})
+mit den bekannten Energien der \ce{^152Eu}-Quelle abgeglichen.
+Jeder Peak wird durch den Fit einer Gaußfunktion angenähert:
+\begin{equation*}
+    N(x) = a \exp\left(-\frac{(x - x_0)^2}{2 \sigma^2}\right) + N_0 \, .
+\end{equation*}
+Dabei entsprechen
+    $a$ der Amplitude, % TODO: Nicht direkt der Amplitude…
+    $x_0$ der Position (als Kanalnummer)
+    und $\sigma$ der Breite
+des Peaks.
+Der Parameter $N_0$ beschreibt den Untergrund.
+
+\autoref{tab:1_energiekalibrierung} zeigt für jeden Peak
+    die Fit-Parameter sowie die zugeordnete Energie aus der Literatur \cite{lara}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{build/plt/spektrum_152-Eu.pdf}
+    \caption{
+        Energiespektrum der \ce{^152Eu}-Quelle mit eingezeichneten Peaks.
+        Die grünen Linien markieren die Position der Theoriewerte nach der Kalibrierung
+        und sind entsprechend ihrer erwarteten Intensität unterschiedlich opak.
+    }
+    \label{fig:spektrum_Eu_152}
+\end{figure}
+
+\begin{table}
+    \centering
+    \caption{Fit-Parameter sowie zugeordnete Energie aus der Literatur \cite{lara} je Peak.}
+    \label{tab:1_energiekalibrierung}
+    \expandableinput{build/tab/1_energiekalibrierung.tex}
+\end{table}
+
+Durch lineare Regression kann schließlich die Abhängigkeit der Energie von der Kanalnummer bestimmt werden.
+Für die Funktion
+\begin{equation*}
+    E(x) = m x + n
+\end{equation*}
+ergeben sich die Parameter
+\begin{align*}
+    m &= \SI{0.20679 \pm 0.00001}{\kilo\electronvolt} \\
+    n &= \SI{-1.34 \pm 0.04}{\kilo\electronvolt} \, .
+\end{align*}
+Ein Plot dieser Regressionsrechnung ist in \autoref{fig:energy_calibration} gegeben.
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{build/plt/energy_calibration.pdf}
-    \caption{TODO.}
-    \label{fig:TODO}
+    \caption{Zugeordnete Energien in Abhängigkeit der Kanalnummern mit Regressionsgerade.}
+    \label{fig:energy_calibration}
 \end{figure}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{build/plt/spektrum_Eu-152.pdf}
-    \caption{TODO.}
-    \label{fig:TODO}
-\end{figure}
+
+\FloatBarrier % temporär
+\subsection{Bestimmung der Effizienz bzw. Vollenergienachweiswahrscheinlichkeit anhand des Spektrums von \ce{^152Eu}}
+Der Raumwinkel $\Omega$ wird anhand der Formel
+\begin{equation*}
+    \Omega = 2\pi \left( 1 - \frac{d}{\sqrt{d^2 + r^2}} \right)
+\end{equation*}
+bestimmt.
+Mit
+% TODO: Quelle(n)!
+    einem Abstand von $d = \SI{8.31}{\centi\meter}$ zwischen Probe und Detektor
+    sowie einem Detektorradius von $r = \SI{2.25}{\centi\meter}$
+ergibt sich ein Raumwinkel von
+$\Omega = 4\pi \cdot \num{0.0135} = \num{0.1691}$.
+
+Die Effizienz wird anhand \autoref{eqn:effizienz} bestimmt… % TODO
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{build/plt/effizienz.pdf}
     \caption{TODO.}
-    \label{fig:TODO}
+    \label{fig:effizienz}
 \end{figure}
+
+\begin{table}
+    \centering
+    \caption{TODO.}
+    \label{tab:2_effizienz}
+    \expandableinput{build/tab/2_effizienz.tex}
+\end{table}
+
+
+\FloatBarrier % temporär
+\subsection{Untersuchung des monochromatischen Gammaspektrums von \ce{^137Cs}}
 
 \begin{figure}
     \centering
@@ -28,10 +101,3 @@
     \caption{TODO.}
     \label{fig:TODO}
 \end{figure}
-
-\begin{table}
-    \centering
-    \caption{TODO.}
-    \label{tab:TODO}
-    \expandableinput{build/tab/1_energiekalibrierung.tex}
-\end{table}
