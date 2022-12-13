@@ -44,7 +44,7 @@ def load_spe(filename):
     return x, N
 
 
-def load_lara(filename):
+def load_lara(filename, parent=None):
     """
     Loads a LARAWEB file and returns the energy and intensity columns, limited to γ decays.
     Data source: http://www.lnhb.fr/Laraweb/index.php
@@ -53,20 +53,27 @@ def load_lara(filename):
     # LARA files have a header (with varying length) and footer that we need to skip.
     # That is all this block does.
     contents = Path(filename).read_text()
-    lines = contents.splitlines()
-    # find lines that only contain "-" or "="
-    delimiter_mask = [all(c in "-=" for c in line) for line in lines]
-    # find the two delimiter lines' indices
-    delimiter_indices = np.where(delimiter_mask)[0]
-    assert len(delimiter_indices) == 2
-    # get the lines between the delimiters as a file-like object
-    data_lines = lines[delimiter_indices[0] + 1:delimiter_indices[1]]
+    lines = np.array(contents.splitlines(), dtype=object)
+    # find delimiter lines (starting with "---" or "===")
+    delimiter_mask = np.array([
+        line.startswith("---") or line.startswith("===")
+        for line in lines
+    ])
+    # add the header to the mask
+    delimiter_mask[:np.where(delimiter_mask)[0][0]] = True
+    # get the lines without delimiters as a file-like object
+    data_lines = lines[~delimiter_mask]
     data = StringIO("\n".join(data_lines))
 
     df = pd.read_csv(data, sep=" ; ", engine='python', index_col=False)
 
     # filter out non-gamma decays
     df = df[df['Type'] == 'g']
+
+    if parent is not None:
+        df = df[df['Parent'] == parent]
+
+    assert len(df) > 0, f"No data found for {filename} (parent={parent})"
 
     lit_energies = df['Energy (keV)'].values * ureg.keV
     lit_intensities = df['Intensity (%)'].values * ureg.percent
@@ -87,13 +94,11 @@ def n_most_intense(energies, intensities, n):
 
     return filtered_energies, filtered_intensities
 
-def intensity_to_alpha(intensity):
+
+def intensity_to_alpha(intensity, exponent=0.25):
     assert isinstance(intensity, pint.Quantity)
     i = intensity.to('dimensionless').m
-    # return min(1, i*3)
-    # log scale between 0% and 100%
-    # return np.log10(i + 1) / 2
-    return i**0.25
+    return i**exponent
 
 
 # █ Energiekalibrierung
@@ -499,9 +504,6 @@ lit_energies_all_Ba, intensities_all_Ba = load_lara("data/emissions/Ba-133.lara.
 lit_energies_all_Sb, intensities_all_Sb = load_lara("data/emissions/Sb-125.lara.txt")
 # energies, intensities = n_most_intense(energies_all, intensities_all, n=len(peak_channels))
 
-lit_channels_all_Ba = tools.nominal_values(E_to_channel(lit_energies_all_Ba))
-lit_channels_all_Sb = tools.nominal_values(E_to_channel(lit_energies_all_Sb))
-
 # %%
 
 x_Ba, N_Ba = load_spe("data/2022-11-28/3_Ba.Spe")
@@ -535,3 +537,68 @@ if tools.BUILD:
 plt.show()
 
 # %%
+x_U, N_U = load_spe("data/2022-11-28/4_U.Spe")
+E_U = channel_to_E(x_U)
+
+lit_energies_all_U, intensities_all_U = load_lara("data/emissions/U-238.lara.txt", parent="U-234")
+lit_energies_all_Th, intensities_all_Th = load_lara("data/emissions/U-238.lara.txt", parent="Th-234")
+
+PARENTS = [
+    "U-238",
+    "Th-234",
+    # "Pa-234",
+    # "U-234",
+    # "Th-230",
+    # "Ra-226",
+    # "Rn-222",
+    # "Po-218",
+    # "At-218", # keine Gamma-Zerfälle
+    "Pb-214",
+    # "Rn-218",
+    "Bi-214",
+    # "Po-214",
+    # "Tl-210",
+    # "Pb-210",
+    # "Bi-210",
+    # "Hg-206",
+    # "Po-210",
+    # "Tl-206",
+]
+
+data_dict = {
+    parent:
+    load_lara("data/emissions/U-238.lara.txt", parent=parent)
+    for parent in PARENTS
+}
+
+# ▒ Plotte Spektrum
+plt.figure()
+# with tools.plot_context(plt, 'dimensionless', 'dimensionless', r"\text{Kanal}", "N") as plt2:
+# TODO: \text funzt nicht ohne BUILD…
+with tools.plot_context(plt, 'keV', 'dimensionless', "E", "N") as plt2:
+    plt2.plot(E_U, N_U, label="Messwerte")
+    # plt.plot(peaks, N_U[peaks], 'x', label="Peaks")  # TODO: Peaks tatsächlich suchen…
+
+    # only the most intense peak is shown
+    # plt.axvline(lit_energies_all_U[0].to('keV').m, color='C2', alpha=1, label="Uran")
+
+    for i, (parent, (lit_energies, intensities)) in enumerate(data_dict.items()):
+        for lit_energy, lit_intensity in zip(lit_energies, intensities):
+            if lit_energy.m > max(E_U.m):
+                continue
+            plt.axvline(lit_energy.to('keV').m, color=f'C{i+2}', alpha=intensity_to_alpha(lit_intensity, exponent=0.4))
+
+# add labels for axvlines
+handles, labels = plt.gca().get_legend_handles_labels()
+handles += [
+    mpatches.Patch(color=f'C{i+2}', label=f"{parent} (Literaturwerte)")
+    for i, parent in enumerate(PARENTS)
+]
+
+# plt.xlim(right=750)
+plt.yscale('log')
+plt.legend(handles=handles)
+plt.tight_layout()
+if tools.BUILD:
+    plt.savefig("build/plt/spektrum_238-U.pdf")
+plt.show()
