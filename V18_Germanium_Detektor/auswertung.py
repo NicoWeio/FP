@@ -4,12 +4,11 @@ from io import StringIO
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import numpy as np
 import pandas as pd
 import pint
-import rich
 import uncertainties.unumpy as unp
-from numpy.linalg import inv
 from rich.console import Console
 from scipy.signal import find_peaks
 from uncertainties import ufloat
@@ -87,6 +86,14 @@ def n_most_intense(energies, intensities, n):
     filtered_intensities = filtered_intensities[i_by_energy]
 
     return filtered_energies, filtered_intensities
+
+def intensity_to_alpha(intensity):
+    assert isinstance(intensity, pint.Quantity)
+    i = intensity.to('dimensionless').m
+    # return min(1, i*3)
+    # log scale between 0% and 100%
+    # return np.log10(i + 1) / 2
+    return i**0.25
 
 
 # █ Energiekalibrierung
@@ -214,10 +221,9 @@ plt.figure()
 with tools.plot_context(plt, 'dimensionless', 'dimensionless', "x", "N") as plt2:
     plt.plot(N_calib, label="Messwerte")
     plt.plot(peaks, N_calib[peaks], 'x', label="Peaks")
-    # for lit_channel, lit_intensity in zip(lit_channels, lit_intensities):
-    for lit_channel, lit_intensity in zip(lit_channels_all, lit_intensities_all):
+    for lit_energy, lit_intensity in zip(lit_channels_all, lit_intensities_all):
         # TODO: Label
-        plt.axvline(lit_channel, color='C2', alpha=min(1, lit_intensity.to('dimensionless').m*3))
+        plt.axvline(lit_energy, color='C2', alpha=intensity_to_alpha(lit_intensity))
 # plt.xlim(right=4000)
 plt.yscale('log')
 plt.legend()
@@ -459,7 +465,7 @@ def fit_fn_klein_nishina(E, a, N_0):
 
 # mask_compton = (E > E_rueckstreupeak) & (E < E_compton_fit)
 mask_compton_fit = (E > ureg('350 keV')) & (E < E_compton_fit)
-mask_compton_plot = (E > ureg('300 keV')) & (E < ureg('500 keV'))
+mask_compton_plot = (E > ureg('200 keV')) & (E < ureg('500 keV'))
 
 a, N_0 = tools.pint_curve_fit(
     fit_fn_klein_nishina,
@@ -478,12 +484,54 @@ plt.figure()
 with tools.plot_context(plt, 'keV', 'dimensionless', r"E_\gamma", r"N") as plt2:
     mask_compton_plotonly = mask_compton_plot & ~mask_compton_fit
     plt2.plot(E[mask_compton_plot], N[mask_compton_plot], 'x', show_xerr=False, color='C0', alpha=0.5, label="Messwerte")
-    plt2.plot(E[mask_compton_plotonly], N[mask_compton_plotonly], 'x', show_xerr=False, color='C1', alpha=0.5, label="nur Plot")
-    plt2.plot(E[mask_compton_plot], fit_fn_klein_nishina(E[mask_compton_plot], a, N_0), show_xerr=False, color='C2', label="Fit")
+    plt2.plot(E[mask_compton_plotonly], N[mask_compton_plotonly], 'x', show_xerr=False,
+              color='C1', alpha=0.5, label="Messwerte (nicht berücksichtigt)")
+    plt2.plot(E[mask_compton_plot], fit_fn_klein_nishina(E[mask_compton_plot], a, N_0),
+              show_xerr=False, show_yerr=False, color='C2', label="Fit")
 plt.yscale('linear')
 plt.legend()
 plt.tight_layout()
 if tools.BUILD:
     plt.savefig("build/plt/klein-nishina.pdf")
+
+# %%
+lit_energies_all_Ba, intensities_all_Ba = load_lara("data/emissions/Ba-133.lara.txt")
+lit_energies_all_Sb, intensities_all_Sb = load_lara("data/emissions/Sb-125.lara.txt")
+# energies, intensities = n_most_intense(energies_all, intensities_all, n=len(peak_channels))
+
+lit_channels_all_Ba = tools.nominal_values(E_to_channel(lit_energies_all_Ba))
+lit_channels_all_Sb = tools.nominal_values(E_to_channel(lit_energies_all_Sb))
+
+# %%
+
+x_Ba, N_Ba = load_spe("data/2022-11-28/3_Ba.Spe")
+E_Ba = channel_to_E(x_Ba)
+
+# ▒ Plotte Spektrum
+plt.figure()
+# with tools.plot_context(plt, 'dimensionless', 'dimensionless', r"\text{Kanal}", "N") as plt2:
+# TODO: \text funzt nicht ohne BUILD…
+with tools.plot_context(plt, 'keV', 'dimensionless', "E", "N") as plt2:
+    plt2.plot(E_Ba, N_Ba, label="Messwerte")
+    # plt.plot(peaks, N_Ba[peaks], 'x', label="Peaks")  # TODO: Peaks tatsächlich suchen…
+    for lit_energy, lit_intensity in zip(lit_energies_all_Ba, intensities_all_Ba):
+        plt.axvline(lit_energy.to('keV').m, color='C2', alpha=intensity_to_alpha(lit_intensity))
+    for lit_energy, lit_intensity in zip(lit_energies_all_Sb, intensities_all_Sb):
+        plt.axvline(lit_energy.to('keV').m, color='C3', alpha=intensity_to_alpha(lit_intensity))
+
+# add labels for axvlines
+handles, labels = plt.gca().get_legend_handles_labels()
+handles += [
+    mpatches.Patch(color='C2', label="Ba-133 (Literaturwerte)"),
+    mpatches.Patch(color='C3', label="Sb-125 (Literaturwerte)"),
+]
+
+plt.xlim(right=750)
+plt.yscale('log')
+plt.legend(handles=handles)
+plt.tight_layout()
+if tools.BUILD:
+    plt.savefig("build/plt/spektrum_133-Ba.pdf")
+plt.show()
 
 # %%
