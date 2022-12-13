@@ -1,5 +1,8 @@
 # %%
 import datetime
+from io import StringIO
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -48,7 +51,20 @@ def load_lara(filename):
     Data source: http://www.lnhb.fr/Laraweb/index.php
     """
     assert filename.endswith('.lara.txt')
-    df = pd.read_csv(filename, sep=" ; ", skiprows=13, skipfooter=1, engine='python', index_col=False)
+    # LARA files have a header (with varying length) and footer that we need to skip.
+    # That is all this block does.
+    contents = Path(filename).read_text()
+    lines = contents.splitlines()
+    # find lines that only contain "-" or "="
+    delimiter_mask = [all(c in "-=" for c in line) for line in lines]
+    # find the two delimiter lines' indices
+    delimiter_indices = np.where(delimiter_mask)[0]
+    assert len(delimiter_indices) == 2
+    # get the lines between the delimiters as a file-like object
+    data_lines = lines[delimiter_indices[0] + 1:delimiter_indices[1]]
+    data = StringIO("\n".join(data_lines))
+
+    df = pd.read_csv(data, sep=" ; ", engine='python', index_col=False)
 
     # filter out non-gamma decays
     df = df[df['Type'] == 'g']
