@@ -101,24 +101,31 @@ def intensity_to_alpha(intensity, exponent=0.25):
     return i**exponent
 
 
-# █ Energiekalibrierung
+# █ Energiekalibration
+console.rule("1. Energiekalibration: Eu-152")
 x_calib, N_calib = load_spe("data/2022-11-28/1_Eu.Spe")
 
 # %% finde Peaks
 peaks, _ = find_peaks(
-    N_calib,
-    prominence=28,
+    # N_calib,
+    # prominence=20,
+    # distance=100,
+
+    np.log(N_calib + 1),
+    prominence=3,
+    distance=100,
+
     # prominence=70,
     # height=100,
 )
+# COULDDO: mehr Peaks?
 
 peaks_to_ignore = {
     58, 62, 150, 200, 226, 415, 536, 576, 764,
 }
 peaks = [peak for peak in peaks if peak not in peaks_to_ignore]
 
-peaks.append(4200)  # TODO!
-peaks = list(sorted(peaks))
+peaks = list(sorted(peaks)) # COULDDO: still needed?
 
 assert len(peaks) == 11, f"Expected 11 peaks, found {len(peaks)}: {peaks}"  # for testing (@Mampfzwerg)
 peaks
