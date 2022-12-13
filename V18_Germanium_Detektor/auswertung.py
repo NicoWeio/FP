@@ -115,6 +115,7 @@ def fit_peak(peak, x, N, plot=True, channel_to_E=None):
             plt2.plot([x_0 - fwtm / 2, x_0 + fwtm / 2], [fwtm_height, fwtm_height], label="FWTM")
 
         plt.legend()
+        plt.tight_layout()
         plt.show()
 
     return {
@@ -185,6 +186,7 @@ with tools.plot_context(plt, 'dimensionless', 'keV', "x", "E") as plt2:
     plt2.plot(peak_channels_n, channel_to_E(peak_channels_n), label="Regressionsgerade")
     plt2.plot(peak_channels_n, lit_energies, 'x', zorder=5, label="Literaturwerte")
 plt.legend()
+plt.tight_layout()
 if tools.BUILD:
     plt.savefig("build/plt/energy_calibration.pdf")
 # plt.show()
@@ -204,6 +206,7 @@ with tools.plot_context(plt, 'dimensionless', 'dimensionless', "x", "N") as plt2
 # plt.xlim(right=4000)
 plt.yscale('log')
 plt.legend()
+plt.tight_layout()
 if tools.BUILD:
     plt.savefig("build/plt/spektrum_152-Eu.pdf")
 plt.show()
@@ -287,6 +290,7 @@ with tools.plot_context(plt, 'keV', 'dimensionless', "E", "Q") as plt2:
     plt2.plot(lit_energies, Q, fmt='x', label="Messwerte")
     plt2.plot(energy_linspace, fit_fn_Q(energy_linspace, Q_max, exponent), label="Fit")
 plt.legend()
+plt.tight_layout()
 if tools.BUILD:
     plt.savefig("build/plt/effizienz.pdf")
 plt.show()
@@ -334,6 +338,7 @@ with tools.plot_context(plt, 'keV', 'dimensionless', r"E_\gamma", r"N") as plt2:
 plt.yscale('log')
 plt.xlim(right=800)
 plt.legend()
+plt.tight_layout()
 if tools.BUILD:
     plt.savefig("build/plt/spektrum_137-Cs.pdf")
 plt.show()
@@ -391,6 +396,7 @@ with tools.plot_context(plt, 'keV', 'dimensionless', r"E_\gamma", r"N") as plt2:
     plt.axvline(E_compton_lit.m, color='C3', label="Compton-Kante (Literatur)")
 plt.yscale('linear')
 plt.legend()
+plt.tight_layout()
 if tools.BUILD:
     plt.savefig("build/plt/compton-kante.pdf")
 # %%
@@ -461,6 +467,7 @@ with tools.plot_context(plt, 'keV', 'dimensionless', r"E_\gamma", r"N") as plt2:
     plt2.plot(E[mask_compton_plot], fit_fn_klein_nishina(E[mask_compton_plot], a, N_0), show_xerr=False, color='C2', label="Fit")
 plt.yscale('linear')
 plt.legend()
+plt.tight_layout()
 if tools.BUILD:
     plt.savefig("build/plt/klein-nishina.pdf")
 
