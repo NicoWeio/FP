@@ -43,13 +43,20 @@ def load_spe(filename):
 
 
 def load_lara(filename):
-    # http://www.lnhb.fr/Laraweb/index.php
+    """
+    Loads a LARAWEB file and returns the energy and intensity columns, limited to γ decays.
+    Data source: http://www.lnhb.fr/Laraweb/index.php
+    """
+    assert filename.endswith('.lara.txt')
     df = pd.read_csv(filename, sep=" ; ", skiprows=13, skipfooter=1, engine='python', index_col=False)
-    # Filtern nach Zerfallsart (TODO untested)
-    decay_mode_mask = df['Type'] == 'g'
-    print(f"Filtered {len(df)} → {len(df[decay_mode_mask])} rows by decay mode")
-    df = df[decay_mode_mask]
-    return df
+
+    # filter out non-gamma decays
+    df = df[df['Type'] == 'g']
+
+    lit_energies = df['Energy (keV)'].values * ureg.keV
+    lit_intensities = df['Intensity (%)'].values * ureg.percent
+
+    return lit_energies, lit_intensities
 
 
 # █ Energiekalibrierung
@@ -135,34 +142,19 @@ peak_channels = [fit['x_0'] for fit in peak_fits]
 
 # %%
 # Lade Emissionsspektrum aus der Literatur
-df = load_lara("data/emissions/Eu-152.lara.txt")
-df
+lit_energies_all, lit_intensities_all = load_lara("data/emissions/Eu-152.lara.txt")
+
+# select the most intense energies, so that len(lit_energies) == len(peak_positions)
+i_by_intensity = np.argsort(lit_intensities_all)[::-1]  # sort by intensity (descending)
+lit_energies = lit_energies_all[i_by_intensity][:len(peak_channels)]
+lit_intensities = lit_intensities_all[i_by_intensity][:len(peak_channels)]
+
+# sort by energy again
+i_by_energy = np.argsort(lit_energies)
+lit_energies = lit_energies[i_by_energy]
+lit_intensities = lit_intensities[i_by_energy]
 
 # %% Lineare Regression (Zuordnung Energie ↔ Kanal)
-# select the most intense energies from the df, so that len(literature_energies) == len(peak_positions)
-# assumes the peaks are already sorted by intensity
-
-# TODO redo:
-# - sort(ed) by intensity
-# - ignore peaks with E < 100 keV
-# - sort by energy
-# - cut to len(peak_channels)
-
-# ↓ selected values
-mask = df['Energy (keV)'] > 100  # ignore that first peak… # TODO: Might be obsolete since we're ignoring non-gamma decays now
-lit_energies = df['Energy (keV)'][mask].values[:len(peak_channels)]
-lit_intensities = df['Intensity (%)'][mask].values[:len(peak_channels)]
-# ↓ all values
-lit_energies_all = df['Energy (keV)'].values
-lit_intensities_all = df['Intensity (%)'].values
-
-# sort by energy
-lit_energies, lit_intensities = zip(*sorted(zip(lit_energies, lit_intensities)))
-
-lit_energies *= ureg.keV
-lit_energies_all *= ureg.keV
-lit_intensities *= ureg.percent
-lit_intensities_all *= ureg.percent
 
 peak_channels_n = tools.nominal_values(peak_channels * ureg.dimensionless)
 m, n = tools.linregress(peak_channels_n, lit_energies)
@@ -173,17 +165,19 @@ def channel_to_E(x):
     return m * x + n
 
 
-# energy = m*channel + b
-# channel = (energy - b)/m
-lit_channels = tools.nominal_values((lit_energies - n) / m)
-lit_channels_all = tools.nominal_values((lit_energies_all - n) / m)
+def E_to_channel(E):
+    return (E - n) / m
+
+
+lit_channels = tools.nominal_values(E_to_channel(lit_energies))
+lit_channels_all = tools.nominal_values(E_to_channel(lit_energies_all))
 
 # Plot: Energie(Kanal)
 plt.figure()
 # with tools.plot_context(plt, 'dimensionless', 'keV', r"\text{Kanal}", "E") as plt2:
 # TODO: \text funzt nicht ohne BUILD…
 with tools.plot_context(plt, 'dimensionless', 'keV', "x", "E") as plt2:
-    plt2.plot(peak_channels_n, channel_to_E(peak_channels_n), label="Regressionsgerade")
+    plt2.plot(peak_channels_n, channel_to_E(peak_channels_n), show_yerr=False, label="Regressionsgerade")
     plt2.plot(peak_channels_n, lit_energies, 'x', zorder=5, label="Literaturwerte")
 plt.legend()
 plt.tight_layout()
