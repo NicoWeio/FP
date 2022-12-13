@@ -75,6 +75,20 @@ def load_lara(filename):
     return lit_energies, lit_intensities
 
 
+def n_most_intense(energies, intensities, n):
+    # select the most intense energies, so that len(lit_energies) == n
+    i_by_intensity = np.argsort(intensities)[::-1]  # sort by intensity (descending)
+    filtered_energies = energies[i_by_intensity][:n]
+    filtered_intensities = intensities[i_by_intensity][:n]
+
+    # sort by energy again
+    i_by_energy = np.argsort(filtered_energies)
+    filtered_energies = filtered_energies[i_by_energy]
+    filtered_intensities = filtered_intensities[i_by_energy]
+
+    return filtered_energies, filtered_intensities
+
+
 # █ Energiekalibrierung
 x_calib, N_calib = load_spe("data/2022-11-28/1_Eu.Spe")
 
@@ -154,25 +168,16 @@ def fit_peak(peak, x, N, plot=True, channel_to_E=None):
 
 peak_fits = [fit_peak(peak, x_calib, N_calib, plot=False) for peak in peaks]
 peak_channels = [fit['x_0'] for fit in peak_fits]
+peak_channels_n = tools.nominal_values(peak_channels * ureg.dimensionless)
 
 
 # %%
-# Lade Emissionsspektrum aus der Literatur
 lit_energies_all, lit_intensities_all = load_lara("data/emissions/Eu-152.lara.txt")
-
-# select the most intense energies, so that len(lit_energies) == len(peak_positions)
-i_by_intensity = np.argsort(lit_intensities_all)[::-1]  # sort by intensity (descending)
-lit_energies = lit_energies_all[i_by_intensity][:len(peak_channels)]
-lit_intensities = lit_intensities_all[i_by_intensity][:len(peak_channels)]
-
-# sort by energy again
-i_by_energy = np.argsort(lit_energies)
-lit_energies = lit_energies[i_by_energy]
-lit_intensities = lit_intensities[i_by_energy]
+# select the most intense energies, so that len(lit_energies) == len(peak_channels)
+lit_energies, lit_intensities = n_most_intense(lit_energies_all, lit_intensities_all, n=len(peak_channels))
 
 # %% Lineare Regression (Zuordnung Energie ↔ Kanal)
 
-peak_channels_n = tools.nominal_values(peak_channels * ureg.dimensionless)
 m, n = tools.linregress(peak_channels_n, lit_energies)
 print(f"m={m}, n={n}")
 
