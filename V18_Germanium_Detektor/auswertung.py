@@ -22,13 +22,18 @@ ureg.define('percent = 1 / 100 = %')
 console = Console()
 
 
-@ureg.wraps(ureg.s**(-1), [ureg.dimensionless, ureg.s])
-def calc_I(N, T):
-    """
-    Zählrate aus Anzahl N und Zeit T.
-    """
-    I = unp.uarray(N / T, np.sqrt(N)/T) / ureg.s
-    return I
+# @ureg.wraps(ureg.s**(-1), [ureg.dimensionless, ureg.s])
+# def calc_I(N, T):
+#     """
+#     Zählrate aus Anzahl N und Zeit T.
+#     """
+#     I = unp.uarray(N / T, np.sqrt(N)/T) / ureg.s
+#     return I
+
+
+@ureg.check('[energy]')
+def calc_ε(E):
+    return E / (ureg.m_e * ureg.c**2)
 
 
 def load_spe(filename):
@@ -107,25 +112,13 @@ x_calib, N_calib = load_spe("data/2022-11-28/1_Eu.Spe")
 
 # %% finde Peaks
 peaks, _ = find_peaks(
-    # N_calib,
-    # prominence=20,
-    # distance=100,
-
     np.log(N_calib + 1),
     prominence=3,
     distance=100,
-
-    # prominence=70,
-    # height=100,
 )
 # COULDDO: mehr Peaks?
 
-peaks_to_ignore = {
-    58, 62, 150, 200, 226, 415, 536, 576, 764,
-}
-peaks = [peak for peak in peaks if peak not in peaks_to_ignore]
-
-peaks = list(sorted(peaks)) # COULDDO: still needed?
+peaks = list(sorted(peaks))  # COULDDO: still needed?
 
 assert len(peaks) == 11, f"Expected 11 peaks, found {len(peaks)}: {peaks}"  # for testing (@Mampfzwerg)
 peaks
@@ -133,8 +126,16 @@ peaks
 # %%
 
 
-def fit_fn_peak(x, a, x_0, sigma, N_0):
-    return a * np.exp(-((x - x_0) ** 2) / (2 * sigma ** 2)) + N_0
+def fit_fn_peak(x, a, x_0, σ, N_0):
+    """
+    x: Kanal
+    ---
+    a: Amplitude
+    x_0: Mittelwert
+    σ: Breite (Standardabweichung)
+    N_0: Hintergrund
+    """
+    return a * np.exp(-((x - x_0)**2) / (2 * σ**2)) + N_0
 
 
 def fit_peak(peak, x, N, plot=True, channel_to_E=None):
@@ -147,6 +148,7 @@ def fit_peak(peak, x, N, plot=True, channel_to_E=None):
     range_N = N[(peak - FIT_RADIUS): (peak + FIT_RADIUS)]
 
     # ▒ Fitte Gauß-Kurve
+    # COULDDO: tools.pint_curve_fit
     a, x_0, σ, N_0 = tools.curve_fit(
         fit_fn_peak,
         range_x, range_N.m,
@@ -172,9 +174,10 @@ def fit_peak(peak, x, N, plot=True, channel_to_E=None):
 
         plt.legend()
         plt.tight_layout()
-        plt.show()
+        if tools.PLOTS:
+            plt.show()
 
-    return {
+    data = {
         'a': a,
         'x_0': x_0,
         'σ': σ,
@@ -184,9 +187,29 @@ def fit_peak(peak, x, N, plot=True, channel_to_E=None):
         'fwtm': fwtm,
     }
 
+    if channel_to_E:
+        data['E'] = channel_to_E(x_0)
+
+    return data
+
+
+def peak_fits_to_arrays(peak_fits):
+    keys = peak_fits[0].keys()
+    return {
+        key: (
+            # für 'E':
+            tools.pintify([tools.nominal_value(fit[key]) for fit in peak_fits])
+            if isinstance(peak_fits[0][key], pint.Quantity)
+            # für alle anderen:
+            else np.array([fit[key].n for fit in peak_fits]) * ureg.dimensionless
+        )
+        for key in keys
+    }
+
 
 peak_fits = [fit_peak(peak, x_calib, N_calib, plot=False) for peak in peaks]
-peak_channels = [fit['x_0'] for fit in peak_fits]
+peak_fit_arrays = peak_fits_to_arrays(peak_fits)
+peak_channels = [fit['x_0'] for fit in peak_fits]  # COULDDO: Brauche ich nicht wirklich, oder?
 peak_channels_n = tools.nominal_values(peak_channels * ureg.dimensionless)
 
 
@@ -223,7 +246,8 @@ plt.legend()
 plt.tight_layout()
 if tools.BUILD:
     plt.savefig("build/plt/energy_calibration.pdf")
-# plt.show()
+# if tools.PLOTS:
+#     plt.show()
 # %%
 
 # ▒ Plotte Spektrum
@@ -236,39 +260,43 @@ with tools.plot_context(plt, 'dimensionless', 'dimensionless', "x", "N") as plt2
     for lit_energy, lit_intensity in zip(lit_channels_all, lit_intensities_all):
         # TODO: Label
         plt.axvline(lit_energy, color='C2', alpha=intensity_to_alpha(lit_intensity))
+
+# add labels for axvlines
+handles, labels = plt.gca().get_legend_handles_labels()
+handles.append(
+    mpatches.Patch(color='C2', label="Eu-152 (Literaturwerte)")
+)
+
 # plt.xlim(right=4000)
 plt.yscale('log')
-plt.legend()
+plt.legend(handles=handles)
 plt.tight_layout()
 if tools.BUILD:
     plt.savefig("build/plt/spektrum_152-Eu.pdf")
-plt.show()
-
-# %%
-# NOTE: wird später noch gebraucht
-a_np = np.array([fit['a'].n for fit in peak_fits]) * ureg.dimensionless  # Amplituden
-x_0_np = np.array([fit['x_0'].n for fit in peak_fits]) * ureg.dimensionless  # Mittelwerte
-σ_np = np.array([fit['σ'].n for fit in peak_fits]) * ureg.dimensionless  # Breiten (Standardabweichungen)
-N_0_np = np.array([fit['N_0'].n for fit in peak_fits]) * ureg.dimensionless  # Hintergründe
+if tools.PLOTS:
+    plt.show()
 
 # %% █ Tabelle generieren
-# TODO: Unsicherheiten
+# COULDDO: Unsicherheiten
 generate_table.generate_table_pint(
     "build/tab/1_energiekalibrierung.tex",
     (r"E_\text{lit}", ureg.kiloelectron_volt, lit_energies),
-    (r"x_0", ureg.dimensionless, x_0_np, 1),
-    (r"a", ureg.dimensionless, a_np, 1),
-    (r"\sigma", ureg.dimensionless, σ_np, 2),
-    (r"N_0", ureg.dimensionless, N_0_np, 2),
+    (r"x_0", ureg.dimensionless, peak_fit_arrays['x_0'], 1),
+    (r"a", ureg.dimensionless, peak_fit_arrays['a'], 1),
+    (r"\sigma", ureg.dimensionless, peak_fit_arrays['σ'], 2),
+    (r"N_0", ureg.dimensionless, peak_fit_arrays['N_0'], 2),
 )
 
 # %% ███ Effizienz ███
-console.rule("Effizienz")
-# TODO: Aus .Spe-Datei lesen
+console.rule("1. Vollenergienachweiswahrscheinlichkeit / Effizienz: Eu-152")
+# COULDDO: Aus .Spe-Datei lesen
 t_mess = ureg('3388 s')  # Messzeit
 
 r = ureg('45 mm') / 2  # Radius [Versuchsanleitung]
-l = ureg('9.5 cm')  # Abstand Probe–Detektor # TODO: Quelle?
+# Abstand Probe–Detektor =
+#   Abstand Probe–Schutzhaube [eigene Messung]
+# + Abstand Schutzhaube–Detektor [Versuchsanleitung]
+l = ureg('7.0 cm') + ureg('1.5 cm')
 
 Ω = 2*np.pi*(1 - l/np.sqrt(l**2 + r**2))
 # print(f"Ω={Ω.to('pi'):.4f}")
@@ -288,7 +316,7 @@ print(f"A={A.to('Bq'):.2f}")
 
 # %% Flächeninhalte der Gaußkurven
 # TODO: Richtige Faktoren (sigma etc.)?
-Z = a_np * np.sqrt(2*np.pi * σ_np**2)  # Flächeninhalte
+Z = peak_fit_arrays['a'] * np.sqrt(2*np.pi * peak_fit_arrays['σ']**2)  # Flächeninhalte
 Z
 
 # %% Effizienz
@@ -321,29 +349,29 @@ energy_linspace = tools.linspace(*tools.bounds(lit_energies), 100)
 plt.figure()
 with tools.plot_context(plt, 'keV', 'dimensionless', "E", "Q") as plt2:
     plt2.plot(lit_energies, Q, fmt='x', label="Messwerte")
-    plt2.plot(energy_linspace, fit_fn_Q(energy_linspace, Q_max, exponent), label="Fit")
+    # COULDDO: Unsicherheiten als Schattierung
+    plt2.plot(energy_linspace, fit_fn_Q(energy_linspace, Q_max, exponent), show_yerr=False, label="Fit")
 plt.legend()
 plt.tight_layout()
 if tools.BUILD:
     plt.savefig("build/plt/effizienz.pdf")
-plt.show()
+if tools.PLOTS:
+    plt.show()
 
 # %% Tabelle generieren
-# TODO: Unsicherheiten
+# COULDDO: Unsicherheiten
 generate_table.generate_table_pint(
     "build/tab/2_effizienz.tex",
     (r"E_\text{lit}", ureg.kiloelectron_volt, lit_energies),
     (r"W", ureg.percent, lit_intensities),
-    (r"x_0", ureg.dimensionless, x_0_np, 1),  # redundant s.o.
-    (r"\sigma", ureg.dimensionless, σ_np, 2),  # redundant s.o.
     (r"Z", ureg.dimensionless, Z, 0),
     (r"Q", ureg.dimensionless, tools.nominal_values(Q), 4),
 )
 
 
-# %% ███ Spektrum von 137Cs ███
-console.rule("Spektrum von 137Cs")
-# TODO: In mehrere .py-Dateien aufteilen
+# %% ███ Spektrum von Cs-137 ███
+console.rule("2. Spektrum von Cs-137")
+# COULDDO: In mehrere .py-Dateien aufteilen
 
 x, N = load_spe("data/2022-11-28/2_Cs.Spe")
 x_pint = x * ureg.dimensionless
@@ -354,34 +382,31 @@ E = channel_to_E(x)  # NOTE: This means E has uncertainties!
 peaks, _ = find_peaks(N, height=50, distance=1000)
 
 assert len(peaks) == 2, f"Es sollten 2 Peaks (Rückstreupeak und Photopeak) gefunden werden. Gefunden wurden {len(peaks)} Peaks."
-rueckstreupeak, photopeak = peaks
-E_rueckstreupeak, E_photopeak = E[peaks]
-
-# TODO: Statt plump die Maxima zu nehmen, Gaußkurven fitten!
-
-print(f"Rückstreupeak: {E_rueckstreupeak}")
-print(f"Photopeak: {E_photopeak}")
+rueckstreupeak_raw, photopeak_raw = peaks
 
 # %% Plot: N(E) – Spektrum von 137Cs
 plt.figure()
 with tools.plot_context(plt, 'keV', 'dimensionless', r"E_\gamma", r"N") as plt2:
     plt2.plot(E, N, label="Messwerte")  # fmt='x'
-    plt2.plot(E[peaks], N[peaks], fmt='x', label="Peaks")
-    plt2.plot(E, np.convolve(N.m, np.ones(20)/20, mode='same'), fmt='-', label="Smoothed")  # TODO: Gut so?
+    # plt2.plot(E[peaks], N[peaks], 'x', show_xerr=False, label="Peaks")
+    plt2.plot(E[rueckstreupeak_raw], N[rueckstreupeak_raw], 'x', show_xerr=False, label="Rückstreupeak")
+    plt2.plot(E[photopeak_raw], N[photopeak_raw], 'x', show_xerr=False, label="Photopeak")
 plt.yscale('log')
 plt.xlim(right=800)
 plt.legend()
 plt.tight_layout()
 if tools.BUILD:
     plt.savefig("build/plt/spektrum_137-Cs.pdf")
-plt.show()
+if tools.PLOTS:
+    plt.show()
 
-# %% Fit: Photopeak
-photopeak_fit = fit_peak(photopeak, x, N, plot=True)
-E_photopeak_fit = channel_to_E(photopeak_fit['x_0'])
+# %% Fit: Rückstreupeak & Photopeak
+peak_fits = [fit_peak(peak, x_calib, N_calib, plot=True, channel_to_E=channel_to_E) for peak in peaks]
+peak_fit_arrays = peak_fits_to_arrays(peak_fits)
+rueckstreupeak_fit, photopeak_fit = peak_fits
 
 E_photopeak_lit = ureg('661.657 keV')  # TODO: Quelle, Unsicherheit
-print(tools.fmt_compare_to_ref(E_photopeak_fit, E_photopeak_lit, name="Photopeak (Fit vs. Literatur)"))
+print(tools.fmt_compare_to_ref(photopeak_fit['E'], E_photopeak_lit, name="Photopeak (Fit vs. Literatur)"))
 
 E_fwhm_fit = channel_to_E(photopeak_fit['fwhm'])
 E_fwtm_fit = channel_to_E(photopeak_fit['fwtm'])
@@ -390,12 +415,23 @@ print(f"FWHM: {E_fwhm_fit:.2f}")
 print(f"FWTM: {E_fwtm_fit:.2f}")
 print(f"FWHM/FWTM: {(E_fwhm_fit/E_fwtm_fit):.2f}")
 
+# %% █ Tabelle generieren
+# COULDDO: Unsicherheiten
+generate_table.generate_table_pint(
+    "build/tab/3_Cs-137.tex",
+    (r"E", ureg.kiloelectron_volt, peak_fit_arrays['E']),
+    (r"x_0", ureg.dimensionless, peak_fit_arrays['x_0'], 1),
+    (r"a", ureg.dimensionless, peak_fit_arrays['a'], 1),
+    (r"\sigma", ureg.dimensionless, peak_fit_arrays['σ'], 2),
+    (r"N_0", ureg.dimensionless, peak_fit_arrays['N_0'], 2),
+)
+
 # %% Compton-Kante
 
 
+@ureg.check('[energy]')
 def calc_compton_edge(E_photopeak):
-    ε = E_photopeak / (ureg.m_e * ureg.c**2)
-    ε.ito('dimensionless')
+    ε = calc_ε(E_photopeak)
     return E_photopeak * 2*ε / (1 + 2*ε)
 
 
@@ -428,7 +464,7 @@ with tools.plot_context(plt, 'keV', 'dimensionless', r"E_\gamma", r"N") as plt2:
     plt.axvline(tools.nominal_value(E_compton_fit).m, color='C2', label="Compton-Kante (Fit)")
     plt.axvline(E_compton_lit.m, color='C3', label="Compton-Kante (Literatur)")
 plt.yscale('linear')
-plt.legend()
+plt.legend(loc='lower left')  # TODO
 plt.tight_layout()
 if tools.BUILD:
     plt.savefig("build/plt/compton-kante.pdf")
@@ -438,11 +474,9 @@ if tools.BUILD:
 def fit_fn_klein_nishina(E, a, N_0):
     # E: Energie des gestoßenen Elektrons
 
-    # ε = ureg.epsilon_0  # ?
-    ε = tools.nominal_value(E_photopeak) / (ureg.m_e * ureg.c**2)  # muss dimensionslos sein; siehe "2 +"
+    ε = tools.nominal_value(calc_ε(photopeak_fit['E']))
     m_0 = ureg.m_e  # ?
-    # E_γ = h*nu
-    E_γ = tools.nominal_value(E_photopeak_fit)  # Energie des einfallenden Gammaquants (=hν)
+    E_γ = tools.nominal_value(photopeak_fit['E'])  # Energie des einfallenden Gammaquants (=hν)
 
     if not isinstance(E, ureg.Quantity):
         E *= ureg.keV
@@ -512,6 +546,7 @@ lit_energies_all_Sb, intensities_all_Sb = load_lara("data/emissions/Sb-125.lara.
 # energies, intensities = n_most_intense(energies_all, intensities_all, n=len(peak_channels))
 
 # %%
+console.rule("3. Aktivitätsbestimmung: Ba-133")
 
 x_Ba, N_Ba = load_spe("data/2022-11-28/3_Ba.Spe")
 E_Ba = channel_to_E(x_Ba)
@@ -541,9 +576,12 @@ plt.legend(handles=handles)
 plt.tight_layout()
 if tools.BUILD:
     plt.savefig("build/plt/spektrum_133-Ba.pdf")
-plt.show()
+if tools.PLOTS:
+    plt.show()
 
 # %%
+console.rule("4. Nuklididentifikation und Aktivitätsbestimmung: Uran & Zerfallsprodukte")
+
 x_U, N_U = load_spe("data/2022-11-28/4_U.Spe")
 E_U = channel_to_E(x_U)
 
@@ -578,16 +616,35 @@ data_dict = {
     for parent in PARENTS
 }
 
-# ▒ Plotte Spektrum
+# %% COULDDO[WIP]: Score nuclides by multiplying their emission spectrum with the measured spectrum
+# for parent, (lit_energies, intensities) in data_dict.items():
+#     E_parent = np.zeros_like(E_U)
+#     for lit_energy, lit_intensity in zip(lit_energies, intensities):
+#         E_parent += fit_fn_peak(x=E_U, a=lit_intensity, x_0=lit_energy, sigma=5, N_0=ureg('0 keV'))
+#     score = E_parent * N_U
+#     print(f"{parent}: {score.sum():.2f}")
+
+# %% Peaks
+peaks, _ = find_peaks(
+    np.log10(N_U + 1),
+    prominence=0.9,
+    distance=100,
+    # threshold=0.03,
+)
+peak_fits = [fit_peak(peak, x_U, N_U, plot=False) for peak in peaks]
+peak_channels = [fit['x_0'] for fit in peak_fits] * ureg.dimensionless
+peak_energies = channel_to_E(peak_channels)
+
+print(f"Found {len(peaks)} peaks")
+
+# %% Plotte Spektrum
 plt.figure()
 # with tools.plot_context(plt, 'dimensionless', 'dimensionless', r"\text{Kanal}", "N") as plt2:
 # TODO: \text funzt nicht ohne BUILD…
 with tools.plot_context(plt, 'keV', 'dimensionless', "E", "N") as plt2:
     plt2.plot(E_U, N_U, label="Messwerte")
-    # plt.plot(peaks, N_U[peaks], 'x', label="Peaks")  # TODO: Peaks tatsächlich suchen…
-
-    # only the most intense peak is shown
-    # plt.axvline(lit_energies_all_U[0].to('keV').m, color='C2', alpha=1, label="Uran")
+    plt2.plot(E_U, np.convolve(N_U.m, np.ones(20)/20, mode='same'), fmt='-', label="Messwerte (geglättet)")  # TODO: Gut so?
+    plt2.plot(E_U[peaks], N_U[peaks], 'x', show_xerr=False, label="Peaks")
 
     for i, (parent, (lit_energies, intensities)) in enumerate(data_dict.items()):
         for lit_energy, lit_intensity in zip(lit_energies, intensities):
@@ -608,4 +665,7 @@ plt.legend(handles=handles)
 plt.tight_layout()
 if tools.BUILD:
     plt.savefig("build/plt/spektrum_238-U.pdf")
-plt.show()
+if tools.PLOTS:
+    plt.show()
+
+# %%
