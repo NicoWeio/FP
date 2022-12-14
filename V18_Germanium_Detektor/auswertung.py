@@ -138,14 +138,21 @@ def fit_fn_peak(x, a, x_0, σ, N_0):
     return a * np.exp(-((x - x_0)**2) / (2 * σ**2)) + N_0
 
 
-def fit_peak(peak, x, N, plot=True, channel_to_E=None):
+def fit_peak(peak, x, N, fit_radius=40, plot=True, plot_path=None, channel_to_E=None):
+    """
+    Helfer-Funktion, um eine Gauß-Kurve auf einen Peak zu fitten.
+
+    peak: Kanal, in dem der Peak etwa liegt (gefunden z.B. mit scipy.signal.find_peaks)
+    x: Kanäle
+    N: Zählraten
+    fit_radius: Radius des Bereichs, in dem die Gauß-Kurve gefittet wird (in Kanälen)
+    """
     # TODO: Stelle sicher, dass x Kanäle, nicht Energien sind.
     # assert not isinstance(x, ureg.Quantity) or x.units == ureg.dimensionless
 
     # print(f"Peak bei ({peak}, {N[peak].m})")
-    FIT_RADIUS = 40  # Radius des Bereichs, in dem die Gauß-Kurve gefittet wird
-    range_x = x[(peak - FIT_RADIUS): (peak + FIT_RADIUS)]
-    range_N = N[(peak - FIT_RADIUS): (peak + FIT_RADIUS)]
+    range_x = x[(peak - fit_radius): (peak + fit_radius)]
+    range_N = N[(peak - fit_radius): (peak + fit_radius)]
 
     # ▒ Fitte Gauß-Kurve
     # COULDDO: tools.pint_curve_fit
@@ -155,12 +162,23 @@ def fit_peak(peak, x, N, plot=True, channel_to_E=None):
         p0=[max(range_N), peak, 1, min(range_N)],
     )
 
+    # Sanity checks
+    try:
+        assert a > 0, f"Amplitude a={a} should be positive"
+        assert x_0 > 0, f"x_0={x_0} should be positive"
+        assert σ > 0, f"σ={σ} should be positive"
+        assert N_0 > 0, f"N_0={N_0} should be positive"
+    except AssertionError as e:
+        print("Continuing for now, but this should be fixed.")
+    # …
+
     fwhm = 2 * σ * np.sqrt(2 * np.log(2))
     fwhm_height = a / 2 + N_0
     fwtm = 2 * σ * np.sqrt(2 * np.log(10))
     fwtm_height = a / 10 + N_0
 
     if plot:
+        plt.figure()
         with tools.plot_context(plt, 'dimensionless', 'dimensionless', r"xTODO", r"N") as plt2:
             plt2.plot(range_x, range_N, label="Messwerte")
             plt2.plot(
@@ -169,11 +187,14 @@ def fit_peak(peak, x, N, plot=True, channel_to_E=None):
                 label="Fit",
             )
 
-            plt2.plot([x_0 - fwhm / 2, x_0 + fwhm / 2], [fwhm_height, fwhm_height], label="FWHM")
-            plt2.plot([x_0 - fwtm / 2, x_0 + fwtm / 2], [fwtm_height, fwtm_height], label="FWTM")
+            plt2.plot([x_0 - fwhm / 2, x_0 + fwhm / 2], [fwhm_height, fwhm_height], show_yerr=False, label="FWHM")
+            plt2.plot([x_0 - fwtm / 2, x_0 + fwtm / 2], [fwtm_height, fwtm_height], show_yerr=False, label="FWTM")
 
+        plt.xlim(range_x[0], range_x[-1])
         plt.legend()
         plt.tight_layout()
+        if plot_path:
+            plt.savefig(plot_path)
         if tools.PLOTS:
             plt.show()
 
@@ -401,7 +422,8 @@ if tools.PLOTS:
     plt.show()
 
 # %% Fit: Rückstreupeak & Photopeak
-peak_fits = [fit_peak(peak, x_calib, N_calib, plot=True, channel_to_E=channel_to_E) for peak in peaks]
+# peak_fits = [fit_peak(peak, x, N, plot=True, channel_to_E=channel_to_E) for peak in peaks]
+peak_fits = [fit_peak(peak, x, N, plot=True, plot_path=f"build/plt/3_gauss_{i}.pdf", channel_to_E=channel_to_E, fit_radius=([150, 40][i])) for i, peak in enumerate(peaks)]
 peak_fit_arrays = peak_fits_to_arrays(peak_fits)
 rueckstreupeak_fit, photopeak_fit = peak_fits
 
