@@ -11,7 +11,7 @@ import pint
 import uncertainties.unumpy as unp
 from rich.console import Console
 from scipy.signal import find_peaks
-from uncertainties import ufloat
+from uncertainties import ufloat, UFloat
 
 import generate_table
 import tools
@@ -36,17 +36,37 @@ def calc_ε(E):
     return E / (ureg.m_e * ureg.c**2)
 
 
-def load_spe(filename):
+def _load_spe(filename):
     # COULDDO: move to tools.py
+
+    # Messzeit lesen
+    lines = Path(filename).read_text().splitlines()
+    assert lines[8] == "$MEAS_TIM:"
+    T = int(lines[9].split(" ")[0]) * ureg.s
+
     N = np.genfromtxt(filename, skip_header=12, skip_footer=14)
     assert len(N) == 8192
     x = np.arange(0, len(N))  # * ureg.dimensionless
 
-    # TODO: Irgendwo den Untergrund abziehen!
-
     N *= ureg.dimensionless
 
-    return x, N
+    return x, N, T
+
+
+def load_spe(filename, subtract_background=True):
+    """
+    Lade eine Spe-Datei und subtrahiere den Untergrund.
+    """
+    x, N, T = _load_spe(filename)
+
+    if subtract_background:
+        x_bg, N_bg, T_bg = _load_spe("data/2022-11-28/5_Background.Spe")
+        N -= N_bg * (T / T_bg)
+
+        if not all(N >= 0):
+            print("⚠ Durch Subtraktion des Untergrunds sind negative Werte entstanden!")
+
+    return x, N, T
 
 
 def load_lara(filename, parent=None):
@@ -106,19 +126,51 @@ def intensity_to_alpha(intensity, exponent=0.25):
     return i**exponent
 
 
-# █ Energiekalibration
-console.rule("1. Energiekalibration: Eu-152")
-x_calib, N_calib = load_spe("data/2022-11-28/1_Eu.Spe")
+# %%
+console.rule("0. Untergrund")
+x_bg, N_bg, T_bg = load_spe("data/2022-11-28/5_Background.Spe", subtract_background=False)
 
-# %% finde Peaks
+# Plot: Untergrund
+plt.figure()
+with tools.plot_context(plt, 'dimensionless', 'dimensionless', "x", "N") as plt2:
+    plt2.plot(x_bg, N_bg, label="Messwerte")
+plt.yscale('log')
+plt.legend()
+plt.tight_layout()
+if tools.BUILD:
+    plt.savefig("build/plt/background.pdf")
+# if tools.PLOTS:
+#     plt.show()
+
+# %% █ Energiekalibration
+console.rule("1. Energiekalibration: Eu-152")
+x_calib, N_calib, T_calib = load_spe("data/2022-11-28/1_Eu.Spe")
+
+N_calib_smooth = np.convolve(N_calib.m, np.ones(50)/50, mode='same') * ureg.dimensionless
+
+N_calib_for_peaks = N_calib_smooth.copy()
+N_calib_for_peaks[:400] = 0  # ignore first channels
+
+# finde Peaks
 peaks, _ = find_peaks(
-    np.log(N_calib + 1),
-    prominence=3,
+    # np.log(N_calib + 1),
+    # prominence=3.2,
+    # distance=100,
+
+    np.log(N_calib_smooth + 1),
+    # np.log(N_calib_for_peaks + 1),
+    prominence=0.6,
     distance=100,
 )
 # COULDDO: mehr Peaks?
 
-peaks = list(sorted(peaks))  # COULDDO: still needed?
+peaks_to_ignore = [
+    79,
+    5861,
+    6287,
+]
+peaks = [p for p in peaks if p not in peaks_to_ignore]
+peaks = list(sorted(peaks))
 
 assert len(peaks) == 11, f"Expected 11 peaks, found {len(peaks)}: {peaks}"  # for testing (@Mampfzwerg)
 peaks
@@ -138,7 +190,7 @@ def fit_fn_peak(x, a, x_0, σ, N_0):
     return a * np.exp(-((x - x_0)**2) / (2 * σ**2)) + N_0
 
 
-def fit_peak(peak, x, N, fit_radius=40, plot=True, plot_path=None, channel_to_E=None):
+def fit_peak(peak_seed, x, N, fit_radius=40, plot=True, plot_path=None, channel_to_E=None):
     """
     Helfer-Funktion, um eine Gauß-Kurve auf einen Peak zu fitten.
 
@@ -151,15 +203,18 @@ def fit_peak(peak, x, N, fit_radius=40, plot=True, plot_path=None, channel_to_E=
     # assert not isinstance(x, ureg.Quantity) or x.units == ureg.dimensionless
 
     # print(f"Peak bei ({peak}, {N[peak].m})")
-    range_x = x[(peak - fit_radius): (peak + fit_radius)]
-    range_N = N[(peak - fit_radius): (peak + fit_radius)]
+    range_x = x[(peak_seed - fit_radius): (peak_seed + fit_radius)]
+    range_N = N[(peak_seed - fit_radius): (peak_seed + fit_radius)]
+
+    # wahres Maximum im Suchbereich
+    true_peak = np.argmax(range_N) + peak_seed - fit_radius
 
     # ▒ Fitte Gauß-Kurve
     # COULDDO: tools.pint_curve_fit
     a, x_0, σ, N_0 = tools.curve_fit(
         fit_fn_peak,
         range_x, range_N.m,
-        p0=[max(range_N), peak, 1, min(range_N)],
+        p0=[max(range_N), true_peak, 1, min(range_N)],
     )
 
     # Sanity checks
@@ -169,13 +224,17 @@ def fit_peak(peak, x, N, fit_radius=40, plot=True, plot_path=None, channel_to_E=
         assert σ > 0, f"σ={σ} should be positive"
         assert N_0 > 0, f"N_0={N_0} should be positive"
     except AssertionError as e:
+        print(e)
         print("Continuing for now, but this should be fixed.")
-    # …
 
+    # FWHM / FWTM
     fwhm = 2 * σ * np.sqrt(2 * np.log(2))
     fwhm_height = a / 2 + N_0
     fwtm = 2 * σ * np.sqrt(2 * np.log(10))
     fwtm_height = a / 10 + N_0
+
+    # (Flächen-)Inhalt
+    Z = a * unp.sqrt(2*np.pi * σ**2)  # TODO: Richtige Faktoren (sigma etc.)?
 
     if plot:
         plt.figure()
@@ -199,13 +258,17 @@ def fit_peak(peak, x, N, fit_radius=40, plot=True, plot_path=None, channel_to_E=
             plt.show()
 
     data = {
+        # ↓ Fit-Parameter
         'a': a,
         'x_0': x_0,
         'σ': σ,
         'N_0': N_0,
-        # ---
+        # ↓ berechnete Werte
         'fwhm': fwhm,
         'fwtm': fwtm,
+        'Z': Z,
+        # ↓ andere
+        'true_peak': true_peak,
     }
 
     if channel_to_E:
@@ -222,13 +285,17 @@ def peak_fits_to_arrays(peak_fits):
             tools.pintify([tools.nominal_value(fit[key]) for fit in peak_fits])
             if isinstance(peak_fits[0][key], pint.Quantity)
             # für alle anderen:
-            else np.array([fit[key].n for fit in peak_fits]) * ureg.dimensionless
+            else (
+                np.array([fit[key].n for fit in peak_fits]) * ureg.dimensionless
+                if isinstance(peak_fits[0][key], UFloat)
+                else np.array([fit[key] for fit in peak_fits]) * ureg.dimensionless
+            )
         )
         for key in keys
     }
 
 
-peak_fits = [fit_peak(peak, x_calib, N_calib, plot=False) for peak in peaks]
+peak_fits = [fit_peak(peak, x_calib, N_calib, plot=True) for peak in peaks]
 peak_fit_arrays = peak_fits_to_arrays(peak_fits)
 peak_channels = [fit['x_0'] for fit in peak_fits]  # COULDDO: Brauche ich nicht wirklich, oder?
 peak_channels_n = tools.nominal_values(peak_channels * ureg.dimensionless)
@@ -277,9 +344,11 @@ plt.figure()
 # TODO: \text funzt nicht ohne BUILD…
 with tools.plot_context(plt, 'dimensionless', 'dimensionless', "x", "N") as plt2:
     plt.plot(N_calib, label="Messwerte")
-    plt.plot(peaks, N_calib[peaks], 'x', label="Peaks")
+    # plt.plot(x_calib, N_calib_smooth, '-', label="Messwerte (geglättet)")
+
+    plt.plot(peak_fit_arrays['true_peak'], N_calib[peak_fit_arrays['true_peak']], 'x', label="Peaks")
+
     for lit_energy, lit_intensity in zip(lit_channels_all, lit_intensities_all):
-        # TODO: Label
         plt.axvline(lit_energy, color='C2', alpha=intensity_to_alpha(lit_intensity))
 
 # add labels for axvlines
@@ -289,6 +358,7 @@ handles.append(
 )
 
 # plt.xlim(right=4000)
+plt.ylim(bottom=0.5)
 plt.yscale('log')
 plt.legend(handles=handles)
 plt.tight_layout()
@@ -336,12 +406,10 @@ A = A_0 * unp.exp((-np.log(2) / t_hw * age_probe).to('dimensionless').m)  # Akti
 print(f"A={A.to('Bq'):.2f}")
 
 # %% Flächeninhalte der Gaußkurven
-# TODO: Richtige Faktoren (sigma etc.)?
-Z = peak_fit_arrays['a'] * np.sqrt(2*np.pi * peak_fit_arrays['σ']**2)  # Flächeninhalte
-Z
+Z = peak_fit_arrays['Z']
 
 # %% Effizienz
-Q = 4*np.pi*Z / (Ω * A * lit_intensities * t_mess)  # Effizienz
+Q = 4*np.pi*Z / (Ω * A * lit_intensities * T_calib)  # Effizienz
 # assert Q.check('dimensionless'), "Q is not dimensionless"
 Q.ito('dimensionless')  # NOTE: Q.check raises a KeyError for some reason, doing this instead → create an Issue?
 Q
@@ -394,7 +462,7 @@ generate_table.generate_table_pint(
 console.rule("2. Spektrum von Cs-137")
 # COULDDO: In mehrere .py-Dateien aufteilen
 
-x, N = load_spe("data/2022-11-28/2_Cs.Spe")
+x, N, T = load_spe("data/2022-11-28/2_Cs.Spe")
 x_pint = x * ureg.dimensionless
 
 E = channel_to_E(x)  # NOTE: This means E has uncertainties!
@@ -423,7 +491,8 @@ if tools.PLOTS:
 
 # %% Fit: Rückstreupeak & Photopeak
 # peak_fits = [fit_peak(peak, x, N, plot=True, channel_to_E=channel_to_E) for peak in peaks]
-peak_fits = [fit_peak(peak, x, N, plot=True, plot_path=f"build/plt/3_gauss_{i}.pdf", channel_to_E=channel_to_E, fit_radius=([150, 40][i])) for i, peak in enumerate(peaks)]
+peak_fits = [fit_peak(peak, x, N, plot=True, plot_path=f"build/plt/3_gauss_{i}.pdf",
+                      channel_to_E=channel_to_E, fit_radius=([150, 40][i])) for i, peak in enumerate(peaks)]
 peak_fit_arrays = peak_fits_to_arrays(peak_fits)
 rueckstreupeak_fit, photopeak_fit = peak_fits
 
@@ -433,19 +502,22 @@ print(tools.fmt_compare_to_ref(photopeak_fit['E'], E_photopeak_lit, name="Photop
 E_fwhm_fit = channel_to_E(photopeak_fit['fwhm'])
 E_fwtm_fit = channel_to_E(photopeak_fit['fwtm'])
 
-print(f"FWHM: {E_fwhm_fit:.2f}")
-print(f"FWTM: {E_fwtm_fit:.2f}")
-print(f"FWHM/FWTM: {(E_fwhm_fit/E_fwtm_fit):.2f}")
+print(f"Photopeak → FWHM: {E_fwhm_fit:.2f}")
+print(f"Photopeak → FWTM: {E_fwtm_fit:.2f}")
+print(f"Photopeak → FWHM/FWTM: {(E_fwhm_fit/E_fwtm_fit):.2f}")
 
 # %% █ Tabelle generieren
 # COULDDO: Unsicherheiten
 generate_table.generate_table_pint(
     "build/tab/3_Cs-137.tex",
-    (r"E", ureg.kiloelectron_volt, peak_fit_arrays['E']),
+    # ↓ Fit-Parameter
     (r"x_0", ureg.dimensionless, peak_fit_arrays['x_0'], 1),
     (r"a", ureg.dimensionless, peak_fit_arrays['a'], 1),
     (r"\sigma", ureg.dimensionless, peak_fit_arrays['σ'], 2),
     (r"N_0", ureg.dimensionless, peak_fit_arrays['N_0'], 2),
+    # ↓ berechnete Werte
+    (r"E(x_0)", ureg.kiloelectron_volt, peak_fit_arrays['E']),
+    (r"Z(a, \sigma)", ureg.dimensionless, peak_fit_arrays['Z'], 0),
 )
 
 # %% Compton-Kante
@@ -461,8 +533,8 @@ E_compton_lit = calc_compton_edge(E_photopeak_lit)
 
 # Fit links-rechts
 # TODO: subject to confirmation bias
-mask_l = (E < E_compton_lit) & (E > (E_compton_lit - 50*ureg.keV))
-mask_r = (E > E_compton_lit) & (E < (E_compton_lit + 10*ureg.keV))
+mask_l = (E < E_compton_lit) & (E > (E_compton_lit - 100*ureg.keV))
+mask_r = (E > E_compton_lit) & (E < (E_compton_lit + 20*ureg.keV))
 mask_lr = mask_l | mask_r
 
 m_l, n_l = tools.linregress(tools.nominal_values(E[mask_l]), N[mask_l])
@@ -483,8 +555,9 @@ with tools.plot_context(plt, 'keV', 'dimensionless', r"E_\gamma", r"N") as plt2:
     plt2.plot(E[mask_lr], m_l*E[mask_lr] + n_l, show_yerr=False, color='C0', label="Fit links")
     plt2.plot(E[mask_lr], m_r*E[mask_lr] + n_r, show_yerr=False, color='C1', label="Fit rechts")
 
-    plt.axvline(tools.nominal_value(E_compton_fit).m, color='C2', label="Compton-Kante (Fit)")
-    plt.axvline(E_compton_lit.m, color='C3', label="Compton-Kante (Literatur)")
+    plt.axvline(tools.nominal_value(E_compton_fit).to('keV').m, color='C2', label="Compton-Kante (Fit)")
+    plt.axvline(E_compton_lit.to('keV').m, color='C3', label="Compton-Kante (Literatur)")
+plt.ylim(top=max(N[mask_lr]))
 plt.yscale('linear')
 plt.legend(loc='lower left')  # TODO
 plt.tight_layout()
@@ -496,9 +569,9 @@ if tools.BUILD:
 def fit_fn_klein_nishina(E, a, N_0):
     # E: Energie des gestoßenen Elektrons
 
-    ε = tools.nominal_value(calc_ε(photopeak_fit['E']))
-    m_0 = ureg.m_e  # ?
     E_γ = tools.nominal_value(photopeak_fit['E'])  # Energie des einfallenden Gammaquants (=hν)
+    ε = calc_ε(E_γ)
+    m_0 = ureg.m_e  # ?
 
     if not isinstance(E, ureg.Quantity):
         E *= ureg.keV
@@ -547,6 +620,13 @@ a, N_0 = tools.pint_curve_fit(
 print(f"a: {a:.2f}")
 print(f"N_0: {N_0:.2f}")
 
+N_fit = fit_fn_klein_nishina(E, a, N_0)
+# Der Inhalt ergibt sich direkt aus Summation,
+# weil wir die Fläche mit Kanälen (statt Energien) auf der x-Achse betrachten…
+Z = sum(N_fit[E < E_compton_lit])
+
+print(f"→ Z: {Z:.1f}")
+
 # %% Plot: Klein-Nishina
 plt.figure()
 with tools.plot_context(plt, 'keV', 'dimensionless', r"E_\gamma", r"N") as plt2:
@@ -570,7 +650,7 @@ lit_energies_all_Sb, intensities_all_Sb = load_lara("data/emissions/Sb-125.lara.
 # %%
 console.rule("3. Aktivitätsbestimmung: Ba-133")
 
-x_Ba, N_Ba = load_spe("data/2022-11-28/3_Ba.Spe")
+x_Ba, N_Ba, T_Ba = load_spe("data/2022-11-28/3_Ba.Spe")
 E_Ba = channel_to_E(x_Ba)
 
 # ▒ Plotte Spektrum
@@ -604,7 +684,7 @@ if tools.PLOTS:
 # %%
 console.rule("4. Nuklididentifikation und Aktivitätsbestimmung: Uran & Zerfallsprodukte")
 
-x_U, N_U = load_spe("data/2022-11-28/4_U.Spe")
+x_U, N_U, T_U = load_spe("data/2022-11-28/4_U.Spe")
 E_U = channel_to_E(x_U)
 
 lit_energies_all_U, intensities_all_U = load_lara("data/emissions/U-238.lara.txt", parent="U-234")
