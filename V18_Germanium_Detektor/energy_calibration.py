@@ -14,35 +14,30 @@ def main():
 
     N_smooth = np.convolve(N.m, np.ones(50)/50, mode='same') * ureg.dimensionless
 
-    # finde Peaks
-    peaks, _ = find_peaks(
-        # np.log(N + 1),
-        # prominence=3.2,
-        # distance=100,
-
+    # ⚠ Wir suchen die Peaks in N_smooth. Daher später `peak_fit_arrays['true_peak']` verwenden!
+    # COULDDO: mehr Peaks?
+    raw_peaks, _ = find_peaks(
         np.log(N_smooth + 1),
-        # np.log(N_for_peaks + 1),
         prominence=0.6,
         distance=100,
     )
-    # COULDDO: mehr Peaks?
 
     peaks_to_ignore = [
         79,
         5861,
         6287,
     ]
-    peaks = [p for p in peaks if p not in peaks_to_ignore]
-    peaks = list(sorted(peaks))
+    raw_peaks = [p for p in raw_peaks if p not in peaks_to_ignore]
+    raw_peaks = list(sorted(raw_peaks))
 
-    assert len(peaks) == 11, f"Expected 11 peaks, found {len(peaks)}: {peaks}"  # for testing (@Mampfzwerg)
+    assert len(raw_peaks) == 11, f"Expected 11 peaks, found {len(raw_peaks)}: {raw_peaks}"  # for testing (@Mampfzwerg)
 
-    peak_fits = [fit_peak(peak, x, N, plot=False) for peak in peaks]
+    peak_fits = [fit_peak(peak, x, N, plot=False) for peak in raw_peaks]
     peak_fit_arrays = peak_fits_to_arrays(peak_fits)
 
     lit_energies_all, lit_intensities_all = load_lara("data/emissions/Eu-152.lara.txt")
     # select the most intense energies, so that len(lit_energies) == len(peaks)
-    lit_energies, lit_intensities = n_most_intense(lit_energies_all, lit_intensities_all, n=len(peaks))
+    lit_energies, lit_intensities = n_most_intense(lit_energies_all, lit_intensities_all, n=len(raw_peaks))
 
     # Lineare Regression (Zuordnung Energie ↔ Kanal)
     m, n = tools.linregress(peak_fit_arrays['x_0'], lit_energies)
@@ -54,9 +49,6 @@ def main():
 
     def E_to_channel(E):
         return (E - n) / m
-
-    lit_channels = tools.nominal_values(E_to_channel(lit_energies))
-    lit_channels_all = tools.nominal_values(E_to_channel(lit_energies_all))
 
     # ▒ Plot: Energie(Kanal)
     plt.figure()
@@ -73,6 +65,8 @@ def main():
     # ▒ Plot: Spektrum
     plot_energyspectrum(
         tools.nominal_values(channel_to_E(x)), N,
+        # peak_indices=raw_peaks,
+        peak_indices=peak_fit_arrays['true_peak'],
         lit_energies_dict={
             "Eu-152": (lit_energies_all, lit_intensities_all),
         },
@@ -80,33 +74,6 @@ def main():
         # smooth_over=20,
         # stack_lit_energies=True,
     )
-
-    # ▒ Plot: Spektrum → deprecated
-    plt.figure()
-    with tools.plot_context(plt, 'dimensionless', 'dimensionless', "x", "N") as plt2:
-        plt.plot(N, label="Messwerte")
-        # plt.plot(x, N_smooth, '-', label="Messwerte (geglättet)")
-
-        plt.plot(peak_fit_arrays['true_peak'], N[peak_fit_arrays['true_peak']], 'x', label="Peaks")
-
-        for lit_energy, lit_intensity in zip(lit_channels_all, lit_intensities_all):
-            plt.axvline(lit_energy, color='C2', alpha=intensity_to_alpha(lit_intensity))
-
-    # add labels for axvlines
-    handles, labels = plt.gca().get_legend_handles_labels()
-    handles.append(
-        mpatches.Patch(color='C2', label="Eu-152 (Literaturwerte)")
-    )
-
-    # plt.xlim(right=4000)
-    plt.ylim(bottom=0.5)
-    plt.yscale('log')
-    plt.legend(handles=handles)
-    plt.tight_layout()
-    if tools.BUILD:
-        plt.savefig("build/plt/spektrum_152-Eu.pdf")
-    if tools.PLOTS:
-        plt.show()
 
     # █ Tabelle generieren
     # COULDDO: Unsicherheiten

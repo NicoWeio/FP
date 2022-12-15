@@ -16,6 +16,5 @@ def main(channel_to_E):
             "Sb-125": (lit_energies_all_Sb, intensities_all_Sb),
         },
         path="build/plt/spektrum_133-Ba.pdf",
-        # smooth_over=20,
-        # stack_lit_energies=True,
+        cut_to_lit_energies=True,
     )

@@ -2,7 +2,8 @@ all: build/main.pdf
 
 PLOTS = build/plt/effizienz.pdf \
 	build/plt/spektrum_152-Eu.pdf \
-	build/plt/spektrum_137-Cs.pdf
+	build/plt/spektrum_137-Cs.pdf \
+	build/plt/spektrum_uranstein.pdf
 
 # TABLES = build/tab/mu.tex \
 # 	build/tab/wuerfel1.tex \
@@ -12,7 +13,7 @@ PLOTS = build/plt/effizienz.pdf \
 
 PYTHONENV = MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: BUILD=true PLOTS=true
 
-build/plt/effizienz.pdf &: auswertung.py | build/plt/
+build/plt/effizienz.pdf &: auswertung.py $(wildcard *.py) | build/plt/
 	$(PYTHONENV) python3 auswertung.py
 
 # build/tab/wuerfel%.tex &: auswertung2.py | build/tab/

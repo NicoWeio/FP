@@ -127,6 +127,8 @@ def plot_energyspectrum(
     stack_lit_energies=False,
     path=None,
     smooth_over: int | None = None,
+    cut_to_lit_energies=False,
+    peak_indices=None,
 ):
     """
     lit_energies_dict: dict of {parent: (energies, intensities)}
@@ -144,7 +146,8 @@ def plot_energyspectrum(
             N_smooth = np.convolve(N.m, np.ones(smooth_over)/smooth_over, mode='same') * ureg.dimensionless
             plt2.plot(E, N_smooth, fmt='-', label="Messwerte (geglättet)")  # TODO: Gut so?
 
-        # plt.plot(peaks, N[peaks], 'x', label="Peaks")  # TODO: Peaks tatsächlich suchen…
+        if peak_indices is not None:
+            plt.plot(E[peak_indices], N[peak_indices], 'x', label="Peaks")
 
         for i, (parent, (lit_energies, intensities)) in enumerate(list(lit_energies_dict.items())):
             for lit_energy, lit_intensity in zip(lit_energies, intensities):
@@ -154,7 +157,7 @@ def plot_energyspectrum(
                 plt.axvline(
                     lit_energy.to('keV').m,
                     color=f'C{i+2}',
-                    alpha=intensity_to_alpha(lit_intensity),
+                    alpha=intensity_to_alpha(lit_intensity),  # COULDDO: support passing an exponent
                     zorder=5,
                     **({
                         'ymin': i*yheight,
@@ -183,10 +186,11 @@ def plot_energyspectrum(
             for i, parent in enumerate(lit_energies_dict.keys())
         ]
 
-    # plt.xlim(
-    #     left=0,  # COULDDO: Why is this necessary!?
-    #     right=1.1 * max([lit_energies.max() for (lit_energies, intensities) in lit_energies_dict.values()]).to('keV').m,
-    # )
+    if cut_to_lit_energies:
+        plt.xlim(
+            # left=0,  # COULDDO: Why is this necessary!?
+            right=1.1 * max([lit_energies.max() for (lit_energies, intensities) in lit_energies_dict.values()]).to('keV').m,
+        )
     # plt.xlim(*E_bounds.to('keV').m)  # COULDDO
     plt.ylim(bottom=0.5)
     plt.yscale('log')
