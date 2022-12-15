@@ -1,13 +1,12 @@
-import datetime
 
 import generate_table
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import numpy as np
 import uncertainties.unumpy as unp
-from common import (fit_peak, intensity_to_alpha, load_lara, load_spe,
-                    n_most_intense, peak_fits_to_arrays, plot_energyspectrum,
-                    ureg)
+from common import (fit_peak, get_age_probe, get_Ω, intensity_to_alpha,
+                    load_lara, load_spe, n_most_intense, peak_fits_to_arrays,
+                    plot_energyspectrum, ureg)
 from scipy.signal import find_peaks
 from uncertainties import UFloat, ufloat
 
@@ -21,20 +20,10 @@ def main(lit_energies, lit_intensities, Z, T, **kwargs):
     Z: Peakinhalte
     T: Messzeit
     """
-    r = ureg('45 mm') / 2  # Radius [Versuchsanleitung]
-
-    # Abstand Probe–Detektor =
-    #   Abstand Probe–Schutzhaube [eigene Messung]
-    # + Abstand Schutzhaube–Detektor [Versuchsanleitung]
-    l = ureg('7.0 cm') + ureg('1.5 cm')
-
-    Ω = 2*np.pi*(1 - l/np.sqrt(l**2 + r**2))
+    Ω = get_Ω()
     print(f"Ω = {Ω:.4f} = 4π · {(Ω / (4*np.pi)).to('dimensionless'):.4f}")
 
-
-    probe_creationdate = datetime.datetime(2000, 10, 1, 0, 0, 0)  # [Versuchsanleitung]
-    durchfuehrung_date = datetime.datetime(2022, 11, 28, 0, 0, 0)
-    age_probe = (durchfuehrung_date - probe_creationdate).total_seconds() * ureg.s
+    age_probe = get_age_probe()
     print(f"Alter Probe: {age_probe.to('s'):.2e} = {age_probe.to('a'):.2f}")
 
     t_hw = ufloat(13.522, 0.016) * ureg.a  # [lara]
@@ -49,13 +38,11 @@ def main(lit_energies, lit_intensities, Z, T, **kwargs):
 
     # %% Fit: Q(E) – Effizienz in Abhängigkeit von der Energie
 
-
     def fit_fn_Q(E, Q_max, exponent):
         # NOTE: E / (1 keV)
         if isinstance(E, ureg.Quantity):
             E = E.to('keV').magnitude
         return Q_max * E**exponent
-
 
     Q_max, exponent = tools.pint_curve_fit(
         fit_fn_Q,
@@ -65,6 +52,9 @@ def main(lit_energies, lit_intensities, Z, T, **kwargs):
     )
     print(f"Q_max (aka p): {Q_max:.2f}")
     print(f"exponent (aka q): {exponent:.2f}")
+
+    def E_to_Q(E):
+        return fit_fn_Q(E, Q_max, exponent)
 
     # %% Plot: Q(E) – Effizienz in Abhängigkeit von der Energie
     energy_linspace = tools.linspace(*tools.bounds(lit_energies), 100)
@@ -89,3 +79,7 @@ def main(lit_energies, lit_intensities, Z, T, **kwargs):
         (r"Z", ureg.dimensionless, Z, 0),
         (r"Q", ureg.dimensionless, tools.nominal_values(Q), 4),
     )
+
+    return {
+        'E_to_Q': E_to_Q,
+    }

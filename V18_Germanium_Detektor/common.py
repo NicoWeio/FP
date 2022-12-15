@@ -1,3 +1,4 @@
+import datetime
 from io import StringIO
 from pathlib import Path
 
@@ -29,6 +30,33 @@ ureg.define('percent = 1 / 100 = %')
 @ureg.check('[energy]')
 def calc_ε(E):
     return E / (ureg.m_e * ureg.c**2)
+
+
+def get_Ω():
+    """
+    Gibt den Raumwinkel Ω (mit Abstandshalter!) zurück.
+    """
+    # COULDDO: Wie mache ich das DRY, ohne die Parameter hier zu setzen? 🤔
+    r = ureg('45 mm') / 2  # Radius [Versuchsanleitung]
+
+    # Abstand Probe–Detektor =
+    #   Abstand Probe–Schutzhaube [eigene Messung]
+    # + Abstand Schutzhaube–Detektor [Versuchsanleitung]
+    l = ureg('7.0 cm') + ureg('1.5 cm')
+
+    Ω = 2*np.pi*(1 - l/np.sqrt(l**2 + r**2))
+    return Ω
+
+
+def get_age_probe():
+    """
+    Gibt das Alter der Probe zurück.
+    """
+    # COULDDO: Wie mache ich das DRY, ohne die Parameter hier zu setzen? 🤔
+    probe_creationdate = datetime.datetime(2000, 10, 1, 0, 0, 0)  # [Versuchsanleitung]
+    durchfuehrung_date = datetime.datetime(2022, 11, 28, 0, 0, 0)
+    age_probe = (durchfuehrung_date - probe_creationdate).total_seconds() * ureg.s
+    return age_probe
 
 
 def _load_spe(filename):
@@ -102,6 +130,9 @@ def load_lara(filename, parent=None):
 
 
 def n_most_intense(energies, intensities, n):
+    """
+    Returns the n most intense lines, sorted by energy (ascending).
+    """
     # select the most intense energies, so that len(lit_energies) == n
     i_by_intensity = np.argsort(intensities)[::-1]  # sort by intensity (descending)
     filtered_energies = energies[i_by_intensity][:n]

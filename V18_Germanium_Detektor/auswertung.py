@@ -16,15 +16,15 @@ channel_to_E = energy_calibration_results['channel_to_E']
 
 
 console.rule("1b. Vollenergienachweiswahrscheinlichkeit / Effizienz: Eu-152")
-efficiency.main(**energy_calibration_results)
+efficiency_results = efficiency.main(**energy_calibration_results)
 
 console.rule("2. Spektrum von Cs-137")
 gamma_spectrum.main(channel_to_E)
 
 
 console.rule("3. Aktivitätsbestimmung: Ba-133")
-activity.main(channel_to_E)
+activity.main(channel_to_E=channel_to_E, **efficiency_results)
 
 
 console.rule("4. Nuklididentifikation und Aktivitätsbestimmung: Uran & Zerfallsprodukte")
-nuclide_identification.main(channel_to_E)
+nuclide_identification.main(channel_to_E, **efficiency_results)
