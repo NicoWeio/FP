@@ -24,19 +24,21 @@ class Column:
 
     def __init__(self, input_tuple):
         self.name: str = input_tuple[0]
-        self.unit: pint.Unit = input_tuple[1]
+        self.unit: pint.Unit | type = input_tuple[1]
         self.data = input_tuple[2]
         if len(input_tuple) == 4:
             assert isinstance(input_tuple[3], int)
             self.formatter = PintFormatter(self.unit, decimals=input_tuple[3])
         else:
-            self.formatter = PintFormatter(self.unit)
+            if self.unit == str:
+                self.formatter = StringFormatter()
+            else:
+                self.formatter = PintFormatter(self.unit)
+                # verify input [TODO: Move to separate function]
+                if isinstance(self.unit, pint.Quantity) and self.unit.magnitude == 1:
+                    raise TypeError(f'"{self.unit}" is not a pint.Unit. Hint: Use ureg.… instead of ureg("…")')
+                assert isinstance(self.unit, pint.Unit), f'"{self.unit}" is not a pint.Unit'
 
-        # verify input
-
-        if isinstance(self.unit, pint.Quantity) and self.unit.magnitude == 1:
-            raise TypeError(f'"{self.unit}" is not a pint.Unit. Hint: Use ureg.… instead of ureg("…")')
-        assert isinstance(self.unit, pint.Unit), f'"{self.unit}" is not a pint.Unit'
 
     def get_cell(self, row_index):
         cell_data = self.data[row_index]
@@ -62,7 +64,7 @@ class Column:
             return (f'${self.name}' r' \mathbin{/} ' r'\si[]{\kilo\electronvolt}$')
         return (
             (f'${self.name}' r' \mathbin{/} ' f'{self.unit:Lx}$')
-            if str(self.unit) != 'dimensionless'
+            if isinstance(self.unit, pint.Unit) and str(self.unit) != 'dimensionless'
             else f'${self.name}$'
         )
 
