@@ -1,20 +1,32 @@
 \section{Auswertung}
 \label{sec:auswertung}
-Fehlerrechnung mit \texttt{uncertainties}.
-Bla bla. % TODO
+Die Berechnung der Unsicherheiten wird im Folgenden vom Python-Paket \texttt{uncertainties} übernommen,
+welches auf der \emph{Gaußschen Fehlerfortpflanzung} basiert.
 
-\subsection{Energiekalibrierung}
+Der Untergrund wird implizit von den Messwerten subtrahiert,
+wobei das Verhältnis der Messdauern berücksichtigt wird:
+\begin{align*}
+    I' &= I - I_\text{bg} \\
+    \leftrightarrow
+    \frac{N'}{T} &= \frac{N}{T} - \frac{N_\text{bg}}{T_\text{bg}} \\
+    \rightarrow
+    N' &= N - \frac{T_{\phantom{\text{bg}}}}{T_\text{bg}} N_\text{bg}
+\end{align*}
+
+
+\subsection{Energiekalibrierung} \label{sec:auswertung:energiekalibrierung}
 Der Vielkanalanalysator wird anhand des Spektrums einer \ce{^152Eu}-Quelle kalibriert.
 Dazu werden die Positionen der Peaks im
     über eine Zeit von $\SI{56.5}{\minute}$ gemessenen
-Spektrum (siehe \autoref{fig:spektrum_Eu_152})
+Spektrum (siehe \autoref{fig:plt:spektrum_Eu_152})
 mit den bekannten Energien der \ce{^152Eu}-Quelle abgeglichen.
 Jeder Peak wird durch den Fit einer Gaußfunktion angenähert:
-\begin{equation*}
+\begin{equation}
     N(x) = a \exp\left(-\frac{(x - x_0)^2}{2 \sigma^2}\right) + N_0 \, .
-\end{equation*}
+    \label{eqn:gauss}
+\end{equation}
 Dabei entsprechen
-    $a$ der Amplitude, % TODO: Nicht direkt der Amplitude…
+    $a$ einem Skalierungsfaktor, % es ist ja nicht direkt die Amplitude…
     $x_0$ der Position (als Kanalnummer)
     und $\sigma$ der Breite
 des Peaks.
@@ -29,9 +41,9 @@ Der Parameter $N_0$ beschreibt den Untergrund.
     \caption{
         Energiespektrum der \ce{^152Eu}-Quelle mit eingezeichneten Peaks.
         Die grünen Linien markieren die Position der Theoriewerte nach der Kalibrierung
-        und sind entsprechend ihrer erwarteten Intensität unterschiedlich opak.
+        und sind entsprechend ihrer erwarteten Intensitäten unterschiedlich opak.
     }
-    \label{fig:spektrum_Eu_152}
+    \label{fig:plt:spektrum_Eu_152}
 \end{figure}
 
 \begin{table}
@@ -51,53 +63,280 @@ ergeben sich die Parameter
     m &= \SI{0.20679 \pm 0.00001}{\kilo\electronvolt} \\
     n &= \SI{-1.34 \pm 0.04}{\kilo\electronvolt} \, .
 \end{align*}
-Ein Plot dieser Regressionsrechnung ist in \autoref{fig:energy_calibration} gegeben.
+Ein Plot dieser Regressionsrechnung ist in \autoref{fig:plt:energy_calibration} einsehbar.
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{build/plt/energy_calibration.pdf}
     \caption{Zugeordnete Energien in Abhängigkeit der Kanalnummern mit Regressionsgerade.}
-    \label{fig:energy_calibration}
+    \label{fig:plt:energy_calibration}
 \end{figure}
 
 
 \FloatBarrier % temporär
-\subsection{Bestimmung der Effizienz bzw. Vollenergienachweiswahrscheinlichkeit anhand des Spektrums von \ce{^152Eu}}
+\subsection{Bestimmung der Vollenergienachweiswahrscheinlichkeit} \label{sec:auswertung:effizienz}
+Um die Vollenergienachweiswahrscheinlichkeit anhand des zuvor betrachteten \ce{^152Eu}-Spektrums zu bestimmen,
+wird zunächst die Aktivität der Probe berechnet.
+Am Tag der Herstellung (01.10.2000) betrug diese $A_0 = \SI{4130(60)}{\becquerel}$.
+Bei einer Halbwertszeit von $t_{1/2} = \SI{13.522(16)}{a}$ \cite{lara} entspricht dies einer Aktivität von
+\begin{equation*}
+    A = A_0 \cdot \exp\left(-\frac{\ln(2)}{t_{1/2}} t\right)
+    = \SI{1326.40(1935)}{\becquerel}
+\end{equation*}
+am Tag der Messung,
+also nach $t = \SI{22.16}{a}$.
+
 Der Raumwinkel $\Omega$ wird anhand der Formel
 \begin{equation*}
     \Omega = 2\pi \left( 1 - \frac{d}{\sqrt{d^2 + r^2}} \right)
 \end{equation*}
 bestimmt.
 Mit
-% TODO: Quelle(n)!
-    einem Abstand von $d = \SI{8.31}{\centi\meter}$ zwischen Probe und Detektor
+    einem Abstand von $d = \SI{8.5}{\centi\meter}$ zwischen Probe und Detektor
+        (
+            $\SI{7}{\centi\meter}$ Probe–Schutzhaube
+            und
+            $\SI{1.5}{\centi\meter}$ Schutzhaube–Detektor
+        )
     sowie einem Detektorradius von $r = \SI{2.25}{\centi\meter}$
 ergibt sich ein Raumwinkel von
-$\Omega = 4\pi \cdot \num{0.0135} = \num{0.1691}$.
+$\Omega = 4\pi \cdot \num{0.0166} = \num{0.2092}$.
 
-Die Effizienz wird anhand \autoref{eqn:effizienz} bestimmt… % TODO
+Die Inhalte $Z$ der Peaks werden anhand der Parameter des Gauß-Fits aus \autoref{tab:1_energiekalibrierung} bestimmt:
+\begin{equation}
+    Z = a \sqrt{2\pi \sigma^2} \, .
+    \label{eqn:peakinhalt}
+\end{equation}
+
+\phantomsection \label{sec:auswertung:effizienz:effizienz}
+Die Effizienz $Q$ wird dann über \autoref{eqn:effizienz} berechnet.
+Um die Energieabhängigkeit selbiger zu beschreiben,
+wird eine Potenzfunktion der Form
+\begin{equation*}
+    Q(E) = p \cdot \left(\frac{E}{\SI{1}{\kilo\electronvolt}}\right)^q
+\end{equation*}
+mithilfe von \texttt{scipy.optimize.curve\_fit} an die in \autoref{tab:2_effizienz} aufgeführten Daten angepasst,
+wie in \autoref{fig:plt:effizienz} gezeigt.
+Die resultierenden Parameter sind
+\begin{align*}
+    p &= \num{49.31 \pm 10.02} \\
+    q &= \num{-0.95 \pm 0.03} \, .
+\end{align*}
+Die Unsicherheit dieser konnte durch \texttt{curve\_fit} nicht geschätzt werden.
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{build/plt/effizienz.pdf}
-    \caption{TODO.}
-    \label{fig:effizienz}
+    \caption{Messwerte und Fit der Effizienz $Q$ in Abhängigkeit der Energie $E$.}
+    \label{fig:plt:effizienz}
 \end{figure}
 
 \begin{table}
     \centering
-    \caption{TODO.}
+    \caption{
+        Berechnete Effizienzen $Q$ der zuvor betrachteten Peaks.
+        Zusätzlich sind die der Berechnung zugrundeliegenden
+            Inhalte $Z$ und
+            Intensitäten (/ Emissionswahrscheinlichkeiten) $W$ \cite{lara}
+        angegeben.
+    }
     \label{tab:2_effizienz}
     \expandableinput{build/tab/2_effizienz.tex}
 \end{table}
 
 
 \FloatBarrier % temporär
-\subsection{Untersuchung des monochromatischen Gammaspektrums von \ce{^137Cs}}
+\subsection{Untersuchung des monochromatischen Gammaspektrums von \ce{^137Cs}} \label{sec:auswertung:Cs_137}
+Als Nächstes wird das
+    in \autoref{fig:plt:spektrum_Cs_137} dargestellte
+Spektrum einer \ce{^137Cs}-Probe untersucht.
+Rückstreu- und Photopeak werden erneut mit Gauß-Kurven approximiert
+    (siehe \autoref{eqn:gauss}).
+Die resultierenden Parameter
+    sowie die mithilfe von \autoref{eqn:peakinhalt} berechneten Inhalte $Z$
+sind in \autoref{tab:3_Cs_137} aufgeführt.
+
+\begin{table}
+    \centering
+    \caption{
+        Fit-Parameter der Gauß-Approximationen von Rückstreu- und Photopeak
+        sowie die daraus berechneten Energien und Inhalte.
+    }
+    \label{tab:3_Cs_137}
+    \expandableinput{build/tab/3_Cs-137.tex}
+\end{table}
+
+Die Energie des Strahlers entspricht der Lage des Photopeaks (Vollenergielinie)
+und beträgt \SI{661.43 \pm 0.06}{\kilo\electronvolt}.
+Als Halbwertsbreite desselben ergibt sich aus dem Fit-Paramter $\sigma$
+\begin{equation*}
+    \text{FWHM} = 2 \sigma \sqrt{2 \ln(2)}
+    = \SI{0.74 \pm 0.05}{\kilo\electronvolt}
+\end{equation*}
+ebenso wie die Zehntelwertsbreite
+\begin{equation*}
+    \text{FWTM} = 2 \sigma \sqrt{2 \ln(10)}
+    = \SI{2.44 \pm 0.02}{\kilo\electronvolt} \, .
+\end{equation*}
+
+% TODO: Diesen Teil der Aufgabenstellung können wir nicht sinnvoll erledigen,
+% ohne wie @Imigir Regressionsgeraden an die Peaks zu fitten.
+% > Prüfen Sie, ob die gemessene Halbwertsbreite der Photolinie mit der Zehntelwertsbreite konsistent ist.
+% > (Welcher Zusammenhang gilt zwischen diesen beiden Größen für eine Gaußverteilung?)
+
+% TODO: Position der Compton-Kante
+
+Um den Inhalt des Compton-Kontinuums abzuschätzen,
+% wird die Formel für den […] differentiellen Wirkungsquerschnitt
+wird der aus \autoref{eqn:klein_nishina} abgeleitete differentielle Wirkungsquerschnitt
+% COULDDO: Formel angeben 😅
+um einen Skalierungsfaktor ergänzt und
+an die Messwerte angepasst,
+    wie in \autoref{fig:plt:klein_nishina} gezeigt.
+Hierbei wird nur der weitgehend unverfälschte Bereich zwischen \SI{350}{\kilo\electronvolt} und der Compton-Kante berücksichtigt.
+Somit ergibt sich für den geschätzten Inhalt des Compton-Kontinuums
+\begin{equation*}
+    Z_\text{Compton} = \SI{46319}{\kilo\electronvolt} \, .
+\end{equation*}
+
+% Vergleichen Sie die gemessenen Werte für die Compton-Kante und die
+% Rückstreulinie mit den aus der Energie berechneten Werten.
+
+% Bestimmen
+%  Sie aus der Länge des Detektorkristalls und dem
+% Extinktionskoeffizienten
+%  für Photo- und Compton-Effekt die
+% Absorptionswahrscheinlichkeit der 137Cs-Quanten für den hier vorliegenden
+% Detektor. Vergleichen Sie Ihre Ergebnisse mit den Inhalten der Photolinie und des
+% Compton-Kontinuums. Welchen Schluss muss man aus dem Vergleich ziehen? Wie
+% kommt vermutlich die „Photolinie“ zustande?
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{build/plt/spektrum_137-Cs.pdf}
-    \caption{TODO.}
-    \label{fig:TODO}
+    \caption{Energiespektrum der \ce{^137Cs}-Quelle mit eingezeichnetem Rückstreu- und Photopeak.}
+    \label{fig:plt:spektrum_Cs_137}
 \end{figure}
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{build/plt/klein-nishina.pdf}
+    \caption{Fit des differentiellen Klein-Nishina-Wirkungsquerschnitts an die Messwerte.}
+    \label{fig:plt:klein_nishina}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{build/plt/compton-kante.pdf}
+    \caption{TODO.}
+    \label{fig:plt:compton_kante}
+\end{figure}
+
+
+\FloatBarrier
+\subsection{Bestimmung der Aktivität von \ce{^133Ba}} \label{sec:auswertung:Ba_133}
+Um zu entscheiden,
+ob es sich bei der vorliegenden Messung um eine \ce{^133Ba}- oder \ce{^125Sb}-Quelle handelt,
+kann das Energiespektrum mit den jeweiligen Literaturwerten verglichen werden.
+Wie in \autoref{fig:plt:spektrum_Ba_133} zu sehen ist,
+können die fünf größten Peaks eindeutig mit den Emissionslinien von \ce{^133Ba} identifiziert werden.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{build/plt/spektrum_133-Ba.pdf}
+    \caption{
+        Energiespektrum der \ce{^133Ba}-Quelle mit eingezeichneten Emissionslinien von \ce{^133Ba} und \ce{^125Sb}.
+        Werte über \SI{750}{\kilo\electronvolt} werden nicht dargestellt.
+    }
+    \label{fig:plt:spektrum_Ba_133}
+\end{figure}
+
+Zur Bestimmung der Aktivität der \ce{^133Ba}-Quelle
+werden die Peaks wieder durch Gauß-Kurven approximiert
+    (siehe \autoref{tab:4_Ba_133}).
+Mit
+    dem bereits bekannten Raumwinkel $\Omega$,
+    der Messdauer $t_\text{m} = \SI{3465}{\second}$,
+    der anhand des polynomiellen Fits aus \autoref{sec:auswertung:effizienz:effizienz} bestimmbaren Effizienz $Q$
+    und den wie zuvor berechneten Peak-Inhalten $Z$ (siehe \autoref{eqn:peakinhalt})
+lässt sich die Aktivität der \ce{^133Ba}-Quelle durch Umstellen von \autoref{eqn:effizienz} berechnen:
+\begin{equation}
+    A = \frac{4 \symup{\pi} Z}{\Omega Q W t_\text{m}}
+\end{equation}
+Die Ergebnisse sind in \autoref{tab:4_Ba_133_activities} zusammengefasst.
+
+Als Aktivität der gesamten Quelle wird der Mittelwert der Aktivitäten aller Peaks mit Ausnahme des ersten gewählt,
+    da dieser auffällig geringer ist als die anderen Peaks.
+So ergibt sich eine Aktivität von $\bar A = \SI{1019.97 \pm 3.59}{\becquerel}$.
+
+\begin{table}
+    \centering
+    \caption{
+        Fit-Parameter der Gauß-Approximationen der Emissionslinien der \ce{^133Ba}-Quelle
+        sowie die daraus berechneten Energien.
+    }
+    \label{tab:4_Ba_133}
+    \expandableinput{build/tab/4_Ba-133.tex}
+\end{table}
+
+\begin{table}
+    \centering
+    \caption{
+        Inhalte, Effizienzen und Aktivitäten der Emissionslinien der \ce{^133Ba}-Quelle
+        sowie Literaturwerte der Energien.
+    }
+    \label{tab:4_Ba_133_activities}
+    \expandableinput{build/tab/4_Ba-133_activities.tex}
+\end{table}
+
+
+\FloatBarrier
+\subsection{Nuklididentifikation und Aktivitätsbestimmung} \label{sec:auswertung:uranstein}
+Das Energiespektrum des Uran-Steins ist in \autoref{fig:plt:spektrum_uranstein} dargestellt.
+Durch Vergleich der Peaks mit Literaturwerten lassen sich
+    (ähnlich wie zuvor)
+die aktiven Isotope identifizieren.
+Über Gauß-Fits (siehe \autoref{tab:5_uranstein})
+wird jedem Peak eine Energie und ein Peakinhalt zugeordnet.
+
+(siehe \autoref{tab:5_uranstein_peaks}).
+Aus den Energien lässt sich auf das jeweilige Isotop schließen,
+während Peakinhalt, Emissionswahrscheinlichkeit und Effizienz die Berechnung der Aktivität ermöglichen
+    (siehe \autoref{tab:5_uranstein_peaks}).
+Durch Summation werden schließlich die Aktivitäten je Isotop zusammengefasst.
+Diese sind in \autoref{tab:5_uranstein_activities_mean} angegeben.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{build/plt/spektrum_uranstein.pdf}
+    \caption{Energiespektrum des Uran-Steins mit eingezeichneten Emissionslinien der Zerfallsprodukte mit den höchsten Intensitäten.}
+    \label{fig:plt:spektrum_uranstein}
+\end{figure}
+
+\begin{table}
+    \centering
+    \caption{
+        Fit-Parameter der Gauß-Approximationen der Emissionslinien des Uran-Steins
+        sowie die daraus berechneten Energien und Inhalte.
+    }
+    \label{tab:5_uranstein}
+    \expandableinput{build/tab/5_uranstein.tex}
+\end{table}
+
+\begin{table}
+    \centering
+    \caption{
+        Literaturwerte der Energien und Emissionswahrscheinlichkeiten für das jeweilige Isotop,
+        sowie Effizienzen und Aktivitäten.
+    }
+    \label{tab:5_uranstein_activities}
+    \expandableinput{build/tab/5_uranstein_activities.tex}
+\end{table}
+
+\begin{table}
+    \centering
+    \caption{Zusammengefasste Aktivitäten der Isotope des Uran-Steins.}
+    \label{tab:5_uranstein_activities_mean}
+    \expandableinput{build/tab/5_uranstein_activities_mean.tex}
+\end{table}
