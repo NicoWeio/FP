@@ -126,6 +126,86 @@ def intensity_to_alpha(intensity, exponent=0.25):
     return i**exponent
 
 
+def plot_energyspectrum(
+    E, N,
+    lit_energies_dict=None,
+    stack_lit_energies=False,
+    path=None,
+    smooth_over: int | None = None,
+):
+    """
+    lit_energies_dict: dict of {parent: (energies, intensities)}
+    path: if given (and tools.BUILD == True), save the plot to this path
+    smooth_over: if given, add a smoothed version over this many points to the plot
+    """
+    yheight = 1/len(lit_energies_dict)
+    E_bounds = tools.bounds(E)
+
+    plt.figure()
+    with tools.plot_context(plt, 'keV', 'dimensionless', "E", "N") as plt2:
+        plt2.plot(E, N, label="Messwerte")
+
+        if smooth_over:
+            N_smooth = np.convolve(N.m, np.ones(smooth_over)/smooth_over, mode='same') * ureg.dimensionless
+            plt2.plot(E, N_smooth, fmt='-', label="Messwerte (geglättet)")  # TODO: Gut so?
+
+        # plt.plot(peaks, N[peaks], 'x', label="Peaks")  # TODO: Peaks tatsächlich suchen…
+
+        for i, (parent, (lit_energies, intensities)) in enumerate(list(lit_energies_dict.items())):
+            for lit_energy, lit_intensity in zip(lit_energies, intensities):
+                if lit_energy < E_bounds[0] or lit_energy > E_bounds[1]:
+                    continue
+
+                plt.axvline(
+                    lit_energy.to('keV').m,
+                    color=f'C{i+2}',
+                    alpha=intensity_to_alpha(lit_intensity),
+                    zorder=5,
+                    **({
+                        'ymin': i*yheight,
+                        'ymax': (i+1)*yheight,
+                    }
+                        if stack_lit_energies else {}
+                    )
+                )
+
+        # for i, (parent, (lit_energies, intensities)) in enumerate(list(data_dict_filtered.items())[::-1]):
+            if stack_lit_energies:
+                plt.text(
+                    0.05,
+                    (i + 1/2)*yheight,
+                    f"{parent}",
+                    horizontalalignment='left',
+                    verticalalignment='center',
+                    transform=plt.gca().transAxes
+                ).set_bbox(dict(facecolor='white', alpha=0.5, edgecolor='none'))
+
+    # add labels for axvlines
+    handles, labels = plt.gca().get_legend_handles_labels()
+    if not stack_lit_energies:
+        handles += [
+            mpatches.Patch(color=f'C{i+2}', label=f"{parent} (Literaturwerte)")
+            for i, parent in enumerate(lit_energies_dict.keys())
+        ]
+
+    # plt.xlim(
+    #     left=0,  # COULDDO: Why is this necessary!?
+    #     right=1.1 * max([lit_energies.max() for (lit_energies, intensities) in lit_energies_dict.values()]).to('keV').m,
+    # )
+    # plt.xlim(*E_bounds.to('keV').m)  # COULDDO
+    plt.ylim(bottom=0.5)
+    plt.yscale('log')
+    plt.legend(handles=handles)
+    plt.tight_layout()
+    if tools.BUILD and path:
+        plt.savefig(path)
+    if tools.PLOTS:
+        plt.show()
+    # plt.close()  # COULDDO
+
+    return plt
+
+
 # %%
 console.rule("0. Untergrund")
 x_bg, N_bg, T_bg = load_spe("data/2022-11-28/5_Background.Spe", subtract_background=False)
@@ -298,7 +378,6 @@ def peak_fits_to_arrays(peak_fits):
 peak_fits = [fit_peak(peak, x_calib, N_calib, plot=False) for peak in peaks]
 peak_fit_arrays = peak_fits_to_arrays(peak_fits)
 peak_channels = [fit['x_0'] for fit in peak_fits]  # COULDDO: Brauche ich nicht wirklich, oder?
-peak_channels_n = tools.nominal_values(peak_channels * ureg.dimensionless)
 
 
 # %%
@@ -308,7 +387,7 @@ lit_energies, lit_intensities = n_most_intense(lit_energies_all, lit_intensities
 
 # %% Lineare Regression (Zuordnung Energie ↔ Kanal)
 
-m, n = tools.linregress(peak_channels_n, lit_energies)
+m, n = tools.linregress(peak_fit_arrays['x_0'], lit_energies)
 print(f"m={m}, n={n}")
 
 
@@ -326,23 +405,19 @@ lit_channels_all = tools.nominal_values(E_to_channel(lit_energies_all))
 
 # Plot: Energie(Kanal)
 plt.figure()
-# with tools.plot_context(plt, 'dimensionless', 'keV', r"\text{Kanal}", "E") as plt2:
-# TODO: \text funzt nicht ohne BUILD…
 with tools.plot_context(plt, 'dimensionless', 'keV', "x", "E") as plt2:
-    plt2.plot(peak_channels_n, channel_to_E(peak_channels_n), show_yerr=False, label="Regressionsgerade")
-    plt2.plot(peak_channels_n, lit_energies, 'x', zorder=5, label="Literaturwerte")
+    plt2.plot(peak_fit_arrays['x_0'], channel_to_E(peak_fit_arrays['x_0']), show_yerr=False, label="Regressionsgerade")
+    plt2.plot(peak_fit_arrays['x_0'], lit_energies, 'x', zorder=5, label="Literaturwerte")
 plt.legend()
 plt.tight_layout()
 if tools.BUILD:
     plt.savefig("build/plt/energy_calibration.pdf")
-# if tools.PLOTS:
-#     plt.show()
+if tools.PLOTS:
+    plt.show()
 # %%
 
 # ▒ Plotte Spektrum
 plt.figure()
-# with tools.plot_context(plt, 'dimensionless', 'dimensionless', r"\text{Kanal}", "N") as plt2:
-# TODO: \text funzt nicht ohne BUILD…
 with tools.plot_context(plt, 'dimensionless', 'dimensionless', "x", "N") as plt2:
     plt.plot(N_calib, label="Messwerte")
     # plt.plot(x_calib, N_calib_smooth, '-', label="Messwerte (geglättet)")
@@ -389,7 +464,6 @@ r = ureg('45 mm') / 2  # Radius [Versuchsanleitung]
 l = ureg('7.0 cm') + ureg('1.5 cm')
 
 Ω = 2*np.pi*(1 - l/np.sqrt(l**2 + r**2))
-# print(f"Ω={Ω.to('pi'):.4f}")
 print(f"Ω = {Ω:.4f} = 4π · {(Ω / (4*np.pi)).to('dimensionless'):.4f}")
 
 
@@ -398,17 +472,13 @@ durchfuehrung_date = datetime.datetime(2022, 11, 28, 0, 0, 0)
 age_probe = (durchfuehrung_date - probe_creationdate).total_seconds() * ureg.s
 print(f"Alter Probe: {age_probe.to('s'):.2e} = {age_probe.to('a'):.2f}")
 
-# t_hw = ureg('4943 d')  # @Mampfzwerg
 t_hw = ufloat(13.522, 0.016) * ureg.a  # [lara]
 A_0 = ufloat(4130, 60) * ureg.Bq  # Aktivität am Tag der Herstellung [Versuchsanleitung]
 A = A_0 * unp.exp((-np.log(2) / t_hw * age_probe).to('dimensionless').m)  # Aktivität am Tag der Durchführung
 print(f"A={A.to('Bq'):.2f}")
 
-# %% Flächeninhalte der Gaußkurven
-Z = peak_fit_arrays['Z']
-
 # %% Effizienz
-Q = 4*np.pi*Z / (Ω * A * lit_intensities * T_calib)  # Effizienz
+Q = 4*np.pi*peak_fit_arrays['Z'] / (Ω * A * lit_intensities * T_calib)  # Effizienz
 # assert Q.check('dimensionless'), "Q is not dimensionless"
 Q.ito('dimensionless')  # NOTE: Q.check raises a KeyError for some reason, doing this instead → create an Issue?
 Q
@@ -452,7 +522,7 @@ generate_table.generate_table_pint(
     "build/tab/2_effizienz.tex",
     (r"E_\text{lit}", ureg.kiloelectron_volt, lit_energies),
     (r"W", ureg.percent, lit_intensities),
-    (r"Z", ureg.dimensionless, Z, 0),
+    (r"Z", ureg.dimensionless, peak_fit_arrays['Z'], 0),
     (r"Q", ureg.dimensionless, tools.nominal_values(Q), 4),
 )
 
@@ -654,36 +724,16 @@ x_Ba, N_Ba, T_Ba = load_spe("data/2022-11-28/3_Ba.Spe")
 E_Ba = channel_to_E(x_Ba)
 
 # ▒ Plotte Spektrum
-plt.figure()
-# with tools.plot_context(plt, 'dimensionless', 'dimensionless', r"\text{Kanal}", "N") as plt2:
-# TODO: \text funzt nicht ohne BUILD…
-with tools.plot_context(plt, 'keV', 'dimensionless', "E", "N") as plt2:
-    plt2.plot(E_Ba, N_Ba, label="Messwerte")
-    # plt.plot(peaks, N_Ba[peaks], 'x', label="Peaks")  # TODO: Peaks tatsächlich suchen…
-    for lit_energy, lit_intensity in zip(lit_energies_all_Ba, intensities_all_Ba):
-        plt.axvline(lit_energy.to('keV').m, color='C2', alpha=intensity_to_alpha(lit_intensity))
-    for lit_energy, lit_intensity in zip(lit_energies_all_Sb, intensities_all_Sb):
-        plt.axvline(lit_energy.to('keV').m, color='C3', alpha=intensity_to_alpha(lit_intensity))
-
-# add labels for axvlines
-handles, labels = plt.gca().get_legend_handles_labels()
-handles += [
-    mpatches.Patch(color='C2', label="Ba-133 (Literaturwerte)"),
-    mpatches.Patch(color='C3', label="Sb-125 (Literaturwerte)"),
-]
-
-plt.xlim(
-    left=0,  # COULDDO: Why is this necessary!?
-    right=1.1 * max(lit_energies_all_Ba.max(), lit_energies_all_Sb.max()).to('keV').m,
+plot_energyspectrum(
+    E_Ba, N_Ba,
+    lit_energies_dict={
+        "Ba-133": (lit_energies_all_Ba, intensities_all_Ba),
+        "Sb-125": (lit_energies_all_Sb, intensities_all_Sb),
+    },
+    path="build/plt/spektrum_133-Ba.pdf",
+    # smooth_over=20,
+    # stack_lit_energies=True,
 )
-plt.ylim(bottom=0.5)
-plt.yscale('log')
-plt.legend(handles=handles)
-plt.tight_layout()
-if tools.BUILD:
-    plt.savefig("build/plt/spektrum_133-Ba.pdf")
-if tools.PLOTS:
-    plt.show()
 
 # %%
 console.rule("4. Nuklididentifikation und Aktivitätsbestimmung: Uran & Zerfallsprodukte")
@@ -755,10 +805,10 @@ peaks, _ = find_peaks(
     # threshold=0.03,
 )
 peak_fits = [fit_peak(peak, x_U, N_U, plot=False) for peak in peaks]
-peak_channels = [fit['x_0'] for fit in peak_fits] * ureg.dimensionless
-peak_energies = channel_to_E(peak_channels)
+peak_energies = channel_to_E(peak_fit_arrays['x_0'])
 
 print(f"Found {len(peaks)} peaks")
+
 
 # %%
 
@@ -780,13 +830,6 @@ def find_nearest_lit_energy(E, data_dict):
         f"Found {len(possible_lit_energies)} possible lit energies with intensities {[f'{x[2].m:.1f}' for x in possible_lit_energies]}")
     return possible_lit_energies[0]
 
-# for peak_energy in peak_energies:
-#     print(f"█ Peak at {peak_energy:.2f}")
-#     nearest_lit_energy = find_nearest_lit_energy(peak_energy, data_dict_filtered)
-#     if nearest_lit_energy is not None:
-#         parent, lit_energy, intensity = nearest_lit_energy
-#         print(f"Nearest lit energy: {parent} at {lit_energy:.2f} with intensity {intensity:.2f}")
-
 
 nearest_lit_energies = [find_nearest_lit_energy(peak_energy, data_dict) for peak_energy in peak_energies]
 # COULDDO: again, filter out energies < 100 keV
@@ -804,40 +847,23 @@ generate_table.generate_table_pint(
 
 
 # %% Plotte Spektrum
+plot_energyspectrum(
+    E_U, N_U,
+    lit_energies_dict=data_dict_filtered,  # COULDDO: Reihenfolge umkehren
+    path="build/plt/spektrum_uranstein.pdf",
+    # smooth_over=20,
+    stack_lit_energies=True,
+)
+
+# %% deprecated
+
 plt.figure()
 # with tools.plot_context(plt, 'dimensionless', 'dimensionless', r"\text{Kanal}", "N") as plt2:
 # TODO: \text funzt nicht ohne BUILD…
 with tools.plot_context(plt, 'keV', 'dimensionless', "E", "N") as plt2:
     plt2.plot(E_U, N_U, label="Messwerte")
-    # plt2.plot(E_U, np.convolve(N_U.m, np.ones(20)/20, mode='same'), fmt='-', label="Messwerte (geglättet)")  # TODO: Gut so?
     plt2.plot(E_U[peaks], N_U[peaks], 'x', show_xerr=False, label="Peaks")
 
-    yheight = 1/len(data_dict_filtered)
-
-    for i, (parent, (lit_energies, intensities)) in enumerate(list(data_dict_filtered.items())[::-1]):
-        plt_text = plt.text(
-            0.05,
-            (i + 1/2)*yheight,
-            f"{parent}",
-            horizontalalignment='left',
-            verticalalignment='center',
-            transform=plt.gca().transAxes
-        )
-        plt_text.set_bbox(dict(facecolor='white', alpha=0.5, edgecolor='none'))
-
-        for lit_energy, lit_intensity in zip(lit_energies, intensities):
-            if lit_energy.m > max(E_U.m):
-                continue
-            # plt.axvline(lit_energy.to('keV').m, color=f'C{i+2}', alpha=intensity_to_alpha(lit_intensity, exponent=0.4))
-            # line that only occupies 1/len(data_dict_filtered) of the vertical space
-            plt.axvline(
-                lit_energy.to('keV').m,
-                color=f'C{i+2}',
-                alpha=intensity_to_alpha(lit_intensity, exponent=0.4),
-                ymin=i*yheight,
-                ymax=(i+1)*yheight,
-                zorder=5,
-            )
 
 # add labels for axvlines
 handles, labels = plt.gca().get_legend_handles_labels()
