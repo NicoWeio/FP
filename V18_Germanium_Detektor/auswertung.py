@@ -6,7 +6,7 @@ import nuclide_identification
 from common import console
 
 console.rule("0. Untergrund")
-background.main()
+# background.main()
 
 
 console.rule("1a. Energiekalibration: Eu-152")
@@ -16,9 +16,6 @@ channel_to_E = energy_calibration_results['channel_to_E']
 
 console.rule("1b. Vollenergienachweiswahrscheinlichkeit / Effizienz: Eu-152")
 efficiency.main(**energy_calibration_results)
-
-raise NotImplementedError("")
-
 
 console.rule("2. Spektrum von Cs-137")
 gamma_spectrum.main(channel_to_E)

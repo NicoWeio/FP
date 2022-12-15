@@ -65,7 +65,6 @@ def main():
     # ▒ Plot: Spektrum
     plot_energyspectrum(
         tools.nominal_values(channel_to_E(x)), N,
-        # peak_indices=raw_peaks,
         peak_indices=peak_fit_arrays['true_peak'],
         lit_energies_dict={
             "Eu-152": (lit_energies_all, lit_intensities_all),

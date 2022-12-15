@@ -127,15 +127,20 @@ def plot_energyspectrum(
     stack_lit_energies=False,
     path=None,
     smooth_over: int | None = None,
-    cut_to_lit_energies=False,
+    # cut_to_lit_energies=False,
+    xlim=None,
     peak_indices=None,
+    plot_cb=None,
 ):
     """
     lit_energies_dict: dict of {parent: (energies, intensities)}
     path: if given (and tools.BUILD == True), save the plot to this path
     smooth_over: if given, add a smoothed version over this many points to the plot
     """
-    yheight = 1/len(lit_energies_dict)
+    if not lit_energies_dict:
+        lit_energies_dict = {}
+
+    yheight = 1/len(lit_energies_dict) if lit_energies_dict else None
     E_bounds = tools.bounds(E)
 
     plt.figure()
@@ -148,6 +153,9 @@ def plot_energyspectrum(
 
         if peak_indices is not None:
             plt.plot(E[peak_indices], N[peak_indices], 'x', label="Peaks")
+
+        if plot_cb is not None:
+            plot_cb(plt, plt2)
 
         for i, (parent, (lit_energies, intensities)) in enumerate(list(lit_energies_dict.items())):
             for lit_energy, lit_intensity in zip(lit_energies, intensities):
@@ -167,7 +175,6 @@ def plot_energyspectrum(
                     )
                 )
 
-        # for i, (parent, (lit_energies, intensities)) in enumerate(list(data_dict_filtered.items())[::-1]):
             if stack_lit_energies:
                 plt.text(
                     0.05,
@@ -186,13 +193,20 @@ def plot_energyspectrum(
             for i, parent in enumerate(lit_energies_dict.keys())
         ]
 
-    if cut_to_lit_energies:
+    if xlim == 'lit_energies':
         plt.xlim(
             # left=0,  # COULDDO: Why is this necessary!?
             right=1.1 * max([lit_energies.max() for (lit_energies, intensities) in lit_energies_dict.values()]).to('keV').m,
         )
-    # plt.xlim(*E_bounds.to('keV').m)  # COULDDO
-    plt.ylim(bottom=0.5)
+    elif xlim is not None:
+        plt.xlim(*xlim)
+    else:
+        plt.xlim(*E_bounds.to('keV').m)
+
+    plt.ylim(
+        bottom=0.5,
+        top=1.1 * N.max().to('dimensionless').m,  # NOTE: Might not work well with xlim == 'lit_energies'
+    )
     plt.yscale('log')
     plt.legend(handles=handles)
     plt.tight_layout()
