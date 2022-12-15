@@ -295,7 +295,7 @@ def peak_fits_to_arrays(peak_fits):
     }
 
 
-peak_fits = [fit_peak(peak, x_calib, N_calib, plot=True) for peak in peaks]
+peak_fits = [fit_peak(peak, x_calib, N_calib, plot=False) for peak in peaks]
 peak_fit_arrays = peak_fits_to_arrays(peak_fits)
 peak_channels = [fit['x_0'] for fit in peak_fits]  # COULDDO: Brauche ich nicht wirklich, oder?
 peak_channels_n = tools.nominal_values(peak_channels * ureg.dimensionless)
@@ -313,6 +313,7 @@ print(f"m={m}, n={n}")
 
 
 def channel_to_E(x):
+    # COULDDO: warn about negative energies
     return m * x + n
 
 
@@ -380,8 +381,6 @@ generate_table.generate_table_pint(
 
 # %% ███ Effizienz ███
 console.rule("1. Vollenergienachweiswahrscheinlichkeit / Effizienz: Eu-152")
-# COULDDO: Aus .Spe-Datei lesen
-t_mess = ureg('3388 s')  # Messzeit
 
 r = ureg('45 mm') / 2  # Radius [Versuchsanleitung]
 # Abstand Probe–Detektor =
@@ -430,8 +429,8 @@ Q_max, exponent = tools.pint_curve_fit(
     (ureg.dimensionless, ureg.dimensionless),
     p0=(50 * ureg.dimensionless, -1 * ureg.dimensionless),
 )
-print(f"Q_max={Q_max:.2f}")
-print(f"exponent={exponent:.2f}")
+print(f"Q_max (aka p): {Q_max:.2f}")
+print(f"exponent (aka q): {exponent:.2f}")
 
 # %% Plot: Q(E) – Effizienz in Abhängigkeit von der Energie
 energy_linspace = tools.linspace(*tools.bounds(lit_energies), 100)
@@ -480,6 +479,7 @@ with tools.plot_context(plt, 'keV', 'dimensionless', r"E_\gamma", r"N") as plt2:
     # plt2.plot(E[peaks], N[peaks], 'x', show_xerr=False, label="Peaks")
     plt2.plot(E[rueckstreupeak_raw], N[rueckstreupeak_raw], 'x', show_xerr=False, label="Rückstreupeak")
     plt2.plot(E[photopeak_raw], N[photopeak_raw], 'x', show_xerr=False, label="Photopeak")
+plt.ylim(bottom=0.5)
 plt.yscale('log')
 plt.xlim(right=800)
 plt.legend()
@@ -672,7 +672,11 @@ handles += [
     mpatches.Patch(color='C3', label="Sb-125 (Literaturwerte)"),
 ]
 
-plt.xlim(right=750)
+plt.xlim(
+    left=0,  # COULDDO: Why is this necessary!?
+    right=1.1 * max(lit_energies_all_Ba.max(), lit_energies_all_Sb.max()).to('keV').m,
+)
+plt.ylim(bottom=0.5)
 plt.yscale('log')
 plt.legend(handles=handles)
 plt.tight_layout()
@@ -687,29 +691,26 @@ console.rule("4. Nuklididentifikation und Aktivitätsbestimmung: Uran & Zerfalls
 x_U, N_U, T_U = load_spe("data/2022-11-28/4_U.Spe")
 E_U = channel_to_E(x_U)
 
-lit_energies_all_U, intensities_all_U = load_lara("data/emissions/U-238.lara.txt", parent="U-234")
-lit_energies_all_Th, intensities_all_Th = load_lara("data/emissions/U-238.lara.txt", parent="Th-234")
-
 PARENTS = [
     "U-238",
     "Th-234",
-    # "Pa-234",
-    # "U-234",
-    # "Th-230",
-    # "Ra-226",
-    # "Rn-222",
-    # "Po-218",
+    "Pa-234",
+    "U-234",
+    "Th-230",
+    "Ra-226",
+    "Rn-222",
+    "Po-218",
     # "At-218", # keine Gamma-Zerfälle
     "Pb-214",
-    # "Rn-218",
+    "Rn-218",
     "Bi-214",
-    # "Po-214",
-    # "Tl-210",
-    # "Pb-210",
-    # "Bi-210",
-    # "Hg-206",
-    # "Po-210",
-    # "Tl-206",
+    "Po-214",
+    "Tl-210",
+    "Pb-210",
+    "Bi-210",
+    "Hg-206",
+    "Po-210",
+    "Tl-206",
 ]
 
 data_dict = {
@@ -717,6 +718,26 @@ data_dict = {
     load_lara("data/emissions/U-238.lara.txt", parent=parent)
     for parent in PARENTS
 }
+
+# %% rank parents by their maximum intensity
+parent_to_max_intensity = [(parent, max(intensities)) for parent, (energies, intensities) in data_dict.items()]
+parent_to_max_intensity.sort(key=lambda x: x[1], reverse=True)
+for parent, max_intensity in parent_to_max_intensity:
+    print(f"{parent}: {max_intensity:.2f}")
+
+# filter out parents with too low (max) intensity
+# data_dict_filtered = {
+#     parent: (energies, intensities)
+#     for parent, (energies, intensities) in data_dict.items()
+#     if max(intensities) > 0.1
+# }
+data_dict_filtered = {
+    parent: data_dict[parent]
+    for parent, max_intensity in parent_to_max_intensity
+    if max_intensity > 0.1
+}
+
+print(f"Filtered out {len(data_dict) - len(data_dict_filtered)} parents with too low intensity.")
 
 # %% COULDDO[WIP]: Score nuclides by multiplying their emission spectrum with the measured spectrum
 # for parent, (lit_energies, intensities) in data_dict.items():
@@ -739,34 +760,99 @@ peak_energies = channel_to_E(peak_channels)
 
 print(f"Found {len(peaks)} peaks")
 
+# %%
+
+
+def find_nearest_lit_energy(E, data_dict):
+    E_RADIUS = ureg('5 keV')  # TODO: test this
+    possible_lit_energies = []  # (parent, lit_energy, intensity)
+    for parent, (lit_energies, intensities) in data_dict.items():
+        for lit_energy, intensity in zip(lit_energies, intensities):
+            if abs(lit_energy - E) < E_RADIUS:
+                possible_lit_energies.append((parent, lit_energy, intensity))
+
+    # if len(possible_lit_energies) == 0:
+        # return None
+    assert len(possible_lit_energies) > 0, f"No lit energies found for {E}"
+
+    possible_lit_energies.sort(key=lambda x: x[2], reverse=True)
+    print(
+        f"Found {len(possible_lit_energies)} possible lit energies with intensities {[f'{x[2].m:.1f}' for x in possible_lit_energies]}")
+    return possible_lit_energies[0]
+
+# for peak_energy in peak_energies:
+#     print(f"█ Peak at {peak_energy:.2f}")
+#     nearest_lit_energy = find_nearest_lit_energy(peak_energy, data_dict_filtered)
+#     if nearest_lit_energy is not None:
+#         parent, lit_energy, intensity = nearest_lit_energy
+#         print(f"Nearest lit energy: {parent} at {lit_energy:.2f} with intensity {intensity:.2f}")
+
+
+nearest_lit_energies = [find_nearest_lit_energy(peak_energy, data_dict) for peak_energy in peak_energies]
+# COULDDO: again, filter out energies < 100 keV
+
+# Tabelle generieren
+generate_table.generate_table_pint(
+    "build/tab/5_uranstein.tex",
+    (r"E", ureg.kiloelectron_volt, tools.nominal_values(peak_energies)),
+    (r"E_\text{lit}", ureg.kiloelectron_volt, [x[1] for x in nearest_lit_energies]),
+    (r"(E - E_\text{lit})", ureg.kiloelectron_volt, [x[1] - tools.nominal_value(peak_energy)
+     for x, peak_energy in zip(nearest_lit_energies, peak_energies)]),
+    (r"W", ureg.percent, [x[2] for x in nearest_lit_energies]),
+    (r"\text{Nuklid}", str, [r"\ce{^" + ''.join(x[0].split('-')[::-1]) + r"}" for x in nearest_lit_energies]),
+)
+
+
 # %% Plotte Spektrum
 plt.figure()
 # with tools.plot_context(plt, 'dimensionless', 'dimensionless', r"\text{Kanal}", "N") as plt2:
 # TODO: \text funzt nicht ohne BUILD…
 with tools.plot_context(plt, 'keV', 'dimensionless', "E", "N") as plt2:
     plt2.plot(E_U, N_U, label="Messwerte")
-    plt2.plot(E_U, np.convolve(N_U.m, np.ones(20)/20, mode='same'), fmt='-', label="Messwerte (geglättet)")  # TODO: Gut so?
+    # plt2.plot(E_U, np.convolve(N_U.m, np.ones(20)/20, mode='same'), fmt='-', label="Messwerte (geglättet)")  # TODO: Gut so?
     plt2.plot(E_U[peaks], N_U[peaks], 'x', show_xerr=False, label="Peaks")
 
-    for i, (parent, (lit_energies, intensities)) in enumerate(data_dict.items()):
+    yheight = 1/len(data_dict_filtered)
+
+    for i, (parent, (lit_energies, intensities)) in enumerate(list(data_dict_filtered.items())[::-1]):
+        plt_text = plt.text(
+            0.05,
+            (i + 1/2)*yheight,
+            f"{parent}",
+            horizontalalignment='left',
+            verticalalignment='center',
+            transform=plt.gca().transAxes
+        )
+        plt_text.set_bbox(dict(facecolor='white', alpha=0.5, edgecolor='none'))
+
         for lit_energy, lit_intensity in zip(lit_energies, intensities):
             if lit_energy.m > max(E_U.m):
                 continue
-            plt.axvline(lit_energy.to('keV').m, color=f'C{i+2}', alpha=intensity_to_alpha(lit_intensity, exponent=0.4))
+            # plt.axvline(lit_energy.to('keV').m, color=f'C{i+2}', alpha=intensity_to_alpha(lit_intensity, exponent=0.4))
+            # line that only occupies 1/len(data_dict_filtered) of the vertical space
+            plt.axvline(
+                lit_energy.to('keV').m,
+                color=f'C{i+2}',
+                alpha=intensity_to_alpha(lit_intensity, exponent=0.4),
+                ymin=i*yheight,
+                ymax=(i+1)*yheight,
+                zorder=5,
+            )
 
 # add labels for axvlines
 handles, labels = plt.gca().get_legend_handles_labels()
-handles += [
-    mpatches.Patch(color=f'C{i+2}', label=f"{parent} (Literaturwerte)")
-    for i, parent in enumerate(PARENTS)
-]
+# handles += [
+#     mpatches.Patch(color=f'C{i+2}', label=f"{parent} (Literaturwerte)")
+#     for i, parent in enumerate(list(data_dict_filtered.keys()))
+# ]
 
 # plt.xlim(right=750)
+plt.ylim(bottom=0.5)
 plt.yscale('log')
-plt.legend(handles=handles)
+plt.legend(handles=handles, loc='lower right')
 plt.tight_layout()
 if tools.BUILD:
-    plt.savefig("build/plt/spektrum_238-U.pdf")
+    plt.savefig("build/plt/spektrum_uranstein.pdf")
 if tools.PLOTS:
     plt.show()
 
