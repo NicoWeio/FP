@@ -111,33 +111,9 @@ def main(channel_to_E):
 
     # %% Plotte Spektrum
     plot_energyspectrum(
-        E, N,
+        tools.nominal_values(E), N,
+        peak_indices=peaks,
         lit_energies_dict=data_dict_filtered,  # COULDDO: Reihenfolge umkehren
         path="build/plt/spektrum_uranstein.pdf",
-        # smooth_over=20,
         stack_lit_energies=True,
     )
-
-    # %% deprecated
-
-    plt.figure()
-    with tools.plot_context(plt, 'keV', 'dimensionless', "E", "N") as plt2:
-        plt2.plot(E, N, label="Messwerte")
-        plt2.plot(E[peaks], N[peaks], 'x', show_xerr=False, label="Peaks")
-
-    # add labels for axvlines
-    handles, labels = plt.gca().get_legend_handles_labels()
-    # handles += [
-    #     mpatches.Patch(color=f'C{i+2}', label=f"{parent} (Literaturwerte)")
-    #     for i, parent in enumerate(list(data_dict_filtered.keys()))
-    # ]
-
-    # plt.xlim(right=750)
-    plt.ylim(bottom=0.5)
-    plt.yscale('log')
-    plt.legend(handles=handles, loc='lower right')
-    plt.tight_layout()
-    if tools.BUILD:
-        plt.savefig("build/plt/spektrum_uranstein.pdf")
-    if tools.PLOTS:
-        plt.show()

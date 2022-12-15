@@ -1,3 +1,4 @@
+import activity
 import background
 import efficiency
 import energy_calibration
@@ -6,7 +7,7 @@ import nuclide_identification
 from common import console
 
 console.rule("0. Untergrund")
-# background.main()
+background.main()
 
 
 console.rule("1a. Energiekalibration: Eu-152")
@@ -22,7 +23,7 @@ gamma_spectrum.main(channel_to_E)
 
 
 console.rule("3. Aktivitätsbestimmung: Ba-133")
-gamma_spectrum.main(channel_to_E)
+activity.main(channel_to_E)
 
 
 console.rule("4. Nuklididentifikation und Aktivitätsbestimmung: Uran & Zerfallsprodukte")

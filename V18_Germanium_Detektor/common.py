@@ -137,6 +137,9 @@ def plot_energyspectrum(
     path: if given (and tools.BUILD == True), save the plot to this path
     smooth_over: if given, add a smoothed version over this many points to the plot
     """
+    assert isinstance(E, pint.Quantity)
+    assert not isinstance(E[0].m, UFloat)
+
     if not lit_energies_dict:
         lit_energies_dict = {}
 
@@ -205,7 +208,9 @@ def plot_energyspectrum(
 
     plt.ylim(
         bottom=0.5,
-        top=1.1 * N.max().to('dimensionless').m,  # NOTE: Might not work well with xlim == 'lit_energies'
+        # NOTE: Might not work well with xlim == 'lit_energies'
+        # NOTE: Due to log scaling, the factor is rather large
+        top=2 * N.max().to('dimensionless').m,
     )
     plt.yscale('log')
     plt.legend(handles=handles)
@@ -263,7 +268,7 @@ def fit_peak(peak_seed, x, N, fit_radius=40, plot=True, plot_path=None, channel_
         assert a > 0, f"Amplitude a={a} should be positive"
         assert x_0 > 0, f"x_0={x_0} should be positive"
         assert σ > 0, f"σ={σ} should be positive"
-        assert N_0 > 0, f"N_0={N_0} should be positive"
+        # assert N_0 > 0, f"N_0={N_0} should be positive" # small negative values should be okay
     except AssertionError as e:
         print(e)
         print("Continuing for now, but this should be fixed.")
