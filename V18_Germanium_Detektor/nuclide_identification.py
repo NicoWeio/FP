@@ -101,7 +101,7 @@ def main(channel_to_E, E_to_Q):
     # COULDDO: again, filter out energies < 100 keV
 
     # █ Aktivitäten berechnen
-    Ω = get_Ω()
+    Ω = get_Ω(with_spacer=False)
     Q = E_to_Q(peak_fit_arrays['E'])
 
     A = 4*np.pi*peak_fit_arrays['Z'] / (Ω * Q * nearest_lit_intensities * T)  # Aktivität

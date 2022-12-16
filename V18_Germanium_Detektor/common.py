@@ -32,17 +32,19 @@ def calc_ε(E):
     return E / (ureg.m_e * ureg.c**2)
 
 
-def get_Ω():
+def get_Ω(with_spacer=True):
     """
-    Gibt den Raumwinkel Ω (mit Abstandshalter!) zurück.
+    Gibt den Raumwinkel Ω zurück.
+
+    Der Abstandshalter wurde für den letzten Versuchsteil entfernt.
     """
     # COULDDO: Wie mache ich das DRY, ohne die Parameter hier zu setzen? 🤔
     r = ureg('45 mm') / 2  # Radius [Versuchsanleitung]
 
     # Abstand Probe–Detektor =
-    #   Abstand Probe–Schutzhaube [eigene Messung]
-    # + Abstand Schutzhaube–Detektor [Versuchsanleitung]
-    l = ureg('7.0 cm') + ureg('1.5 cm')
+    l = ureg('1.5 cm')  # Abstand Schutzhaube–Detektor [Versuchsanleitung]
+    if with_spacer:
+        l += ureg('7.0 cm')  # Abstand Probe–Schutzhaube [eigene Messung]
 
     Ω = 2*np.pi*(1 - l/np.sqrt(l**2 + r**2))
     return Ω
