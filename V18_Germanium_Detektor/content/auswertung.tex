@@ -77,7 +77,7 @@ Ein Plot dieser Regressionsrechnung ist in \autoref{fig:plt:energy_calibration} 
 \subsection{Bestimmung der Vollenergienachweiswahrscheinlichkeit} \label{sec:auswertung:effizienz}
 Um die Vollenergienachweiswahrscheinlichkeit anhand des zuvor betrachteten \ce{^152Eu}-Spektrums zu bestimmen,
 wird zunächst die Aktivität der Probe berechnet.
-Am Tag der Herstellung (01.10.2000) betrug diese $A_0 = \SI{4130(60)}{\becquerel}$.
+Am Tag der Herstellung (01.10.2000) betrug diese $A_0 = \SI{4130(60)}{\becquerel}$ \cite{versuchsanleitung}.
 Bei einer Halbwertszeit von $t_{1/2} = \SI{13.522(16)}{a}$ \cite{lara} entspricht dies einer Aktivität von
 \begin{equation*}
     A = A_0 \cdot \exp\left(-\frac{\ln(2)}{t_{1/2}} t\right)
@@ -324,7 +324,7 @@ So ergibt sich eine Aktivität von $\bar A = \SI{1019.97 \pm 3.59}{\becquerel}$.
     \centering
     \caption{
         Inhalte, Effizienzen und Aktivitäten der Emissionslinien der \ce{^133Ba}-Quelle
-        sowie Literaturwerte der Energien.
+        sowie Literaturwerte der Energien \cite{lara}.
     }
     \label{tab:4_Ba_133_activities}
     \expandableinput{build/tab/4_Ba-133_activities.tex}
@@ -337,20 +337,19 @@ Das Energiespektrum des Uran-Steins ist in \autoref{fig:plt:spektrum_uranstein} 
 Durch Vergleich der Peaks mit Literaturwerten lassen sich
     (ähnlich wie zuvor)
 die aktiven Isotope identifizieren.
-Über Gauß-Fits (siehe \autoref{tab:5_uranstein})
-wird jedem Peak eine Energie und ein Peakinhalt zugeordnet.
-
-(siehe \autoref{tab:5_uranstein_peaks}).
+Über Gauß-Fits
+wird jedem Peak eine Energie und ein Peakinhalt zugeordnet
+    (siehe \autoref{tab:5_uranstein}).
 Aus den Energien lässt sich auf das jeweilige Isotop schließen,
 während Peakinhalt, Emissionswahrscheinlichkeit und Effizienz die Berechnung der Aktivität ermöglichen
-    (siehe \autoref{tab:5_uranstein_peaks}).
+    (siehe \autoref{tab:5_uranstein_activities}).
 Durch Summation werden schließlich die Aktivitäten je Isotop zusammengefasst.
 Diese sind in \autoref{tab:5_uranstein_activities_mean} angegeben.
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{build/plt/spektrum_uranstein.pdf}
-    \caption{Energiespektrum des Uran-Steins mit eingezeichneten Emissionslinien der Zerfallsprodukte mit den höchsten Intensitäten.}
+    \caption{Energiespektrum des Uran-Steins mit eingezeichneten Literaturwerten der Emissionslinien der Zerfallsprodukte mit den höchsten Intensitäten \cite{lara}.}
     \label{fig:plt:spektrum_uranstein}
 \end{figure}
 
@@ -367,7 +366,7 @@ Diese sind in \autoref{tab:5_uranstein_activities_mean} angegeben.
 \begin{table}
     \centering
     \caption{
-        Literaturwerte der Energien und Emissionswahrscheinlichkeiten für das jeweilige Isotop,
+        Literaturwerte der Energien und Emissionswahrscheinlichkeiten für das jeweilige Isotop \cite{lara},
         sowie Effizienzen und Aktivitäten.
     }
     \label{tab:5_uranstein_activities}
