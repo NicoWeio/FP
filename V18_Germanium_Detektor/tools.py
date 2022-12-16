@@ -14,6 +14,7 @@ print("build:", BUILD)
 # 2. sollen Plots mit LaTeX generiert werden?
 # TODO ↓
 PLOTS = bool(os.getenv('PLOTS'))
+print("plots:", BUILD)
 
 if not BUILD:
     # nutze Standard-Backend, nicht LaTeX
@@ -56,6 +57,7 @@ def pint_curve_fit(fit_fn, x, y, param_units, bounds=None, p0=None, return_p0=Fa
         return value.to(unit).m
 
     if return_p0:
+        # TODO: This might shadow errors in p0 (e.g. they must be pint Quantities)
         print("🛈 Returning p0 without fitting…")
         return p0
 
@@ -102,9 +104,8 @@ def pint_curve_fit(fit_fn, x, y, param_units, bounds=None, p0=None, return_p0=Fa
         test_val = fit_fn(x, *pint_params_nominal)
     except:
         raise Exception("Could not test fit_fn")
-    if test_val.units != y.units:
-        raise Exception(
-            f"Wrong param_units – fit_fn(x[0], *fit_params_nominal) returns '{test_val.units}' instead of '{y.units}'")
+    assert isinstance(test_val, pint.Quantity), "fit_fn must return a pint.Quantity"
+    assert test_val.units == y.units, f"Wrong param_units – fit_fn(x[0], *fit_params_nominal) returns '{test_val.units}' instead of '{y.units}'"
     return pint_params
 
 
