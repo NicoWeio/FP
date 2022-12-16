@@ -79,6 +79,53 @@ def main(channel_to_E):
     print(f"Photopeak → FWTM: {E_fwtm_fit:.2f}")
     print(f"Photopeak → FWHM/FWTM: {(E_fwhm_fit/E_fwtm_fit):.2f}")
 
+
+    # FWHM und FWTM des Photopeaks (via Fits)
+    # fwhm_height = photopeak_fit['a'] / 2 + photopeak_fit['N_0']
+    # fwtm_height = photopeak_fit['a'] / 10 + photopeak_fit['N_0']
+
+    fwhm_height = max(N) / 2  # TODO: respect N_0
+    peak_pos = np.argmax(N)
+
+    # fit a line to the left and right side of the peak (using linregress)
+    # - find the x ranges for the left and right side
+    X_RADIUS = 10
+    x_left = x[peak_pos - X_RADIUS:peak_pos] * ureg.dimensionless
+    x_right = x[peak_pos:peak_pos + X_RADIUS] * ureg.dimensionless
+
+    # - fit a line to the left and right side
+    slope_left, intercept_left = tools.linregress(x_left, N[peak_pos - X_RADIUS:peak_pos])
+    slope_right, intercept_right = tools.linregress(x_right, N[peak_pos:peak_pos + X_RADIUS])
+
+    # - find the x values where the line crosses the fwhm height
+    x_left_fwhm = (fwhm_height - intercept_left) / slope_left
+    x_right_fwhm = (fwhm_height - intercept_right) / slope_right
+
+    # - calculate the fwhm
+    fwhm = x_right_fwhm - x_left_fwhm
+
+    print(f"Photopeak → FWHM (via Fits): {channel_to_E(fwhm):.2f}")
+
+
+    # Plot: FWHM
+    plt.figure()
+    with tools.plot_context(plt, 'dimensionless', 'dimensionless', r"x", r"N") as plt2:
+        # plt2.plot(x, N, 'x', label="Messwerte")
+
+        # mark the data points used for the fit
+        plt2.plot(x_left, N[peak_pos - X_RADIUS:peak_pos], 'x')
+        plt2.plot(x_right, N[peak_pos:peak_pos + X_RADIUS], 'x')
+
+        plt2.plot(x_left, slope_left * x_left + intercept_left, show_yerr=False, label="Regressionsgerade (links)")
+        plt2.plot(x_right, slope_right * x_right + intercept_right, show_yerr=False, label="Regressionsgerade (rechts)")
+
+        # plot the fwhm line
+        plt2.plot(tools.pintify([x_left_fwhm, x_right_fwhm]), tools.pintify([fwhm_height, fwhm_height]), show_xerr=False, label="FWHM")
+    plt.legend()
+    plt.show()
+
+    # raise NotImplementedError()
+
     # Plot: N(E) – Spektrum von 137Cs
     plot_energyspectrum(
         tools.nominal_values(channel_to_E(x)), N,
@@ -90,6 +137,7 @@ def main(channel_to_E):
         ),
         xlim=(0, 800),
     )
+
 
     # █ Tabelle generieren
     # COULDDO: Unsicherheiten
@@ -109,9 +157,11 @@ def main(channel_to_E):
     E_compton_lit = calc_compton_edge(E_photopeak_lit)
 
     # Fit links-rechts
-    # TODO: subject to confirmation bias
-    mask_l = (E < E_compton_lit) & (E > (E_compton_lit - 100*ureg.keV))
-    mask_r = (E > E_compton_lit) & (E < (E_compton_lit + 20*ureg.keV))
+    # NOTE: subject to confirmation bias
+    # fit_center = E_compton_lit
+    fit_center = ureg('470 keV')
+    mask_l = (E < fit_center) & (E > (fit_center - ureg('100 keV')))
+    mask_r = (E > fit_center) & (E < (fit_center + ureg('20 keV')))
     mask_lr = mask_l | mask_r
 
     m_l, n_l = tools.linregress(tools.nominal_values(E[mask_l]), N[mask_l])
@@ -120,9 +170,13 @@ def main(channel_to_E):
     # compton peak is at the intersection of the two lines
     E_compton_fit = (n_r - n_l) / (m_l - m_r)
 
-    print(tools.fmt_compare_to_ref(E_compton_fit, E_compton_lit, name="Compton-Kante (Fit vs. Literatur)"))
+    print(f"m_l: {m_l:.2f}")
+    print(f"n_l: {n_l:.2f}")
+    print(f"m_r: {m_r:.2f}")
+    print(f"n_r: {n_r:.2f}")
+    print(tools.fmt_compare_to_ref(E_compton_fit, E_compton_lit, name="Compton-Kante (Fit vs. Literatur)", unit=ureg.keV))
 
-    # Plot: Compton-Kante
+    # █ Plot: Compton-Kante
     plt.figure()
     with tools.plot_context(plt, 'keV', 'dimensionless', r"E", r"N") as plt2:
         plt2.plot(E[mask_l], N[mask_l], 'x', show_xerr=False, color='C0', alpha=0.5, label="Messwerte links")
@@ -162,7 +216,7 @@ def main(channel_to_E):
     Z = sum(N_fit[E < E_compton_lit])
     print(f"→ Z: {Z:.1f}")
 
-    # Plot: Klein-Nishina
+    # █ Plot: Klein-Nishina
     plt.figure()
     with tools.plot_context(plt, 'keV', 'dimensionless', "E", "N") as plt2:
         mask_compton_plotonly = mask_compton_plot & ~mask_compton_fit
