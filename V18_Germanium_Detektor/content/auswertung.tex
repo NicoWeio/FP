@@ -168,23 +168,50 @@ sind in \autoref{tab:3_Cs_137} aufgeführt.
 
 Die Energie des Strahlers entspricht der Lage des Photopeaks (Vollenergielinie)
 und beträgt \SI{661.43 \pm 0.06}{\kilo\electronvolt}.
-Als Halbwertsbreite desselben ergibt sich aus dem Fit-Paramter $\sigma$
-\begin{equation*}
-    \text{FWHM} = 2 \sigma \sqrt{2 \ln(2)}
-    = \SI{0.74 \pm 0.05}{\kilo\electronvolt}
-\end{equation*}
-ebenso wie die Zehntelwertsbreite
-\begin{equation*}
-    \text{FWTM} = 2 \sigma \sqrt{2 \ln(10)}
-    = \SI{2.44 \pm 0.02}{\kilo\electronvolt} \, .
-\end{equation*}
+Zur Bestimmung der Halbwertsbreite und Zehntelwertsbreite desselben wird auf Regressionsgeraden ($N(E) = m·E+n$) zurückgegriffen.
+Deren Parameter lauten
+\begin{align*}
+m_\text{FWHM, links} &= \SI{6.0(5)e+02}{\per\kilo\electronvolt} \\
+n_\text{FWHM, links} &= \num{-3.93(33)e+05} \\
+m_\text{FWHM, rechts} &= \SI{-6.9(4)e+02}{\per\kilo\electronvolt} \\
+n_\text{FWHM, rechts} &= \num{4.59(25)e+05} \\
+ \\
+m_\text{FWTM, links} &= \SI{550(32)}{\per\kilo\electronvolt} \\
+n_\text{FWTM, links} &= \num{-3.63(21)e+05} \\
+m_\text{FWTM, rechts} &= \SI{-5.4(5)e+02}{\per\kilo\electronvolt} \\
+n_\text{FWTM, rechts} &= \num{3.61(31)e+05} \, .
+\end{align*}
+Daraus ergeben sich
+\begin{align}
+    \text{FWHM} = \SI{2.13 \pm 92.47}{\kilo\electronvolt} \\
+    \text{FWTM} = \SI{4.05 \pm 98.52}{\kilo\electronvolt}
+\end{align}
+sowie das Verhältnis
+\begin{equation}
+    \frac{\text{FWTM}}{\text{FWHM}} = \num{1.90 \pm 94.42} \, .
+\end{equation}
 
-% TODO: Diesen Teil der Aufgabenstellung können wir nicht sinnvoll erledigen,
-% ohne wie @Imigir Regressionsgeraden an die Peaks zu fitten.
-% > Prüfen Sie, ob die gemessene Halbwertsbreite der Photolinie mit der Zehntelwertsbreite konsistent ist.
-% > (Welcher Zusammenhang gilt zwischen diesen beiden Größen für eine Gaußverteilung?)
+% NOTE: Vergleich mit dem optimalen Verhältnis in der Diskussion
 
-% TODO: Position der Compton-Kante
+% \begin{equation*}
+%     \text{FWHM} = 2 \sigma \sqrt{2 \ln(2)}
+%     = \SI{0.74 \pm 0.05}{\kilo\electronvolt}
+% \end{equation*}
+% ebenso wie die Zehntelwertsbreite
+% \begin{equation*}
+%     \text{FWTM} = 2 \sigma \sqrt{2 \ln(10)}
+%     = \SI{2.44 \pm 0.02}{\kilo\electronvolt} \, .
+% \end{equation*}
+
+Die Lage der Compton-Kante im gemessenen Spektrum wird anhand des Schnittpunkts zweier Regressionsgeraden zu beiden Seiten der ungefähren Position der Kante bestimmt,
+wie in \autoref{fig:plt:compton_kante} gezeigt.
+Die resultierenden Parameter sind
+\begin{align*}
+    m_\text{links} &= \SI{0.13 \pm 0.01}{\per\kilo\electronvolt} \\
+    n_\text{links} &= \num{-28.90 \pm 3.46} \\
+    m_\text{rechts} &= \SI{-0.90 \pm 0.09}{\per\kilo\electronvolt} \\
+    n_\text{rechts} &= \num{457.29 \pm 40.84} \, .
+\end{align*}
 
 Um den Inhalt des Compton-Kontinuums abzuschätzen,
 % wird die Formel für den […] differentiellen Wirkungsquerschnitt
@@ -218,19 +245,32 @@ Somit ergibt sich für den geschätzten Inhalt des Compton-Kontinuums
     \label{fig:plt:spektrum_Cs_137}
 \end{figure}
 
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{build/plt/compton-kante.pdf}
+    \caption{Approximation der Compton-Kante durch Bestimmung des Schnittpunkts zweier Regressionsgeraden.}
+    \label{fig:plt:compton_kante}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{build/plt/photopeak_fwhm.pdf}
+    \caption{Approximation der Halbwertsbreite durch Bestimmung des Schnittpunkts zweier Regressionsgeraden.}
+    \label{fig:plt:photopeak_fwhm}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{build/plt/photopeak_fwtm.pdf}
+    \caption{Approximation der Zehntelwertsbreite durch Bestimmung des Schnittpunkts zweier Regressionsgeraden.}
+    \label{fig:plt:photopeak_fwtm}
+\end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{build/plt/klein-nishina.pdf}
     \caption{Fit des differentiellen Klein-Nishina-Wirkungsquerschnitts an die Messwerte.}
     \label{fig:plt:klein_nishina}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{build/plt/compton-kante.pdf}
-    \caption{TODO.}
-    \label{fig:plt:compton_kante}
 \end{figure}
 
 

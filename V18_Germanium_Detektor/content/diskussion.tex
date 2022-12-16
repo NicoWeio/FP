@@ -2,10 +2,49 @@
 \label{sec:diskussion}
 
 \subsection{Abweichungen}
+Die \hyperref[sec:auswertung:energiekalibrierung]{Energiekalibrierung},
+    welche essenziell für die weitere Auswertung ist,
+zeigt nur geringfügige Unsicherheiten in der Regressionsgeraden (siehe \autoref{fig:plt:energy_calibration}).
 
-…
+Zur \hyperref[sec:auswertung:effizienz]{Vollenergienachweiswahrscheinlichkeit} liegt kein Vergleichswert vor,
+der Fit in \autoref{fig:plt:effizienz} zeigt jedoch eine gute Übereinstimmung mit dem Modell eines polynomiellen Abfalls mit moderaten Abweichungen.
+
+Im Rahmen der \hyperref[sec:auswertung:Cs_137]{Untersuchung des Gammaspektrums von \ce{^137Cs}}
+wurden die Lagen von Compton-Kante und Photopeak bestimmt.
+Die geschätzte Lage der Compton-Kante weicht um \SI{1.54}{\percent} vom theoretischen Wert ab,
+weist jedoch eine relativ große Unsicherheit auf.
+Der Photopeak konnte hingegen mit einer geringen Abweichung von \SI{0.03}{\percent} bestimmt werden.
+Das Verhältnis von Zehntelwertsbreite zur Halbwertsbreite des Photopeaks
+weicht um \SI{4.24}{\percent} vom für eine ideale Gaußverteilung erwarteten Wert ab.
+
+Für die \hyperref[sec:auswertung:Ba_133]{Aktivität des \ce{^133Ba}-Strahlers} ist ebenfalls kein Vergleichswert vorhanden.
+Der Strahler konnte jedoch in Abgrenzung zu \ce{^125Sb} eindeutig identifiziert werden.
+
+Das \hyperref[sec:auswertung:uranstein]{Energiespektrum des Uran-Steins} weist eine Reihe von Peaks auf,
+die gut mit \ce{^214Bi} übereinstimmen.
+Aufgrund der Vielzahl an Zerfallsprodukten von Uran ist die Zuordnung weniger intensiver Peaks jedoch weniger eindeutig.
+% Auch hier ist kein Vergleichswert vorhanden.
 
 
 \subsection{Mögliche Fehlerquellen}
+An mehreren Stellen wurden nur die deutlichsten Peaks verwendet,
+beispielsweise bei der \hyperref[sec:auswertung:energiekalibrierung]{Energiekalibrierung}.
+Dies ermöglicht eine problemlose Zuordnung anhand der Intensitäten,
+schmälert jedoch zugleich die Datengrundlage für die Regression beziehungsweise die Bestimmung der Effizienz oder der Aktivität.
 
-…
+Durch eine Vielzahl an Störeffekten wird die Qualität der gemessenen Spektren beeinträchtigt.
+Dazu zählen
+    die statistische Schwankung der Elektron-Loch-Paarzahl,
+    das Rauschen des Leckstromes,
+        % der infolge der Eigenleitung und Restverunreinigungen im Kristall
+        % und der hohen Saugspannung entsteht,
+    das Rauschen des an den Detektor angeschlossenen Verstärkers
+    und weitere.
+Bei der Wahl der Saugspannung müssen zudem Kompromisse eingegangen werden.
+
+Da es sich im Kern um ein Zählexperiment handelt,
+kann eine längere Messdauer zu einer besseren Statistik führen.
+
+% Schließlich muss geprüft werden, ob der Untergrund effektiv eliminiert wurde.
+
+% - Abstand Probe-Detektor?
