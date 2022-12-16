@@ -79,7 +79,7 @@ def main(channel_to_E, E_to_Q):
     # %%
 
     def find_nearest_lit_energy(E, data_dict):
-        E_RADIUS = ureg('5 keV')  # TODO: test this
+        E_RADIUS = ureg('5 keV')
         possible_lit_energies = []  # (parent, lit_energy, intensity)
         for parent, (lit_energies, intensities) in data_dict.items():
             for lit_energy, intensity in zip(lit_energies, intensities):

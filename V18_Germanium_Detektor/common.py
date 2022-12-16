@@ -183,7 +183,7 @@ def plot_energyspectrum(
 
         if smooth_over:
             N_smooth = np.convolve(N.m, np.ones(smooth_over)/smooth_over, mode='same') * ureg.dimensionless
-            plt2.plot(E, N_smooth, fmt='-', label="Messwerte (geglättet)")  # TODO: Gut so?
+            plt2.plot(E, N_smooth, fmt='-', label="Messwerte (geglättet)")
 
         if peak_indices is not None:
             plt.plot(E[peak_indices], N[peak_indices], 'x', label="Peaks")
@@ -276,7 +276,7 @@ def fit_peak(peak_seed, x, N, fit_radius=40, plot=True, plot_path=None, channel_
     N: Zählraten
     fit_radius: Radius des Bereichs, in dem die Gauß-Kurve gefittet wird (in Kanälen)
     """
-    # TODO: Stelle sicher, dass x Kanäle, nicht Energien sind.
+    # COULDDO: Stelle sicher, dass x Kanäle, nicht Energien sind.
     # assert not isinstance(x, ureg.Quantity) or x.units == ureg.dimensionless
 
     # print(f"Peak bei ({peak}, {N[peak].m})")
@@ -305,17 +305,19 @@ def fit_peak(peak_seed, x, N, fit_radius=40, plot=True, plot_path=None, channel_
         print("Continuing for now, but this should be fixed.")
 
     # FWHM / FWTM
+    # TODO: Faktoren überprüfen (sigma etc.)
     fwhm = 2 * σ * np.sqrt(2 * np.log(2))
     fwhm_height = a / 2 + N_0
     fwtm = 2 * σ * np.sqrt(2 * np.log(10))
     fwtm_height = a / 10 + N_0
 
     # (Flächen-)Inhalt
-    Z = a * unp.sqrt(2*np.pi * σ**2)  # TODO: Richtige Faktoren (sigma etc.)?
+    Z = a * unp.sqrt(2*np.pi * σ**2)  # TODO: Faktoren überprüfen (sigma etc.)
 
     if plot:
+        # NOTE: Dieser Plot kommt im Protokoll nicht vor.
         plt.figure()
-        with tools.plot_context(plt, 'dimensionless', 'dimensionless', r"xTODO", r"N") as plt2:
+        with tools.plot_context(plt, 'dimensionless', 'dimensionless', r"xCOULDDO", r"N") as plt2:
             plt2.plot(range_x, range_N, label="Messwerte")
             plt2.plot(
                 range_x,
@@ -369,4 +371,55 @@ def peak_fits_to_arrays(peak_fits):
             )
         )
         for key in keys
+    }
+
+
+def fit_peak_linregress(E, N, fit_center, fwhm_height, fit_radius, plot_radius, plot=False, plot_path=None):
+    mask_l = (E <= fit_center) & (E > (fit_center - fit_radius))
+    mask_r = (E >= fit_center) & (E < (fit_center + fit_radius))
+    mask_lr = mask_l | mask_r
+    mask_plot = (E <= (fit_center + plot_radius)) & (E >= (fit_center - plot_radius))
+
+    # - fit a line to the left and right side
+    m_l, n_l = tools.linregress(tools.nominal_values(E[mask_l]), N[mask_l])
+    m_r, n_r = tools.linregress(tools.nominal_values(E[mask_r]), N[mask_r])
+
+    # - find the x values where the line crosses the fwhm height
+    E_left_fwhm = (fwhm_height - n_l) / m_l
+    E_right_fwhm = (fwhm_height - n_r) / m_r
+
+    # - calculate the fwhm
+    fwhm = E_right_fwhm - E_left_fwhm
+
+    # Plot: FWHM
+    if plot or plot_path:
+        plt.figure()
+        with tools.plot_context(plt, 'keV', 'dimensionless', r"E", r"N") as plt2:
+            mask_plotonly = mask_plot & ~mask_lr
+            plt2.plot(E[mask_plotonly], N[mask_plotonly], 'x', show_xerr=False, label="Messwerte (nicht berücksichtigt)")
+            plt2.plot(E[mask_l], N[mask_l], 'x', show_xerr=False, label="Messwerte links")  # color='C0',
+            plt2.plot(E[mask_r], N[mask_r], 'x', show_xerr=False, label="Messwerte rechts")  # color='C1',
+
+            plt2.plot(E[mask_l], m_l*E[mask_l] + n_l, show_xerr=False, show_yerr=False, label="Fit links")  # color='C0',
+            plt2.plot(E[mask_r], m_r*E[mask_r] + n_r, show_xerr=False, show_yerr=False, label="Fit rechts")  # color='C1',
+
+            # plot the fwhm line
+            plt2.plot(
+                tools.pintify([E_left_fwhm, E_right_fwhm]),
+                tools.pintify([fwhm_height, fwhm_height]),
+                show_xerr=False, label="FWHM",
+            )
+        plt.legend()
+        plt.tight_layout()
+        if plot_path:
+            plt.savefig(plot_path)
+        if tools.PLOTS:
+            plt.show()
+
+    return {
+        'm_l': m_l,
+        'n_l': n_l,
+        'm_r': m_r,
+        'n_r': n_r,
+        'fwhm': fwhm,
     }

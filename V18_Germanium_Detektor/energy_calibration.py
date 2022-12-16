@@ -59,8 +59,8 @@ def main():
     plt.tight_layout()
     if tools.BUILD:
         plt.savefig("build/plt/energy_calibration.pdf")
-    if tools.PLOTS:
-        plt.show()
+    # if tools.PLOTS:
+    #     plt.show()
 
     # ▒ Plot: Spektrum
     plot_energyspectrum(

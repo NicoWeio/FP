@@ -1,8 +1,8 @@
 import generate_table
 import matplotlib.pyplot as plt
 import numpy as np
-from common import (calc_ε, fit_peak, load_spe, peak_fits_to_arrays,
-                    plot_energyspectrum, ureg)
+from common import (calc_ε, fit_peak, fit_peak_linregress, load_spe,
+                    peak_fits_to_arrays, plot_energyspectrum, ureg)
 from scipy.signal import find_peaks
 
 import tools
@@ -75,59 +75,44 @@ def main(channel_to_E):
     E_fwhm_fit = channel_to_E(photopeak_fit['fwhm'])
     E_fwtm_fit = channel_to_E(photopeak_fit['fwtm'])
 
-    print(f"Photopeak → FWHM: {E_fwhm_fit:.2f}")
-    print(f"Photopeak → FWTM: {E_fwtm_fit:.2f}")
-    print(f"Photopeak → FWHM/FWTM: {(E_fwhm_fit/E_fwtm_fit):.2f}")
+    # NOTE: Nicht verwirren lassen. Das sind die aus dem Gauß-Fit berechneten Werte.
+    # print(f"Photopeak → FWHM: {E_fwhm_fit:.2f}")
+    # print(f"Photopeak → FWTM: {E_fwtm_fit:.2f}")
+    # print(f"Photopeak → FWHM/FWTM: {(E_fwhm_fit/E_fwtm_fit):.2f}")
 
-    # FWHM und FWTM des Photopeaks (via Fits)
+    # █ FWHM und FWTM des Photopeaks (via Fits)
     fwhm_height = tools.nominal_value((photopeak_fit['a'] / 2 + photopeak_fit['N_0']) * ureg.dimensionless)
-    peak_pos = int(photopeak_fit['true_peak'])
-
-    # fit a line to the left and right side of the peak (using linregress)
-    # - find the x ranges for the left and right side
-    fit_radius = ureg('2 keV')
-    plot_radius = ureg('5 keV')
-
+    fwtm_height = tools.nominal_value((photopeak_fit['a'] / 10 + photopeak_fit['N_0']) * ureg.dimensionless)
+    # peak_pos = int(photopeak_fit['true_peak'])
     fit_center = channel_to_E(photopeak_fit['true_peak'])
-    mask_l = (E <= fit_center) & (E > (fit_center - fit_radius))
-    mask_r = (E >= fit_center) & (E < (fit_center + fit_radius))
-    mask_lr = mask_l | mask_r
-    mask_plot = (E <= (fit_center + plot_radius)) & (E >= (fit_center - plot_radius))
 
-    # - fit a line to the left and right side
-    m_l, n_l = tools.linregress(tools.nominal_values(E[mask_l]), N[mask_l])
-    m_r, n_r = tools.linregress(tools.nominal_values(E[mask_r]), N[mask_r])
+    results_fwhm = fit_peak_linregress(
+        E, N,
+        fit_center, fwhm_height,
+        fit_radius=ureg('2 keV'),
+        plot_radius=ureg('5 keV'),
+        plot_path="build/plt/photopeak_fwhm.pdf",
+    )
+    print("fwhm:", results_fwhm)
 
-    # - find the x values where the line crosses the fwhm height
-    E_left_fwhm = (fwhm_height - n_l) / m_l
-    E_right_fwhm = (fwhm_height - n_r) / m_r
+    results_fwtm = fit_peak_linregress(
+        E, N,
+        fit_center, fwtm_height,
+        fit_radius=ureg('2.5 keV'),
+        plot_radius=ureg('5 keV'),
+        plot_path="build/plt/photopeak_fwtm.pdf",
+    )
+    print("fwtm:", results_fwtm)
 
-    # - calculate the fwhm
-    fwhm = E_right_fwhm - E_left_fwhm
+    fwtm_div_fwhm = results_fwtm['fwhm'] / results_fwhm['fwhm']
+    fwtm_div_fwhm_optimal = 1.823  # TODO: Quelle!
 
-    print(f"Photopeak → FWHM (via Fits): {fwhm:.2f}")
+    print(f"Photopeak → FWHM (via linregress): {results_fwhm['fwhm']:.2f}")
+    # COULDDO: abuse of notation: fwhm is not a good name for the key…
+    print(f"Photopeak → FWTM (via linregress): {results_fwtm['fwhm']:.2f}")
+    print(f"Photopeak → FWTM/FWHM (via linregress): {fwtm_div_fwhm:.2f}")
 
-    # Plot: FWHM
-    plt.figure()
-    with tools.plot_context(plt, 'keV', 'dimensionless', r"E", r"N") as plt2:
-        mask_plotonly = mask_plot & ~mask_lr
-        plt2.plot(E[mask_plotonly], N[mask_plotonly], 'x', show_xerr=False, label="Messwerte (nicht berücksichtigt)")
-        plt2.plot(E[mask_l], N[mask_l], 'x', show_xerr=False, label="Messwerte links") # color='C0',
-        plt2.plot(E[mask_r], N[mask_r], 'x', show_xerr=False, label="Messwerte rechts") # color='C1',
-
-        plt2.plot(E[mask_l], m_l*E[mask_l] + n_l, show_xerr=False, show_yerr=False, label="Fit links") # color='C0',
-        plt2.plot(E[mask_r], m_r*E[mask_r] + n_r, show_xerr=False, show_yerr=False, label="Fit rechts") # color='C1',
-
-        # plot the fwhm line
-        plt2.plot(
-            tools.pintify([E_left_fwhm, E_right_fwhm]),
-            tools.pintify([fwhm_height, fwhm_height]),
-            show_xerr=False, label="FWHM",
-        )
-    plt.legend()
-    plt.show()
-
-    # raise NotImplementedError()
+    print(tools.fmt_compare_to_ref(fwtm_div_fwhm, fwtm_div_fwhm_optimal, name="Photopeak: FWTM/FWHM: gemessen vs. optimal gaußförmig"))
 
     # Plot: N(E) – Spektrum von 137Cs
     plot_energyspectrum(
@@ -191,7 +176,7 @@ def main(channel_to_E):
         plt.axvline(E_compton_lit.to('keV').m, color='C3', label="Compton-Kante (Literatur)")
     plt.ylim(top=max(N[mask_lr]))
     plt.yscale('linear')
-    plt.legend(loc='lower left')  # TODO
+    plt.legend(loc='lower left')
     plt.tight_layout()
     if tools.BUILD:
         plt.savefig("build/plt/compton-kante.pdf")
