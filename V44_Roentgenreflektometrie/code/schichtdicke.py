@@ -19,16 +19,16 @@ def α_to_q(α, λ):
 
 def calc_G(α, D, d_Strahl, α_g):
     """
-    Berechnet den Geometriefaktor G.
+    Berechnet den Geometriefaktor G ≤ 1.
     Dieser wird relevant, wenn die Probe nicht die gesamte Strahlbreite ausfüllt (für α < α_g).
 
     d_Strahl: Strahlbreite
     α_g: Geometriewinkel
     """
-    # α_g = ureg('0.28 mm')
-    α_g_alt = np.arcsin(d_Strahl / D)
+    # Quelle: Versuchsanleitung
     G = D * np.sin(α) / d_Strahl
     G[α > α_g] = 1
+    assert all(G <= 1)
     return G
 
 
@@ -80,7 +80,7 @@ def main(name, mess_refl, mess_diff, ureg, d_Strahl, α_g, litdata):
     d_Strahl: Strahlbreite (siehe Z-Scan)
     α_g: Geometriewinkel (siehe Rockingscan)
     """
-    assert np.all(mess_refl[0] == mess_diff[0]), "x-Werte stimmen nicht überein"
+    assert np.all(mess_refl[0] == mess_diff[0]), "α-Werte stimmen nicht überein"
     α, I_refl = mess_refl
     α, I_diff = mess_diff
 
@@ -114,7 +114,7 @@ def main(name, mess_refl, mess_diff, ureg, d_Strahl, α_g, litdata):
     print(f"Δα_mean = {Δα_mean}")
     print(f"Δq_mean = {Δq_mean}")
     # print(f"d_estim_a = {d_estim_a.to('m')}")
-    print(f"d_estim_b = {d_estim_b.to('nm')}")
+    print(f"d_estim_b = {d_estim_b.to('nm'):.2f} = {d_estim_b.to('Å'):.1f}")
 
     # berechenbar aus δ !? (@Mampfzwerg)
     # α_c_PS = ureg('0.068 °')
@@ -151,7 +151,7 @@ def main(name, mess_refl, mess_diff, ureg, d_Strahl, α_g, litdata):
 
     print(tools.fmt_compare_to_ref(parrat_params['δ1'], litdata['PS']['δ'], "δ1"))
     print(tools.fmt_compare_to_ref(parrat_params['δ2'], litdata['Si']['δ'], "δ2"))
-    print(tools.fmt_compare_to_ref(parrat_params['z'], d_estim_b, "Schichtdicke (Fit vs. Peak-Dist.)", unit='nm'))
+    print(tools.fmt_compare_to_ref(parrat_params['z'], d_estim_b, "Schichtdicke (Fit vs. Peak-Dist.)", unit='Å'))
 
     par, r13 = calc_parratt(
         α.to('rad').m,
