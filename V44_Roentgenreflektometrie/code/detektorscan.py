@@ -63,3 +63,5 @@ def main(name, α, I, ureg):
         if tools.BUILD:
             plt.savefig(f"build/plt/{name}.pdf")
         plt.show()
+
+    return I_max

@@ -1,3 +1,4 @@
+# %%
 # import generate_table
 import code.detektorscan as detektorscan
 import code.rockingscan as rockingscan
@@ -84,7 +85,7 @@ def load_scan(name, x_units):
 
 scan_name = '1_detektor'
 print(f"█ {scan_name}")
-detektorscan.main(scan_name, *load_scan(scan_name, **SCANS[scan_name]), ureg=ureg)
+I_max = detektorscan.main(scan_name, *load_scan(scan_name, **SCANS[scan_name]), ureg=ureg)
 
 scan_name = '2_z1'
 print(f"█ {scan_name}")
@@ -111,6 +112,25 @@ LITDATA = {
     },
 }
 
+# %%
+PARRATT_PARAMS = {
+    # █ Brechungsindizes:
+    # ▒ Korrekturterm
+    # 'δ1': LITDATA['PS']['δ'],
+    # 'δ2': LITDATA['Si']['δ'],
+    'δ1': 0.9e-6,  # Polysterol → untere Einhüllende / Amplitude vergrößert + negativer Offset
+    'δ2': 6.8e-6,  # Silizium → Amplitude verkleinert + positiver Offset
+    # ▒ Absorption
+    'β1': 0E-6,  # Polysterol → Amplitude vergrößert
+    'β2': 0E-6,  # Silizium → Amplitude verkleinert + positiver Offset
+    #
+    # █ Rauigkeit
+    'σ1': 20e-10 * ureg.m,  # Polysterol → Amplitude verkleinert bei größeren α
+    'σ2': 7.3e-10 * ureg.m,  # Silizium → Senkung des Kurvenendes und Amplitudenverkleinerung der Oszillationen
+    #
+    # █ Schichtdicke
+    'z': ureg('867 Å'),  # Schichtdicke → verkleinert Oszillationswellenlänge
+}
 
 print(f"█ Schichtdicke")
 schichtdicke.main(
@@ -120,5 +140,12 @@ schichtdicke.main(
     ureg=ureg,
     d_Strahl=d_Strahl,
     α_g=α_g,
+    I_max=I_max,
     litdata=LITDATA,
+    parratt_params=PARRATT_PARAMS,
+    # ---
+    cut_plot="little",
+    # cut_plot="lot",
 )
+
+# %%

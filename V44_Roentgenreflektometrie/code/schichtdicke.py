@@ -35,26 +35,29 @@ def calc_G(α, D, d_Strahl, α_g):
 def calc_parratt(
     α,
     z,
-    k, α_c_Si,
+    k,
     δ1, δ2,
+    β1, β2,
     σ1, σ2,
     ureg,
     rauigkeit=False,
 ):
     """
-    δ_i: Brechungsindex-Korrektur (n = 1 - δ_i)
+    δ_i: Brechungsindex-Korrektur (n = 1 - δ_i + i·β_i)
+    β_i: Brechungsindex-Korrektur (n = 1 - δ_i + i·β_i)
     σ_i: Rauigkeit der Grenzfläche
     """
 
+    # https://de.wikipedia.org/wiki/Brechungsindex#Komplexer_Brechungsindex
     n1 = 1  # Luft
-    n2 = 1 - δ1  # Polysterol
-    n3 = 1 - δ2  # Silizium
+    n2 = 1 - δ1 + β1  # Polysterol
+    n3 = 1 - δ2 + β2  # Silizium
 
     # ----------------------------
 
-    kz1 = k * np.sqrt(n1**2 - np.cos(α)**2) # removed abs(…)
-    kz2 = k * np.sqrt(n2**2 - np.cos(α)**2) # removed abs(…)
-    kz3 = k * np.sqrt(n3**2 - np.cos(α)**2) # removed abs(…)
+    kz1 = k * np.sqrt(n1**2 - np.cos(α)**2)  # removed abs(…)
+    kz2 = k * np.sqrt(n2**2 - np.cos(α)**2)  # removed abs(…)
+    kz3 = k * np.sqrt(n3**2 - np.cos(α)**2)  # removed abs(…)
     #
     r12 = (kz1 - kz2) / (kz1 + kz2)
     r23 = (kz2 - kz3) / (kz2 + kz3)
@@ -69,16 +72,27 @@ def calc_parratt(
     x1 = (r12 + x2) / (1 + r12 * x2)
     par = np.abs(x1)**2
 
-    # Strecke vor Beginn der Oszillationen auf 1 setzen
-    # par[α < α_c_Si] = 1
-    # r13[α < α_c_Si] = 1
+    # assert par.check('dimensionless') # does not work for whatever reason
+    assert str(par.units) == 'dimensionless'
     return par, r13
 
 
-def main(name, mess_refl, mess_diff, ureg, d_Strahl, α_g, litdata):
+def main(
+    name,
+    mess_refl,
+    mess_diff,
+    ureg,
+    d_Strahl,
+    α_g,
+    I_max,
+    litdata,
+    parratt_params,
+    cut_plot=None,
+):
     """
     d_Strahl: Strahlbreite (siehe Z-Scan)
     α_g: Geometriewinkel (siehe Rockingscan)
+    I_max: Maximale Intensität aus dem Detektorscan
     """
     assert np.all(mess_refl[0] == mess_diff[0]), "α-Werte stimmen nicht überein"
     α, I_refl = mess_refl
@@ -92,6 +106,9 @@ def main(name, mess_refl, mess_diff, ureg, d_Strahl, α_g, litdata):
     I_corr_G = I_refl / G
     # Korrektur um beides
     I_corr = I_corr_diff / G
+
+    R_corr_diff = I_corr_diff / I_max
+    R_corr = I_corr / I_max
 
     λ = ureg('1.54 Å')  # ? (@Mampfzwerg)
     k = 2*np.pi / λ  # Wellenvektor
@@ -126,62 +143,58 @@ def main(name, mess_refl, mess_diff, ureg, d_Strahl, α_g, litdata):
     α_c_Si = λ * np.sqrt(litdata['Si']['r_e·ρ'] / 2)
     # print(f"α_c_PS = {α_c_PS.to('°'):.2f}")
     # print(f"α_c_Si = {α_c_Si.to('°'):.2f}")
-    print(tools.fmt_compare_to_ref(α_c_PS, litdata['PS']['α_c'], 'α_c_PS'))
-    print(tools.fmt_compare_to_ref(α_c_Si, litdata['Si']['α_c'], 'α_c_Si'))
+    print(tools.fmt_compare_to_ref(α_c_PS, litdata['PS']['α_c'], 'α_c_PS', unit='°'))
+    print(tools.fmt_compare_to_ref(α_c_Si, litdata['Si']['α_c'], 'α_c_Si', unit='°'))
 
     # █ Parameter
-    parrat_params = {
-        'α_c_Si': α_c_Si,
-        # Brechungsindizes
-        # δ1 = litdata['PS']['δ']  # Polysterol → Amplitude vergrößert + negativer Offset
-        # δ2 = litdata['Si']['δ']  # Silizium → Amplitude verkleinert + positiver Offset
-        'δ1': 0.7e-6,  # Polysterol → Amplitude vergrößert + negativer Offset
-        'δ2': 6.8e-6,  # Silizium → Amplitude verkleinert + positiver Offset
-        #
-        # Rauigkeit
-        'σ1': 10e-10 * ureg.m,  # Polysterol → Amplitude verkleinert bei hinteren Oszillationen
-        'σ2': 7e-10 * ureg.m,  # Silizium → Senkung des Kurvenendes und Amplitudenverkleinerung der Oszillationen
-        #
-        # Schichtdicke
-        'z': ureg('860 Å'),  # Schichtdicke | verkleinert Oszillationswellenlänge
-    }
+    # TODO: Move back here
 
-    print(tools.fmt_compare_to_ref(parrat_params['δ1'], litdata['PS']['δ'], "δ1"))
-    print(tools.fmt_compare_to_ref(parrat_params['δ2'], litdata['Si']['δ'], "δ2"))
-    print(tools.fmt_compare_to_ref(parrat_params['z'], d_estim_b, "Schichtdicke (Fit vs. Peak-Dist.)", unit='Å'))
+    print(tools.fmt_compare_to_ref(parratt_params['δ1'], litdata['PS']['δ'], "δ1"))
+    print(tools.fmt_compare_to_ref(parratt_params['δ2'], litdata['Si']['δ'], "δ2"))
+    print(tools.fmt_compare_to_ref(parratt_params['z'], d_estim_b, "Schichtdicke (Fit vs. Peak-Dist.)", unit='Å'))
 
     par, r13 = calc_parratt(
         α.to('rad').m,
         k=k,
-        **parrat_params,
+        **parratt_params,
         ureg=ureg,
         rauigkeit=True,
     )
 
+    # --- TEST (WIP): Fit ---
+    # @ureg.wraps(ureg.dimensionless, (ureg.rad, ureg.dimensionless))
+    # def parrat_fitfn(α, δ1):
+    #     return calc_parratt(
+    #         α.to('rad').m,
+    #         # ↓ pass these first, so they can be overwritten
+    #         **parratt_params,
+    #         # ↓ overrides
+    #         δ1=δ1,
+    #         # ↓ the rest
+    #         k=k,
+    #         ureg=ureg,
+    #         rauigkeit=True,
+    #     )[0]
+
+    # δ1_fit = tools.curve_fit(
+    #     parrat_fitfn,
+    #     α.to('rad').m,
+    #     tools.nominal_values(R_corr),
+    #     p0=litdata['PS']['δ'].m,
+    # )
+    # print(tools.fmt_compare_to_ref(δ1_fit, litdata['PS']['δ'], "δ1 (Fit)"))
+    # --- TEST (WIP): Fit ---
+
     par_glatt, r13_glatt = calc_parratt(
         α.to('rad').m,
         k=k,
-        **parrat_params,
+        **parratt_params,
         ureg=ureg,
         rauigkeit=False,
     )
 
-    # passe Höhe der Theoriekurve an Messwerte an
-    # TODO: poor man's fit
-    # theory_correction_factor = np.mean(I / par)
-    theory_correction_factor = I_corr[peaks[0]] / par[peaks[0]]
-    # theory_correction_factor = I_corr[peaks[-3]] / par[peaks[-3]]
-    # theory_correction_factor = np.mean(I_corr[peaks[-3:]] / par[peaks[-3:]])
-    # print(f"theory_correction_factor = {theory_correction_factor}")
-    # NOTE: Bewusst nicht *=, um …?
-    par = par * theory_correction_factor
-    par_glatt = par_glatt * theory_correction_factor
-    r13 = r13 * theory_correction_factor
-    r13_glatt = r13_glatt * theory_correction_factor
-    assert par.check('1/s'), "par hat falsche Dimension"
-
-    # if tools.PLOTS:
-    if True:
+    if tools.PLOTS:
+        # if True:
         # █ Plot 1: Messwerte und Korrekturen
         # α_linspace = tools.linspace(*tools.bounds(α), 1000)
 
@@ -216,20 +229,29 @@ def main(name, mess_refl, mess_diff, ureg, d_Strahl, α_g, litdata):
         # █ Plot 2: Fit
         # COULDDO: Doppelachse mit Intensität und Reflektivität?
         plt.clf()
-        with tools.plot_context(plt, '°', '1/s', "α", "I") as plt2:
-            plt2.plot(α, I_corr, fmt='-', zorder=5, label="Messwerte (korrigiert)")
-            plt2.plot(α[peaks], I_corr[peaks], fmt='x', zorder=5, label="Peaks")
+        with tools.plot_context(plt, '°', 'dimensionless', "α", "R") as plt2:
+            # TODO: R_corr_diff passt irgendwie viel besser als R_corr. Eigentlich sollte letzteres benuzt werden…
+            plt2.plot(α, R_corr, fmt='-', zorder=5, label="Messwerte (korrigiert)")
+            plt2.plot(α, R_corr_diff, fmt='-', zorder=5, label="Messwerte (um diffuse korrigiert)")
+            plt2.plot(α[peaks], R_corr_diff[peaks], fmt='xk', zorder=5, label="Peaks")
 
-            plt2.plot(α, par, fmt='-', zorder=5, label="Theoriekurve (rau)")
-            # plt2.plot(α, r13, fmt='--', label="Theoriekurve (Fresnel)")
-            plt2.plot(α, r13_glatt, fmt='--', label="Fresnelreflektivität")
-            plt2.plot(α, par_glatt, fmt='-', label="Theoriekurve (glatt)")
+            plt2.plot(α, par, '-', zorder=5, label="Theoriekurve (rau)")
+            # plt2.plot(α, r13, '--', label="Theoriekurve (Fresnel)")
+            # TODO plt2.plot(α, r13_glatt, '--', label="Fresnelreflektivität")
+            # TODO plt2.plot(α, par_glatt, '-', label="Theoriekurve (glatt)")
 
             plt.axvline(α_g, color='C0', linestyle='--', label="$α_g$")
-            plt.axvline(α_c_PS, color='C1', linestyle='--', label="α_c,PS") # TODO label=r"$α_\text{c, PS}$")
-            plt.axvline(α_c_Si, color='C2', linestyle='--', label="α_c,Si") # TODO label=r"$α_\text{c, Si}$")
+            plt.axvline(α_c_PS, color='C1', linestyle='--', label="α_c,PS")  # TODO label=r"$α_\text{c, PS}$")
+            plt.axvline(α_c_Si, color='C2', linestyle='--', label="α_c,Si")  # TODO label=r"$α_\text{c, Si}$")
 
-        plt.xlim(right=1.5)
+        if cut_plot == "little":
+            # cut a little
+            plt.xlim(right=1.5)
+            plt.ylim(bottom=1E-6)  # COULDDO: No idea why this is necessary
+        elif cut_plot == "lot":
+            # cut a lot
+            plt.xlim(0.2, 1.0)
+            plt.ylim(1E-5, 1E0)
 
         plt.yscale('log')
         plt.grid()
