@@ -4,7 +4,7 @@ import numpy as np
 import tools
 
 
-def main(name, α, I, ureg):
+def main(name, α, I, ureg, d_Strahl):
     # I_thresh = tools.nominal_value(np.percentile(I, 30))  # NOTE: Nicht gerade robust
     I_thresh = tools.nominal_value(np.percentile(I, 50))  # TODO: Das 30-Perzentil liefert eine kleinere Abweichung von α_g_alt…
     # find the first index where I > I_thresh and the last index where I > I_thresh
@@ -19,9 +19,8 @@ def main(name, α, I, ureg):
     print(f"α_g_mean = {α_g_mean:.2f}")
 
     # █ alternative Berechnung
-    d_0 = ureg('0.28 mm')  # Strahlbreite (@Mampfzwerg)
     D = ureg('20 mm')  # Probendicke (@Mampfzwerg)
-    α_g_alt = np.arcsin(d_0 / D)
+    α_g_alt = np.arcsin(d_Strahl / D)
     print(f"α_g_alt = {α_g_alt.to('°'):.2f}")
 
     print(tools.fmt_compare_to_ref(α_g_mean, α_g_alt, unit='°'))

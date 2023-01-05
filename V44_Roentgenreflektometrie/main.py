@@ -92,7 +92,7 @@ d_Strahl = zscan.main(scan_name, *load_scan(scan_name, **SCANS[scan_name]), ureg
 
 scan_name = '4_rocking1'
 print(f"█ {scan_name}")
-α_g = rockingscan.main(scan_name, *load_scan(scan_name, **SCANS[scan_name]), ureg=ureg)
+α_g = rockingscan.main(scan_name, *load_scan(scan_name, **SCANS[scan_name]), ureg=ureg, d_Strahl=d_Strahl)
 
 LITDATA = {
     # Polysterol:
