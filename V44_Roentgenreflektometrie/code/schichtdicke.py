@@ -52,9 +52,9 @@ def calc_parratt(
 
     # ----------------------------
 
-    kz1 = k * np.sqrt(np.abs(n1**2 - np.cos(α)**2))
-    kz2 = k * np.sqrt(np.abs(n2**2 - np.cos(α)**2))
-    kz3 = k * np.sqrt(np.abs(n3**2 - np.cos(α)**2))
+    kz1 = k * np.sqrt(n1**2 - np.cos(α)**2) # removed abs(…)
+    kz2 = k * np.sqrt(n2**2 - np.cos(α)**2) # removed abs(…)
+    kz3 = k * np.sqrt(n3**2 - np.cos(α)**2) # removed abs(…)
     #
     r12 = (kz1 - kz2) / (kz1 + kz2)
     r23 = (kz2 - kz3) / (kz2 + kz3)
@@ -70,8 +70,8 @@ def calc_parratt(
     par = np.abs(x1)**2
 
     # Strecke vor Beginn der Oszillationen auf 1 setzen
-    par[α < α_c_Si] = 1
-    r13[α < α_c_Si] = 1
+    # par[α < α_c_Si] = 1
+    # r13[α < α_c_Si] = 1
     return par, r13
 
 
@@ -84,24 +84,21 @@ def main(name, mess_refl, mess_diff, ureg, d_Strahl, α_g, litdata):
     α, I_refl = mess_refl
     α, I_diff = mess_diff
 
-    # Ausgangswerte
-    I = I_refl.copy()
     # Korrektur um diffusen Anteil
-    I -= I_diff
-    I_corr_diff = I.copy()
+    I_corr_diff = I_refl - I_diff
     # Korrektur um Geometriefaktor
-    G = calc_G(α, D=ureg('20 mm'), d_Strahl=d_Strahl, α_g=α_g)  # TODO: /= oder *=?
+    G = calc_G(α, D=ureg('20 mm'), d_Strahl=d_Strahl, α_g=α_g)
     G[0] = G[1]  # TODO: Workaround for division by zero
-    # print(f"G = {G}")
-    # I /= G # TODO
     I_corr_G = I_refl / G
+    # Korrektur um beides
+    I_corr = I_corr_diff / G
 
     λ = ureg('1.54 Å')  # ? (@Mampfzwerg)
     k = 2*np.pi / λ  # Wellenvektor
     q = α_to_q(α, λ=λ)
 
     # █ Schichtdicke bestimmen (Peaks finden)
-    # peaks, peak_props = sp.signal.find_peaks(tools.nominal_values(I).to('1/s').m, height=(1E2, 1E4), prominence=5, distance=8)
+    # peaks, peak_props = sp.signal.find_peaks(tools.nominal_values(I_corr).to('1/s').m, height=(1E2, 1E4), prominence=5, distance=8)
     # TODO: Fast funktioniert es automatisch. Fast…
     peaks = [70, 81, 91, 100, 111, 119, (131), 144, 155]
     assert len(peaks) > 0, "Keine Peaks gefunden"
@@ -172,9 +169,9 @@ def main(name, mess_refl, mess_diff, ureg, d_Strahl, α_g, litdata):
     # passe Höhe der Theoriekurve an Messwerte an
     # TODO: poor man's fit
     # theory_correction_factor = np.mean(I / par)
-    theory_correction_factor = I[peaks[0]] / par[peaks[0]]
-    # theory_correction_factor = I[peaks[-3]] / par[peaks[-3]]
-    # theory_correction_factor = np.mean(I[peaks[-3:]] / par[peaks[-3:]])
+    theory_correction_factor = I_corr[peaks[0]] / par[peaks[0]]
+    # theory_correction_factor = I_corr[peaks[-3]] / par[peaks[-3]]
+    # theory_correction_factor = np.mean(I_corr[peaks[-3:]] / par[peaks[-3:]])
     # print(f"theory_correction_factor = {theory_correction_factor}")
     # NOTE: Bewusst nicht *=, um …?
     par = par * theory_correction_factor
@@ -183,17 +180,18 @@ def main(name, mess_refl, mess_diff, ureg, d_Strahl, α_g, litdata):
     r13_glatt = r13_glatt * theory_correction_factor
     assert par.check('1/s'), "par hat falsche Dimension"
 
-    if tools.PLOTS:
+    # if tools.PLOTS:
+    if True:
         # █ Plot 1: Messwerte und Korrekturen
         # α_linspace = tools.linspace(*tools.bounds(α), 1000)
 
-        # TODO: Doppelachse mit Intensität und Reflektivität?
-        with tools.plot_context(plt, '1/m', '1/s', "q", "I") as plt2:
-            plt2.plot(q, tools.nominal_values(I_refl), 'x', label="Messwerte (reflektiert)")
-            plt2.plot(q, tools.nominal_values(I_diff), '.', label="Messwerte (diffuse)")
-            # plt2.plot(q, tools.nominal_values(I_corr_diff), '-', zorder=5, label="Messwerte (korrigiert um diffuse)")
-            # plt2.plot(q, tools.nominal_values(I_corr_G), '-', zorder=5, label="Messwerte (korrigiert um Geometriefaktor)")
-            plt2.plot(q, tools.nominal_values(I), '-', zorder=5, label="Messwerte (korrigiert)")
+        # COULDDO: Doppelachse mit Intensität und Reflektivität?
+        with tools.plot_context(plt, '°', '1/s', "α", "I") as plt2:
+            plt2.plot(α, tools.nominal_values(I_refl), '-', label="reflektiert")
+            plt2.plot(α, tools.nominal_values(I_diff), '-', label="diffuse")
+            plt2.plot(α, tools.nominal_values(I_corr_diff), '-', zorder=5, label="korrigiert um diffuse")
+            plt2.plot(α, tools.nominal_values(I_corr_G), '-', zorder=5, label="korrigiert um Geometriefaktor")
+            plt2.plot(α, tools.nominal_values(I_corr), '-', zorder=5, label="korrigiert")
 
         plt.yscale('log')
         plt.grid()
@@ -206,7 +204,7 @@ def main(name, mess_refl, mess_diff, ureg, d_Strahl, α_g, litdata):
     # if True:
     if False:
         plt.plot(α, G, '-', zorder=5, label="G-Faktor")
-        # with tools.plot_context(plt, '1/m', '1/s', "q", "I") as plt2:
+        # with tools.plot_context(plt, '°', '1/s', "α", "I") as plt2:
         #     plt2.plot(q[1:], tools.nominal_values(np.diff(I)), '-', zorder=5, label="Differenzen")
         # plt.yscale('symlog')
         # plt.xlim(right=2E7)
@@ -216,25 +214,22 @@ def main(name, mess_refl, mess_diff, ureg, d_Strahl, α_g, litdata):
     # if tools.PLOTS:
     if True:  # TODO
         # █ Plot 2: Fit
-        # TODO: Doppelachse mit Intensität und Reflektivität?
+        # COULDDO: Doppelachse mit Intensität und Reflektivität?
         plt.clf()
-        with tools.plot_context(plt, '1/m', '1/s', "q", "I") as plt2:
-            plt2.plot(q, I, fmt='.', zorder=5, label="Messwerte (korrigiert)")  # oder 'x--'?
-            plt2.plot(q[peaks], I[peaks], fmt='x', zorder=5, label="Peaks")
+        with tools.plot_context(plt, '°', '1/s', "α", "I") as plt2:
+            plt2.plot(α, I_corr, fmt='-', zorder=5, label="Messwerte (korrigiert)")
+            plt2.plot(α[peaks], I_corr[peaks], fmt='x', zorder=5, label="Peaks")
 
-            plt2.plot(q, par, fmt='-', zorder=5, label="Theoriekurve (rau)")
-            # plt2.plot(q, r13, fmt='--', label="Theoriekurve (Fresnel)")
-            plt2.plot(q, r13_glatt, fmt='--', label="Fresnelreflektivität")
-            plt2.plot(q, par_glatt, fmt='-', label="Theoriekurve (glatt)")
+            plt2.plot(α, par, fmt='-', zorder=5, label="Theoriekurve (rau)")
+            # plt2.plot(α, r13, fmt='--', label="Theoriekurve (Fresnel)")
+            plt2.plot(α, r13_glatt, fmt='--', label="Fresnelreflektivität")
+            plt2.plot(α, par_glatt, fmt='-', label="Theoriekurve (glatt)")
 
-            plt.axvline(α_to_q(α_g, λ).to('1/m'), color='C0', linestyle='--', label="$α_g$")
-            plt.axvline(α_to_q(α_c_PS, λ).to('1/m'), color='C1', linestyle='--', label=r"$α_\text{c, PS}$")
-            plt.axvline(α_to_q(α_c_Si, λ).to('1/m'), color='C2', linestyle='--', label=r"$α_\text{c, Si}$")
+            plt.axvline(α_g, color='C0', linestyle='--', label="$α_g$")
+            plt.axvline(α_c_PS, color='C1', linestyle='--', label="α_c,PS") # TODO label=r"$α_\text{c, PS}$")
+            plt.axvline(α_c_Si, color='C2', linestyle='--', label="α_c,Si") # TODO label=r"$α_\text{c, Si}$")
 
-        # plt.xlim(0, 2E7)
-        # plt.ylim(bottom=1E2)
-        plt.xlim(right=4E7)
-        plt.ylim(bottom=1E0)
+        plt.xlim(right=1.5)
 
         plt.yscale('log')
         plt.grid()
