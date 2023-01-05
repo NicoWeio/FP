@@ -200,8 +200,8 @@ def main(
 
         # COULDDO: Doppelachse mit Intensität und Reflektivität?
         with tools.plot_context(plt, '°', '1/s', "α", "I") as plt2:
-            plt2.plot(α, tools.nominal_values(I_refl), '-', label="reflektiert")
-            plt2.plot(α, tools.nominal_values(I_diff), '-', label="diffuse")
+            plt2.plot(α, tools.nominal_values(I_refl), '-', label="Messwerte")
+            plt2.plot(α, tools.nominal_values(I_diff), '-', label="Messwerte (diffuse)")
             plt2.plot(α, tools.nominal_values(I_corr_diff), '-', zorder=5, label="korrigiert um diffuse")
             plt2.plot(α, tools.nominal_values(I_corr_G), '-', zorder=5, label="korrigiert um Geometriefaktor")
             plt2.plot(α, tools.nominal_values(I_corr), '-', zorder=5, label="korrigiert")
@@ -224,39 +224,43 @@ def main(
         # plt.savefig('foo.pdf')
         plt.show()
 
-    # if tools.PLOTS:
-    if True:  # TODO
-        # █ Plot 2: Fit
-        # COULDDO: Doppelachse mit Intensität und Reflektivität?
-        plt.clf()
-        with tools.plot_context(plt, '°', 'dimensionless', "α", "R") as plt2:
-            # TODO: R_corr_diff passt irgendwie viel besser als R_corr. Eigentlich sollte letzteres benuzt werden…
-            plt2.plot(α, R_corr, fmt='-', zorder=5, label="Messwerte (korrigiert)")
-            plt2.plot(α, R_corr_diff, fmt='-', zorder=5, label="Messwerte (um diffuse korrigiert)")
-            plt2.plot(α[peaks], R_corr_diff[peaks], fmt='xk', zorder=5, label="Peaks")
+    if tools.PLOTS:
+    # if True:  # TODO
+        # █ Plot 2/3: Fit
+        for plot_kind in ["b", "c"]:
+            # COULDDO: Doppelachse mit Intensität und Reflektivität?
+            plt.clf()
+            with tools.plot_context(plt, '°', 'dimensionless', "α", "R") as plt2:
+                # TODO: R_corr_diff passt irgendwie viel besser als R_corr. Eigentlich sollte letzteres benuzt werden…
+                plt2.plot(α, R_corr, fmt='-', zorder=5, label="Messwerte (korrigiert)")
+                plt2.plot(α, R_corr_diff, fmt='-', zorder=5, label="Messwerte (um diffuse korrigiert)")
+                plt2.plot(α[peaks], R_corr_diff[peaks], fmt='xk', zorder=5, label="Peaks")
 
-            plt2.plot(α, par, '-', zorder=5, label="Theoriekurve (rau)")
-            # plt2.plot(α, r13, '--', label="Theoriekurve (Fresnel)")
-            # TODO plt2.plot(α, r13_glatt, '--', label="Fresnelreflektivität")
-            # TODO plt2.plot(α, par_glatt, '-', label="Theoriekurve (glatt)")
+                plt2.plot(α, par, '-', zorder=5, label="Theoriekurve (rau)")
+                if plot_kind == "b":
+                    plt2.plot(α, r13, '--', label="Theoriekurve (Fresnel)")
+                    plt2.plot(α, r13_glatt, '--', label="Fresnelreflektivität")
+                    plt2.plot(α, par_glatt, '-', label="Theoriekurve (glatt)")
 
-            plt.axvline(α_g, color='C0', linestyle='--', label="$α_g$")
-            plt.axvline(α_c_PS, color='C1', linestyle='--', label="α_c,PS")  # TODO label=r"$α_\text{c, PS}$")
-            plt.axvline(α_c_Si, color='C2', linestyle='--', label="α_c,Si")  # TODO label=r"$α_\text{c, Si}$")
+                if plot_kind == "c":
+                    plt.axvline(α_g, color='C0', linestyle='--', label="$α_g$")
+                    plt.axvline(α_c_PS, color='C1', linestyle='--', label=r"$α_\text{c, PS}$")
+                    plt.axvline(α_c_Si, color='C2', linestyle='--', label=r"$α_\text{c, Si}$")
 
-        if cut_plot == "little":
-            # cut a little
-            plt.xlim(right=1.5)
-            plt.ylim(bottom=1E-6)  # COULDDO: No idea why this is necessary
-        elif cut_plot == "lot":
-            # cut a lot
-            plt.xlim(0.2, 1.0)
-            plt.ylim(1E-5, 1E0)
+            # COULDDO: hacky logic
+            if cut_plot == "little" or plot_kind=="b":
+                # cut a little
+                plt.xlim(right=1.5)
+                plt.ylim(bottom=1E-6)  # COULDDO: No idea why this is necessary
+            elif cut_plot == "lot" or plot_kind=="c":
+                # cut a lot
+                plt.xlim(0.1, 1.0)
+                plt.ylim(1E-5, 1E0)
 
-        plt.yscale('log')
-        plt.grid()
-        plt.legend()
-        plt.tight_layout()
-        if tools.BUILD:
-            plt.savefig(f"build/plt/{name}_b.pdf")
-        plt.show()
+            plt.yscale('log')
+            plt.grid()
+            plt.legend()
+            plt.tight_layout()
+            if tools.BUILD:
+                plt.savefig(f"build/plt/{name}_{plot_kind}.pdf")
+            plt.show()

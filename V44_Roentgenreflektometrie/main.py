@@ -144,8 +144,9 @@ schichtdicke.main(
     litdata=LITDATA,
     parratt_params=PARRATT_PARAMS,
     # ---
-    cut_plot="little",
+    # cut_plot="little",
     # cut_plot="lot",
+    cut_plot=None,  # ensures our hacky logic over there works
 )
 
 # %%

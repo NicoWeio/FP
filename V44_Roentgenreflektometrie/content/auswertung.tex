@@ -117,17 +117,17 @@ erlauben den Rückschluss auf die Schichtdicke des Polystyrol gemäß \autoref{e
 \]
 
 Für die theoretische Beschreibung der Kiessig-Oszillationen werden weitere Parameter manuell an die Messwerte angepasst.
-Diese beinhalten Brechungsindizes $n = 1 - \delta$ und Rauigkeiten $\sigma$
+Diese beinhalten Brechungsindizes $n = 1 - \delta + i\beta$ und Rauigkeiten $\sigma$
 für die unterschiedlichen Schichten beziehungsweise Grenzflächen:
 \begin{align*}
     n_\text{Luft} &= 1 \\
-    n_\text{PS} = 1 - \delta &= 1 - \num{0.7e-6} \\
-    n_\text{Si} = 1 - \delta &= 1 - \num{6.8e-6} \\
-    \sigma_\text{Luft – PS} &= \SI{10}{\angstrom} \\
-    \sigma_\text{PS – Si} &= \SI{7}{\angstrom} \\
+    n_\text{PS} = 1 - \delta + i\beta &= 1 - \num{0.9e-6} + 0 \\
+    n_\text{Si} = 1 - \delta + i\beta &= 1 - \num{6.8e-6} + 0 \\
+    \sigma_\text{Luft–PS} &= \SI{20}{\angstrom} \\
+    \sigma_\text{PS–Si} &= \SI{7.3}{\angstrom} \\
 \end{align*}
 Außerdem wird eine (vom aus den Abständen der Maxima berechneten Wert unabhängige) Schichtdicke des Polystyrols von
-$d_\text{PS}' = \SI{860.0}{\angstrom}$ verwendet.
+$d_\text{PS}' = \SI{867.0}{\angstrom}$ verwendet.
 
 Aus den Korrekturen $\delta$ ergeben sich zudem die kritischen Winkel der Totalreflexion:
 \begin{align*}
@@ -138,7 +138,9 @@ Aus den Korrekturen $\delta$ ergeben sich zudem die kritischen Winkel der Totalr
 Die (wie zuvor beschrieben) korrigierten Messwerte,
 die kritischen Winkel
 sowie die Theoriekurven mit und ohne Berücksichtigung der Rauigkeit
-sind in \autoref{fig:plt:schichtdicke_b} dargestellt.
+sind in \autoref{fig:plt:schichtdicke_b}
+    (beziehungsweise \autoref{fig:plt:schichtdicke_c})
+dargestellt.
 
 
 % Plot-Aufteilung:
@@ -166,6 +168,19 @@ sind in \autoref{fig:plt:schichtdicke_b} dargestellt.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{build/plt/schichtdicke_b.pdf}
-    \caption{Korrigierte Messwerte und Theoriekurven zur Reflektivität.}
+    \caption{
+        Korrigierte Messwerte und Theoriekurven zur Reflektivität,
+        zugeschnitten auf die nicht vernachlässigbaren Reflektivitäten.
+    }
     \label{fig:plt:schichtdicke_b}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{build/plt/schichtdicke_c.pdf}
+    \caption{
+        Korrigierte Messwerte und Theoriekurven zur Reflektivität,
+        zugeschnitten auf die Kiessig-Oszillationen.
+    }
+    \label{fig:plt:schichtdicke_c}
 \end{figure}
