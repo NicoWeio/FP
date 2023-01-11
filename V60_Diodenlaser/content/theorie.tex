@@ -19,9 +19,12 @@ as shown in \autoref{fig:aufbau_laser}.
 \begin{figure}
     \centering
     \includegraphics[width=0.7\textwidth]{content/img/p6_Fig2.png}
-    \caption{General structure of a diode laser.
-    An active medium is located between two differently doped semiconductors.
-    If a current is sent through the diode, light is produced by emission \cite{versuchsanleitung}.}
+    \caption{
+        General structure of a diode laser.
+        An active medium is located between two differently doped semiconductors.
+        If a current is sent through the diode, light is produced by emission.
+        \cite{versuchsanleitung}
+    }
     \label{fig:aufbau_laser}
 \end{figure}
 The current creates additional electron-hole pairs in the active medium.
@@ -55,9 +58,11 @@ The addition of an optical grating to the laser diode is shown schematically in 
 \begin{figure}
     \centering
     \includegraphics[width=0.9\textwidth]{content/img/p8_Fig4.png}
-    \caption{Representation of the external cavity of a diode laser with an optical grating.
-    A small part of the light produced in the laser is reflected by the grating, the rest is refracted.
-    Taken from Ref. \cite{versuchsanleitung}.}
+    \caption{
+        Representation of the external cavity of a diode laser with an optical grating.
+        A small part of the light produced in the laser is reflected by the grating, the rest is refracted.
+        \cite{versuchsanleitung}
+    }
     \label{fig:laser_system}
 \end{figure}
 
@@ -66,11 +71,13 @@ This is shown in \autoref{fig:gain_function}.
 \begin{figure}
     \centering
     \includegraphics[width=0.7\textwidth]{content/img/p9_Fig5.png}
-    \caption{Gain function depending on the different cavities of the laser.
-    For the internal and external cavity,
-    a standing wave results in each case,
-    while the medium gain and the grating feedback show a single maximum.
-    Taken from Ref. \cite{versuchsanleitung}.}
+    \caption{
+        Gain function depending on the different cavities of the laser.
+        For the internal and external cavity,
+        a standing wave results in each case,
+        while the medium gain and the grating feedback show a single maximum.
+        \cite{versuchsanleitung}
+    }
     \label{fig:gain_function}
 \end{figure}
 A distinction is made between the gain of the active medium,
@@ -87,7 +94,7 @@ can be determined using the equation $\symup{\Delta}\nu_\text{FSR} = \sfrac{c}{2
 where $L$ is the length of the cavity and $n$ is the refractive index.
 For the grating feedback, there is a single narrow maximum,
 which corresponds to the wavelengths of the light reflected back to the laser.
-All other wavelengths are scattered by the grating without constructive interference. % TODO: right?
+Other wavelengths have their scattering maxima at different angles and do not feed back into the laser.
 For the gain of the external cavity, the same results as for the internal cavity,
 due to the reflection of light between the optical grating and the laser diode.
 In this case the period is described by $\symup{\Delta}\nu_\text{FSR} = \sfrac{c}{2L}$.
@@ -96,17 +103,23 @@ where $d$ is the line number of the grating,
 and $\theta$ is the grating angle.
 The superposition of the gain of the external cavity and the grating feedback is considered.
 
+\phantomsection\label{sec:theorie:modehops}
 The gain of both the medium and the internal cavity depends on the current and thus on the temperature of the diode,
 because the diode heats up more when the current increases.
 In this way, the concentration of the charge carriers in the active medium also changes.
 The wavelength of the resulting radiation increases linearly with the current intensity and the temperature.
-However, the wavelengths of the different components change differently with changes in the current,
-so that so-called mode hops occur,
+However,
+the wavelengths of the different components change differently with changes in the current,
+so that so-called \enquote{mode hops} occur,
 which are exemplified in \autoref{fig:modehops},
 where in this case the grating angle was varied.
 \begin{figure}
     \centering
     \includegraphics[width=0.7\textwidth]{content/img/p13_Fig9.pdf}
-    \caption{Representation of mode hops in the gain of the external cavity and the grating feedback with variation of the grating angle \cite{versuchsanleitung}.}
+    \caption{
+        Representation of mode hops in the gain of the external cavity
+        and the grating feedback with variation of the grating angle
+        \cite{versuchsanleitung}.
+    }
     \label{fig:modehops}
 \end{figure}
