@@ -22,6 +22,7 @@ def calc_G(α, D, d_Strahl, α_g):
     Berechnet den Geometriefaktor G ≤ 1.
     Dieser wird relevant, wenn die Probe nicht die gesamte Strahlbreite ausfüllt (für α < α_g).
 
+    D: Probendurchmesser
     d_Strahl: Strahlbreite
     α_g: Geometriewinkel
     """
@@ -50,8 +51,8 @@ def calc_parratt(
 
     # https://de.wikipedia.org/wiki/Brechungsindex#Komplexer_Brechungsindex
     n1 = 1  # Luft
-    n2 = 1 - δ1 + β1  # Polysterol
-    n3 = 1 - δ2 + β2  # Silizium
+    n2 = 1 - δ1 + 1j*β1  # Polysterol
+    n3 = 1 - δ2 + 1j*β2  # Silizium
 
     # ----------------------------
 
@@ -70,11 +71,11 @@ def calc_parratt(
     #
     x2 = np.exp(0 - (kz2 * z) * 2j) * r23
     x1 = (r12 + x2) / (1 + r12 * x2)
-    par = np.abs(x1)**2
+    R_parratt = np.abs(x1)**2
 
     # assert par.check('dimensionless') # does not work for whatever reason
-    assert str(par.units) == 'dimensionless'
-    return par, r13
+    assert str(R_parratt.units) == 'dimensionless'
+    return R_parratt, np.abs(r13)
 
 
 def main(
@@ -83,6 +84,7 @@ def main(
     mess_diff,
     ureg,
     d_Strahl,
+    D,
     α_g,
     I_max,
     litdata,
@@ -101,7 +103,7 @@ def main(
     # Korrektur um diffusen Anteil
     I_corr_diff = I_refl - I_diff
     # Korrektur um Geometriefaktor
-    G = calc_G(α, D=ureg('20 mm'), d_Strahl=d_Strahl, α_g=α_g)
+    G = calc_G(α, D=D, d_Strahl=d_Strahl, α_g=α_g)
     G[0] = G[1]  # TODO: Workaround for division by zero
     I_corr_G = I_refl / G
     # Korrektur um beides
@@ -139,10 +141,16 @@ def main(
     # z = d_estim_b
 
     # α_c_Si = np.sqrt(2 * δ)
-    α_c_PS = λ * np.sqrt(litdata['PS']['r_e·ρ'] / 2)
-    α_c_Si = λ * np.sqrt(litdata['Si']['r_e·ρ'] / 2)
+
+    # α_c_PS = λ * np.sqrt(litdata['PS']['r_e·ρ'] / np.pi)
+    # α_c_Si = λ * np.sqrt(litdata['Si']['r_e·ρ'] / np.pi)
+    #
+    α_c_PS = np.sqrt(2 * parratt_params['δ1']) * ureg.rad # !?
+    α_c_Si = np.sqrt(2 * parratt_params['δ2']) * ureg.rad # !?
+    #
     # print(f"α_c_PS = {α_c_PS.to('°'):.2f}")
     # print(f"α_c_Si = {α_c_Si.to('°'):.2f}")
+    #
     print(tools.fmt_compare_to_ref(α_c_PS, litdata['PS']['α_c'], 'α_c_PS', unit='°'))
     print(tools.fmt_compare_to_ref(α_c_Si, litdata['Si']['α_c'], 'α_c_Si', unit='°'))
 
@@ -242,25 +250,31 @@ def main(
                     plt2.plot(α, r13_glatt, '--', label="Fresnelreflektivität")
                     plt2.plot(α, par_glatt, '-', label="Theoriekurve (glatt)")
 
-                if plot_kind == "c":
-                    plt.axvline(α_g, color='C0', linestyle='--', label="$α_g$")
-                    plt.axvline(α_c_PS, color='C1', linestyle='--', label=r"$α_\text{c, PS}$")
-                    plt.axvline(α_c_Si, color='C2', linestyle='--', label=r"$α_\text{c, Si}$")
+                # if plot_kind == "c":
+                if True:
+                    plt.axvline(α_g.to('°'), color='C0', linestyle='--', label="$α_g$")
+                    plt.axvline(α_c_PS.to('°'), color='C1', linestyle='--', label=r"$α_\text{c, PS}$")
+                    plt.axvline(α_c_Si.to('°'), color='C2', linestyle='--', label=r"$α_\text{c, Si}$")
 
             # COULDDO: hacky logic
-            if cut_plot == "little" or plot_kind=="b":
+            if tools.BUILD:
+                assert cut_plot is None, "cut_plot ≠ None kills my hacky logic on BUILD"
+            if cut_plot == "little" or plot_kind == "b":
                 # cut a little
                 plt.xlim(right=1.5)
                 plt.ylim(bottom=1E-6)  # COULDDO: No idea why this is necessary
-            elif cut_plot == "lot" or plot_kind=="c":
+            if cut_plot == "lot" or plot_kind == "c":
                 # cut a lot
                 plt.xlim(0.1, 1.0)
                 plt.ylim(1E-5, 1E0)
 
             plt.yscale('log')
             plt.grid()
-            plt.legend()
+            plt.legend(fontsize=8)
             plt.tight_layout()
             if tools.BUILD:
                 plt.savefig(f"build/plt/{name}_{plot_kind}.pdf")
             plt.show()
+
+            if cut_plot:
+                break  # hacky, as I said

@@ -58,27 +58,27 @@ und somit oberhalb des gemessenen sowie gefitteten Maximums des Detektorscans.
 
 
 \FloatBarrier
-\subsection{Rockingscan}
+\subsection{Rockingscan} \label{sec:auswertung:rockingscan}
 Mithilfe des in \autoref{fig:plt:4_rocking1_linear}
 % NOTE: Verzichte auf explizite Nennung von fig:plt:4_rocking1_log zugunsten besserer Seitenumbrüche
     % in \autoref{fig:plt:4_rocking1_linear} linear
     % und in \autoref{fig:plt:4_rocking1_log} logarithmisch
 dargestellten Rockingscans
-können die Geometriewinkel $\alpha_{g, 1}$ und $\alpha_{g, 2}$
+können die Geometriewinkel $\alpha_{\text{g}, 1}$ und $\alpha_{\text{g}, 2}$
 als Übergangspunkte zum Untergrund bestimmt werden.
-Sie und ihr Mittelwert $\alpha_g$ betragen:
+Sie und ihr Mittelwert $\alpha_\text{g}$ betragen:
 \begin{align*}
-    \alpha_{g, 1} &= \SI{-0.48}{\degree} \\
-    \alpha_{g, 2} &= \phantom{-} \SI{0.48}{\degree} \\
-    \alpha_g &= \frac{|\alpha_{g, 1}| + |\alpha_{g, 2}|}{2}
+    \alpha_{\text{g}, 1} &= \SI{-0.48}{\degree} \\
+    \alpha_{\text{g}, 2} &= \phantom{-} \SI{0.48}{\degree} \\
+    \alpha_\text{g} &= \frac{|\alpha_{\text{g}, 1}| + |\alpha_{\text{g}, 2}|}{2}
         = \SI{0.48}{\degree}
 \end{align*}
 
 Eine alternative Abschätzung der Geometriewinkel
-geht aus der in \autoref{sec:auswertung:zscan} bestimmten Strahlbreite $d_0$ und der Probendicke $D = \SI{20}{\milli\meter}$ hervor.
+geht aus der in \autoref{sec:auswertung:zscan} bestimmten Strahlbreite $d_0$ und der Probendurchmesser $D = \SI{20}{\milli\meter}$ hervor.
 Es ergibt sich:
 \[
-    \alpha_g' = \arcsin{\sfrac{d_0}{D}}
+    \alpha_\text{g}' = \arcsin{\frac{d_0}{D}}
     = \SI{0.69}{\degree} \; .
 \]
 
@@ -98,9 +98,9 @@ Es ergibt sich:
 
 
 \FloatBarrier
-\subsection{Reflektivitätsscan}
+\subsection{Reflektivitätsscan} \label{sec:auswertung:schichtdicke}
 Die betrachteten Reflektivitäten setzen sich aus zwei Messungen zusammen:
-Dem Reflektivitätsscan und dem diffusen Scan.
+dem Reflektivitätsscan und dem diffusen Scan.
 Der Reflektivitätsscan wird durch
     Subtraktion des diffusen Scans sowie
     Division durch den Geometriefaktor $G$ (\autoref{eqn:geometriefaktor})
@@ -121,8 +121,8 @@ Diese beinhalten Brechungsindizes $n = 1 - \delta + i\beta$ und Rauigkeiten $\si
 für die unterschiedlichen Schichten beziehungsweise Grenzflächen:
 \begin{align*}
     n_\text{Luft} &= 1 \\
-    n_\text{PS} = 1 - \delta + i\beta &= 1 - \num{0.9e-6} + 0 \\
-    n_\text{Si} = 1 - \delta + i\beta &= 1 - \num{6.8e-6} + 0 \\
+    n_\text{PS} = 1 - \delta_\text{PS} + i \beta_\text{PS} &= 1 - \num{0.9e-6} + i \cdot \num{4.5e-9} \\
+    n_\text{Si} = 1 - \delta_\text{PS} + i \beta_\text{PS} &= 1 - \num{6.8e-6} + i \cdot \num{1.7e-7} \\
     \sigma_\text{Luft–PS} &= \SI{20}{\angstrom} \\
     \sigma_\text{PS–Si} &= \SI{7.3}{\angstrom} \\
 \end{align*}
