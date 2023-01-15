@@ -1,17 +1,34 @@
 \section{Discussion}
 \label{sec:diskussion}
 
-\subsection{Deviations}
+% \subsection{Deviations} % → N/A
+% \subsection{Possible causes for deviations}
 
-…
+Overall,
+the experiment was successful,
+as the laser was sufficiently adjusted to ensure coverage of the demanded spectrum,
+which could then be analyzed and displayed in a way that was comparable to the \hyperref[fig:measurement_lit]{expected results}.
+%
+However,
+certain disturbances were observed,
+which could have been avoided with more careful calibration and preparation.
 
+One source of disturbance was the room light,
+which adds an oscillating signal at a frequency of \SI{50}{\hertz} to the spectrum.
+As such,
+its impact varies with the frequency set at the \component{ramp generator}
+and is hardly noticeable in \autoref{fig:measurement}.
 
-\subsection{Possible causes for deviations}
+Disturbance is also caused by the photodiodes,
+which by mistake were not actively powered during the experiment,
+therefore requiring higher gain
+and ultimately leading to a less precise measurement.
 
-\begin{itemize}
-    \item Photodiodes were not powered on
-    \item More careful calibration
-    \item Ambient light (50Hz)
-    \item …
-\end{itemize}
-…
+Ultimately,
+the manual adjustment of the laser using an Allen wrench was not very precise,
+so that the longitudinal mode could not be found exactly,
+resulting in suboptimal intensity.
+The adjustment of the \componentlabel{SIDE} knob was similarly difficult,
+but could be compensated for by the \component{piezo stack}.
+
+% COULDDO: Remaining mode hops?
