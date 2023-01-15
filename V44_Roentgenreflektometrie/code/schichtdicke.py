@@ -89,7 +89,7 @@ def main(
     I_max,
     litdata,
     parratt_params,
-    cut_plot=None,
+    plot_configs,
 ):
     """
     d_Strahl: Strahlbreite (siehe Z-Scan)
@@ -145,21 +145,21 @@ def main(
     # α_c_PS = λ * np.sqrt(litdata['PS']['r_e·ρ'] / np.pi)
     # α_c_Si = λ * np.sqrt(litdata['Si']['r_e·ρ'] / np.pi)
     #
-    α_c_PS = np.sqrt(2 * parratt_params['δ1']) * ureg.rad # !?
-    α_c_Si = np.sqrt(2 * parratt_params['δ2']) * ureg.rad # !?
+    α_c_PS = np.sqrt(2 * parratt_params['δ1']) * ureg.rad  # !?
+    α_c_Si = np.sqrt(2 * parratt_params['δ2']) * ureg.rad  # !?
     #
     # print(f"α_c_PS = {α_c_PS.to('°'):.2f}")
     # print(f"α_c_Si = {α_c_Si.to('°'):.2f}")
     #
-    print(tools.fmt_compare_to_ref(α_c_PS, litdata['PS']['α_c'], 'α_c_PS', unit='°'))
-    print(tools.fmt_compare_to_ref(α_c_Si, litdata['Si']['α_c'], 'α_c_Si', unit='°'))
+    # print(tools.fmt_compare_to_ref(α_c_PS, litdata['PS']['α_c'], 'α_c_PS', unit='°'))
+    # print(tools.fmt_compare_to_ref(α_c_Si, litdata['Si']['α_c'], 'α_c_Si', unit='°'))
 
     # █ Parameter
     # TODO: Move back here
 
-    print(tools.fmt_compare_to_ref(parratt_params['δ1'], litdata['PS']['δ'], "δ1"))
-    print(tools.fmt_compare_to_ref(parratt_params['δ2'], litdata['Si']['δ'], "δ2"))
-    print(tools.fmt_compare_to_ref(parratt_params['z'], d_estim_b, "Schichtdicke (Fit vs. Peak-Dist.)", unit='Å'))
+    # print(tools.fmt_compare_to_ref(parratt_params['δ1'], litdata['PS']['δ'], "δ1"))
+    # print(tools.fmt_compare_to_ref(parratt_params['δ2'], litdata['Si']['δ'], "δ2"))
+    # print(tools.fmt_compare_to_ref(parratt_params['z'], d_estim_b, "Schichtdicke (Fit vs. Peak-Dist.)", unit='Å'))
 
     par, r13 = calc_parratt(
         α.to('rad').m,
@@ -168,6 +168,13 @@ def main(
         ureg=ureg,
         rauigkeit=True,
     )
+
+    # Scaling of Parratt
+    R_corr_plateau_mean = R_corr[(ureg('0.1°') < α) & (α < ureg('0.2°'))].mean()
+    print(f"R_corr_plateau_mean = {R_corr_plateau_mean:.3f}")
+    # NOTE: par can be assumed to be 1 in this range
+    par_scaled = par * tools.nominal_value(R_corr_plateau_mean / 1)
+
 
     # --- TEST (WIP): Fit ---
     # @ureg.wraps(ureg.dimensionless, (ureg.rad, ureg.dimensionless))
@@ -201,11 +208,8 @@ def main(
         rauigkeit=False,
     )
 
+    # █ Plot 1: Messwerte und Korrekturen
     if tools.PLOTS:
-        # if True:
-        # █ Plot 1: Messwerte und Korrekturen
-        # α_linspace = tools.linspace(*tools.bounds(α), 1000)
-
         # COULDDO: Doppelachse mit Intensität und Reflektivität?
         with tools.plot_context(plt, '°', '1/s', "α", "I") as plt2:
             plt2.plot(α, tools.nominal_values(I_refl), '-', label="Messwerte")
@@ -213,7 +217,6 @@ def main(
             plt2.plot(α, tools.nominal_values(I_corr_diff), '-', zorder=5, label="korrigiert um diffuse")
             plt2.plot(α, tools.nominal_values(I_corr_G), '-', zorder=5, label="korrigiert um Geometriefaktor")
             plt2.plot(α, tools.nominal_values(I_corr), '-', zorder=5, label="korrigiert")
-
         plt.yscale('log')
         plt.grid()
         plt.legend()
@@ -222,59 +225,59 @@ def main(
             plt.savefig(f"build/plt/{name}_a.pdf")
         plt.show()
 
-    # if True:
-    if False:
-        plt.plot(α, G, '-', zorder=5, label="G-Faktor")
-        # with tools.plot_context(plt, '°', '1/s', "α", "I") as plt2:
-        #     plt2.plot(q[1:], tools.nominal_values(np.diff(I)), '-', zorder=5, label="Differenzen")
-        # plt.yscale('symlog')
-        # plt.xlim(right=2E7)
-        # plt.savefig('foo.pdf')
-        plt.show()
 
-    if tools.PLOTS:
-    # if True:  # TODO
-        # █ Plot 2/3: Fit
-        for plot_kind in ["b", "c"]:
-            # COULDDO: Doppelachse mit Intensität und Reflektivität?
-            plt.clf()
-            with tools.plot_context(plt, '°', 'dimensionless', "α", "R") as plt2:
-                # TODO: R_corr_diff passt irgendwie viel besser als R_corr. Eigentlich sollte letzteres benuzt werden…
+    def plot_schichtdicke(config):
+        # α_linspace = tools.linspace(*tools.bounds(α), 1000)
+
+        # COULDDO: Doppelachse mit Intensität und Reflektivität?
+        plt.clf()
+        with tools.plot_context(plt, '°', 'dimensionless', "α", "R") as plt2:
+            # TODO: R_corr_diff passt irgendwie viel besser als R_corr. Eigentlich sollte letzteres benuzt werden…
+            if 'R_corr' in config['show']:
                 plt2.plot(α, R_corr, fmt='-', zorder=5, label="Messwerte (korrigiert)")
+            if 'R_corr_diff' in config['show']:
                 plt2.plot(α, R_corr_diff, fmt='-', zorder=5, label="Messwerte (um diffuse korrigiert)")
+            if 'R_corr[peaks]' in config['show']:
+                plt2.plot(α[peaks], R_corr[peaks], fmt='xk', zorder=5, label="Peaks")
+            if 'R_corr_diff[peaks]' in config['show']:
                 plt2.plot(α[peaks], R_corr_diff[peaks], fmt='xk', zorder=5, label="Peaks")
 
+            if 'par' in config['show']:
                 plt2.plot(α, par, '-', zorder=5, label="Theoriekurve (rau)")
-                if plot_kind == "b":
-                    plt2.plot(α, r13, '--', label="Theoriekurve (Fresnel)")
-                    plt2.plot(α, r13_glatt, '--', label="Fresnelreflektivität")
-                    plt2.plot(α, par_glatt, '-', label="Theoriekurve (glatt)")
+            if 'par_scaled' in config['show']:
+                plt2.plot(α, par_scaled, '-', zorder=5, label="Theoriekurve (rau)")
+            if 'r13' in config['show']:
+                plt2.plot(α, r13, '--', label="Theoriekurve (Fresnel)")
+            if 'r13_glatt' in config['show']:
+                plt2.plot(α, r13_glatt, '--', label="Fresnelreflektivität")
+            if 'par_glatt' in config['show']:
+                plt2.plot(α, par_glatt, '-', label="Theoriekurve (glatt)")
 
-                # if plot_kind == "c":
-                if True:
-                    plt.axvline(α_g.to('°'), color='C0', linestyle='--', label="$α_g$")
-                    plt.axvline(α_c_PS.to('°'), color='C1', linestyle='--', label=r"$α_\text{c, PS}$")
-                    plt.axvline(α_c_Si.to('°'), color='C2', linestyle='--', label=r"$α_\text{c, Si}$")
+            if 'α_g' in config['show']:
+                plt.axvline(α_g.to('°'), color='C0', linestyle='--', label="$α_g$")
+            if 'α_c_PS' in config['show']:
+                plt.axvline(α_c_PS.to('°'), color='C1', linestyle='--', label=r"$α_\text{c, PS}$")
+            if 'α_c_Si' in config['show']:
+                plt.axvline(α_c_Si.to('°'), color='C2', linestyle='--', label=r"$α_\text{c, Si}$")
 
-            # COULDDO: hacky logic
-            if tools.BUILD:
-                assert cut_plot is None, "cut_plot ≠ None kills my hacky logic on BUILD"
-            if cut_plot == "little" or plot_kind == "b":
-                # cut a little
-                plt.xlim(right=1.5)
-                plt.ylim(bottom=1E-6)  # COULDDO: No idea why this is necessary
-            if cut_plot == "lot" or plot_kind == "c":
-                # cut a lot
-                plt.xlim(0.1, 1.0)
-                plt.ylim(1E-5, 1E0)
+        if config.get('cut_plot') == "little":
+            # cut a little
+            plt.xlim(right=1.5)
+            plt.ylim(bottom=1E-6)  # COULDDO: No idea why this is necessary
+        if config.get('cut_plot') == "lot":
+            # cut a lot
+            plt.xlim(0.1, 1.0)
+            plt.ylim(1E-5, 1E0)
 
-            plt.yscale('log')
-            plt.grid()
-            plt.legend(fontsize=8)
-            plt.tight_layout()
-            if tools.BUILD:
-                plt.savefig(f"build/plt/{name}_{plot_kind}.pdf")
-            plt.show()
+        plt.yscale('log')
+        plt.grid()
+        # plt.legend(fontsize=8)
+        plt.legend()
+        plt.tight_layout()
+        if tools.BUILD:
+            plt.savefig(f"build/plt/{config['name']}.pdf")
+        plt.show()
 
-            if cut_plot:
-                break  # hacky, as I said
+    if tools.PLOTS or True: # TODO
+        for plot_config in plot_configs:
+            plot_schichtdicke(plot_config)

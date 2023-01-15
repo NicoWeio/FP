@@ -118,14 +118,14 @@ LITDATA = {
 }
 
 # %%
-δ1 = 0.9e-6
-δ2 = 6.8e-6
+δ1 = 0.9e-6 + 0.0e-6
+δ2 = 6.8e-6 - 1.5e-6
+# δ1 = LITDATA['PS']['δ']
+# δ2 = LITDATA['Si']['δ']
 
 PARRATT_PARAMS = {
     # █ Brechungsindizes:
     # ▒ Korrekturterm
-    # 'δ1': LITDATA['PS']['δ'],
-    # 'δ2': LITDATA['Si']['δ'],
     'δ1': δ1,  # Polysterol → untere Einhüllende / Amplitude vergrößert + negativer Offset
     'δ2': δ2,  # Silizium → Amplitude verkleinert + positiver Offset
     # ▒ Absorption
@@ -136,12 +136,37 @@ PARRATT_PARAMS = {
     'β2': δ2 / 40,
     #
     # █ Rauigkeit
-    'σ1': 20e-10 * ureg.m,  # Polysterol → Amplitude verkleinert bei größeren α
-    'σ2': 7.3e-10 * ureg.m,  # Silizium → Senkung des Kurvenendes und Amplitudenverkleinerung der Oszillationen
+    'σ1': (20.0e-10 + 0.0e-10) * ureg.m,  # Polysterol → Amplitude verkleinert bei größeren α
+    'σ2': (7.3e-10 + 0.5e-10) * ureg.m,  # Silizium → Senkung des Kurvenendes und Amplitudenverkleinerung der Oszillationen
     #
     # █ Schichtdicke
-    'z': ureg('867 Å'),  # Schichtdicke → verkleinert Oszillationswellenlänge
+    'z': ureg('860 Å'),  # Schichtdicke → verkleinert Oszillationswellenlänge
 }
+
+PLOT_CONFIGS = [
+    # {
+    #     # █ Plot 2: Theoriekurven
+    #     'name': 'b',
+    #     'show': {
+    #         'par',
+    #             'r13',
+    #             'r13_glatt',
+    #             'par_glatt',
+    #     },
+    #     'cut_plot': 'little',
+    # },
+    {
+        # █ Plot 3: Fit
+        'name': 'c',
+        'show': {
+            'R_corr',
+            'R_corr[peaks]',
+            'par_scaled',
+        },
+        # 'cut_plot': 'little',
+        'cut_plot': 'lot',
+    },
+]
 
 print(f"█ Schichtdicke")
 print({k: f"{v:.3E}" for k, v in PARRATT_PARAMS.items()})
@@ -156,10 +181,7 @@ schichtdicke.main(
     I_max=I_max,
     litdata=LITDATA,
     parratt_params=PARRATT_PARAMS,
-    # ---
-    # cut_plot="little",
-    # cut_plot="lot",
-    cut_plot=None,  # ensures our hacky logic over there works
+    plot_configs=PLOT_CONFIGS,
 )
 
 # %%
