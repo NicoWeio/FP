@@ -376,7 +376,13 @@ def peak_fits_to_arrays(peak_fits):
     }
 
 
-def fit_peak_linregress(E, N, fit_center, fwhm_height, fit_radius, plot_radius, plot=False, plot_path=None):
+def fit_peak_linregress(E, N, fit_center, fwhm_height, fit_radius, plot_radius, plot=False, plot_path=None, fwhm_name=None):
+    """
+    Helfer-Funktion, um zwei Geraden an einen Peak zu fitten.
+
+    NOTE: Durch Übergeben einer entsprechenden `fwhm_height` kann auch die FWTM bestimmt werden.
+    Dann sollte allerdings `fwhm_name` auf "FWTM" gesetzt werden.
+    """
     mask_l = (E <= fit_center) & (E > (fit_center - fit_radius))
     mask_r = (E >= fit_center) & (E < (fit_center + fit_radius))
     mask_lr = mask_l | mask_r
@@ -409,7 +415,7 @@ def fit_peak_linregress(E, N, fit_center, fwhm_height, fit_radius, plot_radius, 
             plt2.plot(
                 tools.pintify([E_left_fwhm, E_right_fwhm]),
                 tools.pintify([fwhm_height, fwhm_height]),
-                show_xerr=False, label="FWHM",
+                show_xerr=False, label=(fwhm_name or "FWHM"),
             )
         plt.legend()
         plt.tight_layout()

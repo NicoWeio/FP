@@ -101,6 +101,7 @@ def main(channel_to_E):
         fit_radius=ureg('2.5 keV'),
         plot_radius=ureg('5 keV'),
         plot_path="build/plt/photopeak_fwtm.pdf",
+        fwhm_name="FWTM",
     )
     print("fwtm:", results_fwtm)
 
