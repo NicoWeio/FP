@@ -55,36 +55,35 @@ def get_fit_fn_klein_nishina(E_γ):
 def main_comptonkante(E, N, photopeak_fit, E_photopeak_lit):
     E_compton_lit = calc_compton_edge(E_photopeak_lit)
 
-    # Fit links-rechts
-    # NOTE: subject to confirmation bias
-    # fit_center = E_compton_lit
     fit_center = ureg('470 keV')
     mask_l = (E < fit_center) & (E > (fit_center - ureg('100 keV')))
     mask_r = (E > fit_center) & (E < (fit_center + ureg('20 keV')))
     mask_lr = mask_l | mask_r
 
-    m_l, n_l = tools.linregress(tools.nominal_values(E[mask_l]), N[mask_l])
-    m_r, n_r = tools.linregress(tools.nominal_values(E[mask_r]), N[mask_r])
+    # v1 ↓
+    # N_smooth = np.convolve(N.m, np.ones(10)/10, mode='same') * ureg.dimensionless
+    # peak_i = np.argmax(N_smooth[mask_lr])
 
-    # compton peak is at the intersection of the two lines
-    E_compton_fit = (n_r - n_l) / (m_l - m_r)
+    # v2 ↓
+    # smoothe N by chunking it into bins of 16 and taking the 95% percentile
+    N_smooth = np.percentile(N.m.reshape(-1, 16), 95, axis=1)
+    # …but keep the original length
+    N_smooth = np.repeat(N_smooth, 16) * ureg.dimensionless
+    # peak_i = np.argmax(N_smooth[mask_lr])
+    peak_i = np.argmin(np.diff(N_smooth, append=0)[mask_lr])
 
-    print(f"m_l: {m_l:.2f}")
-    print(f"n_l: {n_l:.2f}")
-    print(f"m_r: {m_r:.2f}")
-    print(f"n_r: {n_r:.2f}")
-    print(tools.fmt_compare_to_ref(E_compton_fit, E_compton_lit, name="Compton-Kante (Fit vs. Literatur)", unit=ureg.keV))
+    E_compton_fit = E[mask_lr][peak_i]
+
+    print(tools.fmt_compare_to_ref(E_compton_fit, E_compton_lit, "Compton-Kante", unit='keV'))
 
     # █ Plot: Compton-Kante
     plt.figure()
     with tools.plot_context(plt, 'keV', 'dimensionless', r"E", r"N") as plt2:
-        plt2.plot(E[mask_l], N[mask_l], 'x', show_xerr=False, color='C0', alpha=0.5, label="Messwerte links")
-        plt2.plot(E[mask_r], N[mask_r], 'x', show_xerr=False, color='C1', alpha=0.5, label="Messwerte rechts")
+        plt2.plot(E[mask_lr], N[mask_lr], 'x', show_xerr=False, color='C0', alpha=0.5, label="Messwerte")
+        # plt2.plot(E[mask_lr], N_smooth[mask_lr], '-', show_xerr=False, color='C1', label="Messwerte (geglättet)")
         # plt2.plot(E[peaks], N[peaks], fmt='x', label="Peaks")
-        plt2.plot(E[mask_lr], m_l*E[mask_lr] + n_l, show_yerr=False, color='C0', label="Fit links")
-        plt2.plot(E[mask_lr], m_r*E[mask_lr] + n_r, show_yerr=False, color='C1', label="Fit rechts")
 
-        plt.axvline(tools.nominal_value(E_compton_fit).to('keV').m, color='C2', label="Compton-Kante (Fit)")
+        plt.axvline(tools.nominal_value(E_compton_fit).to('keV').m, color='C2', label="Compton-Kante")
         plt.axvline(E_compton_lit.to('keV').m, color='C3', label="Compton-Kante (Literatur)")
     plt.ylim(top=max(N[mask_lr]))
     plt.yscale('linear')
@@ -93,6 +92,8 @@ def main_comptonkante(E, N, photopeak_fit, E_photopeak_lit):
     if tools.BUILD:
         plt.savefig("build/plt/compton-kante.pdf")
 
+
+    # █ Fit: Klein-Nishina
     mask_compton_fit = (E > ureg('350 keV')) & (E < E_compton_fit)
     mask_compton_plot = (E > ureg('200 keV')) & (E < ureg('500 keV'))
 
@@ -156,7 +157,7 @@ def main(channel_to_E):
     peak_fit_arrays = peak_fits_to_arrays(peak_fits)
     rueckstreupeak_fit, photopeak_fit = peak_fits
 
-    E_photopeak_lit = ureg('661.657 keV')  # TODO: Quelle, Unsicherheit
+    E_photopeak_lit = ureg('661.657 keV')  # Quelle: LARA
     print(tools.fmt_compare_to_ref(photopeak_fit['E'], E_photopeak_lit, name="Photopeak (Fit vs. Literatur)"))
 
     # NOTE: E = E_right - E_left = (m·channel_right+b) - (m·channel_left+b) = m·(channel_right-channel_left)
@@ -167,7 +168,6 @@ def main(channel_to_E):
     print(f"Photopeak (via Gauß-Fit):")
     print(f"\tFWHM: {E_fwhm_fit:.2f}")
     print(f"\tFWTM: {E_fwtm_fit:.2f}")
-    print(f"\tFWHM/FWTM: {(E_fwhm_fit/E_fwtm_fit):.2f}")
 
     # █ FWHM und FWTM des Photopeaks (via Gauß-Fits)
     fwhm_height = tools.nominal_value((photopeak_fit['a'] / 2 + photopeak_fit['N_0']) * ureg.dimensionless)

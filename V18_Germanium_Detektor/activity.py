@@ -77,7 +77,7 @@ def main(channel_to_E, E_to_Q):
         peak_indices=peak_fit_arrays['true_peak'],
         lit_energies_dict={
             "Ba-133": (lit_energies_all, lit_intensities_all),
-            "Sb-125": load_lara("data/emissions/Sb-125.lara.txt"),
+            # "Sb-125": load_lara("data/emissions/Sb-125.lara.txt"),
         },
         path="build/plt/spektrum_133-Ba.pdf",
         # xlim='lit_energies', # Sb hat einige schwache, hochenergetische Emissionen, daher funktioniert das hier nicht.

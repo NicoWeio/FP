@@ -73,7 +73,7 @@ def main(lit_energies, lit_intensities, Z, T, **kwargs):
         (r"E_\text{lit}", ureg.kiloelectron_volt, lit_energies),
         (r"W", ureg.percent, lit_intensities),
         (r"Z", ureg.dimensionless, Z, 0),
-        (r"Q", ureg.dimensionless, tools.nominal_values(Q), 4),
+        (r"Q", ureg.percent, tools.nominal_values(Q), 2),
     )
 
     return {

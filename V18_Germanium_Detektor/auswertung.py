@@ -7,7 +7,8 @@ import nuclide_identification
 from common import console
 
 console.rule("0. Untergrund")
-# background.main()
+if False:
+    background.main()
 
 
 console.rule("1a. Energiekalibration: Eu-152")

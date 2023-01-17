@@ -9,6 +9,7 @@ import pandas as pd
 import pint
 import uncertainties.unumpy as unp
 from rich.console import Console
+from scipy.signal import peak_widths
 from uncertainties import UFloat
 
 import tools
@@ -272,6 +273,8 @@ def fit_fn_peak(x, a, x_0, σ, N_0):
 def fit_peak(peak_seed, x, N, fit_radius=40, plot=True, plot_path=None, channel_to_E=None):
     """
     Helfer-Funktion, um eine Gauß-Kurve auf einen Peak zu fitten.
+    ACHTUNG: Die zurückgegebenen FWHM/FWTM werden mit `scipy.signal.peak_widths`
+    (statt anhand des Fits) bestimmt!
 
     peak: Kanal, in dem der Peak etwa liegt (gefunden z.B. mit scipy.signal.find_peaks)
     x: Kanäle
@@ -308,10 +311,16 @@ def fit_peak(peak_seed, x, N, fit_radius=40, plot=True, plot_path=None, channel_
 
     # FWHM / FWTM
     # TODO: Faktoren überprüfen (sigma etc.)
-    fwhm = 2 * σ * np.sqrt(2 * np.log(2))
-    fwhm_height = a / 2 + N_0
-    fwtm = 2 * σ * np.sqrt(2 * np.log(10))
-    fwtm_height = a / 10 + N_0
+    fwhm_fit = 2 * σ * np.sqrt(2 * np.log(2))
+    fwhm_height_fit = a / 2 + N_0
+    fwtm_fit = 2 * σ * np.sqrt(2 * np.log(10))
+    fwtm_height_fit = a / 10 + N_0
+
+    fwhm_scipy = peak_widths(N, [true_peak], rel_height=0.5)
+    fwtm_scipy = peak_widths(N, [true_peak], rel_height=1 - 0.1)
+
+    def channel_to_E_opt(c):
+        return channel_to_E(c) if channel_to_E else c
 
     # (Flächen-)Inhalt
     Z = a * unp.sqrt(2*np.pi * σ**2)  # TODO: Faktoren überprüfen (sigma etc.)
@@ -333,12 +342,17 @@ def fit_peak(peak_seed, x, N, fit_radius=40, plot=True, plot_path=None, channel_
             plt2.plot(
                 channel_to_E_opt(range_x_linspace),
                 fit_fn_peak(range_x_linspace, *[param.n for param in [a, x_0, σ, N_0]]),
+                '--',
                 show_xerr=False,
                 label="Fit",
             )
 
-            plt2.plot(channel_to_E_opt([x_0 - fwhm / 2, x_0 + fwhm / 2]), [fwhm_height, fwhm_height], show_yerr=False, label="FWHM")
-            plt2.plot(channel_to_E_opt([x_0 - fwtm / 2, x_0 + fwtm / 2]), [fwtm_height, fwtm_height], show_yerr=False, label="FWTM")
+            # plt2.plot(channel_to_E_opt([x_0 - fwhm / 2, x_0 + fwhm / 2]), [fwhm_height, fwhm_height], show_yerr=False, label="FWHM")
+            # plt2.plot(channel_to_E_opt([x_0 - fwtm / 2, x_0 + fwtm / 2]), [fwtm_height, fwtm_height], show_yerr=False, label="FWTM")
+
+            print(f"{fwhm_scipy=}")
+            plt2.plot(channel_to_E_opt([fwhm_scipy[2][0], fwhm_scipy[3][0]]), [fwhm_scipy[1][0], fwhm_scipy[1][0]], show_yerr=False, label="FWHM (scipy)")
+            plt2.plot(channel_to_E_opt([fwtm_scipy[2][0], fwtm_scipy[3][0]]), [fwtm_scipy[1][0], fwtm_scipy[1][0]], show_yerr=False, label="FWTM (scipy)")
 
         # plt.xlim(range_x[0], range_x[-1])
         plt.grid()
@@ -356,8 +370,10 @@ def fit_peak(peak_seed, x, N, fit_radius=40, plot=True, plot_path=None, channel_
         'σ': σ,
         'N_0': N_0,
         # ↓ berechnete Werte
-        'fwhm': fwhm,
-        'fwtm': fwtm,
+        # 'fwhm': fwhm_fit,
+        # 'fwtm': fwtm_fit,
+        'fwhm': fwhm_scipy[0][0],
+        'fwtm': fwtm_scipy[0][0],
         'Z': Z,
         # ↓ andere
         'true_peak': true_peak,

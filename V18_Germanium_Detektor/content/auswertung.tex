@@ -167,29 +167,19 @@ sind in \autoref{tab:3_Cs_137} aufgeführt.
 \end{table}
 
 Die Energie des Strahlers entspricht der Lage des Photopeaks (Vollenergielinie)
-und beträgt \SI{661.43 \pm 0.06}{\kilo\electronvolt}.
-Zur Bestimmung der Halbwertsbreite und Zehntelwertsbreite desselben wird auf Regressionsgeraden ($N(E) = m·E+n$) zurückgegriffen.
-Deren Parameter lauten
+und beträgt somit \SI{661.43 \pm 0.06}{\kilo\electronvolt}.
+Zur Bestimmung der Halbwertsbreite und Zehntelwertsbreite desselben
+wird auf \texttt{scipy.signal.peak\_widths} zurückgegriffen,
+damit das Verhältnis der Breiten nicht durch die Wahl einer Gauß-Approximation vorweggenommen wird.
+Damit ergeben sich
 \begin{align*}
-m_\text{FWHM, links} &= \SI{6.0(5)e+02}{\per\kilo\electronvolt} \\
-n_\text{FWHM, links} &= \num{-3.93(33)e+05} \\
-m_\text{FWHM, rechts} &= \SI{-6.9(4)e+02}{\per\kilo\electronvolt} \\
-n_\text{FWHM, rechts} &= \num{4.59(25)e+05} \\
- \\
-m_\text{FWTM, links} &= \SI{550(32)}{\per\kilo\electronvolt} \\
-n_\text{FWTM, links} &= \num{-3.63(21)e+05} \\
-m_\text{FWTM, rechts} &= \SI{-5.4(5)e+02}{\per\kilo\electronvolt} \\
-n_\text{FWTM, rechts} &= \num{3.61(31)e+05} \, .
+    \text{FWHM} = \SI{2.05}{\kilo\electronvolt} \\
+    \text{FWTM} = \SI{3.86}{\kilo\electronvolt}
 \end{align*}
-Daraus ergeben sich
-\begin{align}
-    \text{FWHM} = \SI{2.13 \pm 92.47}{\kilo\electronvolt} \\
-    \text{FWTM} = \SI{4.05 \pm 98.52}{\kilo\electronvolt}
-\end{align}
 sowie das Verhältnis
-\begin{equation}
-    \frac{\text{FWTM}}{\text{FWHM}} = \num{1.90 \pm 94.42} \, .
-\end{equation}
+\begin{equation*}
+    \frac{\text{FWTM}}{\text{FWHM}} = \num{1.88} \, .
+\end{equation*}
 
 % NOTE: Vergleich mit dem optimalen Verhältnis in der Diskussion
 
@@ -203,15 +193,20 @@ sowie das Verhältnis
 %     = \SI{2.44 \pm 0.02}{\kilo\electronvolt} \, .
 % \end{equation*}
 
-Die Lage der Compton-Kante im gemessenen Spektrum wird anhand des Schnittpunkts zweier Regressionsgeraden zu beiden Seiten der ungefähren Position der Kante bestimmt,
-wie in \autoref{fig:plt:compton_kante} gezeigt.
-Die resultierenden Parameter sind
+Die Lage der Compton-Kante im gemessenen Spektrum wird
+    (näherungsweise)
+abgelesen
+und in \autoref{fig:plt:compton_kante} eingezeichnet.
+Es ergibt sich ein ungefährer Wert von \SI{478.22}{\kilo\electronvolt}.
+Einen Referenzwert bietet die aus dem Literaturwert der Strahler-Energie $E$ (und somit des Photopeaks) \cite{lara}
+gemäß
 \begin{align*}
-    m_\text{links} &= \SI{0.13 \pm 0.01}{\per\kilo\electronvolt} \\
-    n_\text{links} &= \num{-28.90 \pm 3.46} \\
-    m_\text{rechts} &= \SI{-0.90 \pm 0.09}{\per\kilo\electronvolt} \\
-    n_\text{rechts} &= \num{457.29 \pm 40.84} \, .
+    % NOTE: E = E_\text{Photopeak}
+    E_\text{Compton} &= E \frac{2ε}{1 + 2ε} \\
+    \text{mit } ε &= \frac{E}{m_e c^2}
 \end{align*}
+berechnete Energie.
+Sie beträgt \SI{477.33}{\kilo\electronvolt}.
 
 Um den Inhalt des Compton-Kontinuums abzuschätzen,
 % wird die Formel für den […] differentiellen Wirkungsquerschnitt
@@ -223,7 +218,7 @@ an die Messwerte angepasst,
 Hierbei wird nur der weitgehend unverfälschte Bereich zwischen \SI{350}{\kilo\electronvolt} und der Compton-Kante berücksichtigt.
 Somit ergibt sich für den geschätzten Inhalt des Compton-Kontinuums
 \begin{equation*}
-    Z_\text{Compton} = \SI{46319}{\kilo\electronvolt} \, .
+    Z_\text{Compton} = \num{42051.6} \, .
 \end{equation*}
 
 % Vergleichen Sie die gemessenen Werte für die Compton-Kante und die
@@ -248,22 +243,15 @@ Somit ergibt sich für den geschätzten Inhalt des Compton-Kontinuums
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{build/plt/compton-kante.pdf}
-    \caption{Approximation der Compton-Kante durch Bestimmung des Schnittpunkts zweier Regressionsgeraden.}
+    \caption{Ausschnitt des Spektrums mit geschätzter und berechneter Lage der Compton-Kante.}
     \label{fig:plt:compton_kante}
 \end{figure}
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{build/plt/photopeak_fwhm.pdf}
-    \caption{Approximation der Halbwertsbreite durch Bestimmung des Schnittpunkts zweier Regressionsgeraden.}
-    \label{fig:plt:photopeak_fwhm}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{build/plt/photopeak_fwtm.pdf}
-    \caption{Approximation der Zehntelwertsbreite durch Bestimmung des Schnittpunkts zweier Regressionsgeraden.}
-    \label{fig:plt:photopeak_fwtm}
+    \includegraphics[width=\textwidth]{build/plt/3_gauss_photopeak.pdf}
+    \caption{Photopeak mit eingezeichneter Halbwertsbreite und Zehntelwertsbreite sowie Gauß-Fit.}
+    \label{fig:plt:photopeak_fwhm_fwtm} % TODO: fix refs
 \end{figure}
 
 \begin{figure}
@@ -276,17 +264,18 @@ Somit ergibt sich für den geschätzten Inhalt des Compton-Kontinuums
 
 \FloatBarrier
 \subsection{Bestimmung der Aktivität von \ce{^133Ba}} \label{sec:auswertung:Ba_133}
-Um zu entscheiden,
-ob es sich bei der vorliegenden Messung um eine \ce{^133Ba}- oder \ce{^125Sb}-Quelle handelt,
-kann das Energiespektrum mit den jeweiligen Literaturwerten verglichen werden.
-Wie in \autoref{fig:plt:spektrum_Ba_133} zu sehen ist,
-können die fünf größten Peaks eindeutig mit den Emissionslinien von \ce{^133Ba} identifiziert werden.
+% NOTE: Einige Altprotokolle mussten hier offenbar erst entscheiden,
+% ob sie es mit Ba-133 oder Sb-125 zu tun haben.
+
+In einem Vergleich mit den Literaturwerten \cite{lara}
+können die fünf größten Peaks eindeutig mit den Emissionslinien von \ce{^133Ba} identifiziert werden,
+wie in \autoref{fig:plt:spektrum_Ba_133} zu sehen ist.
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{build/plt/spektrum_133-Ba.pdf}
     \caption{
-        Energiespektrum der \ce{^133Ba}-Quelle mit eingezeichneten Emissionslinien von \ce{^133Ba} und \ce{^125Sb}.
+        Energiespektrum der \ce{^133Ba}-Quelle mit eingezeichneten Emissionslinien von \ce{^133Ba} \cite{lara}.
         Werte über \SI{750}{\kilo\electronvolt} werden nicht dargestellt.
     }
     \label{fig:plt:spektrum_Ba_133}
@@ -307,7 +296,9 @@ lässt sich die Aktivität der \ce{^133Ba}-Quelle durch Umstellen von \autoref{e
 Die Ergebnisse sind in \autoref{tab:4_Ba_133_activities} zusammengefasst.
 
 Als Aktivität der gesamten Quelle wird der Mittelwert der Aktivitäten aller Peaks mit Ausnahme des ersten gewählt,
-    da dieser auffällig geringer ist als die anderen Peaks.
+    da dessen Aktivität auffällig geringer ist.
+    % als die der anderen Peaks.
+% NOTE: Begründung siehe Diskussion
 So ergibt sich eine Aktivität von $\bar A = \SI{1019.97 \pm 3.59}{\becquerel}$.
 
 \begin{table}
