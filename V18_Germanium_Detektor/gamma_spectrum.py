@@ -2,7 +2,7 @@ import generate_table
 import matplotlib.pyplot as plt
 import numpy as np
 from common import (calc_ε, fit_peak, fit_peak_linregress, load_spe,
-                    peak_fits_to_arrays, plot_energyspectrum, ureg)
+                    peak_fits_to_arrays, plot_energyspectrum, ureg, console)
 from scipy.signal import find_peaks
 
 import tools

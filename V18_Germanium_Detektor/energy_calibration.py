@@ -1,9 +1,8 @@
-import matplotlib.patches as mpatches
 import generate_table
 import matplotlib.pyplot as plt
 import numpy as np
 from common import (fit_peak, load_lara, load_spe, n_most_intense,
-                    peak_fits_to_arrays, ureg, plot_energyspectrum, intensity_to_alpha)
+                    peak_fits_to_arrays, ureg, plot_energyspectrum)
 from scipy.signal import find_peaks
 
 import tools

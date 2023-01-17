@@ -1,14 +1,10 @@
 
 import generate_table
-import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import numpy as np
 import uncertainties.unumpy as unp
-from common import (fit_peak, get_age_probe, get_Ω, intensity_to_alpha,
-                    load_lara, load_spe, n_most_intense, peak_fits_to_arrays,
-                    plot_energyspectrum, ureg)
-from scipy.signal import find_peaks
-from uncertainties import UFloat, ufloat
+from common import (get_age_probe, get_Ω, ureg)
+from uncertainties import ufloat
 
 import tools
 

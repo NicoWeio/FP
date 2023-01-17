@@ -1,5 +1,4 @@
 import generate_table
-import matplotlib.pyplot as plt
 import numpy as np
 from common import (fit_peak, get_Ω, load_lara, load_spe, peak_fits_to_arrays,
                     plot_energyspectrum, ureg)

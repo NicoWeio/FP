@@ -9,7 +9,7 @@ import pandas as pd
 import pint
 import uncertainties.unumpy as unp
 from rich.console import Console
-from uncertainties import UFloat, ufloat
+from uncertainties import UFloat
 
 import tools
 

@@ -1,10 +1,9 @@
 import generate_table
 import numpy as np
-from common import (fit_peak, get_age_probe, get_Ω, load_lara, load_spe,
+from common import (fit_peak, get_Ω, load_lara, load_spe,
                     n_most_intense, peak_fits_to_arrays, plot_energyspectrum,
                     ureg)
 from scipy.signal import find_peaks
-from uncertainties import UFloat, ufloat
 
 import tools
 
