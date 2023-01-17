@@ -52,96 +52,7 @@ def get_fit_fn_klein_nishina(E_γ):
     return fit_fn_klein_nishina
 
 
-def main(channel_to_E):
-    x, N, T = load_spe("data/2022-11-28/2_Cs.Spe")
-    E = channel_to_E(x)  # NOTE: This means E has uncertainties!
-
-    # Peaks
-    peaks, _ = find_peaks(N, height=50, distance=1000)
-
-    assert len(peaks) == 2, f"{len(peaks)} statt 2 Peaks (Rückstreupeak und Photopeak) gefunden."
-    rueckstreupeak_raw, photopeak_raw = peaks
-
-    # Fit: Rückstreupeak & Photopeak
-    # peak_fits = [fit_peak(peak, x, N, plot=True, channel_to_E=channel_to_E) for peak in peaks]
-    peak_fits = [fit_peak(peak, x, N, plot=True, plot_path=f"build/plt/3_gauss_{i}.pdf",
-                          channel_to_E=channel_to_E, fit_radius=([150, 40][i])) for i, peak in enumerate(peaks)]
-    peak_fit_arrays = peak_fits_to_arrays(peak_fits)
-    rueckstreupeak_fit, photopeak_fit = peak_fits
-
-    E_photopeak_lit = ureg('661.657 keV')  # TODO: Quelle, Unsicherheit
-    print(tools.fmt_compare_to_ref(photopeak_fit['E'], E_photopeak_lit, name="Photopeak (Fit vs. Literatur)"))
-
-    E_fwhm_fit = channel_to_E(photopeak_fit['fwhm'])
-    E_fwtm_fit = channel_to_E(photopeak_fit['fwtm'])
-
-    # NOTE: Nicht verwirren lassen. Das sind die aus dem Gauß-Fit berechneten Werte.
-    # print(f"Photopeak → FWHM: {E_fwhm_fit:.2f}")
-    # print(f"Photopeak → FWTM: {E_fwtm_fit:.2f}")
-    # print(f"Photopeak → FWHM/FWTM: {(E_fwhm_fit/E_fwtm_fit):.2f}")
-
-    # █ FWHM und FWTM des Photopeaks (via Fits)
-    fwhm_height = tools.nominal_value((photopeak_fit['a'] / 2 + photopeak_fit['N_0']) * ureg.dimensionless)
-    fwtm_height = tools.nominal_value((photopeak_fit['a'] / 10 + photopeak_fit['N_0']) * ureg.dimensionless)
-    # peak_pos = int(photopeak_fit['true_peak'])
-    fit_center = channel_to_E(photopeak_fit['true_peak'])
-
-    results_fwhm = fit_peak_linregress(
-        E, N,
-        fit_center, fwhm_height,
-        fit_radius=ureg('2 keV'),
-        plot_radius=ureg('5 keV'),
-        plot_path="build/plt/photopeak_fwhm.pdf",
-    )
-    print("fwhm:", results_fwhm)
-
-    results_fwtm = fit_peak_linregress(
-        E, N,
-        fit_center, fwtm_height,
-        fit_radius=ureg('2.5 keV'),
-        plot_radius=ureg('5 keV'),
-        plot_path="build/plt/photopeak_fwtm.pdf",
-        fwhm_name="FWTM",
-    )
-    print("fwtm:", results_fwtm)
-
-    fwtm_div_fwhm = results_fwtm['fwhm'] / results_fwhm['fwhm']
-    fwtm_div_fwhm_optimal = 1.823  # TODO: Quelle!
-
-    print(f"Photopeak → FWHM (via linregress): {results_fwhm['fwhm']:.2f}")
-    # COULDDO: abuse of notation: fwhm is not a good name for the key…
-    print(f"Photopeak → FWTM (via linregress): {results_fwtm['fwhm']:.2f}")
-    print(f"Photopeak → FWTM/FWHM (via linregress): {fwtm_div_fwhm:.2f}")
-
-    print(tools.fmt_compare_to_ref(fwtm_div_fwhm, fwtm_div_fwhm_optimal, name="Photopeak: FWTM/FWHM: gemessen vs. optimal gaußförmig"))
-
-    # Plot: N(E) – Spektrum von 137Cs
-    plot_energyspectrum(
-        tools.nominal_values(channel_to_E(x)), N,
-        path="build/plt/spektrum_137-Cs.pdf",
-        plot_cb=lambda _, plt2: (
-            plt2.plot(E[rueckstreupeak_raw], N[rueckstreupeak_raw], 'x', show_xerr=False, label="Rückstreupeak")
-            and
-            plt2.plot(E[photopeak_raw], N[photopeak_raw], 'x', show_xerr=False, label="Photopeak")
-        ),
-        xlim=(0, 800),
-    )
-
-    # █ Tabelle generieren
-    # COULDDO: Unsicherheiten
-    generate_table.generate_table_pint(
-        "build/tab/3_Cs-137.tex",
-        # ↓ Fit-Parameter
-        (r"x_0", ureg.dimensionless, peak_fit_arrays['x_0'], 1),
-        (r"a", ureg.dimensionless, peak_fit_arrays['a'], 1),
-        (r"\sigma", ureg.dimensionless, peak_fit_arrays['σ'], 2),
-        (r"N_0", ureg.dimensionless, peak_fit_arrays['N_0'], 2),
-        # ↓ berechnete Werte
-        (r"E(x_0)", ureg.kiloelectron_volt, peak_fit_arrays['E']),
-        (r"Z(a, \sigma)", ureg.dimensionless, peak_fit_arrays['Z'], 0),
-    )
-
-    # Compton-Kante
+def main_comptonkante(E, N, photopeak_fit, E_photopeak_lit):
     E_compton_lit = calc_compton_edge(E_photopeak_lit)
 
     # Fit links-rechts
@@ -218,3 +129,87 @@ def main(channel_to_E):
     plt.tight_layout()
     if tools.BUILD:
         plt.savefig("build/plt/klein-nishina.pdf")
+
+
+def main(channel_to_E):
+    x, N, T = load_spe("data/2022-11-28/2_Cs.Spe")
+    E = channel_to_E(x)  # NOTE: This means E has uncertainties!
+
+    # Peaks
+    peaks, _ = find_peaks(N, height=50, distance=1000)
+
+    assert len(peaks) == 2, f"{len(peaks)} statt 2 Peaks (Rückstreupeak und Photopeak) gefunden."
+    rueckstreupeak_raw, photopeak_raw = peaks
+
+    # Fit: Rückstreupeak & Photopeak
+    # peak_fits = [fit_peak(peak, x, N, plot=True, channel_to_E=channel_to_E) for peak in peaks]
+    peak_fits = [
+        fit_peak(
+            peak, x, N, plot=True,
+            plot_path=f"build/plt/3_gauss_{['rueckstreu','photo'][i]}peak.pdf",
+            channel_to_E=channel_to_E,
+            fit_radius=([150, 40][i]),
+            # fit_radius=([150, 20][i]),
+        )
+        for i, peak in enumerate(peaks)
+    ]
+    peak_fit_arrays = peak_fits_to_arrays(peak_fits)
+    rueckstreupeak_fit, photopeak_fit = peak_fits
+
+    E_photopeak_lit = ureg('661.657 keV')  # TODO: Quelle, Unsicherheit
+    print(tools.fmt_compare_to_ref(photopeak_fit['E'], E_photopeak_lit, name="Photopeak (Fit vs. Literatur)"))
+
+    # NOTE: E = E_right - E_left = (m·channel_right+b) - (m·channel_left+b) = m·(channel_right-channel_left)
+    E_fwhm_fit = channel_to_E.m * photopeak_fit['fwhm']
+    E_fwtm_fit = channel_to_E.m * photopeak_fit['fwtm']
+
+    # NOTE: Nicht verwirren lassen. Das sind die aus dem Gauß-Fit berechneten Werte.
+    print(f"Photopeak (via Gauß-Fit):")
+    print(f"\tFWHM: {E_fwhm_fit:.2f}")
+    print(f"\tFWTM: {E_fwtm_fit:.2f}")
+    print(f"\tFWHM/FWTM: {(E_fwhm_fit/E_fwtm_fit):.2f}")
+
+    # █ FWHM und FWTM des Photopeaks (via Gauß-Fits)
+    fwhm_height = tools.nominal_value((photopeak_fit['a'] / 2 + photopeak_fit['N_0']) * ureg.dimensionless)
+    fwtm_height = tools.nominal_value((photopeak_fit['a'] / 10 + photopeak_fit['N_0']) * ureg.dimensionless)
+
+    fwtm_div_fwhm = E_fwtm_fit / E_fwhm_fit
+    assert fwtm_div_fwhm > 1
+    fwtm_div_fwhm_optimal = 1.823  # TODO: Quelle!
+
+    print(tools.fmt_compare_to_ref(fwtm_div_fwhm, fwtm_div_fwhm_optimal,
+          name="Photopeak: FWTM/FWHM: gemessen vs. optimal gaußförmig"))
+
+    # Plot: N(E) – Spektrum von 137Cs
+    plot_energyspectrum(
+        tools.nominal_values(channel_to_E(x)), N,
+        path="build/plt/spektrum_137-Cs.pdf",
+        plot_cb=lambda _, plt2: (
+            plt2.plot(E[rueckstreupeak_raw], N[rueckstreupeak_raw], 'x', show_xerr=False, label="Rückstreupeak")
+            and
+            plt2.plot(E[photopeak_raw], N[photopeak_raw], 'x', show_xerr=False, label="Photopeak")
+        ),
+        xlim=(0, 800),
+    )
+
+    # █ Tabelle generieren
+    # COULDDO: Unsicherheiten
+    generate_table.generate_table_pint(
+        "build/tab/3_Cs-137.tex",
+        # ↓ Fit-Parameter
+        (r"x_0", ureg.dimensionless, peak_fit_arrays['x_0'], 1),
+        (r"a", ureg.dimensionless, peak_fit_arrays['a'], 1),
+        (r"\sigma", ureg.dimensionless, peak_fit_arrays['σ'], 2),
+        (r"N_0", ureg.dimensionless, peak_fit_arrays['N_0'], 2),
+        # ↓ berechnete Werte
+        (r"E(x_0)", ureg.kiloelectron_volt, peak_fit_arrays['E']),
+        (r"Z(a, \sigma)", ureg.dimensionless, peak_fit_arrays['Z'], 0),
+    )
+
+    # Compton-Kante
+    console.rule("→ Compton-Kante", style="gray")
+    main_comptonkante(
+        E, N,
+        photopeak_fit,
+        E_photopeak_lit,
+    )

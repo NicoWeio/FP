@@ -43,6 +43,11 @@ def main():
     print(f"m={m}, n={n}")
 
     def channel_to_E(x):
+        channel_to_E.m = m
+        channel_to_E.n = n
+
+        if isinstance(x, ureg.Quantity):
+            assert x.units == ureg.dimensionless
         # COULDDO: warn about negative energies
         return m * x + n
 
