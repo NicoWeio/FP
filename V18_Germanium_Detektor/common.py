@@ -317,20 +317,31 @@ def fit_peak(peak_seed, x, N, fit_radius=40, plot=True, plot_path=None, channel_
     Z = a * unp.sqrt(2*np.pi * σ**2)  # TODO: Faktoren überprüfen (sigma etc.)
 
     if plot:
-        # NOTE: Dieser Plot kommt im Protokoll nicht vor.
+        def channel_to_E_opt(c):
+            return channel_to_E(c) if channel_to_E else c
+
+        x_axis_data = (
+            ('keV', r"E")
+            if channel_to_E else
+            ('dimensionless', r"channel")
+        )
+        range_x_linspace = tools.linspace(*tools.bounds(range_x * ureg.dimensionless), 1000)
+
         plt.figure()
-        with tools.plot_context(plt, 'dimensionless', 'dimensionless', r"xCOULDDO", r"N") as plt2:
-            plt2.plot(range_x, range_N, label="Messwerte")
+        with tools.plot_context(plt, x_axis_data[0], 'dimensionless', x_axis_data[1], r"N") as plt2:
+            plt2.plot(channel_to_E_opt(range_x), range_N, show_xerr=False, label="Messwerte")
             plt2.plot(
-                range_x,
-                fit_fn_peak(range_x, *[param.n for param in [a, x_0, σ, N_0]]),
+                channel_to_E_opt(range_x_linspace),
+                fit_fn_peak(range_x_linspace, *[param.n for param in [a, x_0, σ, N_0]]),
+                show_xerr=False,
                 label="Fit",
             )
 
-            plt2.plot([x_0 - fwhm / 2, x_0 + fwhm / 2], [fwhm_height, fwhm_height], show_yerr=False, label="FWHM")
-            plt2.plot([x_0 - fwtm / 2, x_0 + fwtm / 2], [fwtm_height, fwtm_height], show_yerr=False, label="FWTM")
+            plt2.plot(channel_to_E_opt([x_0 - fwhm / 2, x_0 + fwhm / 2]), [fwhm_height, fwhm_height], show_yerr=False, label="FWHM")
+            plt2.plot(channel_to_E_opt([x_0 - fwtm / 2, x_0 + fwtm / 2]), [fwtm_height, fwtm_height], show_yerr=False, label="FWTM")
 
-        plt.xlim(range_x[0], range_x[-1])
+        # plt.xlim(range_x[0], range_x[-1])
+        plt.grid()
         plt.legend()
         plt.tight_layout()
         if plot_path:
