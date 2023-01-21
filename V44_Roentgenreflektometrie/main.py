@@ -119,7 +119,7 @@ LITDATA = {
 
 # %%
 δ1 = 0.9e-6 + 0.0e-6
-δ2 = 6.8e-6 - 1.5e-6
+δ2 = 6.8e-6 - 1.6e-6
 # δ1 = LITDATA['PS']['δ']
 # δ2 = LITDATA['Si']['δ']
 
@@ -137,31 +137,36 @@ PARRATT_PARAMS = {
     #
     # █ Rauigkeit
     'σ1': (20.0e-10 + 0.0e-10) * ureg.m,  # Polysterol → Amplitude verkleinert bei größeren α
-    'σ2': (7.3e-10 + 0.5e-10) * ureg.m,  # Silizium → Senkung des Kurvenendes und Amplitudenverkleinerung der Oszillationen
+    'σ2': (7.3e-10 + 0.0e-10) * ureg.m,  # Silizium → Senkung des Kurvenendes und Amplitudenverkleinerung der Oszillationen
     #
     # █ Schichtdicke
     'z': ureg('860 Å'),  # Schichtdicke → verkleinert Oszillationswellenlänge
 }
 
 PLOT_CONFIGS = [
-    # {
-    #     # █ Plot 2: Theoriekurven
-    #     'name': 'b',
-    #     'show': {
-    #         'par',
-    #             'r13',
-    #             'r13_glatt',
-    #             'par_glatt',
-    #     },
-    #     'cut_plot': 'little',
-    # },
+    {
+        # █ Plot 2: Theoriekurven
+        'name': 'theoriekurven',
+        'show': {
+            'par',
+            # 'r13',
+            'r13_glatt',
+            'par_glatt',
+        },
+        'cut_plot': 'little',
+    },
     {
         # █ Plot 3: Fit
-        'name': 'c',
+        'name': 'fit',
         'show': {
+            # 'R_corr_diff', # COULDDO
             'R_corr',
             'R_corr[peaks]',
             'par_scaled',
+            # ---
+            'α_g',
+            # 'α_c_PS', # mit cut_plot='lot' nicht sichtbar
+            'α_c_Si',
         },
         # 'cut_plot': 'little',
         'cut_plot': 'lot',

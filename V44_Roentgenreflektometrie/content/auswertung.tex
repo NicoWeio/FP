@@ -106,7 +106,8 @@ Der Reflektivitätsscan wird durch
     Division durch den Geometriefaktor $G$ (\autoref{eqn:geometriefaktor})
 korrigiert.
 \autoref{fig:plt:schichtdicke_a} zeigt die Messwerte beider Messungen sowie die korrigierten Reflektivitäten
-in Abhängigkeit des Wellenvektorübertrags $q = \frac{4\pi}{\lambda} · \sin{\frac{\pi}{180} \alpha_i}$.
+in Abhängigkeit des TODO Winkels.
+% Wellenvektorübertrags $q = \frac{4\pi}{\lambda} · \sin{\frac{\pi}{180} \alpha_i}$.
 
 Mittels der Funktion \texttt{find\_peaks} aus \texttt{scipy.signal} werden die Maxima der Kiessig-Oszillationen bestimmt.
 Die Abstände $\symup{\Delta} \alpha_i$ zwischen den Maxima
@@ -151,7 +152,7 @@ dargestellt.
 % → Messdaten korrigiert um diffuse Strahlung und Geometriefaktor
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{build/plt/schichtdicke_a.pdf}
+    \includegraphics[width=\textwidth]{build/plt/schichtdicke_messwerte.pdf}
     \caption{
         Unveränderte und korrigierte Messwerte zur Bestimmung der Reflektivität.
         Zur besseren Lesbarkeit wird auf Fehlerbalken verzichtet.
@@ -167,20 +168,20 @@ dargestellt.
 % → kritische Winkel
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{build/plt/schichtdicke_b.pdf}
+    \includegraphics[width=\textwidth]{build/plt/schichtdicke_fit.pdf}
     \caption{
-        Korrigierte Messwerte und Theoriekurven zur Reflektivität,
-        zugeschnitten auf die nicht vernachlässigbaren Reflektivitäten.
+        Korrigierte Messwerte und Theoriekurven zur Reflektivität, TODO.
+        % zugeschnitten auf die nicht vernachlässigbaren Reflektivitäten.
     }
     \label{fig:plt:schichtdicke_b}
 \end{figure}
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{build/plt/schichtdicke_c.pdf}
+    \includegraphics[width=\textwidth]{build/plt/schichtdicke_theoriekurven.pdf}
     \caption{
-        Korrigierte Messwerte und Theoriekurven zur Reflektivität,
-        zugeschnitten auf die Kiessig-Oszillationen.
+        Theoriekurven zur Reflektivität, TODO.
+        % zugeschnitten auf die Kiessig-Oszillationen.
     }
     \label{fig:plt:schichtdicke_c}
 \end{figure}

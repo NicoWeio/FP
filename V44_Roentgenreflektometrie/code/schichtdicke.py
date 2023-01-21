@@ -222,7 +222,7 @@ def main(
         plt.legend()
         plt.tight_layout()
         if tools.BUILD:
-            plt.savefig(f"build/plt/{name}_a.pdf")
+            plt.savefig(f"build/plt/{name}_messwerte.pdf")
         plt.show()
 
 
@@ -254,11 +254,11 @@ def main(
                 plt2.plot(α, par_glatt, '-', label="Theoriekurve (glatt)")
 
             if 'α_g' in config['show']:
-                plt.axvline(α_g.to('°'), color='C0', linestyle='--', label="$α_g$")
+                plt.axvline(α_g.to('°'), color='C2', linestyle='--', label="$α_g$")
             if 'α_c_PS' in config['show']:
-                plt.axvline(α_c_PS.to('°'), color='C1', linestyle='--', label=r"$α_\text{c, PS}$")
+                plt.axvline(α_c_PS.to('°'), color='C3', linestyle='--', label=r"$α_\text{c, PS}$")
             if 'α_c_Si' in config['show']:
-                plt.axvline(α_c_Si.to('°'), color='C2', linestyle='--', label=r"$α_\text{c, Si}$")
+                plt.axvline(α_c_Si.to('°'), color='C4', linestyle='--', label=r"$α_\text{c, Si}$")
 
         if config.get('cut_plot') == "little":
             # cut a little
@@ -275,7 +275,7 @@ def main(
         plt.legend()
         plt.tight_layout()
         if tools.BUILD:
-            plt.savefig(f"build/plt/{config['name']}.pdf")
+            plt.savefig(f"build/plt/{name}_{config['name']}.pdf")
         plt.show()
 
     if tools.PLOTS or True: # TODO
