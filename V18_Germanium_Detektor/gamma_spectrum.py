@@ -150,6 +150,7 @@ def main(channel_to_E):
             plot_path=f"build/plt/3_gauss_{['rueckstreu','photo'][i]}peak.pdf",
             channel_to_E=channel_to_E,
             fit_radius=([150, 40][i]),
+            widths_mode='scipy',
             # fit_radius=([150, 20][i]),
         )
         for i, peak in enumerate(peaks)

@@ -270,7 +270,7 @@ def fit_fn_peak(x, a, x_0, σ, N_0):
     return a * np.exp(-((x - x_0)**2) / (2 * σ**2)) + N_0
 
 
-def fit_peak(peak_seed, x, N, fit_radius=40, plot=True, plot_path=None, channel_to_E=None):
+def fit_peak(peak_seed, x, N, fit_radius=40, plot=True, plot_path=None, widths_mode='gauss', channel_to_E=None):
     """
     Helfer-Funktion, um eine Gauß-Kurve auf einen Peak zu fitten.
     ACHTUNG: Die zurückgegebenen FWHM/FWTM werden mit `scipy.signal.peak_widths`
@@ -280,6 +280,7 @@ def fit_peak(peak_seed, x, N, fit_radius=40, plot=True, plot_path=None, channel_
     x: Kanäle
     N: Zählraten
     fit_radius: Radius des Bereichs, in dem die Gauß-Kurve gefittet wird (in Kanälen)
+    widths_mode: Methode, mit der FWHM und FWTM bestimmt werden; 'gauss' oder 'scipy'
     """
     # COULDDO: Stelle sicher, dass x Kanäle, nicht Energien sind.
     # assert not isinstance(x, ureg.Quantity) or x.units == ureg.dimensionless
@@ -347,12 +348,12 @@ def fit_peak(peak_seed, x, N, fit_radius=40, plot=True, plot_path=None, channel_
                 label="Fit",
             )
 
-            # plt2.plot(channel_to_E_opt([x_0 - fwhm / 2, x_0 + fwhm / 2]), [fwhm_height, fwhm_height], show_yerr=False, label="FWHM")
-            # plt2.plot(channel_to_E_opt([x_0 - fwtm / 2, x_0 + fwtm / 2]), [fwtm_height, fwtm_height], show_yerr=False, label="FWTM")
-
-            print(f"{fwhm_scipy=}")
-            plt2.plot(channel_to_E_opt([fwhm_scipy[2][0], fwhm_scipy[3][0]]), [fwhm_scipy[1][0], fwhm_scipy[1][0]], show_yerr=False, label="FWHM (scipy)")
-            plt2.plot(channel_to_E_opt([fwtm_scipy[2][0], fwtm_scipy[3][0]]), [fwtm_scipy[1][0], fwtm_scipy[1][0]], show_yerr=False, label="FWTM (scipy)")
+            if widths_mode == 'scipy':
+                plt2.plot(channel_to_E_opt([x_0 - fwhm_fit / 2, x_0 + fwhm_fit / 2]), [fwhm_height_fit, fwhm_height_fit], show_yerr=False, label="FWHM")
+                plt2.plot(channel_to_E_opt([x_0 - fwtm_fit / 2, x_0 + fwtm_fit / 2]), [fwtm_height_fit, fwtm_height_fit], show_yerr=False, label="FWTM")
+            elif widths_mode == 'gauss':
+                plt2.plot(channel_to_E_opt([fwhm_scipy[2][0], fwhm_scipy[3][0]]), [fwhm_scipy[1][0], fwhm_scipy[1][0]], show_yerr=False, label="FWHM (scipy)")
+                plt2.plot(channel_to_E_opt([fwtm_scipy[2][0], fwtm_scipy[3][0]]), [fwtm_scipy[1][0], fwtm_scipy[1][0]], show_yerr=False, label="FWTM (scipy)")
 
         # plt.xlim(range_x[0], range_x[-1])
         plt.grid()
@@ -370,14 +371,24 @@ def fit_peak(peak_seed, x, N, fit_radius=40, plot=True, plot_path=None, channel_
         'σ': σ,
         'N_0': N_0,
         # ↓ berechnete Werte
-        # 'fwhm': fwhm_fit,
-        # 'fwtm': fwtm_fit,
-        'fwhm': fwhm_scipy[0][0],
-        'fwtm': fwtm_scipy[0][0],
+        # (fwhm / fwtm s. u.)
         'Z': Z,
         # ↓ andere
         'true_peak': true_peak,
     }
+
+    if widths_mode == 'scipy':
+        data |= {
+            'fwhm': fwhm_scipy[0][0],
+            'fwtm': fwtm_scipy[0][0],
+        }
+    elif widths_mode == 'gauss':
+        data |= {
+            'fwhm': fwhm_fit,
+            'fwtm': fwtm_fit,
+        }
+    else:
+        raise ValueError(f"widths_mode={widths_mode} not implemented")
 
     if channel_to_E:
         data['E'] = channel_to_E(x_0)
