@@ -1,1 +1,107 @@
-/home/nicolai/Daten/Studium/Praktikum_FP/Repo/V44_Roentgenreflektometrie/data/unused/4_rocking_y-1,5.UXD
+; C:\DIFFDAT1\Praktikum\Popp-Weitkemper\4_rockingscan_y-1,5.raw(Diffrac Plus V1.01 file) converted by XCH V1.0
+_FILEVERSION=2
+_SITE='Deutschland'
+_USER='Administrator'
+_GONIOMETER_CODE=4885
+; D8 Theta/Theta; Special
+_SAMPLE_CHANGER_CODE=0
+_ATTACHMENTS_CODE=0
+_GONIOMETER_RADIUS=350.000000
+_FIXED_DIVSLIT=0.600000
+_FIXED_SAMPLESLIT=0.000000
+_FIXED_DETSLIT=11.660000
+_MONOCHROMATOR=0
+; None
+_THIN_FILM='N'
+_BETA_FILTER='Y'
+_FIXED_ANTISLIT=8.340000
+_ANALYZER_CODE=0
+; None
+_DATEMEASURED='31-Oct-2022 10:17:47'
+_WL_UNIT='A'
+_WL1=1.540600
+_WL2=1.544390
+_WL3=1.392220
+_WLRATIO=0.500000
+_ANODE='Cu'
+; (Data for Range number 1)
+_DRIVE='THETA'
+_STEPTIME=1.000000
+_STEPSIZE=0.040000
+_STEPMODE='C'
+_START=-1.000000
+_THETA=-1.000000
+_2THETA=0.000000
+_KHI=0.000000
+_PHI=92.459999
+_X=-1.000000
+_Y=-1.500000
+_Z=0.206000
+_DIVERGENCE=0.000000
+_ANTISCATTER=0.000000
+_DETECTOR=5
+_DETECTORSLIT='unkn'
+_AUX1=0.000000
+_AUX2=0.000000
+_AUX3=0.000000
+_TIMESTARTED=3.000000
+_TEMP_RATE=-1.000000
+_TEMP_DELAY=-1.000000
+_KV=40
+_MA=35
+_RANGE_WL=1.540600
+_3DPLANE=0
+_GONIOMETER=0.000000
+_PSDCHANNEL0=0
+_2THETACOUNTS
+  -1.0000         2
+  -0.9600         0
+  -0.9200         1
+  -0.8800         3
+  -0.8400         0
+  -0.8000         4
+  -0.7600         5
+  -0.7200         3
+  -0.6800         4
+  -0.6400        10
+  -0.6000        13
+  -0.5600        29
+  -0.5200        95
+  -0.4800      1288
+  -0.4400      9387
+  -0.4000     24536
+  -0.3600     48531
+  -0.3200     80138
+  -0.2800    118295
+  -0.2400    162928
+  -0.2000    199262
+  -0.1600    253053
+  -0.1200    304095
+  -0.0800    356061
+  -0.0400    413439
+   0.0000    450861
+   0.0400    405942
+   0.0800    351171
+   0.1200    299118
+   0.1600    246804
+   0.2000    194387
+   0.2400    158057
+   0.2800    113818
+   0.3200     74708
+   0.3600     43221
+   0.4000     21179
+   0.4400      7493
+   0.4800       915
+   0.5200        73
+   0.5600        38
+   0.6000        15
+   0.6400         9
+   0.6800         8
+   0.7200         6
+   0.7600         1
+   0.8000         1
+   0.8400         2
+   0.8800         1
+   0.9200         4
+   0.9600         0
+   1.0000         0
