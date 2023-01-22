@@ -104,7 +104,8 @@ def main(
     I_corr_diff = I_refl - I_diff
     # Korrektur um Geometriefaktor
     G = calc_G(α, D=D, d_Strahl=d_Strahl, α_g=α_g)
-    G[0] = np.nan  # NOTE: Workaround for division by zero
+    # G[0] = np.nan  # NOTE: Workaround for division by zero
+    G[0] = G[1]  # NOTE: Workaround for division by zero; variant for fitting…
     I_corr_G = I_refl / G
     # Korrektur um beides
     I_corr = I_corr_diff / G
@@ -181,33 +182,58 @@ def main(
         par_scaled = par * tools.nominal_value(R_corr_plateau_mean / 1)
 
     # --- TEST (WIP): Fit ---
-    # @ureg.wraps(ureg.dimensionless, (ureg.rad, ureg.dimensionless))
-    # def parrat_fitfn(α, δ1):
-    #     return calc_parratt(
-    #         α.to('rad').m,
-    #         # ↓ pass these first, so they can be overwritten
-    #         **parratt_params,
-    #         # ↓ overrides
-    #         δ1=δ1,
-    #         # ↓ the rest
-    #         k=k,
-    #         ureg=ureg,
-    #         rauigkeit=True,
-    #     )[0]
+    def parrat_fitfn(α, *override_parratt_params_tuple):
+        # if isinstance(σ1, ureg.Quantity):
+        #     # assume all are quantities
+        #     σ1 = σ1.to('m').m
+        #     σ2 = σ2.to('m').m
+        PASSED_PARAMS = ['δ1', 'δ2']
+        override_parratt_params = dict(zip(PASSED_PARAMS, override_parratt_params_tuple))
 
-    # δ1_fit = tools.curve_fit(
-    #     parrat_fitfn,
-    #     α.to('rad').m,
-    #     tools.nominal_values(R_corr),
-    #     p0=litdata['PS']['δ'].m,
-    # )
-    # print(tools.fmt_compare_to_ref(δ1_fit, litdata['PS']['δ'], "δ1 (Fit)"))
+        return calc_parratt(
+            α,
+            **(parratt_params | override_parratt_params),
+            # ↓ the rest
+            k=k,
+            ureg=ureg,
+            rauigkeit=True,
+        )[0]
+
+    # def parrat_fitfn_nodim(α, δ1):
+    #     return parrat_fitfn(α * ureg.rad, δ1 * ureg.dimensionless)
+
+    # fit_mask = (ureg('0.2°') < α) & (α < ureg('1.5°'))
+    fit_mask = (α[peaks[0]] < α) & (α < α[peaks[-1]])
+
+    δ1_fit, δ2_fit = tools.pint_curve_fit(
+    # δ1_fit, δ2_fit, σ1_fit, σ2_fit = tools.pint_curve_fit(
+        parrat_fitfn,
+        α.to('rad')[fit_mask],
+        tools.nominal_values(R_corr)[fit_mask],
+        (ureg.dimensionless, ureg.dimensionless),
+        # (ureg.dimensionless, ureg.dimensionless, ureg.m, ureg.m),
+        p0=(0 * ureg.dimensionless, 0 * ureg.dimensionless),
+        # p0=(litdata['PS']['δ'], litdata['Si']['δ']),
+        # p0=(litdata['PS']['δ'], litdata['Si']['δ'], 20E-10 * ureg.m, 7E-10 * ureg.m),
+        maxfev=5000,
+    )
+    # print(δ1_fit)
+    print(tools.fmt_compare_to_ref(δ1_fit, litdata['PS']['δ'], "δ1 (Fit)"))
+    print(tools.fmt_compare_to_ref(δ2_fit, litdata['Si']['δ'], "δ2 (Fit)"))
+
+    parratt_params_fit = parratt_params | {
+        'δ1': tools.nominal_value(δ1_fit),
+        'δ2': tools.nominal_value(δ2_fit),
+        # 'σ1': tools.nominal_value(σ1_fit),
+        # 'σ2': tools.nominal_value(σ2_fit),
+    }
     # --- TEST (WIP): Fit ---
 
     par_glatt, r13_glatt = calc_parratt(
         α.to('rad').m,
         k=k,
-        **parratt_params,
+        # **parratt_params,
+        **parratt_params_fit,
         ureg=ureg,
         rauigkeit=False,
     )
@@ -262,6 +288,8 @@ def main(
                 plt.axvline(α_c_PS.to('°'), color='C3', linestyle='--', label="TODO_a_PS")  # TODO label=r"$α_\text{c, PS}$"
             if 'α_c_Si' in config['show']:
                 plt.axvline(α_c_Si.to('°'), color='C4', linestyle='--', label="TODO_a_Si")  # TODO label=r"$α_\text{c, Si}$"
+
+            plt.axvspan(*tools.bounds(α[fit_mask]), color='C1', alpha=0.2, label="Fitbereich")
 
         if config.get('cut_plot') == "little":
             # cut a little

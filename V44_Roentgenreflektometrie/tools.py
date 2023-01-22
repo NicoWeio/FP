@@ -41,7 +41,7 @@ def curve_fit(fit_fn, x, y, **kwargs):
     return tuple(ufloat(p, e) for p, e in zip(params, param_errors))
 
 
-def pint_curve_fit(fit_fn, x, y, param_units, bounds=None, p0=None, return_p0=False):
+def pint_curve_fit(fit_fn, x, y, param_units, bounds=None, p0=None, return_p0=False, **kwargs):
     """Wrapper for `sp.optimize.curve_fit` that accepts pint units."""
 
     assert all(isinstance(u, (pint.Unit, pint.Quantity))
@@ -93,7 +93,7 @@ def pint_curve_fit(fit_fn, x, y, param_units, bounds=None, p0=None, return_p0=Fa
         sigma = std_devs(y).m
         y = nominal_values(y)
 
-    u_params = curve_fit(fit_fn, x.m, y.m, p0=p0, bounds=bounds, sigma=sigma)
+    u_params = curve_fit(fit_fn, x.m, y.m, p0=p0, bounds=bounds, sigma=sigma, **kwargs)
     pint_params = tuple(p * u for p, u in zip(u_params, param_units))
 
     try:
