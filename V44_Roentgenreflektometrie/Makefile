@@ -15,7 +15,7 @@ TABLES = \
 
 PYTHONENV = MATPLOTLIBRC=../matplotlibrc TEXINPUTS=$$(pwd)/..: BUILD=true PLOTS=true
 
-$(PLOTS) &: main.py $(wildcard code/*.py) data_Mampfzwerg/1_detektor.txt | build/plt build/tab
+$(PLOTS) &: main.py $(wildcard code/*.py) | build/plt build/tab
 	$(PYTHONENV) python main.py
 
 build/main.pdf: ../header_common.tex main.tex $(wildcard content/*.tex) lit.bib $(PLOTS) $(TABLES) | build

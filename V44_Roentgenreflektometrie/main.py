@@ -64,7 +64,6 @@ SCANS = {
 
 
 def load_scan(name, x_units):
-    # data_path = Path(f"data_Mampfzwerg/{name}.txt") # skip_header=1
     data_path = Path(f"data/{name}.UXD")
 
     raw_data = data_path.read_text()
@@ -87,18 +86,17 @@ def load_scan(name, x_units):
 
 
 scan_name = '1_detektor'
-print(f"█ {scan_name}")
+console.rule(scan_name)
 I_max = detektorscan.main(scan_name, *load_scan(scan_name, **SCANS[scan_name]), ureg=ureg)
 
 scan_name = '2_z1'
-print(f"█ {scan_name}")
+console.rule(scan_name)
 d_Strahl = zscan.main(scan_name, *load_scan(scan_name, **SCANS[scan_name]), ureg=ureg)
 
 D = ureg('20 mm')  # Probendurchmesser [Versuchsanleitung]
 
 scan_name = '4_rocking1'
-print(f"█ {scan_name}")
-α_g = rockingscan.main(scan_name, *load_scan(scan_name, **SCANS[scan_name]), ureg=ureg, d_Strahl=d_Strahl, D=D)
+console.rule(scan_name)
 rockingscan_results = rockingscan.main(scan_name, *load_scan(scan_name, **SCANS[scan_name]), ureg=ureg, d_Strahl=d_Strahl, D=D)
 α_g = rockingscan_results['α_g_alt']
 
@@ -145,6 +143,16 @@ PARRATT_PARAMS = {
     'z': ureg('860 Å'),  # Schichtdicke → verkleinert Oszillationswellenlänge
 }
 
+PARRATT_PARAMS_MAMPFZWERG = {
+    'δ1': 0.7e-6,
+    'δ2': 6.7e-6,
+    'β1': 0,
+    'β2': 0,
+    'σ1': 7.9e-10 * ureg.m,
+    'σ2': 5.7e-10 * ureg.m,
+    'z': ureg('855 Å'),
+}
+
 PLOT_CONFIGS = [
     {
         # █ Plot 2: Theoriekurven
@@ -164,10 +172,11 @@ PLOT_CONFIGS = [
             # 'R_corr_diff', # COULDDO
             'R_corr',
             'R_corr[peaks]',
-            'par_scaled',
+            'par',
+            # 'par_scaled',
             # ---
             'α_g',
-            # 'α_c_PS', # mit cut_plot='lot' nicht sichtbar
+            'α_c_PS',
             'α_c_Si',
         },
         # 'cut_plot': 'little',
@@ -175,7 +184,7 @@ PLOT_CONFIGS = [
     },
 ]
 
-print(f"█ Schichtdicke")
+console.print(f"Schichtdicke")
 print({k: f"{v:.3E}" for k, v in PARRATT_PARAMS.items()})
 schichtdicke.main(
     "schichtdicke",
@@ -188,6 +197,7 @@ schichtdicke.main(
     I_max=I_max,
     litdata=LITDATA,
     parratt_params=PARRATT_PARAMS,
+    # parratt_params=PARRATT_PARAMS_MAMPFZWERG,
     plot_configs=PLOT_CONFIGS,
 )
 

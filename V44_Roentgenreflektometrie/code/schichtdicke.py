@@ -104,7 +104,7 @@ def main(
     I_corr_diff = I_refl - I_diff
     # Korrektur um Geometriefaktor
     G = calc_G(α, D=D, d_Strahl=d_Strahl, α_g=α_g)
-    G[0] = G[1]  # TODO: Workaround for division by zero
+    G[0] = np.nan  # NOTE: Workaround for division by zero
     I_corr_G = I_refl / G
     # Korrektur um beides
     I_corr = I_corr_diff / G
@@ -145,11 +145,12 @@ def main(
     # α_c_PS = λ * np.sqrt(litdata['PS']['r_e·ρ'] / np.pi)
     # α_c_Si = λ * np.sqrt(litdata['Si']['r_e·ρ'] / np.pi)
     #
+    # https://github.com/NicoJG/Fortgeschrittenenpraktikum/blob/677f5868153db0d111c41329f5c517432f6487c9/V44_Reflektometrie/python/messung.py#L157-L158
     α_c_PS = np.sqrt(2 * parratt_params['δ1']) * ureg.rad  # !?
     α_c_Si = np.sqrt(2 * parratt_params['δ2']) * ureg.rad  # !?
     #
-    # print(f"α_c_PS = {α_c_PS.to('°'):.2f}")
-    # print(f"α_c_Si = {α_c_Si.to('°'):.2f}")
+    print(f"α_c_PS = {α_c_PS.to('°'):.2f}")
+    print(f"α_c_Si = {α_c_Si.to('°'):.2f}")
     #
     # print(tools.fmt_compare_to_ref(α_c_PS, litdata['PS']['α_c'], 'α_c_PS', unit='°'))
     # print(tools.fmt_compare_to_ref(α_c_Si, litdata['Si']['α_c'], 'α_c_Si', unit='°'))
@@ -169,12 +170,15 @@ def main(
         rauigkeit=True,
     )
 
-    # Scaling of Parratt
     R_corr_plateau_mean = R_corr[(ureg('0.1°') < α) & (α < ureg('0.2°'))].mean()
     print(f"R_corr_plateau_mean = {R_corr_plateau_mean:.3f}")
-    # NOTE: par can be assumed to be 1 in this range
-    par_scaled = par * tools.nominal_value(R_corr_plateau_mean / 1)
-
+    if True:  # Scaling of measured data (in-place)
+        print("🛈 Measured data is scaled to match the plateau of the Parratt curve!")
+        for var in [I_refl, I_diff, I_corr_diff, I_corr_G, I_corr, R_corr_diff, R_corr,]:
+            var /= R_corr_plateau_mean
+    if True:  # Scaling of Parratt theory curve (in new variable)
+        # NOTE: par can be assumed to be 1 in this range
+        par_scaled = par * tools.nominal_value(R_corr_plateau_mean / 1)
 
     # --- TEST (WIP): Fit ---
     # @ureg.wraps(ureg.dimensionless, (ureg.rad, ureg.dimensionless))
@@ -225,7 +229,6 @@ def main(
             plt.savefig(f"build/plt/{name}_messwerte.pdf")
         plt.show()
 
-
     def plot_schichtdicke(config):
         # α_linspace = tools.linspace(*tools.bounds(α), 1000)
 
@@ -256,9 +259,9 @@ def main(
             if 'α_g' in config['show']:
                 plt.axvline(α_g.to('°'), color='C2', linestyle='--', label="$α_g$")
             if 'α_c_PS' in config['show']:
-                plt.axvline(α_c_PS.to('°'), color='C3', linestyle='--', label=r"$α_\text{c, PS}$")
+                plt.axvline(α_c_PS.to('°'), color='C3', linestyle='--', label="TODO_a_PS")  # TODO label=r"$α_\text{c, PS}$"
             if 'α_c_Si' in config['show']:
-                plt.axvline(α_c_Si.to('°'), color='C4', linestyle='--', label=r"$α_\text{c, Si}$")
+                plt.axvline(α_c_Si.to('°'), color='C4', linestyle='--', label="TODO_a_Si")  # TODO label=r"$α_\text{c, Si}$"
 
         if config.get('cut_plot') == "little":
             # cut a little
@@ -266,8 +269,9 @@ def main(
             plt.ylim(bottom=1E-6)  # COULDDO: No idea why this is necessary
         if config.get('cut_plot') == "lot":
             # cut a lot
-            plt.xlim(0.1, 1.0)
-            plt.ylim(1E-5, 1E0)
+            # plt.xlim(0.1, 1.0)
+            plt.xlim(0.0, 1.0)
+            # plt.ylim(1E-5, 1E0)
 
         plt.yscale('log')
         plt.grid()
@@ -278,6 +282,6 @@ def main(
             plt.savefig(f"build/plt/{name}_{config['name']}.pdf")
         plt.show()
 
-    if tools.PLOTS or True: # TODO
+    if tools.PLOTS or True:  # TODO
         for plot_config in plot_configs:
             plot_schichtdicke(plot_config)
