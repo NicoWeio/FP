@@ -48,4 +48,7 @@ def main(name, α, I, ureg, d_Strahl, D):
                 plt.savefig(f"build/plt/{name}_{yscale}.pdf")
             plt.show()
 
-    return α_g_mean
+    return {
+        'α_g_mean': α_g_mean,
+        'α_g_alt': α_g_alt,
+    }

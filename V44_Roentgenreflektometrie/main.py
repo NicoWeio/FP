@@ -99,6 +99,8 @@ D = ureg('20 mm')  # Probendurchmesser [Versuchsanleitung]
 scan_name = '4_rocking1'
 print(f"█ {scan_name}")
 α_g = rockingscan.main(scan_name, *load_scan(scan_name, **SCANS[scan_name]), ureg=ureg, d_Strahl=d_Strahl, D=D)
+rockingscan_results = rockingscan.main(scan_name, *load_scan(scan_name, **SCANS[scan_name]), ureg=ureg, d_Strahl=d_Strahl, D=D)
+α_g = rockingscan_results['α_g_alt']
 
 LITDATA = {
     # Polysterol:
