@@ -1,7 +1,7 @@
 \section{Auswertung}
 \label{sec:auswertung}
 
-% TODO: Fehlerrechnung
+% COULDDO: Fehlerrechnung
 
 \subsection{Detektorscan}
 Um die Strahlbreite zu quantifizieren,
@@ -106,7 +106,8 @@ Der Reflektivitätsscan wird durch
     Division durch den Geometriefaktor $G$ (\autoref{eqn:geometriefaktor})
 korrigiert.
 \autoref{fig:plt:schichtdicke_a} zeigt die Messwerte beider Messungen sowie die korrigierten Reflektivitäten
-in Abhängigkeit des TODO Winkels.
+in Abhängigkeit des
+Winkels $\alpha$.
 % Wellenvektorübertrags $q = \frac{4\pi}{\lambda} · \sin{\frac{\pi}{180} \alpha_i}$.
 
 Mittels der Funktion \texttt{find\_peaks} aus \texttt{scipy.signal} werden die Maxima der Kiessig-Oszillationen bestimmt.
@@ -122,18 +123,19 @@ Diese beinhalten Brechungsindizes $n = 1 - \delta + i\beta$ und Rauigkeiten $\si
 für die unterschiedlichen Schichten beziehungsweise Grenzflächen:
 \begin{align*}
     n_\text{Luft} &= 1 \\
-    n_\text{PS} = 1 - \delta_\text{PS} + i \beta_\text{PS} &= 1 - \num{0.9e-6} + i \cdot \num{4.5e-9} \\
-    n_\text{Si} = 1 - \delta_\text{PS} + i \beta_\text{PS} &= 1 - \num{6.8e-6} + i \cdot \num{1.7e-7} \\
-    \sigma_\text{Luft–PS} &= \SI{20}{\angstrom} \\
-    \sigma_\text{PS–Si} &= \SI{7.3}{\angstrom} \\
+    n_\text{PS} = 1 - \delta_\text{PS} + i \beta_\text{PS} &= 1 - \num{1.10e-6} + i \cdot \num{5.00e-9} \\
+    n_\text{Si} = 1 - \delta_\text{PS} + i \beta_\text{PS} &= 1 - \num{7.19e-6} + i \cdot \num{1.69e-7} \\
+    \sigma_\text{Luft–PS} &= \SI{24.8}{\angstrom} \\
+    \sigma_\text{PS–Si} &= \SI{11.9}{\angstrom} \\
 \end{align*}
 Außerdem wird eine (vom aus den Abständen der Maxima berechneten Wert unabhängige) Schichtdicke des Polystyrols von
-$d_\text{PS}' = \SI{867.0}{\angstrom}$ verwendet.
+$d_\text{PS}' = \SI{872.5}{\angstrom}$ verwendet.
 
 Aus den Korrekturen $\delta$ ergeben sich zudem die kritischen Winkel der Totalreflexion:
 \begin{align*}
-    \alpha_\text{c, PS} = \SI{0.19}{\degree}
-    \alpha_\text{c, Si} = \SI{0.28}{\degree} \\
+    \alpha_\text{c, PS} &= \SI{0.09}{\degree}
+    &
+    \alpha_\text{c, Si} &= \SI{0.22}{\degree} \\
 \end{align*}
 
 Die (wie zuvor beschrieben) korrigierten Messwerte,
@@ -170,8 +172,8 @@ dargestellt.
     \centering
     \includegraphics[width=\textwidth]{build/plt/schichtdicke_fit.pdf}
     \caption{
-        Korrigierte Messwerte und Theoriekurven zur Reflektivität, TODO.
-        % zugeschnitten auf die nicht vernachlässigbaren Reflektivitäten.
+        Korrigierte Messwerte und Theoriekurve zur Reflektivität,
+        zugeschnitten auf die Kiessig-Oszillationen.
     }
     \label{fig:plt:schichtdicke_b}
 \end{figure}
@@ -180,8 +182,8 @@ dargestellt.
     \centering
     \includegraphics[width=\textwidth]{build/plt/schichtdicke_theoriekurven.pdf}
     \caption{
-        Theoriekurven zur Reflektivität, TODO.
-        % zugeschnitten auf die Kiessig-Oszillationen.
+        Theoriekurven zur Reflektivität,
+        zugeschnitten auf die Kiessig-Oszillationen.
     }
     \label{fig:plt:schichtdicke_c}
 \end{figure}
