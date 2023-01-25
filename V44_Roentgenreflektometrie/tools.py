@@ -33,7 +33,7 @@ def linregress(x, y):
 def curve_fit(fit_fn, x, y, **kwargs):
     """Wrapper for `sp.optimize.curve_fit` that returns `ufloat`s"""
     if kwargs.get('bounds', False) is None:
-        # Act as if `bounds` was not passed
+        # Act as if `bounds` was not passed if it is None
         del kwargs['bounds']
 
     params, pcov = sp.optimize.curve_fit(fit_fn, x, y, **kwargs)
@@ -65,9 +65,16 @@ def pint_curve_fit(fit_fn, x, y, param_units, bounds=None, p0=None, return_p0=Fa
     #     # TODO: Best solution would be to write a wrapper for fit_fn
 
     if bounds is not None:
+        def convert_bounds(b, u):
+            if b is None:
+                return (-np.infty, np.infty)
+            return (
+                b[0].to(u).m if b[0] is not None else -np.infty,
+                b[1].to(u).m if b[1] is not None else np.infty
+            )
         # first, [(lower, upper)]
         bounds = [
-            (b[0].to(u).m, b[1].to(u).m) if (b is not None) else (-np.infty, np.infty)
+            convert_bounds(b, u)
             for b, u in zip(bounds, param_units, strict=True)
         ]
         # then, ([lower], [uppper])
