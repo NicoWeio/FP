@@ -1,9 +1,10 @@
-# import generate_table
+"""
+NOTE: Die Benennung der Schichtdicke ist uneinheitlich. Manchmal wird sie als z bezeichnet, manchmal als d.
+"""
+
 import matplotlib.pyplot as plt
 import numpy as np
-import scipy as sp
 
-# import generate_table
 import tools
 
 
@@ -31,6 +32,13 @@ def calc_G(α, D, d_Strahl, α_g):
     G[α > α_g] = 1
     assert all(G <= 1)
     return G
+
+
+def calc_α_c(δ, ureg):
+    # α_c_PS = λ * np.sqrt(litdata['PS']['r_e·ρ'] / np.pi)
+
+    # https://github.com/NicoJG/Fortgeschrittenenpraktikum/blob/677f5868153db0d111c41329f5c517432f6487c9/V44_Reflektometrie/python/messung.py#L157-L158
+    return np.sqrt(2 * δ) * ureg.rad  # !?
 
 
 def calc_parratt(
@@ -78,117 +86,30 @@ def calc_parratt(
     return R_parratt, np.abs(r13)
 
 
-def main(
-    name,
-    mess_refl,
-    mess_diff,
-    ureg,
-    d_Strahl,
-    D,
-    α_g,
-    I_max,
-    litdata,
+def do_fit(
+    *,  # force keyword arguments
+    the_α,
+    the_R,
+    fit_mask,
     parratt_params,
-    plot_configs,
+    k,
+    ureg,
 ):
     """
-    d_Strahl: Strahlbreite (siehe Z-Scan)
-    α_g: Geometriewinkel (siehe Rockingscan)
-    I_max: Maximale Intensität aus dem Detektorscan
+    Nimmt `parratt_params` als Startwerte entgegen.
+    Falls nicht alle Parameter gefittet werden, enthält die Rückgabe dann auch diese.
     """
-    assert np.all(mess_refl[0] == mess_diff[0]), "α-Werte stimmen nicht überein"
-    α, I_refl = mess_refl
-    α, I_diff = mess_diff
-
-    # Korrektur um diffusen Anteil
-    I_corr_diff = I_refl - I_diff
-    # Korrektur um Geometriefaktor
-    G = calc_G(α, D=D, d_Strahl=d_Strahl, α_g=α_g)
-    # G[0] = np.nan  # NOTE: Workaround for division by zero
-    G[0] = G[1]  # NOTE: Workaround for division by zero; variant for fitting…
-    I_corr_G = I_refl / G
-    # Korrektur um beides
-    I_corr = I_corr_diff / G
-
-    R_corr_diff = I_corr_diff / I_max
-    R_corr = I_corr / I_max
-
-    λ = ureg('1.54 Å')  # ? (@Mampfzwerg)
-    k = 2*np.pi / λ  # Wellenvektor
-    q = α_to_q(α, λ=λ)
-
-    # █ Schichtdicke bestimmen (Peaks finden)
-    # peaks, peak_props = sp.signal.find_peaks(tools.nominal_values(I_corr).to('1/s').m, height=(1E2, 1E4), prominence=5, distance=8)
-    # TODO: Fast funktioniert es automatisch. Fast…
-    peaks = [70, 81, 91, 100, 111, 119, (131), 144, 155]
-    assert len(peaks) > 0, "Keine Peaks gefunden"
-    print(f"Peak-Indizes: {peaks}")
-    # TODO: add sem/ufloat
-    Δα_mean = np.mean(np.diff(α[peaks].to('rad').m)) * ureg.rad
-    Δq_mean = np.mean(np.diff(q[peaks].to('1/m').m)) * ureg['1/m']
-    # d_estim_a = 2*np.pi / Δq_mean # anderes Resultat als bei @Mampfzwerg
-    d_estim_b = λ / (2 * Δα_mean)  # korrekte Daten bei @Mampfzwerg
-    print(f"Δα_mean = {Δα_mean}")
-    print(f"Δq_mean = {Δq_mean}")
-    # print(f"d_estim_a = {d_estim_a.to('m')}")
-    print(f"d_estim_b = {d_estim_b.to('nm'):.2f} = {d_estim_b.to('Å'):.1f}")
-
-    # berechenbar aus δ !? (@Mampfzwerg)
-    # α_c_PS = ureg('0.068 °')
-    # α_c_Si = ureg('0.210 °')
-
-    plt.figure()
-
-    # z = d_estim_b
-
-    # α_c_Si = np.sqrt(2 * δ)
-
-    # α_c_PS = λ * np.sqrt(litdata['PS']['r_e·ρ'] / np.pi)
-    # α_c_Si = λ * np.sqrt(litdata['Si']['r_e·ρ'] / np.pi)
-    #
-    # https://github.com/NicoJG/Fortgeschrittenenpraktikum/blob/677f5868153db0d111c41329f5c517432f6487c9/V44_Reflektometrie/python/messung.py#L157-L158
-    α_c_PS = np.sqrt(2 * parratt_params['δ1']) * ureg.rad  # !?
-    α_c_Si = np.sqrt(2 * parratt_params['δ2']) * ureg.rad  # !?
-    #
-    print(f"α_c_PS = {α_c_PS.to('°'):.2f}")
-    print(f"α_c_Si = {α_c_Si.to('°'):.2f}")
-    #
-    # print(tools.fmt_compare_to_ref(α_c_PS, litdata['PS']['α_c'], 'α_c_PS', unit='°'))
-    # print(tools.fmt_compare_to_ref(α_c_Si, litdata['Si']['α_c'], 'α_c_Si', unit='°'))
-
-    # █ Parameter
-    # TODO: Move back here
-
-    # print(tools.fmt_compare_to_ref(parratt_params['δ1'], litdata['PS']['δ'], "δ1"))
-    # print(tools.fmt_compare_to_ref(parratt_params['δ2'], litdata['Si']['δ'], "δ2"))
-    # print(tools.fmt_compare_to_ref(parratt_params['z'], d_estim_b, "Schichtdicke (Fit vs. Peak-Dist.)", unit='Å'))
-
-    par, r13 = calc_parratt(
-        α.to('rad').m,
-        k=k,
-        **parratt_params,
-        ureg=ureg,
-        rauigkeit=True,
-    )
-
-    R_corr_plateau_mean = R_corr[(ureg('0.1°') < α) & (α < ureg('0.2°'))].mean()
-    print(f"R_corr_plateau_mean = {R_corr_plateau_mean:.3f}")
-    if True:  # Scaling of measured data (in-place)
-        print("🛈 Measured data is scaled to match the plateau of the Parratt curve!")
-        for var in [I_refl, I_diff, I_corr_diff, I_corr_G, I_corr, R_corr_diff, R_corr,]:
-            var /= R_corr_plateau_mean
-    if True:  # Scaling of Parratt theory curve (in new variable)
-        # NOTE: par can be assumed to be 1 in this range
-        par_scaled = par * tools.nominal_value(R_corr_plateau_mean / 1)
-
-    # --- TEST (WIP): Fit ---
     def parrat_fitfn(α, *override_parratt_params_tuple):
         # if isinstance(σ1, ureg.Quantity):
         #     # assume all are quantities
         #     σ1 = σ1.to('m').m
         #     σ2 = σ2.to('m').m
-        PASSED_PARAMS = ['δ1', 'δ2']
-        override_parratt_params = dict(zip(PASSED_PARAMS, override_parratt_params_tuple))
+        PASSED_PARAMS = ['δ1', 'δ2', 'σ1', 'σ2', 'z']
+        UNITS = [ureg.dimensionless, ureg.dimensionless, ureg.m, ureg.m, ureg['Å']]
+        override_parratt_params = dict(zip(PASSED_PARAMS, override_parratt_params_tuple, strict=True))
+        for key, val in override_parratt_params.items():
+            if not isinstance(val, ureg.Quantity):
+                override_parratt_params[key] *= UNITS[PASSED_PARAMS.index(key)]
 
         return calc_parratt(
             α,
@@ -202,44 +123,174 @@ def main(
     # def parrat_fitfn_nodim(α, δ1):
     #     return parrat_fitfn(α * ureg.rad, δ1 * ureg.dimensionless)
 
-    # fit_mask = (ureg('0.2°') < α) & (α < ureg('1.5°'))
-    fit_mask = (α[peaks[0]] < α) & (α < α[peaks[-1]])
+    # BOUND_POSITIVE = (ureg('0 dimensionless'), None)
 
-    δ1_fit, δ2_fit = tools.pint_curve_fit(
-    # δ1_fit, δ2_fit, σ1_fit, σ2_fit = tools.pint_curve_fit(
+    δ1_fit, δ2_fit, σ1_fit, σ2_fit, z_fit = tools.pint_curve_fit(
         parrat_fitfn,
-        α.to('rad')[fit_mask],
-        tools.nominal_values(R_corr)[fit_mask],
-        (ureg.dimensionless, ureg.dimensionless),
+        the_α.to('rad')[fit_mask],
+        # tools.nominal_values(R_corr)[fit_mask],
+        the_R[fit_mask],
+        (ureg.dimensionless, ureg.dimensionless, ureg.m, ureg.m, ureg.angstrom),
         # (ureg.dimensionless, ureg.dimensionless, ureg.m, ureg.m),
-        p0=(0 * ureg.dimensionless, 0 * ureg.dimensionless),
+        # p0=(1E-6 * ureg.dimensionless, 1E-6 * ureg.dimensionless, ureg('1E-10 m'), ureg('1E-10 m'), ureg('860 Å')),
+        p0=tuple(parratt_params[key] for key in ['δ1', 'δ2', 'σ1', 'σ2', 'z']),
+        # bounds=(None, None, None, None, None),
+        # bounds=(BOUND_POSITIVE, BOUND_POSITIVE, None, None, None),
+        # bounds=(BOUND_POSITIVE, BOUND_POSITIVE, (ureg('0 m'), None), (ureg('0 m'), None), None),
+        # bounds=(None, None, None, None, (parratt_params['z'] * 0.8, parratt_params['z'] * 1.2)),
+        # bounds=(None, None, None, None, (ureg('400 Å'), ureg('600 Å'))),
         # p0=(litdata['PS']['δ'], litdata['Si']['δ']),
         # p0=(litdata['PS']['δ'], litdata['Si']['δ'], 20E-10 * ureg.m, 7E-10 * ureg.m),
         maxfev=5000,
     )
-    # print(δ1_fit)
-    print(tools.fmt_compare_to_ref(δ1_fit, litdata['PS']['δ'], "δ1 (Fit)"))
-    print(tools.fmt_compare_to_ref(δ2_fit, litdata['Si']['δ'], "δ2 (Fit)"))
 
     parratt_params_fit = parratt_params | {
         'δ1': tools.nominal_value(δ1_fit),
         'δ2': tools.nominal_value(δ2_fit),
-        # 'σ1': tools.nominal_value(σ1_fit),
-        # 'σ2': tools.nominal_value(σ2_fit),
+        'σ1': tools.nominal_value(σ1_fit),
+        'σ2': tools.nominal_value(σ2_fit),
+        'z': tools.nominal_value(z_fit),
     }
-    # --- TEST (WIP): Fit ---
 
-    par_glatt, r13_glatt = calc_parratt(
-        α.to('rad').m,
+    return parratt_params_fit
+
+
+def main(
+    name,
+    mess_refl,
+    mess_diff,
+    ureg,
+    d_Strahl,
+    D,
+    α_g,
+    I_max,
+    litdata,
+    parratt_params_input,
+    plot_configs,
+):
+    """
+    d_Strahl: Strahlbreite (siehe Z-Scan)
+    α_g: Geometriewinkel (siehe Rockingscan)
+    I_max: Maximale Intensität aus dem Detektorscan
+    """
+    # █ Messwerte vorbereiten und korrigieren
+    assert np.all(mess_refl[0] == mess_diff[0]), "α-Werte stimmen nicht überein"
+    α, I_refl = mess_refl
+    α, I_diff = mess_diff
+
+    # ↓ Korrektur um diffusen Anteil
+    I_corr_diff = I_refl - I_diff
+    # ↓ Korrektur um Geometriefaktor
+    G = calc_G(α, D=D, d_Strahl=d_Strahl, α_g=α_g)
+    # G[0] = np.nan  # NOTE: Workaround for division by zero
+    G[0] = G[1]  # NOTE: Workaround for division by zero; variant for fitting…
+    I_corr_G = I_refl / G
+    # ↓ Korrektur um beides
+    I_corr = I_corr_diff / G
+
+    R_corr_diff = I_corr_diff / I_max
+    R_corr = I_corr / I_max
+
+    λ = ureg('1.54 Å')  # ? (@Mampfzwerg)
+    k = 2*np.pi / λ  # Wellenvektor
+
+
+    # █ Schichtdicke aus Peaks bestimmen
+    # peaks, peak_props = sp.signal.find_peaks(tools.nominal_values(I_corr).to('1/s').m, height=(1E2, 1E4), prominence=5, distance=8)
+    # COULDDO: Fast funktioniert es automatisch. Fast…
+    peaks = [70, 81, 91, 100, 111, 119, (131), 144, 155]
+    assert len(peaks) > 0, "Keine Peaks gefunden"
+    print(f"Peak-Indizes: {peaks}")
+    # COULDDO: add sem/ufloat
+    Δα_mean = np.mean(np.diff(α[peaks].to('rad').m)) * ureg.rad
+    d_from_peaks = λ / (2 * Δα_mean)
+    print(f"Δα_mean = {Δα_mean}")
+    print(f"d_from_peaks = {d_from_peaks.to('nm'):.2f} = {d_from_peaks.to('Å'):.1f}")
+
+
+    # █ Skalierung der Messdaten (Anpassung an die Parratt-Theoriekurve)
+    R_corr_plateau_mean = R_corr[(ureg('0.1°') < α) & (α < ureg('0.2°'))].mean()
+    print(f"R_corr_plateau_mean = {R_corr_plateau_mean:.3f}")
+    if True:  # Scaling of measured data (in-place)
+        print("🛈 Measured data is scaled to match the plateau of the Parratt curve!")
+        for var in [I_refl, I_diff, I_corr_diff, I_corr_G, I_corr, R_corr_diff, R_corr,]:
+            var /= R_corr_plateau_mean
+
+
+    # █ Fit der Parratt-Theoriekurve
+    # fit_mask = (ureg('0.2°') < α) & (α < ureg('1.5°'))
+    # fit_mask = (ureg('0.3°') < α) & (α < ureg('1.25°'))
+    fit_mask = (α[peaks[0]] <= α) & (α <= α[peaks[-1]])
+    parratt_params_fit = do_fit(
+        the_α=α,
+        the_R=R_corr,
+        fit_mask=fit_mask,
         k=k,
-        # **parratt_params,
-        **parratt_params_fit,
+        parratt_params=parratt_params_input,
         ureg=ureg,
-        rauigkeit=False,
     )
+
+    # █ Berechnung der kritischen Winkel
+    α_c_PS_fit = calc_α_c(parratt_params_fit['δ1'], ureg=ureg)
+    α_c_Si_fit = calc_α_c(parratt_params_fit['δ2'], ureg=ureg)
+
+
+    # █ Vergleich mit Literaturwerten
+    COMPARISON_DATA = [
+        {
+            'key': 'δ1',
+            'name': "δ1",
+            # 'ours': parratt_params_fit['δ1'],
+            'ref': litdata['PS']['δ'],
+        },
+        {
+            'key': 'δ2',
+            'name': "δ2",
+            # 'ours': parratt_params_fit['δ2'],
+            'ref': litdata['Si']['δ'],
+        },
+        {
+            'key': 'z',
+            'name': "z (vs. aus Peak-Abständen)",
+            # 'ours': parratt_params_fit['z'],
+            'ref': d_from_peaks,
+        }
+    ]
+    for c in COMPARISON_DATA:
+        print(tools.fmt_compare_to_ref(parratt_params_fit[c['key']], c['ref'], c['name']))
+    # print(f"α_c_PS_fit = {α_c_PS_fit.to('°'):.2f}")
+    # print(f"α_c_Si_fit = {α_c_Si_fit.to('°'):.2f}")
+    print(tools.fmt_compare_to_ref(α_c_PS_fit, litdata['PS']['α_c'], "α_c_PS_fit", unit='°'))
+    print(tools.fmt_compare_to_ref(α_c_Si_fit, litdata['Si']['α_c'], "α_c_Si_fit", unit='°'))
+
+
+    # █ Berechnung der Parratt-Theoriekurven
+    calc_parratt_common_paramters = {
+        'α': α.to('rad').m,
+        'k': k,
+        'ureg': ureg,
+        'rauigkeit': True,
+    }
+
+    par_input, r13_input = calc_parratt(
+        **calc_parratt_common_paramters,
+        **parratt_params_input,
+    )
+
+    par_fit, r13_fit = calc_parratt(
+        **calc_parratt_common_paramters,
+        **parratt_params_fit,
+    )
+
+    par_fit_glatt, r13_fit_glatt = calc_parratt(
+        **(calc_parratt_common_paramters | dict(rauigkeit=False)),
+        **parratt_params_fit,
+    )
+
 
     # █ Plot 1: Messwerte und Korrekturen
     if tools.PLOTS:
+        plt.figure()
         # COULDDO: Doppelachse mit Intensität und Reflektivität?
         with tools.plot_context(plt, '°', '1/s', "α", "I") as plt2:
             plt2.plot(α, tools.nominal_values(I_refl), '-', label="Messwerte")
@@ -255,61 +306,67 @@ def main(
             plt.savefig(f"build/plt/{name}_messwerte.pdf")
         plt.show()
 
-    def plot_schichtdicke(config):
-        # α_linspace = tools.linspace(*tools.bounds(α), 1000)
-
-        # COULDDO: Doppelachse mit Intensität und Reflektivität?
-        plt.clf()
-        with tools.plot_context(plt, '°', 'dimensionless', "α", "R") as plt2:
-            # TODO: R_corr_diff passt irgendwie viel besser als R_corr. Eigentlich sollte letzteres benuzt werden…
-            if 'R_corr' in config['show']:
-                plt2.plot(α, R_corr, fmt='-', zorder=5, label="Messwerte (korrigiert)")
-            if 'R_corr_diff' in config['show']:
-                plt2.plot(α, R_corr_diff, fmt='-', zorder=5, label="Messwerte (um diffuse korrigiert)")
-            if 'R_corr[peaks]' in config['show']:
-                plt2.plot(α[peaks], R_corr[peaks], fmt='xk', zorder=5, label="Peaks")
-            if 'R_corr_diff[peaks]' in config['show']:
-                plt2.plot(α[peaks], R_corr_diff[peaks], fmt='xk', zorder=5, label="Peaks")
-
-            if 'par' in config['show']:
-                plt2.plot(α, par, '-', zorder=5, label="Theoriekurve (rau)")
-            if 'par_scaled' in config['show']:
-                plt2.plot(α, par_scaled, '-', zorder=5, label="Theoriekurve (rau)")
-            if 'r13' in config['show']:
-                plt2.plot(α, r13, '--', label="Theoriekurve (Fresnel)")
-            if 'r13_glatt' in config['show']:
-                plt2.plot(α, r13_glatt, '--', label="Fresnelreflektivität")
-            if 'par_glatt' in config['show']:
-                plt2.plot(α, par_glatt, '-', label="Theoriekurve (glatt)")
-
-            if 'α_g' in config['show']:
-                plt.axvline(α_g.to('°'), color='C2', linestyle='--', label="$α_g$")
-            if 'α_c_PS' in config['show']:
-                plt.axvline(α_c_PS.to('°'), color='C3', linestyle='--', label="TODO_a_PS")  # TODO label=r"$α_\text{c, PS}$"
-            if 'α_c_Si' in config['show']:
-                plt.axvline(α_c_Si.to('°'), color='C4', linestyle='--', label="TODO_a_Si")  # TODO label=r"$α_\text{c, Si}$"
-
-            plt.axvspan(*tools.bounds(α[fit_mask]), color='C1', alpha=0.2, label="Fitbereich")
-
-        if config.get('cut_plot') == "little":
-            # cut a little
-            plt.xlim(right=1.5)
-            plt.ylim(bottom=1E-6)  # COULDDO: No idea why this is necessary
-        if config.get('cut_plot') == "lot":
-            # cut a lot
-            # plt.xlim(0.1, 1.0)
-            plt.xlim(0.0, 1.0)
-            # plt.ylim(1E-5, 1E0)
-
-        plt.yscale('log')
-        plt.grid()
-        # plt.legend(fontsize=8)
-        plt.legend()
-        plt.tight_layout()
-        if tools.BUILD:
-            plt.savefig(f"build/plt/{name}_{config['name']}.pdf")
-        plt.show()
-
     if tools.PLOTS or True:  # TODO
+        def plot_schichtdicke(config):
+            # α_linspace = tools.linspace(*tools.bounds(α), 1000)
+
+            # COULDDO: Doppelachse mit Intensität und Reflektivität?
+            plt.clf()
+            with tools.plot_context(plt, '°', 'dimensionless', "α", "R") as plt2:
+                # TODO: R_corr_diff passt irgendwie viel besser als R_corr. Eigentlich sollte letzteres benuzt werden…
+                if 'R_corr' in config['show']:
+                    plt2.plot(α, R_corr, fmt='-', zorder=5, label="Messwerte (korrigiert)")
+                if 'R_corr_diff' in config['show']:
+                    plt2.plot(α, R_corr_diff, fmt='-', zorder=5, label="Messwerte (um diffuse korrigiert)")
+                if 'R_corr[peaks]' in config['show']:
+                    plt2.plot(α[peaks], R_corr[peaks], fmt='xk', zorder=5, label="Peaks")
+                if 'R_corr_diff[peaks]' in config['show']:
+                    plt2.plot(α[peaks], R_corr_diff[peaks], fmt='xk', zorder=5, label="Peaks")
+
+                if 'par_input' in config['show']:
+                    plt2.plot(α, par_input, '-', zorder=5, label="Theoriekurve (rau)")
+                if 'r13_input' in config['show']:
+                    plt2.plot(α, r13_input, '--', label="Theoriekurve (Fresnel)")
+                if 'par_fit' in config['show']:
+                    plt2.plot(α, par_fit, '-', zorder=5, label="Theoriekurve (rau)") # label → Fit
+                if 'r13_fit' in config['show']:
+                    plt2.plot(α, r13_fit, '--', label="Theoriekurve (Fresnel)") # label → Fit
+                if 'r13_fit_glatt' in config['show']:
+                    plt2.plot(α, r13_fit_glatt, '--', label="Fresnelreflektivität")
+                if 'par_fit_glatt' in config['show']:
+                    plt2.plot(α, par_fit_glatt, '-', label="Theoriekurve (glatt)")
+
+                if 'α_g' in config['show']:
+                    plt.axvline(α_g.to('°'), color='C2', linestyle='--', label="$α_g$")
+                if 'α_c_PS_fit' in config['show']:
+                    plt.axvline(α_c_PS_fit.to('°'), color='C3', linestyle='--',
+                                label=r"$α_\mathrm{c, PS}$")  # TODO label=r"$α_\text{c, PS}$"
+                if 'α_c_Si_fit' in config['show']:
+                    plt.axvline(α_c_Si_fit.to('°'), color='C4', linestyle='--',
+                                label=r"$α_\mathrm{c, Si}$")  # TODO label=r"$α_\text{c, Si}$"
+                if 'fit_mask' in config['show']:
+                    plt.axvspan(*tools.bounds(α[fit_mask]), color='C1', alpha=0.2, label="Fitbereich")
+
+            if config.get('cut_plot') == "little":
+                # cut a little
+                plt.xlim(right=1.5)
+                plt.ylim(bottom=1E-6)  # COULDDO: No idea why this is necessary
+            if config.get('cut_plot') == "lot":
+                # cut a lot
+                # plt.xlim(0.1, 1.0)
+                plt.xlim(0.0, 1.0)
+                # plt.ylim(1E-5, 1E0)
+
+            plt.yscale('log')
+            plt.grid()
+            # plt.legend(fontsize=8)
+            plt.legend()
+            plt.tight_layout()
+            if tools.BUILD:
+                plt.savefig(f"build/plt/{name}_{config['name']}.pdf")
+            plt.show()
+
+            return plt
+
         for plot_config in plot_configs:
             plot_schichtdicke(plot_config)

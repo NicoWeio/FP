@@ -118,8 +118,8 @@ LITDATA = {
 }
 
 # %%
-δ1 = 0.9e-6 + 0.0e-6
-δ2 = 6.8e-6 - 1.6e-6
+δ1 = 1.0e-6 * ureg.dimensionless
+δ2 = 6.75e-6 * ureg.dimensionless
 # δ1 = LITDATA['PS']['δ']
 # δ2 = LITDATA['Si']['δ']
 
@@ -136,32 +136,32 @@ PARRATT_PARAMS = {
     'β2': δ2 / 40,
     #
     # █ Rauigkeit
-    'σ1': (20.0e-10 + 0.0e-10) * ureg.m,  # Polysterol → Amplitude verkleinert bei größeren α
-    'σ2': (7.3e-10 + 0.0e-10) * ureg.m,  # Silizium → Senkung des Kurvenendes und Amplitudenverkleinerung der Oszillationen
+    'σ1': (20.0e-10 + 4.0e-10) * ureg.m,  # Polysterol → Amplitude verkleinert bei größeren α
+    'σ2': (7.3e-10 + 1.0e-10) * ureg.m,  # Silizium → Senkung des Kurvenendes und Amplitudenverkleinerung der Oszillationen
     #
     # █ Schichtdicke
-    'z': ureg('860 Å'),  # Schichtdicke → verkleinert Oszillationswellenlänge
+    'z': ureg('872 Å'),  # Schichtdicke → verkleinert Oszillationswellenlänge
 }
 
-PARRATT_PARAMS_MAMPFZWERG = {
-    'δ1': 0.7e-6,
-    'δ2': 6.7e-6,
-    'β1': 0,
-    'β2': 0,
-    'σ1': 7.9e-10 * ureg.m,
-    'σ2': 5.7e-10 * ureg.m,
-    'z': ureg('855 Å'),
-}
+# PARRATT_PARAMS_MAMPFZWERG = {
+#     'δ1': 0.7e-6 * ureg.dimensionless,
+#     'δ2': 6.7e-6 * ureg.dimensionless,
+#     'β1': 0,
+#     'β2': 0,
+#     'σ1': 7.9e-10 * ureg.m,
+#     'σ2': 5.7e-10 * ureg.m,
+#     'z': ureg('855 Å'),
+# }
 
 PLOT_CONFIGS = [
     {
         # █ Plot 2: Theoriekurven
         'name': 'theoriekurven',
         'show': {
-            'par',
-            # 'r13',
-            'r13_glatt',
-            'par_glatt',
+            'par_fit',
+            # 'r13_fit',
+            'r13_fit_glatt',
+            'par_fit_glatt',
         },
         'cut_plot': 'little',
     },
@@ -172,19 +172,20 @@ PLOT_CONFIGS = [
             # 'R_corr_diff', # COULDDO
             'R_corr',
             'R_corr[peaks]',
-            'par',
-            # 'par_scaled',
+            # 'par_input',
+            'par_fit',
             # ---
             'α_g',
-            'α_c_PS',
-            'α_c_Si',
+            # 'α_c_PS_fit',
+            # 'α_c_Si_fit',
+            # 'fit_mask',
         },
-        # 'cut_plot': 'little',
-        'cut_plot': 'lot',
+        'cut_plot': 'little',
+        # 'cut_plot': 'lot', COULDDO
     },
 ]
 
-console.print(f"Schichtdicke")
+console.rule(f"Schichtdicke")
 print({k: f"{v:.3E}" for k, v in PARRATT_PARAMS.items()})
 schichtdicke.main(
     "schichtdicke",
@@ -196,7 +197,7 @@ schichtdicke.main(
     α_g=α_g,
     I_max=I_max,
     litdata=LITDATA,
-    parratt_params=PARRATT_PARAMS,
+    parratt_params_input=PARRATT_PARAMS,
     # parratt_params=PARRATT_PARAMS_MAMPFZWERG,
     plot_configs=PLOT_CONFIGS,
 )
